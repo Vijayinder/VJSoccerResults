@@ -2305,6 +2305,54 @@
     },
     {
         "type": "results",
+        "hash_id": "vmZp9zgOlK",
+        "attributes": {
+            "name": "Avondale FC U15  vs Western United FC U15 ",
+            "date": "2026-02-07 23:45:00",
+            "round": "R2",
+            "full_round": "Round 2",
+            "ground_name": "Ironbark Fields",
+            "field_name": "Pitch 2",
+            "home_team_name": "Avondale FC U15",
+            "home_logo": "https://ocean.dribl.com/aa620c163b524970beec05f0b0d95879",
+            "away_team_name": "Western United FC U15",
+            "away_logo": "https://ocean.dribl.com/b76c38e7edf04307b1742b682d19203a",
+            "competition_name": "Boys Victorian Youth Premier League 1",
+            "league_name": "U15 YPL1 Boys",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 0,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 3,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": false,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 2,
+            "enable_referees_allocated": false,
+            "match_hash_id": "Pmj27Xny5m",
+            "home_team_hash_id": "gdMvMWw7mE",
+            "away_team_hash_id": "BdD1BeA6mb",
+            "forfeit_team_hash_id": null
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/vmZp9zgOlK"
+            }
+        }
+    },
+    {
+        "type": "results",
         "hash_id": "Pmj27a1rZm",
         "attributes": {
             "name": "FV54532717 - Langwarrin SC v Melbourne Knights FC",
@@ -6956,54 +7004,6 @@
         "links": {
             "self": {
                 "href": "https://mc-api.dribl.com/api/results/4KLlzJwrGK"
-            }
-        }
-    },
-    {
-        "type": "results",
-        "hash_id": "vmZp9zgOlK",
-        "attributes": {
-            "name": "Avondale FC U15  vs Western United FC U15 ",
-            "date": "2026-02-07 23:45:00",
-            "round": "R2",
-            "full_round": "Round 2",
-            "ground_name": "Ironbark Fields",
-            "field_name": "Pitch 2",
-            "home_team_name": "Avondale FC U15",
-            "home_logo": "https://ocean.dribl.com/aa620c163b524970beec05f0b0d95879",
-            "away_team_name": "Western United FC U15",
-            "away_logo": "https://ocean.dribl.com/b76c38e7edf04307b1742b682d19203a",
-            "competition_name": "Boys Victorian Youth Premier League 1",
-            "league_name": "U15 YPL1 Boys",
-            "status": "complete",
-            "bye_flag": 0,
-            "is_unstructured": false,
-            "league_result_access": "public",
-            "home_score": 0,
-            "home_score_extra": null,
-            "home_score_penalty": null,
-            "home_score_half": null,
-            "home_score_extra_half": null,
-            "away_score": 3,
-            "away_score_extra": null,
-            "away_score_penalty": null,
-            "away_score_half": null,
-            "away_score_extra_half": null,
-            "allocated_center_referee": true,
-            "allocated_assistant_referee_1": true,
-            "allocated_assistant_referee_2": false,
-            "allocated_fourth_official": false,
-            "allocated_game_leader": false,
-            "referee_count": 2,
-            "enable_referees_allocated": false,
-            "match_hash_id": "Pmj27Xny5m",
-            "home_team_hash_id": "gdMvMWw7mE",
-            "away_team_hash_id": "BdD1BeA6mb",
-            "forfeit_team_hash_id": null
-        },
-        "links": {
-            "self": {
-                "href": "https://mc-api.dribl.com/api/results/vmZp9zgOlK"
             }
         }
     }
