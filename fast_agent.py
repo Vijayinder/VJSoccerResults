@@ -1,16 +1,15 @@
-# fast_agent.py - ENHANCED VERSION WITH PERSONAL CONFIGURATION
+# fast_agent.py - ENHANCED VERSION WITH ADVANCED FILTERING
 """
 Dribl Soccer Stats Fast Agent - Enhanced Edition
 =================================================
 Features:
 - Personal team configuration (Heidelberg United FC U16)
-- Yellow/Red card queries
+- Advanced filtering for top scorers, yellow/red cards by team/age group
 - Detailed player match-by-match stats
 - Enhanced player profile with jersey, cards, etc.
 - Date format: dd-mmm (e.g., 09-Feb)
 """
 
-# fast_agent.py - FIXED VERSION
 import os
 import json
 import re
@@ -30,7 +29,7 @@ USER_CONFIG = {
 }
 
 # ---------------------------------------------------------
-# 1. Load JSON data files - FIXED PATHS
+# 1. Load JSON data files
 # ---------------------------------------------------------
 
 # Get the directory where this file is located
@@ -39,21 +38,16 @@ DATA_DIR = os.path.join(BASE_DIR, "data")
 
 def load_json(name: str):
     """Load and parse JSON file from data directory"""
-    # Try multiple possible paths
     possible_paths = [
-        os.path.join(DATA_DIR, name),  # Relative to fast_agent.py
-        os.path.join("data", name),    # Relative to working directory
-        name                           # Absolute or in working directory
+        os.path.join(DATA_DIR, name),
+        os.path.join("data", name),
+        name
     ]
     
     for path in possible_paths:
         if os.path.exists(path):
-            print(f"  📂 Loading from: {path}")
             with open(path, "r", encoding="utf-8") as f:
                 return json.load(f)
-    
-    # If file doesn't exist, return empty/default data
-    print(f"  ⚠️  File not found: {name}")
     
     # Return appropriate empty data structure based on filename
     if "players_summary" in name:
@@ -65,38 +59,14 @@ def load_json(name: str):
     else:
         return {}
 
-print("\n" + "="*60)
-print("📂 LOADING DATA FILES")
-print("="*60)
-
-# Load data with fallbacks
+# Load data
 results = load_json("master_results.json")
-print(f"  {'✅' if results else '⚠️ '} master_results.json: {len(results) if isinstance(results, list) else 0} completed matches\n")
-
 fixtures = load_json("fixtures.json")
-print(f"  {'✅' if fixtures else '⚠️ '} fixtures.json: {len(fixtures) if isinstance(fixtures, list) else 0} upcoming fixtures\n")
-
 players_data = load_json("players_summary.json")
 players_summary = players_data.get("players", [])
-print(f"  {'✅' if players_summary else '⚠️ '} players_summary.json: {len(players_summary)} players indexed")
-
-if players_summary:
-    sample = players_summary[0]
-    print(f"     Sample: {sample.get('first_name')} {sample.get('last_name')} ({sample.get('team_name')})\n")
-
 match_centre_data = load_json("master_match_centre.json")
-print(f"  {'✅' if match_centre_data else '⚠️ '} master_match_centre.json: {len(match_centre_data) if isinstance(match_centre_data, list) else 0} matches with events\n")
-
 lineups_data = load_json("master_lineups.json")
-print(f"  {'✅' if lineups_data else '⚠️ '} master_lineups.json: {len(lineups_data) if isinstance(lineups_data, list) else 0} match lineups\n")
-
 competition_overview = load_json("competition_overview.json")
-print(f"  {'✅' if competition_overview else '⚠️ '} competition_overview.json: {len(competition_overview)} competitions\n")
-
-print("="*60)
-print("✅ DATA LOADING COMPLETE")
-print("="*60 + "\n")
-
 
 # ---------------------------------------------------------
 # 2. Date formatting helper
@@ -107,7 +77,6 @@ def format_date(date_str: str) -> str:
     if not date_str:
         return "TBD"
     try:
-        # Handle ISO format or date-only
         date_part = date_str.split('T')[0] if 'T' in date_str else date_str
         dt = datetime.fromisoformat(date_part)
         return dt.strftime("%d-%b")
@@ -139,10 +108,6 @@ def parse_date(date_str: str) -> datetime.date:
 # 3. Build search indices
 # ---------------------------------------------------------
 
-print("="*60)
-print("🔨 BUILDING SEARCH INDICES")
-print("="*60)
-
 def fuzzy_find(query: str, choices: List[str], threshold: int = 60) -> Optional[str]:
     if not choices:
         return None
@@ -150,10 +115,9 @@ def fuzzy_find(query: str, choices: List[str], threshold: int = 60) -> Optional[
     if not res:
         return None
     match, score, _ = res
-    print(f"  🔍 Fuzzy: '{query}' → '{match}' ({score}%)")
     return match if score >= threshold else None
 
-print("  🔨 Building player index...")
+# Build player index
 player_names = []
 player_lookup = {}
 
@@ -166,36 +130,26 @@ for p in players_summary:
         player_names.append(full_name)
         player_lookup[full_name.lower()] = p
 
-print(f"  ✅ Player index: {len(player_names)} players")
-print(f"     Examples: {', '.join(player_names[:3])}\n")
-
-print("  🔨 Building team index...")
+# Build team index
 team_names = sorted({
     p.get("team_name", "")
     for p in players_summary
     if p.get("team_name")
 })
-print(f"  ✅ Team index: {len(team_names)} teams\n")
 
-print("  🔨 Building league index...")
+# Build league index
 league_names = sorted({
     p.get("league_name", "")
     for p in players_summary
     if p.get("league_name")
 })
-print(f"  ✅ League index: {len(league_names)} leagues\n")
 
-print("  🔨 Building competition index...")
+# Build competition index
 competition_names = sorted({
     p.get("competition_name", "")
     for p in players_summary
     if p.get("competition_name")
 })
-print(f"  ✅ Competition index: {len(competition_names)} competitions\n")
-
-print("="*60)
-print("✅ ALL INDICES BUILT")
-print("="*60 + "\n")
 
 def fuzzy_team(q: str) -> Optional[str]:
     return fuzzy_find(q.lower(), [t.lower() for t in team_names], threshold=60)
@@ -250,26 +204,61 @@ def find_lineup_by_match_hash(match_hash_id: str) -> Optional[Dict[str, Any]]:
     return None
 
 # ---------------------------------------------------------
-# 5. FIXTURES TOOL
+# 5. FILTERING HELPERS
+# ---------------------------------------------------------
+
+def extract_age_group(text: str) -> Optional[str]:
+    """Extract age group from text (e.g., 'U16', 'U15')"""
+    match = re.search(r'\bu(\d{2})\b', text.lower())
+    if match:
+        return f"U{match.group(1)}"
+    return None
+
+def extract_team_name(text: str) -> Optional[str]:
+    """Extract team name from text"""
+    # Remove common keywords
+    clean = re.sub(r'\b(top|scorer|scorers?|yellow|red|card|cards?|in|for|details?|show|list|with)\b', '', text, flags=re.IGNORECASE).strip()
+    
+    # Check if there's a recognizable team name
+    if clean:
+        normalized = normalize_team(clean)
+        if normalized:
+            return normalized
+    
+    return None
+
+def filter_players_by_criteria(players: List[Dict], query: str) -> List[Dict]:
+    """Filter players by age group and/or team name from query"""
+    age_group = extract_age_group(query)
+    team_name = extract_team_name(query)
+    
+    filtered = players
+    
+    # Filter by age group
+    if age_group:
+        filtered = [
+            p for p in filtered
+            if age_group.lower() in p.get("team_name", "").lower()
+        ]
+    
+    # Filter by team name
+    if team_name:
+        filtered = [
+            p for p in filtered
+            if team_name.lower() in p.get("team_name", "").lower()
+        ]
+    
+    return filtered
+
+# ---------------------------------------------------------
+# 6. FIXTURES TOOL
 # ---------------------------------------------------------
 
 def tool_fixtures(query: str = "", limit: int = 10, use_user_team: bool = False) -> str:
-    """
-    Show upcoming fixtures
-    
-    Args:
-        query: Optional team name filter
-        limit: Maximum number of fixtures to show
-        use_user_team: If True and no query provided, use user's team from config
-    """
-    # Use user's team if no query provided and use_user_team is True
+    """Show upcoming fixtures"""
     if use_user_team and not query:
         query = USER_CONFIG["team"]
-        print(f"  👤 Using your team: '{query}'")
     
-    print(f"  📅 Searching fixtures: '{query}' (limit: {limit})")
-    
-    # Parse today's date
     today = datetime.now().date()
     
     # Filter upcoming fixtures
@@ -277,13 +266,10 @@ def tool_fixtures(query: str = "", limit: int = 10, use_user_team: bool = False)
     for f in fixtures:
         attrs = f.get("attributes", {})
         date_str = attrs.get("date", "")
-        
-        # Parse fixture date
         fixture_date = parse_date(date_str)
         if fixture_date >= today:
             upcoming.append((fixture_date, attrs))
     
-    # Sort by date
     upcoming.sort(key=lambda x: x[0])
     
     # Filter by team if query provided
@@ -293,21 +279,17 @@ def tool_fixtures(query: str = "", limit: int = 10, use_user_team: bool = False)
         for date, attrs in upcoming:
             home = attrs.get("home_team_name", "")
             away = attrs.get("away_team_name", "")
-            
-            # Match team name
             if team.lower() in home.lower() or team.lower() in away.lower():
                 filtered.append((date, attrs))
-        
         upcoming = filtered
     
     if not upcoming:
         team_name = query if query else "any team"
         return f"❌ No upcoming fixtures found for {team_name}"
     
-    # Limit results
     upcoming = upcoming[:limit]
     
-    # Format output - make it personal if using user team
+    # Format output
     if use_user_team and query == USER_CONFIG["team"]:
         lines = [f"📅 **Your Upcoming Matches** ({len(upcoming)} matches)\n"]
     else:
@@ -321,11 +303,9 @@ def tool_fixtures(query: str = "", limit: int = 10, use_user_team: bool = False)
         time = attrs.get("time", "TBD")
         competition = attrs.get("competition_name", "")
         
-        # Format date
         date_display = fixture_date.strftime("%d-%b-%Y (%a)")
-        
-        # Calculate days until match
         days_until = (fixture_date - today).days
+        
         if days_until == 0:
             days_str = "🔴 TODAY!"
         elif days_until == 1:
@@ -335,7 +315,6 @@ def tool_fixtures(query: str = "", limit: int = 10, use_user_team: bool = False)
         else:
             days_str = f"🟢 In {days_until} days"
         
-        # Determine home/away for user's team
         if use_user_team and query == USER_CONFIG["team"]:
             if USER_CONFIG["club"].lower() in home.lower():
                 match_type = "🏠 HOME"
@@ -363,34 +342,38 @@ def tool_fixtures(query: str = "", limit: int = 10, use_user_team: bool = False)
     return "\n".join(lines)
 
 # ---------------------------------------------------------
-# 6. CARD QUERIES
+# 7. ENHANCED CARD QUERIES WITH FILTERING
 # ---------------------------------------------------------
 
 def tool_yellow_cards(query: str = "", show_details: bool = False) -> str:
-    """List all players with yellow cards"""
-    print(f"  🟨 Searching yellow cards: '{query}'")
-    
+    """List all players with yellow cards - supports age group and team filtering"""
     players_with_yellows = [
         p for p in players_summary 
         if p.get("stats", {}).get("yellow_cards", 0) > 0
     ]
     
+    # Apply filters
     if query:
-        q = query.lower()
-        players_with_yellows = [
-            p for p in players_with_yellows
-            if (q in p.get("team_name", "").lower() or
-                q in p.get("league_name", "").lower() or
-                q in p.get("competition_name", "").lower())
-        ]
+        players_with_yellows = filter_players_by_criteria(players_with_yellows, query)
     
     if not players_with_yellows:
-        return "❌ No players with yellow cards found"
+        filter_desc = f" matching '{query}'" if query else ""
+        return f"❌ No players with yellow cards found{filter_desc}"
     
     players_with_yellows.sort(key=lambda x: x.get("stats", {}).get("yellow_cards", 0), reverse=True)
     
+    # Build filter description
+    age_group = extract_age_group(query) if query else None
+    team_name = extract_team_name(query) if query else None
+    filter_parts = []
+    if age_group:
+        filter_parts.append(age_group)
+    if team_name:
+        filter_parts.append(team_name)
+    filter_desc = " - " + " ".join(filter_parts) if filter_parts else ""
+    
     if show_details:
-        lines = [f"🟨 **Players with Yellow Cards** ({len(players_with_yellows)} total)\n"]
+        lines = [f"🟨 **Players with Yellow Cards{filter_desc}** ({len(players_with_yellows)} total)\n"]
         
         for p in players_with_yellows[:50]:
             stats = p.get("stats", {})
@@ -413,50 +396,59 @@ def tool_yellow_cards(query: str = "", show_details: bool = False) -> str:
         
         return "\n".join(lines)
     else:
-        lines = [f"🟨 **Yellow Cards Summary** ({len(players_with_yellows)} players)\n"]
-        lines.append("Player | Team | Cards")
-        lines.append("-" * 60)
-        
-        for p in players_with_yellows[:30]:
+        # Return as table data
+        data = []
+        for i, p in enumerate(players_with_yellows[:30], 1):
             stats = p.get("stats", {})
             yellows = stats.get("yellow_cards", 0)
             name = f"{p.get('first_name')} {p.get('last_name')}"
-            team = p.get('team_name', '')[:30]
-            lines.append(f"{name[:25]:<25} | {team:<30} | 🟨 {yellows}")
+            team = p.get('team_name', '')
+            
+            data.append({
+                "Rank": i,
+                "Player": name,
+                "Team": team,
+                "Yellow Cards": yellows,
+                "Matches": stats.get("matches_played", 0),
+                "Goals": stats.get("goals", 0)
+            })
         
-        if len(players_with_yellows) > 30:
-            lines.append(f"\n... and {len(players_with_yellows) - 30} more")
-        
-        lines.append(f"\n💡 Use 'yellow cards details' to see match-by-match breakdown")
-        
-        return "\n".join(lines)
+        return {
+            "type": "table",
+            "data": data,
+            "title": f"🟨 Yellow Cards{filter_desc} ({len(players_with_yellows)} players total, showing top 30)"
+        }
 
 
 def tool_red_cards(query: str = "", show_details: bool = False) -> str:
-    """List all players with red cards"""
-    print(f"  🟥 Searching red cards: '{query}'")
-    
+    """List all players with red cards - supports age group and team filtering"""
     players_with_reds = [
         p for p in players_summary 
         if p.get("stats", {}).get("red_cards", 0) > 0
     ]
     
+    # Apply filters
     if query:
-        q = query.lower()
-        players_with_reds = [
-            p for p in players_with_reds
-            if (q in p.get("team_name", "").lower() or
-                q in p.get("league_name", "").lower() or
-                q in p.get("competition_name", "").lower())
-        ]
+        players_with_reds = filter_players_by_criteria(players_with_reds, query)
     
     if not players_with_reds:
-        return "❌ No players with red cards found"
+        filter_desc = f" matching '{query}'" if query else ""
+        return f"❌ No players with red cards found{filter_desc}"
     
     players_with_reds.sort(key=lambda x: x.get("stats", {}).get("red_cards", 0), reverse=True)
     
+    # Build filter description
+    age_group = extract_age_group(query) if query else None
+    team_name = extract_team_name(query) if query else None
+    filter_parts = []
+    if age_group:
+        filter_parts.append(age_group)
+    if team_name:
+        filter_parts.append(team_name)
+    filter_desc = " - " + " ".join(filter_parts) if filter_parts else ""
+    
     if show_details:
-        lines = [f"🟥 **Players with Red Cards** ({len(players_with_reds)} total)\n"]
+        lines = [f"🟥 **Players with Red Cards{filter_desc}** ({len(players_with_reds)} total)\n"]
         
         for p in players_with_reds:
             stats = p.get("stats", {})
@@ -479,42 +471,60 @@ def tool_red_cards(query: str = "", show_details: bool = False) -> str:
         
         return "\n".join(lines)
     else:
-        lines = [f"🟥 **Red Cards Summary** ({len(players_with_reds)} players)\n"]
-        lines.append("Player | Team | Cards")
-        lines.append("-" * 60)
-        
-        for p in players_with_reds:
+        # Return as table data
+        data = []
+        for i, p in enumerate(players_with_reds, 1):
             stats = p.get("stats", {})
             reds = stats.get("red_cards", 0)
             name = f"{p.get('first_name')} {p.get('last_name')}"
-            team = p.get('team_name', '')[:30]
-            lines.append(f"{name[:25]:<25} | {team:<30} | 🟥 {reds}")
+            team = p.get('team_name', '')
+            
+            data.append({
+                "Rank": i,
+                "Player": name,
+                "Team": team,
+                "Red Cards": reds,
+                "Matches": stats.get("matches_played", 0),
+                "Goals": stats.get("goals", 0)
+            })
         
-        return "\n".join(lines)
+        return {
+            "type": "table",
+            "data": data,
+            "title": f"🟥 Red Cards{filter_desc} ({len(players_with_reds)} players total)"
+        }
 
+
+# ---------------------------------------------------------
+# 8. ENHANCED TOP SCORERS WITH FILTERING
+# ---------------------------------------------------------
 
 def tool_top_scorers(query: str = "", limit: int = 20):
-    """List top goal scorers - returns data for table display"""
-    print(f"  ⚽ Top scorers: '{query}' (limit: {limit})")
-    
+    """List top goal scorers - supports age group and team filtering"""
     scorers = [
         p for p in players_summary 
         if p.get("stats", {}).get("goals", 0) > 0
     ]
     
+    # Apply filters
     if query:
-        q = query.lower()
-        scorers = [
-            p for p in scorers
-            if (q in p.get("team_name", "").lower() or
-                q in p.get("league_name", "").lower() or
-                q in p.get("competition_name", "").lower())
-        ]
+        scorers = filter_players_by_criteria(scorers, query)
     
     if not scorers:
-        return {"type": "error", "message": "❌ No goal scorers found"}
+        filter_desc = f" matching '{query}'" if query else ""
+        return {"type": "error", "message": f"❌ No goal scorers found{filter_desc}"}
     
     scorers.sort(key=lambda x: x.get("stats", {}).get("goals", 0), reverse=True)
+    
+    # Build filter description
+    age_group = extract_age_group(query) if query else None
+    team_name = extract_team_name(query) if query else None
+    filter_parts = []
+    if age_group:
+        filter_parts.append(age_group)
+    if team_name:
+        filter_parts.append(team_name)
+    filter_desc = " - " + " ".join(filter_parts) if filter_parts else ""
     
     # Return as structured data for table display
     data = []
@@ -538,27 +548,29 @@ def tool_top_scorers(query: str = "", limit: int = 20):
             "Red": reds
         })
     
-    return {"type": "table", "data": data, "title": f"⚽ Top Scorers ({len(scorers)} players with goals)"}
+    return {
+        "type": "table",
+        "data": data,
+        "title": f"⚽ Top Scorers{filter_desc} ({len(scorers)} players with goals, showing top {min(limit, len(scorers))})"
+    }
 
+
+# ---------------------------------------------------------
+# 9. TEAM STATS
+# ---------------------------------------------------------
 
 def tool_team_stats(query: str = "") -> str:
     """Get team statistics including squad overview and top performers"""
-    print(f"  📊 Team stats: '{query}'")
-    
     # If query is just an age group, use user's club
     age_groups = ['u13', 'u14', 'u15', 'u16', 'u17', 'u18']
     query_lower = query.lower().strip()
     
-    # Check if query is just an age group
     if query_lower in age_groups:
         team_query = f"{USER_CONFIG['club']} {query.upper()}"
-        print(f"  👤 Using your club: '{team_query}'")
     else:
         team_query = query
     
-    # Find matching team
     team = normalize_team(team_query) or team_query
-    
     players = [p for p in players_summary if team.lower() in p.get("team_name", "").lower()]
     
     if not players:
@@ -585,10 +597,10 @@ def tool_team_stats(query: str = "") -> str:
                 matches = p.get("stats", {}).get("matches_played", 0)
                 avg = f"({goals/matches:.2f}/match)" if matches > 0 else ""
                 lines.append(f"  {i}. {p.get('first_name')} {p.get('last_name')} - ⚽ {goals} {avg}")
-            if i >= 5:  # Show top 5
+            if i >= 5:
                 break
     
-    # Most disciplined (most cards)
+    # Most carded
     carded = sorted(players, key=lambda x: x.get("stats", {}).get("yellow_cards", 0) + x.get("stats", {}).get("red_cards", 0) * 2, reverse=True)[:5]
     if carded[0].get("stats", {}).get("yellow_cards", 0) + carded[0].get("stats", {}).get("red_cards", 0) > 0:
         lines.append("\n**🟨 Discipline Record:**")
@@ -617,7 +629,6 @@ def tool_team_stats(query: str = "") -> str:
             hs = a.get('home_score')
             as_ = a.get('away_score')
             
-            # Determine if win/loss/draw
             is_home = team.lower() in a.get('home_team_name', '').lower()
             if is_home:
                 result = "🟢 W" if int(hs) > int(as_) else ("🔴 L" if int(hs) < int(as_) else "🟡 D")
@@ -631,12 +642,8 @@ def tool_team_stats(query: str = "") -> str:
 
 def tool_competition_overview(query: str = ""):
     """Display competition overview showing club rankings across all age groups"""
-    print(f"  🏆 Competition overview: '{query}'")
-    
-    # Normalize query to match competition names
     q = query.upper().strip()
     
-    # Map common queries to competition keys
     comp_mapping = {
         "YPL1": "YPL1",
         "YPL 1": "YPL1",
@@ -650,16 +657,13 @@ def tool_competition_overview(query: str = ""):
         "VPL WOMEN": "VPL Women"
     }
     
-    # Find matching competition
     competition_key = None
     for key, value in comp_mapping.items():
         if key in q or value in q:
             competition_key = value
             break
     
-    # If no query provided or not found, list all competitions
     if not competition_key or competition_key not in competition_overview:
-        # Return list of available competitions
         lines = ["🏆 **Available Competitions:**\n"]
         for comp in sorted(competition_overview.keys()):
             club_count = len(competition_overview[comp]["clubs"])
@@ -668,28 +672,23 @@ def tool_competition_overview(query: str = ""):
         lines.append("\n💡 Try: 'YPL1 overview', 'YPL2 standings', 'competition overview YSL NW'")
         return "\n".join(lines)
     
-    # Get competition data
     comp_data = competition_overview[competition_key]
     age_groups = sorted(comp_data["age_groups"])
     clubs = comp_data["clubs"]
     
-    # Build table data
     table_data = []
-    
     for club_data in clubs:
         row = {
             "Rank": club_data["overall_rank"],
             "Club": club_data["club"]
         }
         
-        # Add position for each age group
         for age in age_groups:
             if age in club_data["age_groups"]:
                 row[age] = club_data["age_groups"][age]["position"]
             else:
                 row[age] = "-"
         
-        # Add summary columns
         row["Total Pos"] = club_data["total_position_points"]
         row["GF"] = club_data["total_gf"]
         row["GA"] = club_data["total_ga"]
@@ -706,13 +705,11 @@ def tool_competition_overview(query: str = ""):
 
 
 # ---------------------------------------------------------
-# 7. ENHANCED PLAYER STATS
+# 10. PLAYER STATS - ENHANCED WITH TABLE FORMAT
 # ---------------------------------------------------------
 
 def tool_players(query: str, detailed: bool = False) -> str:
     """Search for player and show stats"""
-    print(f"  🔍 Searching player: '{query}' (detailed={detailed})")
-    
     q = query.lower().strip()
     
     # Exact substring match
@@ -722,8 +719,6 @@ def tool_players(query: str, detailed: bool = False) -> str:
             exact_matches.append(player_data)
     
     if exact_matches:
-        print(f"  ✅ Found {len(exact_matches)} matches")
-        
         if len(exact_matches) == 1:
             p = exact_matches[0]
             stats = p.get("stats", {})
@@ -793,19 +788,27 @@ def tool_players(query: str, detailed: bool = False) -> str:
             
             return "\n".join(lines)
         else:
-            lines = [f"Found {len(exact_matches)} players:\n"]
+            # Multiple players found - return as table
+            data = []
             for p in exact_matches[:10]:
                 stats = p.get("stats", {})
-                lines.append(
-                    f"👤 **{p.get('first_name')} {p.get('last_name')}** (#{p.get('jersey')})\n"
-                    f"   {p.get('team_name')}\n"
-                    f"   ⚽ {stats.get('goals', 0)} goals | 🎮 {stats.get('matches_played', 0)} matches | "
-                    f"🟨 {stats.get('yellow_cards', 0)} | 🟥 {stats.get('red_cards', 0)}\n"
-                )
-            return "\n".join(lines)
+                data.append({
+                    "Player": f"{p.get('first_name')} {p.get('last_name')}",
+                    "Jersey": f"#{p.get('jersey')}",
+                    "Team": p.get('team_name', ''),
+                    "Goals": stats.get('goals', 0),
+                    "Matches": stats.get('matches_played', 0),
+                    "Yellow": stats.get('yellow_cards', 0),
+                    "Red": stats.get('red_cards', 0)
+                })
+            
+            return {
+                "type": "table",
+                "data": data,
+                "title": f"👤 Found {len(exact_matches)} players matching '{query}' (showing {min(10, len(exact_matches))})"
+            }
     
     # Fuzzy match fallback
-    print(f"  🔍 Trying fuzzy search...")
     matched_name = fuzzy_find(q, [n.lower() for n in player_names], threshold=50)
     
     if matched_name and matched_name in player_lookup:
@@ -831,7 +834,7 @@ def tool_players(query: str, detailed: bool = False) -> str:
 
 
 # ---------------------------------------------------------
-# 8. Other tools
+# 11. Other tools (matches, team_overview, ladder, form, etc.)
 # ---------------------------------------------------------
 
 def tool_matches(query: str) -> str:
@@ -1070,43 +1073,37 @@ def tool_lineups(query: str) -> str:
     return "\n".join(lines)
 
 # ---------------------------------------------------------
-# 9. ENHANCED Smart Query Router
+# 12. Smart Query Router
 # ---------------------------------------------------------
 
 class FastQueryRouter:
     """Enhanced pattern-based query router with personal team support"""
     
     def __init__(self):
-        print(f"✅ Router ready! {len(team_names)} teams, {len(player_names)} players\n")
+        pass
         
     def process(self, query: str):
         """Route query to appropriate handler"""
         q = query.lower().strip()
         
-        print(f"🔍 Query: '{query}'")
-        
-        # COMPETITION OVERVIEW (HIGH PRIORITY - before other routes)
+        # COMPETITION OVERVIEW
         comp_overview_keywords = ['competition overview', 'competition standings', 'ypl1 overview', 'ypl2 overview', 
                                    'ysl overview', 'vpl overview', 'club rankings', 'overall standings']
         if any(keyword in q for keyword in comp_overview_keywords) or any(comp in q for comp in ['ypl1', 'ypl2', 'ysl nw', 'ysl se', 'vpl']):
-            # Check if it's specifically asking for overview/standings
             if 'overview' in q or 'standings' in q or 'ranking' in q or 'competition' in q:
-                print("✅ Route: COMPETITION OVERVIEW")
                 return tool_competition_overview(query)
         
-        # PERSONAL FIXTURES (detect "my", "i", "our")
+        # PERSONAL FIXTURES
         personal_keywords = ['my next', 'when do i play', 'where do i play', 'my schedule', 'when is my', 'where is my', 'our next']
         is_personal_query = any(keyword in q for keyword in personal_keywords)
         
-        # FIXTURES / NEXT MATCH (HIGH PRIORITY)
+        # FIXTURES / NEXT MATCH
         fixture_keywords = [
             'next match', 'next game', 'upcoming', 'when do i play',
             'where do i play', 'my next', 'schedule', 'fixture', 'fixtures',
             'when is my', 'where is my', 'our next'
         ]
         if any(keyword in q for keyword in fixture_keywords):
-            print("✅ Route: FIXTURES" + (" (PERSONAL)" if is_personal_query else ""))
-            
             if is_personal_query:
                 return tool_fixtures(query="", limit=5, use_user_team=True)
             else:
@@ -1116,184 +1113,64 @@ class FastQueryRouter:
         
         # YELLOW CARDS
         if "yellow card" in q or "yellows" in q:
-            print("✅ Route: YELLOW CARDS")
             show_details = "detail" in q
             filter_query = re.sub(r'\b(yellow|card|cards|details?|show|list|with)\b', '', q).strip()
             return tool_yellow_cards(filter_query, show_details)
         
         # RED CARDS
         if "red card" in q or "reds" in q:
-            print("✅ Route: RED CARDS")
             show_details = "detail" in q
             filter_query = re.sub(r'\b(red|card|cards|details?|show|list|with)\b', '', q).strip()
             return tool_red_cards(filter_query, show_details)
         
         # TOP SCORERS
         if "top scorer" in q or "leading scorer" in q or "goal scorer" in q:
-            print("✅ Route: TOP SCORERS")
             limit_match = re.search(r'top (\d+)', q)
             limit = int(limit_match.group(1)) if limit_match else 20
             filter_query = re.sub(r'\b(top|scorer|scorers?|leading|goal|goals?|\d+)\b', '', q).strip()
             return tool_top_scorers(filter_query, limit)
         
-        # TEAM STATS (detect "stats for U13" or "stats for [team] U13")
+        # TEAM STATS
         if "stats for" in q:
             clean = re.sub(r'\b(stats?|for)\b', '', q).strip()
-            
-            # Check if it's just an age group (u13, u14, etc.)
             age_groups = ['u13', 'u14', 'u15', 'u16', 'u17', 'u18']
             if clean.lower() in age_groups:
-                print("✅ Route: TEAM STATS (personal)")
                 return tool_team_stats(clean)
-            
-            # Check if it looks like a team query (contains team name)
-            # If it has a team name, it's a team stats query
             team_keywords = ['fc', 'sc', 'united', 'city', 'rovers', 'wanderers']
             if any(keyword in clean.lower() for keyword in team_keywords) or any(age in clean.lower() for age in age_groups):
-                print("✅ Route: TEAM STATS")
                 return tool_team_stats(clean)
-            
-            # Otherwise, it's a player stats query
-            print("✅ Route: PLAYER STATS")
             return tool_players(clean, detailed=False)
         
-        # PLAYER STATS (with details mode)
+        # PLAYER STATS
         if any(word in q for word in ["player", "show me"]) or "details for" in q:
-            print("✅ Route: PLAYER STATS")
             detailed = "detail" in q
             clean = re.sub(r'\b(stats?|for|player|show|me|get|find|tell|about|details?)\b', '', q).strip()
             return tool_players(clean, detailed)
         
         # LADDER
         if any(word in q for word in ["ladder", "table", "standings"]):
-            print("✅ Route: LADDER")
             return tool_ladder(query)
         
         # LINEUP
         if "lineup" in q or "starting" in q:
-            print("✅ Route: LINEUP")
             return tool_lineups(query)
         
         # MATCH RESULT
         if " vs " in q or " v " in q:
-            print("✅ Route: MATCH RESULT")
             return tool_match_centre(query)
         
         # TEAM FORM
         if "form" in q:
-            print("✅ Route: TEAM FORM")
             team = normalize_team(query)
             return tool_form(team if team else query)
         
         # TEAM OVERVIEW
         if "team" in q or "overview" in q:
-            print("✅ Route: TEAM OVERVIEW")
             team = normalize_team(query)
             return tool_team_overview(team if team else query)
         
         # DEFAULT
-        print("✅ Route: DEFAULT (team search)")
         team = normalize_team(query)
         if team:
             return tool_form(team)
         return tool_matches(query)
-
-# ---------------------------------------------------------
-# 10. Interactive CLI
-# ---------------------------------------------------------
-
-def main():
-    """Main interactive loop"""
-    print("\n" + "="*60)
-    print("🚀 DRIBL BOT - PERSONALIZED EDITION!")
-    print("="*60 + "\n")
-    
-    router = FastQueryRouter()
-    
-    print("📝 Try these queries:\n")
-    
-    print("🏆 Competition Overview:")
-    print("  - YPL1 overview")
-    print("  - YPL2 standings")
-    print("  - competition overview")
-    print("  - YSL NW overview")
-    
-    print("\n📅 Personal Fixtures (auto-uses your team):")
-    print("  - when is my next match")
-    print("  - where do i play next")
-    print("  - my schedule")
-    
-    print("\n📅 Other Fixtures:")
-    print("  - upcoming fixtures")
-    print("  - next match for Essendon Royals")
-    
-    print("\n🟨 Yellow Cards:")
-    print("  - list players with yellow cards")
-    print("  - yellow cards details")
-    print("  - yellow cards for Essendon Royals")
-    
-    print("\n🟥 Red Cards:")
-    print("  - list players with red cards")
-    print("  - red cards details")
-    
-    print("\n⚽ Top Scorers:")
-    print("  - top scorers")
-    print("  - top 10 scorers")
-    print("  - top scorers U16 YPL1")
-    
-    print("\n📊 Team Stats:")
-    print("  - stats for U13  (your Heidelberg U13 team)")
-    print("  - stats for Avondale U13  (Avondale's team)")
-    print("  - stats for Essendon Royals U16")
-    
-    print("\n👤 Enhanced Player Stats:")
-    print("  - stats for Shaurya jaswal")
-    print("  - details for Shaurya jaswal")
-    
-    print("\n🏟️ Team & Other:")
-    print("  - Essendon Royals SC U16 form")
-    print("  - U16 YPL1 Boys ladder")
-    print("  - Essendon vs South Melbourne")
-    
-    print("\nType 'exit' to quit\n")
-    print("="*60 + "\n")
-    
-    while True:
-        try:
-            q = input("You: ").strip()
-        except (EOFError, KeyboardInterrupt):
-            break
-        
-        if not q or q.lower() in {"exit", "quit", "q"}:
-            print("\n👋 Thanks for using Dribl Bot!")
-            break
-        
-        start = datetime.now()
-        try:
-            response = router.process(q)
-            elapsed = (datetime.now() - start).total_seconds()
-            
-            # Handle different response types
-            if isinstance(response, dict):
-                if response.get("type") == "table":
-                    print(f"\n{response.get('title')}\n")
-                    data = response.get('data', [])
-                    if data:
-                        # Print as formatted table
-                        import pandas as pd
-                        df = pd.DataFrame(data)
-                        print(df.to_string(index=False))
-                elif response.get("type") == "error":
-                    print(f"\n{response.get('message')}")
-            else:
-                # Regular text response
-                print(f"\n{response}\n")
-            
-            print(f"⚡ {elapsed:.3f}s\n" + "-"*60 + "\n")
-        except Exception as e:
-            print(f"\n❌ Error: {e}")
-            import traceback
-            traceback.print_exc()
-
-if __name__ == "__main__":
-    main()
