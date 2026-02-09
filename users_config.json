@@ -1,0 +1,27 @@
+{
+  "admin": {
+    "password_hash": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
+    "role": "admin",
+    "full_name": "Administrator"
+  },
+  "coach": {
+    "password_hash": "777a025f5ca4a20f7bafee940f2820e28e1f4bbcbd9dd774bbce883166ef7c55",
+    "role": "user",
+    "full_name": "Coach"
+  },
+  "parent": {
+    "password_hash": "82e3edf5f5f3a46b5f94579b61817fd9a1f356adcef5ee22da3b96ef775c4860",
+    "role": "user",
+    "full_name": "Parent"
+  },
+  "Shaurya": {
+    "password_hash": "8ab286df311e121dee3d51f7ae77cf86d247033aac49e679d6feb5b1103f9848",
+    "role": "admin",
+    "full_name": "Shaurya Jaswal"
+  },
+  "Parent": {
+    "password_hash": "94f65fa9a999cba83270f5b5283b462d19d92afac49946dc121095f3de3a74ea",
+    "role": "user",
+    "full_name": "Parents Account"
+  }
+}
