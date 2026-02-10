@@ -675,7 +675,7 @@ def is_natural_language_query(query):
         "details for", "top scorer", "ladder", "table", "form",
         "yellow card", "red card", "lineup", "vs", " v ",
         "team", "overview", "competition", "standings", "rankings",
-        "ypl1", "ypl2", "ysl"
+        "ypl1", "ypl2", "ysl", "missing score", "no score", "overdue"
     ]
     return any(keyword in query.lower() for keyword in keywords)
 
@@ -792,13 +792,13 @@ def main_app():
     search = st.text_input(
         "",
         key="global_search",
-        placeholder="Try: 'Stats for Shaurya','top scorers in U16', 'yellow cards Heidelberg', 'when is my next match'...",
+        placeholder="Try: 'Stats for Shaurya','top scorers in U16', 'yellow cards Heidelberg', 'missing scores'...",
         label_visibility="collapsed"
     )
     
     # Example queries
     with st.expander("💡 Example Queries", expanded=False):
-        col1, col2 = st.columns(2)
+        col1, col2, col3 = st.columns(3)
         
         with col1:
             st.markdown("**📊 Statistics**")
@@ -819,6 +819,15 @@ def main_app():
             st.markdown("\n**🟨🟥 Discipline**")
             st.markdown("• yellow cards details")
             st.markdown("• red cards in U15")
+            st.markdown("• coaches yellow cards")
+            
+        with col3:
+            st.markdown("**⚠️ Missing Scores (NEW!)**")
+            st.markdown("• missing scores")
+            st.markdown("• missing scores Heidelberg")
+            st.markdown("• missing scores YPL1")
+            st.markdown("• scores not entered")
+            st.markdown("• overdue matches")
 
     # Process search queries
     if search and search != st.session_state["last_search"]:

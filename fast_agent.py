@@ -16,7 +16,7 @@ import os
 import json
 import re
 from typing import List, Dict, Any, Optional
-from datetime import datetime
+from datetime import datetime, timedelta
 from collections import defaultdict
 
 from rapidfuzz import process, fuzz
@@ -105,6 +105,39 @@ def parse_date(date_str: str) -> datetime.date:
         return datetime.fromisoformat(date_part).date()
     except (ValueError, AttributeError):
         return datetime.min.date()
+
+def parse_date_utc_to_aest(date_str: str) -> Optional[datetime]:
+    """Parse UTC date string and convert to AEST datetime"""
+    if not date_str:
+        return None
+    try:
+        # Parse UTC datetime
+        if 'Z' in date_str:
+            # Remove 'Z' and parse
+            utc_dt = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
+        elif 'T' in date_str:
+            utc_dt = datetime.fromisoformat(date_str)
+        else:
+            return None
+        
+        # Convert to AEST (UTC+10 or UTC+11 depending on DST)
+        from datetime import timezone, timedelta
+        aest = timezone(timedelta(hours=10))  # Standard time (non-DST)
+        aest_dt = utc_dt.astimezone(aest)
+        return aest_dt
+    except (ValueError, AttributeError):
+        return None
+
+def get_last_sunday() -> datetime.date:
+    """Get the date of last Sunday"""
+    today = datetime.now().date()
+    days_since_sunday = (today.weekday() + 1) % 7  # Monday = 0, Sunday = 6
+    if days_since_sunday == 0:
+        # Today is Sunday, return last Sunday
+        last_sunday = today - timedelta(days=7)
+    else:
+        last_sunday = today - timedelta(days=days_since_sunday)
+    return last_sunday
 
 def format_minutes(minutes_list: List) -> str:
     """Format list of minutes into readable string"""
@@ -461,6 +494,155 @@ def tool_fixtures(query: str = "", limit: int = 10, use_user_team: bool = False)
             lines.append("")
     
     return "\n".join(lines)
+
+    return "\n".join(lines)
+
+# ---------------------------------------------------------
+# 6B. MISSING SCORES TOOL
+# ---------------------------------------------------------
+
+def tool_missing_scores(query: str = "", include_all_leagues: bool = False) -> str:
+    """
+    Find matches that were scheduled before last Sunday but don't have scores entered
+    
+    Args:
+        query: Optional filter for specific league or team
+        include_all_leagues: If False, only show YPL1, YPL2, YSL leagues
+    """
+    last_sunday = get_last_sunday()
+    
+    # Define leagues we care about
+    target_leagues = ['YPL1', 'YPL2', 'YSL NW', 'YSL SE']
+    
+    missing_scores = []
+    
+    for fixture in fixtures:
+        attrs = fixture.get("attributes", {})
+        
+        # Parse match date
+        date_str = attrs.get("date", "")
+        if not date_str:
+            continue
+        
+        match_datetime = parse_date_utc_to_aest(date_str)
+        if not match_datetime:
+            continue
+        
+        match_date = match_datetime.date()
+        
+        # Check if match was before last Sunday
+        if match_date >= last_sunday:
+            continue
+        
+        # Check league filter
+        league_name = attrs.get("league_name", "")
+        extracted_league = extract_league_from_league_name(league_name)
+        
+        if not include_all_leagues:
+            if extracted_league not in target_leagues:
+                continue
+        
+        # Check if query matches
+        if query:
+            home = attrs.get("home_team_name", "")
+            away = attrs.get("away_team_name", "")
+            comp = attrs.get("competition_name", "")
+            
+            query_lower = query.lower()
+            if not (query_lower in home.lower() or 
+                   query_lower in away.lower() or 
+                   query_lower in league_name.lower() or
+                   query_lower in comp.lower()):
+                continue
+        
+        # Check if score is missing
+        status = attrs.get("status", "")
+        home_score = attrs.get("home_score")
+        away_score = attrs.get("away_score")
+        
+        # Score is missing if:
+        # 1. Status is not "complete", OR
+        # 2. Home/away score is None/null
+        has_missing_score = (
+            status != "complete" or 
+            home_score is None or 
+            away_score is None
+        )
+        
+        if has_missing_score:
+            missing_scores.append({
+                "match_date": match_date,
+                "match_datetime": match_datetime,
+                "home_team": attrs.get("home_team_name", "Unknown"),
+                "away_team": attrs.get("away_team_name", "Unknown"),
+                "league": league_name,
+                "competition": attrs.get("competition_name", ""),
+                "round": attrs.get("full_round", attrs.get("round", "")),
+                "venue": attrs.get("ground_name", ""),
+                "status": status,
+                "match_hash_id": attrs.get("match_hash_id", ""),
+                "days_overdue": (datetime.now().date() - match_date).days
+            })
+    
+    if not missing_scores:
+        filter_desc = f" for '{query}'" if query else ""
+        return f"✅ No missing scores found{filter_desc}! All matches have been entered."
+    
+    # Sort by date (oldest first)
+    missing_scores.sort(key=lambda x: x["match_date"])
+    
+    # Format output
+    filter_desc = f" - {query}" if query else ""
+    
+    # Return as table data
+    data = []
+    for i, match in enumerate(missing_scores, 1):
+        league = extract_league_from_league_name(match["league"])
+        
+        # Format date in AEST
+        date_display = match["match_datetime"].strftime("%d-%b-%Y %H:%M")
+        
+        data.append({
+            "#": i,
+            "Date (AEST)": date_display,
+            "Days Overdue": match["days_overdue"],
+            "League": league,
+            "Home": match["home_team"],
+            "Away": match["away_team"],
+            "Round": match["round"],
+            "Venue": match["venue"],
+            "Status": match["status"]
+        })
+    
+    return {
+        "type": "table",
+        "data": data,
+        "title": f"⚠️ Missing Scores{filter_desc} - Matches before {last_sunday.strftime('%d-%b-%Y')} ({len(missing_scores)} matches)"
+    }
+
+def extract_league_from_league_name(league_name: str) -> str:
+    """Extract league from league name (YPL1, YPL2, YSL NW, etc.)"""
+    if not league_name:
+        return "Other"
+    
+    league_name_lower = str(league_name).lower()
+    
+    if "ypl1" in league_name_lower or "ypl 1" in league_name_lower:
+        return "YPL1"
+    if "ypl2" in league_name_lower or "ypl 2" in league_name_lower:
+        return "YPL2"
+    if "ysl" in league_name_lower and ("north-west" in league_name_lower or "nw" in league_name_lower or "north west" in league_name_lower):
+        return "YSL NW"
+    if "ysl" in league_name_lower and ("south-east" in league_name_lower or "se" in league_name_lower or "south east" in league_name_lower):
+        return "YSL SE"
+    if "vpl men" in league_name_lower:
+        return "VPL Men"
+    if "vpl women" in league_name_lower:
+        return "VPL Women"
+    if "ysl" in league_name_lower:
+        return "YSL"
+    
+    return "Other"
 
 # ---------------------------------------------------------
 # 7. ENHANCED CARD QUERIES WITH FILTERING AND TIME INFO
@@ -1340,6 +1522,13 @@ class FastQueryRouter:
         
         # Check if query is about non-players (coaches/staff)
         is_non_player_query = any(keyword in q for keyword in ['non player', 'non-player', 'coach', 'coaches', 'staff', 'manager'])
+        
+        # MISSING SCORES
+        missing_keywords = ['missing score', 'missing scores', 'no score', 'scores not entered', 'overdue', 'matches without scores']
+        if any(keyword in q for keyword in missing_keywords):
+            filter_query = re.sub(r'\b(missing|score|scores?|no|not|entered|overdue|matches?|without|for|show|list)\b', '', q).strip()
+            include_all = 'all leagues' in q or 'all league' in q
+            return tool_missing_scores(filter_query, include_all_leagues=include_all)
         
         # COMPETITION OVERVIEW
         comp_overview_keywords = ['competition overview', 'competition standings', 'ypl1 overview', 'ypl2 overview', 
