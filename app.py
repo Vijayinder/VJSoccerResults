@@ -836,7 +836,7 @@ def main_app():
             st.markdown("• coaches yellow cards")
             
         with col3:
-            st.markdown("**⚠️ Missing Scores (NEW!)**")
+            st.markdown("**⚠️ Missing Scores**")
             st.markdown("• missing scores")
             st.markdown("• missing scores Heidelberg")
             st.markdown("• missing scores YPL1")
