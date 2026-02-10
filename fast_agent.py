@@ -8,6 +8,8 @@ Features:
 - Detailed player match-by-match stats
 - Enhanced player profile with jersey, cards, etc.
 - Date format: dd-mmm (e.g., 09-Feb)
+- Non-player (coach/staff) support
+- Time information for goals and cards
 """
 
 import os
@@ -103,6 +105,20 @@ def parse_date(date_str: str) -> datetime.date:
         return datetime.fromisoformat(date_part).date()
     except (ValueError, AttributeError):
         return datetime.min.date()
+
+def format_minutes(minutes_list: List) -> str:
+    """Format list of minutes into readable string"""
+    if not minutes_list:
+        return ""
+    try:
+        # Convert to integers and sort
+        mins = sorted([int(m) for m in minutes_list if m])
+        if not mins:
+            return ""
+        # Return as comma-separated string with ' suffix
+        return ", ".join([f"{m}'" for m in mins])
+    except (ValueError, TypeError):
+        return ""
 
 # ---------------------------------------------------------
 # 3. Build search indices
@@ -264,6 +280,7 @@ def extract_base_club_name(text: str) -> Optional[str]:
     """
     Extract base club name (without age group) from text
     E.g., "Heidelberg United" from "yellow cards Heidelberg United"
+    Improved to handle partial club names
     """
     # Remove common keywords
     clean = re.sub(r'\b(top|scorer|scorers?|yellow|red|card|cards?|in|for|details?|show|list|with|non|player|players?|staff|coach|coaches?|team|stats?)\b', '', text, flags=re.IGNORECASE).strip()
@@ -272,10 +289,32 @@ def extract_base_club_name(text: str) -> Optional[str]:
     clean = re.sub(r'\s*u\d{2}\s*$', '', clean, flags=re.IGNORECASE).strip()
     
     if clean:
-        # Try to match to a known team, then extract base name
+        # First, try direct substring matching in team names (more lenient)
+        clean_lower = clean.lower()
+        
+        # Find all teams that contain this substring
+        matching_teams = [t for t in team_names if clean_lower in t.lower()]
+        
+        if matching_teams:
+            # Extract base club names (without age group)
+            base_names = set()
+            for team in matching_teams:
+                base = re.sub(r'\s+U\d{2}$', '', team).strip()
+                base_names.add(base)
+            
+            # If all matches share the same base name, return it
+            if len(base_names) == 1:
+                return base_names.pop()
+            # If multiple base names, try fuzzy matching
+            elif len(base_names) > 1:
+                # Return the one that's most similar to the query
+                best_match = fuzzy_find(clean_lower, [b.lower() for b in base_names], threshold=60)
+                if best_match:
+                    return next((b for b in base_names if b.lower() == best_match), None)
+        
+        # Fallback to old method
         normalized = normalize_team(clean)
         if normalized:
-            # Remove age group suffix from normalized team name
             base = re.sub(r'\s+U\d{2}$', '', normalized).strip()
             return base
     
@@ -424,7 +463,7 @@ def tool_fixtures(query: str = "", limit: int = 10, use_user_team: bool = False)
     return "\n".join(lines)
 
 # ---------------------------------------------------------
-# 7. ENHANCED CARD QUERIES WITH FILTERING
+# 7. ENHANCED CARD QUERIES WITH FILTERING AND TIME INFO
 # ---------------------------------------------------------
 
 def tool_yellow_cards(query: str = "", show_details: bool = False, include_non_players: bool = False) -> str:
@@ -484,8 +523,10 @@ def tool_yellow_cards(query: str = "", show_details: bool = False, include_non_p
                 if m.get("yellow_cards", 0) > 0:
                     venue = "🏠" if m.get('home_or_away') == 'home' else "✈️"
                     date_str = format_date(m.get('date', ''))
+                    yellow_mins = format_minutes(m.get('yellow_minutes', []))
+                    yellow_display = f"🟨 {m.get('yellow_cards')}" + (f" ({yellow_mins})" if yellow_mins else "")
                     lines.append(
-                        f"   {venue} vs {m.get('opponent_team_name')} - {date_str} - 🟨 {m.get('yellow_cards')}"
+                        f"   {venue} vs {m.get('opponent_team_name')} - {date_str} - {yellow_display}"
                     )
             lines.append("")
         
@@ -508,7 +549,7 @@ def tool_yellow_cards(query: str = "", show_details: bool = False, include_non_p
                 "Team": team,
                 "Yellow Cards": yellows,
                 "Matches": stats.get("matches_played", 0) if role == "player" else "-",
-                "Goals": stats.get("goals", 0)
+                "Goals": stats.get("goals", 0) if role == "player" else "-"
             })
         
         return {
@@ -575,8 +616,10 @@ def tool_red_cards(query: str = "", show_details: bool = False, include_non_play
                 if m.get("red_cards", 0) > 0:
                     venue = "🏠" if m.get('home_or_away') == 'home' else "✈️"
                     date_str = format_date(m.get('date', ''))
+                    red_mins = format_minutes(m.get('red_minutes', []))
+                    red_display = "🟥 RED CARD" + (f" ({red_mins})" if red_mins else "")
                     lines.append(
-                        f"   {venue} vs {m.get('opponent_team_name')} - {date_str} - 🟥 RED CARD"
+                        f"   {venue} vs {m.get('opponent_team_name')} - {date_str} - {red_display}"
                     )
             lines.append("")
         
@@ -599,7 +642,7 @@ def tool_red_cards(query: str = "", show_details: bool = False, include_non_play
                 "Team": team,
                 "Red Cards": reds,
                 "Matches": stats.get("matches_played", 0) if role == "player" else "-",
-                "Goals": stats.get("goals", 0)
+                "Goals": stats.get("goals", 0) if role == "player" else "-"
             })
         
         return {
@@ -828,7 +871,7 @@ def tool_competition_overview(query: str = ""):
 
 
 # ---------------------------------------------------------
-# 10. PLAYER STATS - ENHANCED WITH TABLE FORMAT
+# 10. PLAYER STATS - ENHANCED WITH TABLE FORMAT AND TIME INFO
 # ---------------------------------------------------------
 
 def tool_players(query: str, detailed: bool = False) -> str:
@@ -877,11 +920,23 @@ def tool_players(query: str, detailed: bool = False) -> str:
                     
                     performance = []
                     if m.get('goals', 0) > 0:
-                        performance.append(f"⚽ {m.get('goals')} goal(s)")
+                        goal_mins = format_minutes(m.get('goal_minutes', []))
+                        goal_str = f"⚽ {m.get('goals')} goal(s)"
+                        if goal_mins:
+                            goal_str += f" ({goal_mins})"
+                        performance.append(goal_str)
                     if m.get('yellow_cards', 0) > 0:
-                        performance.append(f"🟨 Yellow")
+                        yellow_mins = format_minutes(m.get('yellow_minutes', []))
+                        yellow_str = "🟨 Yellow"
+                        if yellow_mins:
+                            yellow_str += f" ({yellow_mins})"
+                        performance.append(yellow_str)
                     if m.get('red_cards', 0) > 0:
-                        performance.append(f"🟥 Red")
+                        red_mins = format_minutes(m.get('red_minutes', []))
+                        red_str = "🟥 Red"
+                        if red_mins:
+                            red_str += f" ({red_mins})"
+                        performance.append(red_str)
                     if not performance:
                         performance.append("No goals/cards")
                     
@@ -896,15 +951,21 @@ def tool_players(query: str, detailed: bool = False) -> str:
                 for m in matches[:5]:
                     venue = "🏠" if m.get('home_or_away') == 'home' else "✈️"
                     date_str = format_date(m.get('date', ''))
-                    goals_str = f"⚽×{m.get('goals')}" if m.get('goals', 0) > 0 else ""
-                    cards_str = ""
+                    
+                    # Build performance string with times
+                    perf_parts = []
+                    if m.get('goals', 0) > 0:
+                        goal_mins = format_minutes(m.get('goal_minutes', []))
+                        perf_parts.append(f"⚽×{m.get('goals')}" + (f"({goal_mins})" if goal_mins else ""))
                     if m.get('yellow_cards', 0) > 0:
-                        cards_str += "🟨"
+                        perf_parts.append("🟨")
                     if m.get('red_cards', 0) > 0:
-                        cards_str += "🟥"
+                        perf_parts.append("🟥")
+                    
+                    perf_str = " ".join(perf_parts) if perf_parts else ""
                     
                     lines.append(
-                        f"   {venue} vs {m.get('opponent_team_name')} - {date_str} {goals_str} {cards_str}"
+                        f"   {venue} vs {m.get('opponent_team_name')} - {date_str} {perf_str}"
                     )
                 
                 lines.append(f"\n💡 Use 'details for {p.get('first_name')} {p.get('last_name')}' for match-by-match breakdown")
