@@ -22,7 +22,7 @@ from activity_tracker import (
 # ---------------------------------------------------------
 
 st.set_page_config(
-    page_title="Dribl Football Intelligence",
+    page_title="VJ Football Intelligence",
     page_icon="⚽",
     layout="wide",
     initial_sidebar_state="collapsed"
@@ -212,7 +212,7 @@ def show_login_page():
     """Display login page"""
     st.markdown("""
         <div class="main-header">
-            <h1 style='margin:0; padding:0;'>⚽ Dribl Football Intelligence</h1>
+            <h1 style='margin:0; padding:0;'>⚽ VJ Football Intelligence</h1>
             <p style='margin:0.5rem 0 0 0; font-size:16px; opacity:0.9;'>
                 Please login to continue
             </p>
@@ -640,7 +640,7 @@ def header():
     with col1:
         st.markdown("""
             <div class="main-header">
-                <h1 style='margin:0; padding:0;'>⚽ Dribl Football Intelligence</h1>
+                <h1 style='margin:0; padding:0;'>⚽ VJ Football Intelligence</h1>
                 <p style='margin:0.5rem 0 0 0; font-size:16px; opacity:0.9;'>
                     League → Competition → Ladder → Club → Players
                 </p>
@@ -792,7 +792,7 @@ def main_app():
     search = st.text_input(
         "",
         key="global_search",
-        placeholder="Try: 'top scorers in U16', 'yellow cards Heidelberg', 'when is my next match'...",
+        placeholder="Try: 'Stats for Shaurya','top scorers in U16', 'yellow cards Heidelberg', 'when is my next match'...",
         label_visibility="collapsed"
     )
     
@@ -802,14 +802,14 @@ def main_app():
         
         with col1:
             st.markdown("**📊 Statistics**")
-            st.markdown("• top scorers in U16")
-            st.markdown("• yellow cards Heidelberg United")
+            st.markdown("• top scorers in Heidelberg United U16")
+            st.markdown("• yellow cards Heidelberg United U16")
             st.markdown("• stats for [player name]")
             st.markdown("• team stats for Heidelberg U16")
             
             st.markdown("\n**📅 Fixtures**")
             st.markdown("• when is my next match")
-            st.markdown("• upcoming fixtures Essendon")
+            st.markdown("• upcoming fixtures Heidelberg United")
             
         with col2:
             st.markdown("**🏆 Competitions**")
