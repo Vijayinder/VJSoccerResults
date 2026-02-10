@@ -89,6 +89,11 @@ CLUB_ALIASES = {
     "bentleigh greens": "Bentleigh Greens SC",
     "greens": "Bentleigh Greens SC",
     
+    # Hume City variations
+    "hume": "Hume City FC",
+    "hume city": "Hume City FC",
+    "hume city fc": "Hume City FC",
+
     # Add more as needed...
 }
 
@@ -1688,10 +1693,14 @@ def tool_non_players(query: str = "") -> str:
             "Red": reds
         })
     
+    # Add a conversational title
+    filter_desc = f" for {team_name}" if team_name else ""
+    title = f"📋 I found {len(non_players)} staff members{filter_desc}:"
+    
     return {
         "type": "table",
         "data": data,
-        "title": f"👨‍🏫 Non-Players{filter_desc} ({len(non_players)} total)"
+        "title": title
     }
 
 # ---------------------------------------------------------
@@ -1708,8 +1717,14 @@ class FastQueryRouter:
         """Route query to appropriate handler"""
         q = query.lower().strip()
         
-        # Check if query is about non-players (coaches/staff)
-        is_non_player_query = any(keyword in q for keyword in ['non player', 'non-player', 'coach', 'coaches', 'staff', 'manager'])
+        
+        # Identify if this is a non-player query (coach/staff)
+        is_non_player_query = any(word in q for word in ["coach", "coaches", "staff", "manager", "non player", "non-player"])
+        
+        # --- NEW: Handle General Staff/Coach Lists ---
+        # If they just ask "list staff" or "who is coach" without card keywords
+        if is_non_player_query and not any(word in q for word in ["card", "yellow", "red"]):
+            return tool_non_players(query)
         
         # MISSING SCORES
         missing_keywords = ['missing score', 'missing scores', 'no score', 'scores not entered', 'overdue', 'matches without scores']
