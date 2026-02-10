@@ -311,13 +311,26 @@ def fuzzy_team(q: str) -> Optional[str]:
     # Step 4: Fall back to fuzzy matching with higher threshold
     return fuzzy_find(q_lower, team_names_lower, threshold=75)
 
-def normalize_team(q: str) -> Optional[str]:
-    """Normalize team name with improved matching"""
-    best = fuzzy_team(q)
-    if not best:
+def normalize_team(query: str) -> Optional[str]:
+    """Resolve a query string to a canonical team name using aliases and fuzzy matching."""
+    if not query:
         return None
-    return next((t for t in team_names if t.lower() == best), best)
+    
+    q_lower = query.lower().strip()
+    
+    # NEW: Check for club aliases first to ensure "Heidelberg" -> "Heidelberg United FC"
+    canonical_club = get_canonical_club_name(q_lower)
+    age_group = extract_age_group(q_lower)
+    
+    # If we found an alias, rebuild the query to be more specific
+    if canonical_club:
+        if age_group:
+            query = f"{canonical_club} {age_group}"
+        else:
+            query = canonical_club
 
+    # Now proceed with the existing fuzzy search logic
+    return fuzzy_team(query)
 # ---------------------------------------------------------
 # 4. Core search utilities
 # ---------------------------------------------------------
@@ -1748,29 +1761,58 @@ class FastQueryRouter:
             return tool_non_players(filter_query)
         
         # TOP SCORERS
-        if "top scorer" in q or "leading scorer" in q or "goal scorer" in q:
-            limit_match = re.search(r'top (\d+)', q)
-            limit = int(limit_match.group(1)) if limit_match else 20
-            filter_query = re.sub(r'\b(top|scorer|scorers?|leading|goal|goals?|\d+)\b', '', q).strip()
-            return tool_top_scorers(filter_query, limit)
-        
+        # --- Example update for the "TOP SCORERS" block ---
+        if any(word in q for word in ["top scorer","leading scorer", "top scorers", "golden boot"]):
+            clean = re.sub(r'\b(top|scorer|scorers?|golden|boot|in|for|show|me|list)\b', '', q).strip()
+            team_context = clean if clean else USER_CONFIG["team"]
+            
+            result = tool_top_scorers(team_context)
+            
+            # Add a conversational preamble if it's a table
+            if isinstance(result, dict) and result.get("type") == "table":
+                result["title"] = f"🏆 Here are the top performers for {result.get('title', team_context)}:"
+            return result
+            
         # TEAM STATS
-        if "stats for" in q or "team stats" in q:
-            clean = re.sub(r'\b(stats?|for|team)\b', '', q).strip()
-            age_groups = ['u13', 'u14', 'u15', 'u16', 'u17', 'u18']
-            if clean.lower() in age_groups:
-                return tool_team_stats(clean)
-            team_keywords = ['fc', 'sc', 'united', 'city', 'rovers', 'wanderers', 'magic', 'heidelberg', 'essendon', 'avondale', 'brunswick', 'box hill']
-            if any(keyword in clean.lower() for keyword in team_keywords) or any(age in clean.lower() for age in age_groups):
-                return tool_team_stats(clean)
-            return tool_players(clean, detailed=False)
+#        if "stats for" in q or "team stats" in q:
+#            clean = re.sub(r'\b(stats?|for|team)\b', '', q).strip()
+#            age_groups = ['u13', 'u14', 'u15', 'u16', 'u17', 'u18']
+#            if clean.lower() in age_groups:
+#                return tool_team_stats(clean)
+#            team_keywords = ['fc', 'sc', 'united', 'city', 'rovers', 'wanderers', 'magic', 'heidelberg', 'essendon', 'avondale', 'brunswick', 'box hill']
+#            if any(keyword in clean.lower() for keyword in team_keywords) or any(age in clean.lower() for age in age_groups):
+#                return tool_team_stats(clean)
+#            return tool_players(clean, detailed=False)
         
-        # PLAYER STATS
-        if any(word in q for word in ["player", "show me"]) or "details for" in q:
+ #       # PLAYER STATS
+ #       if any(word in q for word in ["player", "show me"]) or "details for" in q:
+ #           detailed = "detail" in q
+ #           clean = re.sub(r'\b(stats?|for|player|show|me|get|find|tell|about|details?)\b', '', q).strip()
+ #           return tool_players(clean, detailed)
+ 	# --- REPLACED: Combined Team and Player Stats Block ---
+        if any(word in q for word in ["stats for", "team stats", "show me", "details for"]):
+            # 1. Clean the query
+            clean = re.sub(r'\b(stats?|for|team|show|me|get|find|details?|profile|about)\b', '', q).strip()
             detailed = "detail" in q
-            clean = re.sub(r'\b(stats?|for|player|show|me|get|find|tell|about|details?)\b', '', q).strip()
-            return tool_players(clean, detailed)
-        
+            
+            # 2. Check if the input is a recognized team
+            recognized_team = normalize_team(clean)
+            
+            if recognized_team:
+                # If it's a team, return team stats
+                result = tool_team_stats(recognized_team)
+                if isinstance(result, dict) and result.get("type") == "table":
+                    result["title"] = f"📊 Here is the latest performance data for **{recognized_team}**:"
+                return result
+            else:
+                # If not a team, look for a player match
+                result = tool_players(clean, detailed)
+                # If tool_players returns a string (like a profile), it's already conversational.
+                # If it's a table (like match history), add a title:
+                if isinstance(result, dict) and result.get("type") == "table":
+                    result["title"] = f"👟 Recent match-by-match stats for **{clean.title()}**:"
+                return result
+                
         # LADDER
         if any(word in q for word in ["ladder", "table", "standings"]):
             return tool_ladder(query)

@@ -865,13 +865,24 @@ def main_app():
 
             if isinstance(answer, dict):
                 if answer.get("type") == "table":
-                    st.markdown(f"### {answer.get('title')}")
+                    # This displays the conversational title we added in fast_agent.py
+                    st.info(answer.get('title', "Results")) 
                     df = pd.DataFrame(answer.get('data', []))
                     st.dataframe(df, hide_index=True, use_container_width=True)
                 elif answer.get("type") == "error":
                     st.error(answer.get("message", "An error occurred"))
             else:
-                st.markdown(answer)
+                # If it's just a string, display it as a chat bubble
+                st.chat_message("assistant").write(answer)
+#            if isinstance(answer, dict):
+ #               if answer.get("type") == "table":
+  #                  st.markdown(f"### {answer.get('title')}")
+   #                 df = pd.DataFrame(answer.get('data', []))
+    #                st.dataframe(df, hide_index=True, use_container_width=True)
+     #           elif answer.get("type") == "error":
+      #              st.error(answer.get("message", "An error occurred"))
+      #      else:
+      #          st.markdown(answer)
 
             st.caption(f"⏱️ Response time: {end - start:.3f}s")
             st.markdown("---")
