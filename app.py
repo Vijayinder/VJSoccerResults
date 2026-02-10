@@ -522,12 +522,26 @@ def get_matches_for_club_in_comp(results, club_name, competition):
             matches.append(item)
     return matches
 
-def get_players_for_club(players_data, club_name):
+def get_players_for_club(players_data, club_name, competition=None):
+    """
+    Get players for a specific club, optionally filtered by competition
+    """
     players = []
     for p in players_data.get("players", []):
         team = p.get("team_name", "")
-        if base_club_name(team) == club_name:
-            players.append(p)
+        
+        # Check club name match
+        if base_club_name(team) != club_name:
+            continue
+        
+        # If competition specified, filter by it
+        if competition:
+            # Extract competition from team's league name
+            team_comp = extract_competition_from_league_name(p.get("league_name", ""))
+            if team_comp != competition:
+                continue
+        
+        players.append(p)
     return players
 
 def get_matches_for_player(player):
@@ -996,7 +1010,7 @@ def main_app():
                 row["GD"] = club.get("total_gf", 0) - club.get("total_ga", 0)
                 rows.append(row)
             df_overview = pd.DataFrame(rows)
-            st.dataframe(df_overview, hide_index=True, use_container_width=True)
+            st.dataframe(df_overview, hide_index=True, use_container_width=True, height=650)
         else:
             st.info("No competition overview data available for this league.")
 
@@ -1040,6 +1054,7 @@ def main_app():
             disabled=["Pos", "ClubDisplay", "played", "wins", "draws", "losses",
                       "gf", "ga", "gd", "points"],
             use_container_width=True,
+            height=650,  # Increased height to show ~18 rows
             key="ladder_editor"
         )
 
@@ -1129,21 +1144,29 @@ def main_app():
                     st.info(f"No matches found")
 
             with col_players:
-                st.markdown(f"### 👤 Players")
-                players = get_players_for_club(players_data, club)
+                st.markdown(f"### 👤 Squad")
+                
+                # Get all people (players + non-players) for this club in this competition
+                all_people = get_players_for_club(players_data, club, comp)
 
                 if search and not is_natural_language_query(search):
-                    players = [
-                        p for p in players
+                    all_people = [
+                        p for p in all_people
                         if search.lower() in f"{p.get('first_name','')} {p.get('last_name','')}".lower()
                     ]
 
                 selected_match_id = st.session_state.get("selected_match_id")
                 if selected_match_id:
                     st.info(f"🎯 Filtered by selected match")
-                    players = [p for p in players if player_played_in_match(p, selected_match_id)]
+                    all_people = [p for p in all_people if player_played_in_match(p, selected_match_id)]
 
+                # Separate players and non-players
+                players = [p for p in all_people if not p.get("role") or p.get("role") == "player"]
+                non_players = [p for p in all_people if p.get("role") and p.get("role") != "player"]
+
+                # PLAYERS TABLE
                 if players:
+                    st.markdown("**Players**")
                     rows = []
                     for p in players:
                         full_name = f"{p.get('first_name','')} {p.get('last_name','')}"
@@ -1203,6 +1226,33 @@ def main_app():
                         st.info("No players in selected match")
                     else:
                         st.info("No players found")
+                
+                # NON-PLAYERS TABLE (STAFF/COACHES)
+                if non_players:
+                    st.markdown("**Staff & Coaches**")
+                    staff_rows = []
+                    for p in non_players:
+                        full_name = f"{p.get('first_name','')} {p.get('last_name','')}"
+                        role = p.get("role", "staff").title()
+                        staff_rows.append({
+                            "Name": full_name,
+                            "Role": role,
+                            "🟨": p.get("stats", {}).get("yellow_cards", 0),
+                            "🟥": p.get("stats", {}).get("red_cards", 0),
+                        })
+
+                    df_staff = pd.DataFrame(staff_rows)
+                    st.dataframe(
+                        df_staff,
+                        hide_index=True,
+                        column_config={
+                            "Name": st.column_config.TextColumn("Name", width="medium"),
+                            "Role": st.column_config.TextColumn("Role", width="small"),
+                            "🟨": st.column_config.NumberColumn("🟨", width="small"),
+                            "🟥": st.column_config.NumberColumn("🟥", width="small")
+                        },
+                        use_container_width=True,
+                    )
 
     # LEVEL 4: PLAYER MATCHES (same as before)
     elif level == "matches":

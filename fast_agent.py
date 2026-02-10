@@ -31,6 +31,72 @@ USER_CONFIG = {
 }
 
 # ---------------------------------------------------------
+# CLUB NAME ALIASES
+# ---------------------------------------------------------
+# Common variations of club names mapped to their canonical names
+CLUB_ALIASES = {
+    # Heidelberg variations
+    "heidelberg": "Heidelberg United FC",
+    "heidelberg united": "Heidelberg United FC",
+    "heidelberg utd": "Heidelberg United FC",
+    "heidelberg fc": "Heidelberg United FC",
+    
+    # Brunswick variations
+    "brunswick": "Brunswick Juventus FC",
+    "brunswick juventus": "Brunswick Juventus FC",
+    "brunswick juve": "Brunswick Juventus FC",
+    "juve": "Brunswick Juventus FC",
+    
+    # Essendon variations
+    "essendon": "Essendon Royals SC",
+    "essendon royals": "Essendon Royals SC",
+    "royals": "Essendon Royals SC",
+    
+    # Avondale variations
+    "avondale": "Avondale FC",
+    "avondale fc": "Avondale FC",
+    
+    # Altona variations
+    "altona": "Altona Magic SC",
+    "altona magic": "Altona Magic SC",
+    "magic": "Altona Magic SC",
+    
+    # Box Hill variations
+    "box hill": "Box Hill United SC",
+    "box hill united": "Box Hill United SC",
+    
+    # Manningham variations
+    "manningham": "Manningham United Blues FC",
+    "manningham united": "Manningham United Blues FC",
+    "manningham blues": "Manningham United Blues FC",
+    
+    # Bulleen variations
+    "bulleen": "FC Bulleen Lions",
+    "bulleen lions": "FC Bulleen Lions",
+    "fc bulleen": "FC Bulleen Lions",
+    
+    # Add more as needed...
+}
+
+def get_canonical_club_name(query: str) -> Optional[str]:
+    """
+    Get canonical club name from query using aliases
+    Returns the full club name without age group
+    """
+    query_lower = query.lower().strip()
+    
+    # Check direct match in aliases
+    if query_lower in CLUB_ALIASES:
+        return CLUB_ALIASES[query_lower]
+    
+    # Check if query contains any alias
+    for alias, canonical in CLUB_ALIASES.items():
+        if alias in query_lower:
+            return canonical
+    
+    return None
+
+# ---------------------------------------------------------
 # 1. Load JSON data files
 # ---------------------------------------------------------
 
@@ -313,7 +379,7 @@ def extract_base_club_name(text: str) -> Optional[str]:
     """
     Extract base club name (without age group) from text
     E.g., "Heidelberg United" from "yellow cards Heidelberg United"
-    Improved to handle partial club names
+    Improved to handle partial club names with alias lookup
     """
     # Remove common keywords
     clean = re.sub(r'\b(top|scorer|scorers?|yellow|red|card|cards?|in|for|details?|show|list|with|non|player|players?|staff|coach|coaches?|team|stats?)\b', '', text, flags=re.IGNORECASE).strip()
@@ -322,7 +388,12 @@ def extract_base_club_name(text: str) -> Optional[str]:
     clean = re.sub(r'\s*u\d{2}\s*$', '', clean, flags=re.IGNORECASE).strip()
     
     if clean:
-        # First, try direct substring matching in team names (more lenient)
+        # FIRST: Try club alias lookup
+        canonical = get_canonical_club_name(clean)
+        if canonical:
+            return canonical
+        
+        # SECOND: Try direct substring matching in team names (more lenient)
         clean_lower = clean.lower()
         
         # Find all teams that contain this substring
@@ -345,7 +416,7 @@ def extract_base_club_name(text: str) -> Optional[str]:
                 if best_match:
                     return next((b for b in base_names if b.lower() == best_match), None)
         
-        # Fallback to old method
+        # THIRD: Fallback to old method
         normalized = normalize_team(clean)
         if normalized:
             base = re.sub(r'\s+U\d{2}$', '', normalized).strip()
@@ -725,14 +796,19 @@ def tool_yellow_cards(query: str = "", show_details: bool = False, include_non_p
                 name += f" ({role.title()})"
             team = p.get('team_name', '')
             
-            data.append({
+            row_data = {
                 "Rank": i,
                 "Name": name,
                 "Team": team,
                 "Yellow Cards": yellows,
-                "Matches": stats.get("matches_played", 0) if role == "player" else "-",
-                "Goals": stats.get("goals", 0) if role == "player" else "-"
-            })
+            }
+            
+            # Only add Matches and Goals for players
+            if role == "player" or not role:
+                row_data["Matches"] = stats.get("matches_played", 0)
+                row_data["Goals"] = stats.get("goals", 0)
+            
+            data.append(row_data)
         
         return {
             "type": "table",
@@ -818,14 +894,19 @@ def tool_red_cards(query: str = "", show_details: bool = False, include_non_play
                 name += f" ({role.title()})"
             team = p.get('team_name', '')
             
-            data.append({
+            row_data = {
                 "Rank": i,
                 "Name": name,
                 "Team": team,
                 "Red Cards": reds,
-                "Matches": stats.get("matches_played", 0) if role == "player" else "-",
-                "Goals": stats.get("goals", 0) if role == "player" else "-"
-            })
+            }
+            
+            # Only add Matches and Goals for players
+            if role == "player" or not role:
+                row_data["Matches"] = stats.get("matches_played", 0)
+                row_data["Goals"] = stats.get("goals", 0)
+            
+            data.append(row_data)
         
         return {
             "type": "table",
@@ -918,13 +999,40 @@ def tool_team_stats(query: str = "") -> str:
     else:
         team_query = query
     
-    team = normalize_team(team_query) or team_query
-    players = [p for p in players_summary if team.lower() in p.get("team_name", "").lower()]
+    # Try to get canonical club name first
+    canonical_club = get_canonical_club_name(team_query)
+    age_group = extract_age_group(team_query)
+    
+    # Build the team filter
+    if canonical_club and age_group:
+        # Exact team match: "Heidelberg United FC U16"
+        team_filter = f"{canonical_club} {age_group}"
+    elif canonical_club:
+        # Club only: match all age groups
+        team_filter = canonical_club
+    else:
+        # Fall back to normalize_team
+        team_filter = normalize_team(team_query) or team_query
+    
+    # Filter players - use exact match if we have canonical name, otherwise substring
+    if canonical_club:
+        # Exact matching for canonical club names
+        if age_group:
+            players = [p for p in players_summary if p.get("team_name", "") == team_filter]
+        else:
+            # Match all teams from this club (any age group)
+            players = [p for p in players_summary if p.get("team_name", "").startswith(canonical_club)]
+    else:
+        # Substring matching for other cases
+        players = [p for p in players_summary if team_filter.lower() in p.get("team_name", "").lower()]
+    
+    # Filter to only players (not coaches/staff)
+    players = [p for p in players if not p.get("role") or p.get("role") == "player"]
     
     if not players:
         return f"❌ No players found for team: {query}"
     
-    lines = [f"📊 **Team Statistics: {players[0].get('team_name', team)}**\n"]
+    lines = [f"📊 **Team Statistics: {players[0].get('team_name', team_filter)}**\n"]
     
     # Overall stats
     total_goals = sum(p.get("stats", {}).get("goals", 0) for p in players)
@@ -962,11 +1070,12 @@ def tool_team_stats(query: str = "") -> str:
     
     # Recent team results
     team_results = []
+    team_name_to_match = players[0].get('team_name', '') if players else team_filter
     for r in results:
         a = r.get("attributes", {})
         home = a.get("home_team_name", "")
         away = a.get("away_team_name", "")
-        if team.lower() in home.lower() or team.lower() in away.lower():
+        if team_name_to_match.lower() in home.lower() or team_name_to_match.lower() in away.lower():
             team_results.append(a)
 
     team_results.sort(key=lambda x: x.get("date", ""), reverse=True)
@@ -977,7 +1086,7 @@ def tool_team_stats(query: str = "") -> str:
             hs = a.get('home_score')
             as_ = a.get('away_score')
             
-            is_home = team.lower() in a.get('home_team_name', '').lower()
+            is_home = team_name_to_match.lower() in a.get('home_team_name', '').lower()
             if is_home:
                 result = "🟢 W" if int(hs) > int(as_) else ("🔴 L" if int(hs) < int(as_) else "🟡 D")
             else:
@@ -1232,10 +1341,38 @@ def tool_matches(query: str) -> str:
     return "\n".join(lines[:20])
 
 def tool_team_overview(query: str) -> str:
-    team = normalize_team(query) or query
-    lines = [f"🏟️ **{team}**\n"]
+    """Get team overview with stats"""
+    # Try to get canonical club name first
+    canonical_club = get_canonical_club_name(query)
+    age_group = extract_age_group(query)
+    
+    # Build the team filter
+    if canonical_club and age_group:
+        # Exact team match: "Heidelberg United FC U16"
+        team_filter = f"{canonical_club} {age_group}"
+    elif canonical_club:
+        # Club only: match all age groups
+        team_filter = canonical_club
+    else:
+        # Fall back to normalize_team
+        team_filter = normalize_team(query) or query
+    
+    lines = [f"🏟️ **{query}**\n"]
 
-    players = [p for p in players_summary if team.lower() in p.get("team_name", "").lower()]
+    # Filter players - use exact match if we have canonical name, otherwise substring
+    if canonical_club:
+        # Exact matching for canonical club names
+        if age_group:
+            players = [p for p in players_summary if p.get("team_name", "") == team_filter]
+        else:
+            # Match all teams from this club (any age group)
+            players = [p for p in players_summary if p.get("team_name", "").startswith(canonical_club)]
+    else:
+        # Substring matching for other cases
+        players = [p for p in players_summary if team_filter.lower() in p.get("team_name", "").lower()]
+    
+    # Filter to only players (not coaches/staff)
+    players = [p for p in players if not p.get("role") or p.get("role") == "player"]
     
     if players:
         total_goals = sum(p.get("stats", {}).get("goals", 0) for p in players)
@@ -1254,12 +1391,15 @@ def tool_team_overview(query: str) -> str:
                 if goals > 0:
                     lines.append(f"  ⚽ {p.get('first_name')} {p.get('last_name')} - {goals}")
     
+    # Get team name to match in results
+    team_name_to_match = players[0].get('team_name', '') if players else team_filter
+    
     team_results = []
     for r in results:
         a = r.get("attributes", {})
         home = a.get("home_team_name", "")
         away = a.get("away_team_name", "")
-        if team.lower() in home.lower() or team.lower() in away.lower():
+        if team_name_to_match.lower() in home.lower() or team_name_to_match.lower() in away.lower():
             team_results.append(a)
 
     team_results.sort(key=lambda x: x.get("date", ""), reverse=True)
