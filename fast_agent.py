@@ -1717,15 +1717,19 @@ class FastQueryRouter:
         """Route query to appropriate handler"""
         q = query.lower().strip()
         
-        
-        # Identify if this is a non-player query (coach/staff)
-        is_non_player_query = any(word in q for word in ["coach", "coaches", "staff", "manager", "non player", "non-player"])
-        
-        # --- NEW: Handle General Staff/Coach Lists ---
-        # If they just ask "list staff" or "who is coach" without card keywords
-        if is_non_player_query and not any(word in q for word in ["card", "yellow", "red"]):
-            return tool_non_players(query)
-        
+        is_non_player_query = any(keyword in q for keyword in ['non player', 'non-player', 'coach', 'staff', 'manager'])
+
+        # [Existing Card Logic...]
+        if "yellow card" in q or "yellows" in q:
+            # ... handles yellows ...
+            return tool_yellow_cards(filter_query, show_details, include_non_players=is_non_player_query)
+
+        # ADD THIS BLOCK:
+        # STANDALONE NON-PLAYER/STAFF LIST
+        if is_non_player_query:
+            # Clean query to get the team/club name
+            clean = re.sub(r'\b(list|all|staff|coaches|managers|non-players?|for|show|me|get)\b', '', q).strip()
+            return tool_non_players(clean)
         # MISSING SCORES
         missing_keywords = ['missing score', 'missing scores', 'no score', 'scores not entered', 'overdue', 'matches without scores']
         if any(keyword in q for keyword in missing_keywords):
