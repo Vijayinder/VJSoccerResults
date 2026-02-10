@@ -246,7 +246,11 @@ def extract_age_group(text: str) -> Optional[str]:
 def extract_team_name(text: str) -> Optional[str]:
     """Extract team name from text"""
     # Remove common keywords
-    clean = re.sub(r'\b(top|scorer|scorers?|yellow|red|card|cards?|in|for|details?|show|list|with)\b', '', text, flags=re.IGNORECASE).strip()
+    clean = re.sub(r'\b(top|scorer|scorers?|yellow|red|card|cards?|in|for|details?|show|list|with|non|player|players?|staff|coach|coaches?)\b', '', text, flags=re.IGNORECASE).strip()
+    
+    # If only age group remains (like "U16"), don't treat as team name
+    if re.match(r'^u\d{2}$', clean.lower().strip()):
+        return None
     
     # Check if there's a recognizable team name
     if clean:
@@ -256,22 +260,71 @@ def extract_team_name(text: str) -> Optional[str]:
     
     return None
 
-def filter_players_by_criteria(players: List[Dict], query: str) -> List[Dict]:
-    """Filter players by age group and/or team name from query"""
+def extract_base_club_name(text: str) -> Optional[str]:
+    """
+    Extract base club name (without age group) from text
+    E.g., "Heidelberg United" from "yellow cards Heidelberg United"
+    """
+    # Remove common keywords
+    clean = re.sub(r'\b(top|scorer|scorers?|yellow|red|card|cards?|in|for|details?|show|list|with|non|player|players?|staff|coach|coaches?|team|stats?)\b', '', text, flags=re.IGNORECASE).strip()
+    
+    # Remove age group pattern if present
+    clean = re.sub(r'\s*u\d{2}\s*$', '', clean, flags=re.IGNORECASE).strip()
+    
+    if clean:
+        # Try to match to a known team, then extract base name
+        normalized = normalize_team(clean)
+        if normalized:
+            # Remove age group suffix from normalized team name
+            base = re.sub(r'\s+U\d{2}$', '', normalized).strip()
+            return base
+    
+    return None
+
+def filter_players_by_criteria(players: List[Dict], query: str, include_non_players: bool = False) -> List[Dict]:
+    """
+    Filter players by age group and/or team name from query
+    
+    Args:
+        players: List of player/person dictionaries
+        query: Search query string
+        include_non_players: If True, only return non-players (coaches/staff)
+    """
     age_group = extract_age_group(query)
-    team_name = extract_team_name(query)
+    team_name = extract_team_name(query)  # Full team name with age group
+    base_club = extract_base_club_name(query)  # Club name without age group
     
     filtered = players
     
-    # Filter by age group
-    if age_group:
+    # Filter by role if looking for non-players
+    if include_non_players:
+        filtered = [
+            p for p in filtered
+            if p.get("role") and p.get("role") != "player"
+        ]
+    else:
+        # Only players
+        filtered = [
+            p for p in filtered
+            if not p.get("role") or p.get("role") == "player"
+        ]
+    
+    # Filter by age group only (e.g., "top scorers in U16")
+    if age_group and not team_name and not base_club:
         filtered = [
             p for p in filtered
             if age_group.lower() in p.get("team_name", "").lower()
         ]
     
-    # Filter by team name
-    if team_name:
+    # Filter by base club name only (e.g., "yellow cards Heidelberg United")
+    elif base_club and not age_group and not team_name:
+        filtered = [
+            p for p in filtered
+            if base_club.lower() in p.get("team_name", "").lower()
+        ]
+    
+    # Filter by specific team (e.g., "Heidelberg U16")
+    elif team_name:
         filtered = [
             p for p in filtered
             if team_name.lower() in p.get("team_name", "").lower()
@@ -374,8 +427,8 @@ def tool_fixtures(query: str = "", limit: int = 10, use_user_team: bool = False)
 # 7. ENHANCED CARD QUERIES WITH FILTERING
 # ---------------------------------------------------------
 
-def tool_yellow_cards(query: str = "", show_details: bool = False) -> str:
-    """List all players with yellow cards - supports age group and team filtering"""
+def tool_yellow_cards(query: str = "", show_details: bool = False, include_non_players: bool = False) -> str:
+    """List all people with yellow cards - supports age group and team filtering"""
     players_with_yellows = [
         p for p in players_summary 
         if p.get("stats", {}).get("yellow_cards", 0) > 0
@@ -383,33 +436,46 @@ def tool_yellow_cards(query: str = "", show_details: bool = False) -> str:
     
     # Apply filters
     if query:
-        players_with_yellows = filter_players_by_criteria(players_with_yellows, query)
+        players_with_yellows = filter_players_by_criteria(players_with_yellows, query, include_non_players=include_non_players)
+    elif include_non_players:
+        # Filter for non-players even without query
+        players_with_yellows = [p for p in players_with_yellows if p.get("role") and p.get("role") != "player"]
     
     if not players_with_yellows:
         filter_desc = f" matching '{query}'" if query else ""
-        return f"❌ No players with yellow cards found{filter_desc}"
+        person_type = "non-players" if include_non_players else "players"
+        return f"❌ No {person_type} with yellow cards found{filter_desc}"
     
     players_with_yellows.sort(key=lambda x: x.get("stats", {}).get("yellow_cards", 0), reverse=True)
     
-    # Build filter description
+    # Build filter description based on what was actually extracted
     age_group = extract_age_group(query) if query else None
     team_name = extract_team_name(query) if query else None
+    base_club = extract_base_club_name(query) if query else None
+    
     filter_parts = []
-    if age_group:
+    if include_non_players:
+        filter_parts.append("Non-Players")
+    if age_group and not team_name:
         filter_parts.append(age_group)
-    if team_name:
+    elif base_club and not age_group and not team_name:
+        filter_parts.append(base_club)
+    elif team_name:
         filter_parts.append(team_name)
+    
     filter_desc = " - " + " ".join(filter_parts) if filter_parts else ""
     
     if show_details:
-        lines = [f"🟨 **Players with Yellow Cards{filter_desc}** ({len(players_with_yellows)} total)\n"]
+        lines = [f"🟨 **Yellow Cards{filter_desc}** ({len(players_with_yellows)} total)\n"]
         
         for p in players_with_yellows[:50]:
             stats = p.get("stats", {})
             yellows = stats.get("yellow_cards", 0)
+            role = p.get("role", "player")
+            role_display = f" ({role.title()})" if role != "player" else ""
             
             lines.append(
-                f"👤 **{p.get('first_name')} {p.get('last_name')}** (#{p.get('jersey')})\n"
+                f"👤 **{p.get('first_name')} {p.get('last_name')}**{role_display} (#{p.get('jersey')})\n"
                 f"   {p.get('team_name')} | 🟨 {yellows} card(s)"
             )
             
@@ -430,27 +496,30 @@ def tool_yellow_cards(query: str = "", show_details: bool = False) -> str:
         for i, p in enumerate(players_with_yellows[:30], 1):
             stats = p.get("stats", {})
             yellows = stats.get("yellow_cards", 0)
+            role = p.get("role", "player")
             name = f"{p.get('first_name')} {p.get('last_name')}"
+            if role != "player":
+                name += f" ({role.title()})"
             team = p.get('team_name', '')
             
             data.append({
                 "Rank": i,
-                "Player": name,
+                "Name": name,
                 "Team": team,
                 "Yellow Cards": yellows,
-                "Matches": stats.get("matches_played", 0),
+                "Matches": stats.get("matches_played", 0) if role == "player" else "-",
                 "Goals": stats.get("goals", 0)
             })
         
         return {
             "type": "table",
             "data": data,
-            "title": f"🟨 Yellow Cards{filter_desc} ({len(players_with_yellows)} players total, showing top 30)"
+            "title": f"🟨 Yellow Cards{filter_desc} ({len(players_with_yellows)} total, showing top 30)"
         }
 
 
-def tool_red_cards(query: str = "", show_details: bool = False) -> str:
-    """List all players with red cards - supports age group and team filtering"""
+def tool_red_cards(query: str = "", show_details: bool = False, include_non_players: bool = False) -> str:
+    """List all people with red cards - supports age group and team filtering"""
     players_with_reds = [
         p for p in players_summary 
         if p.get("stats", {}).get("red_cards", 0) > 0
@@ -458,33 +527,46 @@ def tool_red_cards(query: str = "", show_details: bool = False) -> str:
     
     # Apply filters
     if query:
-        players_with_reds = filter_players_by_criteria(players_with_reds, query)
+        players_with_reds = filter_players_by_criteria(players_with_reds, query, include_non_players=include_non_players)
+    elif include_non_players:
+        # Filter for non-players even without query
+        players_with_reds = [p for p in players_with_reds if p.get("role") and p.get("role") != "player"]
     
     if not players_with_reds:
         filter_desc = f" matching '{query}'" if query else ""
-        return f"❌ No players with red cards found{filter_desc}"
+        person_type = "non-players" if include_non_players else "players"
+        return f"❌ No {person_type} with red cards found{filter_desc}"
     
     players_with_reds.sort(key=lambda x: x.get("stats", {}).get("red_cards", 0), reverse=True)
     
-    # Build filter description
+    # Build filter description based on what was actually extracted
     age_group = extract_age_group(query) if query else None
     team_name = extract_team_name(query) if query else None
+    base_club = extract_base_club_name(query) if query else None
+    
     filter_parts = []
-    if age_group:
+    if include_non_players:
+        filter_parts.append("Non-Players")
+    if age_group and not team_name:
         filter_parts.append(age_group)
-    if team_name:
+    elif base_club and not age_group and not team_name:
+        filter_parts.append(base_club)
+    elif team_name:
         filter_parts.append(team_name)
+    
     filter_desc = " - " + " ".join(filter_parts) if filter_parts else ""
     
     if show_details:
-        lines = [f"🟥 **Players with Red Cards{filter_desc}** ({len(players_with_reds)} total)\n"]
+        lines = [f"🟥 **Red Cards{filter_desc}** ({len(players_with_reds)} total)\n"]
         
         for p in players_with_reds:
             stats = p.get("stats", {})
             reds = stats.get("red_cards", 0)
+            role = p.get("role", "player")
+            role_display = f" ({role.title()})" if role != "player" else ""
             
             lines.append(
-                f"👤 **{p.get('first_name')} {p.get('last_name')}** (#{p.get('jersey')})\n"
+                f"👤 **{p.get('first_name')} {p.get('last_name')}**{role_display} (#{p.get('jersey')})\n"
                 f"   {p.get('team_name')} | 🟥 {reds} card(s)"
             )
             
@@ -505,22 +587,25 @@ def tool_red_cards(query: str = "", show_details: bool = False) -> str:
         for i, p in enumerate(players_with_reds, 1):
             stats = p.get("stats", {})
             reds = stats.get("red_cards", 0)
+            role = p.get("role", "player")
             name = f"{p.get('first_name')} {p.get('last_name')}"
+            if role != "player":
+                name += f" ({role.title()})"
             team = p.get('team_name', '')
             
             data.append({
                 "Rank": i,
-                "Player": name,
+                "Name": name,
                 "Team": team,
                 "Red Cards": reds,
-                "Matches": stats.get("matches_played", 0),
+                "Matches": stats.get("matches_played", 0) if role == "player" else "-",
                 "Goals": stats.get("goals", 0)
             })
         
         return {
             "type": "table",
             "data": data,
-            "title": f"🟥 Red Cards{filter_desc} ({len(players_with_reds)} players total)"
+            "title": f"🟥 Red Cards{filter_desc} ({len(players_with_reds)} total)"
         }
 
 
@@ -533,11 +618,12 @@ def tool_top_scorers(query: str = "", limit: int = 20):
     scorers = [
         p for p in players_summary 
         if p.get("stats", {}).get("goals", 0) > 0
+        and (not p.get("role") or p.get("role") == "player")  # Only players
     ]
     
     # Apply filters
     if query:
-        scorers = filter_players_by_criteria(scorers, query)
+        scorers = filter_players_by_criteria(scorers, query, include_non_players=False)
     
     if not scorers:
         filter_desc = f" matching '{query}'" if query else ""
@@ -545,14 +631,22 @@ def tool_top_scorers(query: str = "", limit: int = 20):
     
     scorers.sort(key=lambda x: x.get("stats", {}).get("goals", 0), reverse=True)
     
-    # Build filter description
+    # Build filter description based on what was actually extracted
     age_group = extract_age_group(query) if query else None
     team_name = extract_team_name(query) if query else None
+    base_club = extract_base_club_name(query) if query else None
+    
     filter_parts = []
-    if age_group:
+    if age_group and not team_name:
+        # Only age group specified
         filter_parts.append(age_group)
-    if team_name:
+    elif base_club and not age_group and not team_name:
+        # Only base club specified
+        filter_parts.append(base_club)
+    elif team_name:
+        # Specific team specified
         filter_parts.append(team_name)
+    
     filter_desc = " - " + " ".join(filter_parts) if filter_parts else ""
     
     # Return as structured data for table display
@@ -1102,6 +1196,74 @@ def tool_lineups(query: str) -> str:
     return "\n".join(lines)
 
 # ---------------------------------------------------------
+# 11. NON-PLAYER QUERIES
+# ---------------------------------------------------------
+
+def tool_non_players(query: str = "") -> str:
+    """List non-players (coaches, staff) with optional team filtering and card info"""
+    non_players = [
+        p for p in players_summary 
+        if p.get("role") and p.get("role") != "player"
+    ]
+    
+    if not non_players:
+        return "❌ No non-players (coaches/staff) found in the data"
+    
+    # Apply filters
+    if query:
+        non_players = filter_players_by_criteria(non_players, query, include_non_players=True)
+    
+    if not non_players:
+        return f"❌ No non-players found matching '{query}'"
+    
+    # Build filter description
+    age_group = extract_age_group(query) if query else None
+    team_name = extract_team_name(query) if query else None
+    base_club = extract_base_club_name(query) if query else None
+    
+    filter_parts = []
+    if age_group and not team_name:
+        filter_parts.append(age_group)
+    elif base_club and not age_group and not team_name:
+        filter_parts.append(base_club)
+    elif team_name:
+        filter_parts.append(team_name)
+    
+    filter_desc = " - " + " ".join(filter_parts) if filter_parts else ""
+    
+    # Sort by total cards (yellow + red * 2), then by name
+    non_players.sort(key=lambda x: (
+        -(x.get("stats", {}).get("yellow_cards", 0) + x.get("stats", {}).get("red_cards", 0) * 2),
+        x.get("last_name", ""),
+        x.get("first_name", "")
+    ))
+    
+    # Return as table data
+    data = []
+    for i, p in enumerate(non_players, 1):
+        stats = p.get("stats", {})
+        yellows = stats.get("yellow_cards", 0)
+        reds = stats.get("red_cards", 0)
+        role = p.get("role", "staff").title()
+        name = f"{p.get('first_name')} {p.get('last_name')}"
+        team = p.get('team_name', '')
+        
+        data.append({
+            "Rank": i,
+            "Name": name,
+            "Role": role,
+            "Team": team,
+            "Yellow": yellows,
+            "Red": reds
+        })
+    
+    return {
+        "type": "table",
+        "data": data,
+        "title": f"👨‍🏫 Non-Players{filter_desc} ({len(non_players)} total)"
+    }
+
+# ---------------------------------------------------------
 # 12. Smart Query Router
 # ---------------------------------------------------------
 
@@ -1114,6 +1276,9 @@ class FastQueryRouter:
     def process(self, query: str):
         """Route query to appropriate handler"""
         q = query.lower().strip()
+        
+        # Check if query is about non-players (coaches/staff)
+        is_non_player_query = any(keyword in q for keyword in ['non player', 'non-player', 'coach', 'coaches', 'staff', 'manager'])
         
         # COMPETITION OVERVIEW
         comp_overview_keywords = ['competition overview', 'competition standings', 'ypl1 overview', 'ypl2 overview', 
@@ -1140,17 +1305,22 @@ class FastQueryRouter:
                 limit = 5 if team_query else 10
                 return tool_fixtures(team_query, limit, use_user_team=False)
         
-        # YELLOW CARDS
+        # YELLOW CARDS (including non-players)
         if "yellow card" in q or "yellows" in q:
             show_details = "detail" in q
             filter_query = re.sub(r'\b(yellow|card|cards|details?|show|list|with)\b', '', q).strip()
-            return tool_yellow_cards(filter_query, show_details)
+            return tool_yellow_cards(filter_query, show_details, include_non_players=is_non_player_query)
         
-        # RED CARDS
+        # RED CARDS (including non-players)
         if "red card" in q or "reds" in q:
             show_details = "detail" in q
             filter_query = re.sub(r'\b(red|card|cards|details?|show|list|with)\b', '', q).strip()
-            return tool_red_cards(filter_query, show_details)
+            return tool_red_cards(filter_query, show_details, include_non_players=is_non_player_query)
+        
+        # NON-PLAYER QUERIES
+        if is_non_player_query:
+            filter_query = re.sub(r'\b(non|player|players?|staff|coach|coaches?|for|all|show|list|with)\b', '', q).strip()
+            return tool_non_players(filter_query)
         
         # TOP SCORERS
         if "top scorer" in q or "leading scorer" in q or "goal scorer" in q:
@@ -1160,12 +1330,12 @@ class FastQueryRouter:
             return tool_top_scorers(filter_query, limit)
         
         # TEAM STATS
-        if "stats for" in q:
-            clean = re.sub(r'\b(stats?|for)\b', '', q).strip()
+        if "stats for" in q or "team stats" in q:
+            clean = re.sub(r'\b(stats?|for|team)\b', '', q).strip()
             age_groups = ['u13', 'u14', 'u15', 'u16', 'u17', 'u18']
             if clean.lower() in age_groups:
                 return tool_team_stats(clean)
-            team_keywords = ['fc', 'sc', 'united', 'city', 'rovers', 'wanderers']
+            team_keywords = ['fc', 'sc', 'united', 'city', 'rovers', 'wanderers', 'magic', 'heidelberg', 'essendon', 'avondale', 'brunswick', 'box hill']
             if any(keyword in clean.lower() for keyword in team_keywords) or any(age in clean.lower() for age in age_groups):
                 return tool_team_stats(clean)
             return tool_players(clean, detailed=False)
