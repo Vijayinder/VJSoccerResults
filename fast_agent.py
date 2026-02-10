@@ -40,17 +40,22 @@ CLUB_ALIASES = {
     "heidelberg united": "Heidelberg United FC",
     "heidelberg utd": "Heidelberg United FC",
     "heidelberg fc": "Heidelberg United FC",
+    "heidelberg united fc": "Heidelberg United FC",
+    "bergers": "Heidelberg United FC",  # Nickname
+    "heid": "Heidelberg United FC",
     
     # Brunswick variations
     "brunswick": "Brunswick Juventus FC",
     "brunswick juventus": "Brunswick Juventus FC",
     "brunswick juve": "Brunswick Juventus FC",
     "juve": "Brunswick Juventus FC",
+    "brunswick fc": "Brunswick Juventus FC",
     
     # Essendon variations
     "essendon": "Essendon Royals SC",
     "essendon royals": "Essendon Royals SC",
     "royals": "Essendon Royals SC",
+    "essendon sc": "Essendon Royals SC",
     
     # Avondale variations
     "avondale": "Avondale FC",
@@ -60,20 +65,29 @@ CLUB_ALIASES = {
     "altona": "Altona Magic SC",
     "altona magic": "Altona Magic SC",
     "magic": "Altona Magic SC",
+    "altona sc": "Altona Magic SC",
     
     # Box Hill variations
     "box hill": "Box Hill United SC",
     "box hill united": "Box Hill United SC",
+    "boxhill": "Box Hill United SC",
     
     # Manningham variations
     "manningham": "Manningham United Blues FC",
     "manningham united": "Manningham United Blues FC",
     "manningham blues": "Manningham United Blues FC",
+    "blues": "Manningham United Blues FC",
     
     # Bulleen variations
     "bulleen": "FC Bulleen Lions",
     "bulleen lions": "FC Bulleen Lions",
     "fc bulleen": "FC Bulleen Lions",
+    "lions": "FC Bulleen Lions",
+    
+    # Bentleigh variations (to prevent false matches)
+    "bentleigh": "Bentleigh Greens SC",
+    "bentleigh greens": "Bentleigh Greens SC",
+    "greens": "Bentleigh Greens SC",
     
     # Add more as needed...
 }
@@ -359,7 +373,10 @@ def extract_age_group(text: str) -> Optional[str]:
     return None
 
 def extract_team_name(text: str) -> Optional[str]:
-    """Extract team name from text"""
+    """
+    Extract full team name from text (with age group)
+    Only returns a value if we can match to an exact existing team
+    """
     # Remove common keywords
     clean = re.sub(r'\b(top|scorer|scorers?|yellow|red|card|cards?|in|for|details?|show|list|with|non|player|players?|staff|coach|coaches?)\b', '', text, flags=re.IGNORECASE).strip()
     
@@ -367,10 +384,16 @@ def extract_team_name(text: str) -> Optional[str]:
     if re.match(r'^u\d{2}$', clean.lower().strip()):
         return None
     
-    # Check if there's a recognizable team name
+    # Check if there's a recognizable full team name (exact match in team_names)
     if clean:
+        # Try exact match first
+        for team in team_names:
+            if clean.lower() == team.lower():
+                return team
+        
+        # Try normalized match
         normalized = normalize_team(clean)
-        if normalized:
+        if normalized and normalized in team_names:
             return normalized
     
     return None
@@ -452,25 +475,37 @@ def filter_players_by_criteria(players: List[Dict], query: str, include_non_play
             if not p.get("role") or p.get("role") == "player"
         ]
     
-    # Filter by age group only (e.g., "top scorers in U16")
-    if age_group and not team_name and not base_club:
+    # Now apply team/age filters
+    # Priority order:
+    # 1. Specific team name (full name with age group) - most specific
+    # 2. Base club + age group - build exact match
+    # 3. Base club only - match all age groups
+    # 4. Age group only - match all clubs
+    
+    if team_name:
+        # Has full team name - use exact match
         filtered = [
             p for p in filtered
-            if age_group.lower() in p.get("team_name", "").lower()
+            if team_name.lower() in p.get("team_name", "").lower()
         ]
-    
-    # Filter by base club name only (e.g., "yellow cards Heidelberg United")
-    elif base_club and not age_group and not team_name:
+    elif base_club and age_group:
+        # Has both club and age group - build exact team name
+        exact_team = f"{base_club} {age_group}"
+        filtered = [
+            p for p in filtered
+            if exact_team.lower() in p.get("team_name", "").lower()
+        ]
+    elif base_club:
+        # Has club only - match all age groups from this club
         filtered = [
             p for p in filtered
             if base_club.lower() in p.get("team_name", "").lower()
         ]
-    
-    # Filter by specific team (e.g., "Heidelberg U16")
-    elif team_name:
+    elif age_group:
+        # Has age group only - match all clubs with this age group
         filtered = [
             p for p in filtered
-            if team_name.lower() in p.get("team_name", "").lower()
+            if age_group.lower() in p.get("team_name", "").lower()
         ]
     
     return filtered
