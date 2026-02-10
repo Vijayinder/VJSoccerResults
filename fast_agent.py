@@ -152,9 +152,38 @@ competition_names = sorted({
 })
 
 def fuzzy_team(q: str) -> Optional[str]:
-    return fuzzy_find(q.lower(), [t.lower() for t in team_names], threshold=60)
+    """
+    Improved team matching with better precision
+    Prioritizes exact substring matches over fuzzy matches
+    """
+    q_lower = q.lower().strip()
+    team_names_lower = [t.lower() for t in team_names]
+    
+    # Step 1: Check for exact match
+    if q_lower in team_names_lower:
+        return q_lower
+    
+    # Step 2: Check for exact substring match (team name contains the query)
+    exact_matches = [t for t in team_names_lower if q_lower in t]
+    if len(exact_matches) == 1:
+        return exact_matches[0]
+    elif len(exact_matches) > 1:
+        # Multiple matches - try to find the shortest one (most specific)
+        return min(exact_matches, key=len)
+    
+    # Step 3: Check if query contains team name (query is longer than team name)
+    reverse_matches = [t for t in team_names_lower if t in q_lower]
+    if len(reverse_matches) == 1:
+        return reverse_matches[0]
+    elif len(reverse_matches) > 1:
+        # Multiple matches - return the longest match (most specific)
+        return max(reverse_matches, key=len)
+    
+    # Step 4: Fall back to fuzzy matching with higher threshold
+    return fuzzy_find(q_lower, team_names_lower, threshold=75)
 
 def normalize_team(q: str) -> Optional[str]:
+    """Normalize team name with improved matching"""
     best = fuzzy_team(q)
     if not best:
         return None

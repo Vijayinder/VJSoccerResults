@@ -249,17 +249,6 @@ def show_login_page():
                     st.session_state["role"] = "guest"
                     log_login("guest", "Guest User", st.session_state["session_id"])
                     st.rerun()
-        
-        # Show default credentials info
-        with st.expander("ℹ️ Default Credentials", expanded=False):
-            st.info("""
-            **Default accounts:**
-            - Admin: `admin` / `admin123`
-            - Coach: `coach` / `coach123`
-            - Parent: `parent` / `parent123`
-            
-            ⚠️ Please change these passwords after first login!
-            """)
 
 # ---------------------------------------------------------
 # Get last updated timestamp in AEST
@@ -987,13 +976,15 @@ def main_app():
                     "Club": base_club_name(club.get("club", "")),
                     "Total Pos": club.get("total_position_points", 0),
                     "Teams": club.get("age_group_count", 0),
-                    "GF": club.get("total_gf", 0),
-                    "GA": club.get("total_ga", 0),
-                    "GD": club.get("total_gf", 0) - club.get("total_ga", 0),
                 }
+                # Add age group positions
                 for age in age_groups:
                     pos = club.get("age_groups", {}).get(age, {}).get("position")
                     row[age] = pos if pos else "-"
+                # Add GF, GA, GD as last 3 columns
+                row["GF"] = club.get("total_gf", 0)
+                row["GA"] = club.get("total_ga", 0)
+                row["GD"] = club.get("total_gf", 0) - club.get("total_ga", 0)
                 rows.append(row)
             df_overview = pd.DataFrame(rows)
             st.dataframe(df_overview, hide_index=True, use_container_width=True)
