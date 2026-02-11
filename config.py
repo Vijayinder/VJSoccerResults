@@ -82,19 +82,62 @@ USERS_CONFIG_PATH = os.path.join(BASE_DIR, "users_config.json")
 
 def build_default_users():
     """Build default users using passwords from secrets/env vars"""
+    users = {}
+    
+    # Try to load all users from Streamlit secrets
+    if HAS_STREAMLIT:
+        try:
+            # Get all passwords from secrets
+            passwords = st.secrets.get("passwords", {})
+            roles = st.secrets.get("roles", {})
+            full_names = st.secrets.get("full_names", {})
+            
+            for username in passwords.keys():
+                users[username] = {
+                    "password_hash": hash_password(passwords[username]),
+                    "role": roles.get(username, "user"),
+                    "full_name": full_names.get(username, username.title())
+                }
+            
+            # If we got users from secrets, return them
+            if users:
+                return users
+        except (KeyError, FileNotFoundError, AttributeError):
+            pass
+    
+    # Fallback: Build from environment variables
+    # Check for DRIBL_PASSWORD_* env vars
+    env_users = {}
+    for key in os.environ.keys():
+        if key.startswith("DRIBL_PASSWORD_"):
+            username = key.replace("DRIBL_PASSWORD_", "").lower()
+            password = os.environ[key]
+            role = os.environ.get(f"DRIBL_ROLE_{username.upper()}", "user")
+            full_name = os.environ.get(f"DRIBL_NAME_{username.upper()}", username.title())
+            
+            env_users[username] = {
+                "password_hash": hash_password(password),
+                "role": role,
+                "full_name": full_name
+            }
+    
+    if env_users:
+        return env_users
+    
+    # Final fallback: Hardcoded defaults (only for initial setup)
     return {
         "admin": {
-            "password_hash": hash_password(get_secret_password("admin")),
+            "password_hash": hash_password("admin123"),
             "role": "admin",
             "full_name": "Administrator"
         },
         "coach": {
-            "password_hash": hash_password(get_secret_password("coach")),
+            "password_hash": hash_password("coach123"),
             "role": "user",
             "full_name": "Coach"
         },
         "parent": {
-            "password_hash": hash_password(get_secret_password("parent")),
+            "password_hash": hash_password("parent123"),
             "role": "user",
             "full_name": "Parent"
         }
@@ -216,7 +259,7 @@ ACTIVITY_DB_PATH = os.path.join(BASE_DIR, "activity_logs.db")
 # Settings with fallbacks
 ENABLE_ACTIVITY_TRACKING = get_setting("enable_activity_tracking", True)
 LOG_RETENTION_DAYS = get_setting("log_retention_days", 90)
-SESSION_TIMEOUT_MINUTES = get_setting("session_timeout", 60)
+SESSION_TIMEOUT_MINUTES = get_setting("session_timeout", 240)  # 4 hours default
 ENABLE_GUEST_ACCESS = get_setting("enable_guest_access", False)
 GUEST_USERNAME = "guest"
 
