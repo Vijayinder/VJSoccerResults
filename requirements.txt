@@ -6,6 +6,8 @@ streamlit>=1.28.0
 pandas>=2.0.0
 pytz>=2023.3
 rapidfuzz>=3.0.0
-
+# Data Visualization & Export
+plotly>=5.18.0
+kaleido==0.2.1
 # Optional: For environment variables
 python-dotenv>=1.0.0
