@@ -102,6 +102,19 @@ st.markdown("""
         margin: 0.5rem 0;
         border: 1px solid #4CAF50;
     }
+    /* Targeted styling for buttons inside expanders only */
+    [data-testid="stExpander"] .stButton > button {
+        padding: 2px 8px !important;
+        min-height: 28px !important;
+        height: 28px !important;
+        font-size: 13px !important;
+        margin-bottom: 2px !important;
+    }
+
+    /* Optional: remove the gap between buttons */
+    [data-testid="stExpander"] div[data-testid="stVerticalBlock"] > div {
+        gap: 0.2rem !important;
+    }
 
 </style>
 """, unsafe_allow_html=True)
@@ -838,7 +851,9 @@ def main_app():
     # Update session state when user types
     if search != st.session_state["search_query"]:
         st.session_state["search_query"] = search
+        st.rerun() # Add this to ensure the expander reacts immediately to typing
     # If the user clears the search bar, re-open the examples
+    
     if not search:
         st.session_state["expander_state"] = True
     else:
@@ -846,75 +861,74 @@ def main_app():
         st.session_state["expander_state"] = False
     # Example queries
     with st.expander("💡 Example Queries", expanded=st.session_state["expander_state"]):
-#    with st.expander("💡 Example Queries", expanded=False):
         st.markdown("*Click any example to try it:*")
         col1, col2, col3 = st.columns(3)
         
         with col1:
             st.markdown("**📊 Statistics**")
-            if st.button("top scorers in Heidelberg United", key="ex1", use_container_width=True):
+            if st.button("top scorers in Heidelberg United", key="ex1", use_container_width=False):
                 st.session_state["clicked_query"] = "top scorers in Heidelberg United"
                 st.session_state["expander_state"] = False
                 st.rerun()
-            if st.button("yellow cards Heidelberg United U16", key="ex2", use_container_width=True):
+            if st.button("yellow cards Heidelberg United U16", key="ex2", use_container_width=False):
                 st.session_state["clicked_query"] = "yellow cards Heidelberg United U16"
                 st.session_state["expander_state"] = False
                 st.rerun()
-            if st.button("stats for John Doe", key="ex3", use_container_width=True):
+            if st.button("stats for John Doe", key="ex3", use_container_width=False):
                 st.session_state["clicked_query"] = "stats for John Doe"
                 st.session_state["expander_state"] = False
                 st.rerun()
-            if st.button("team stats for Heidelberg U16", key="ex4", use_container_width=True):
+            if st.button("team stats for Heidelberg U16", key="ex4", use_container_width=False):
                 st.session_state["clicked_query"] = "team stats for Heidelberg U16"
                 st.session_state["expander_state"] = False
                 st.rerun()
             
             st.markdown("**📅 Fixtures**")
-            if st.button("when is my next match", key="ex5", use_container_width=True):
+            if st.button("when is my next match", key="ex5", use_container_width=False):
                 st.session_state["clicked_query"] = "when is my next match"
                 st.session_state["expander_state"] = False
                 st.rerun()
-            if st.button("upcoming fixtures Heidelberg United", key="ex6", use_container_width=True):
+            if st.button("upcoming fixtures Heidelberg United", key="ex6", use_container_width=False):
                 st.session_state["clicked_query"] = "upcoming fixtures Heidelberg United"
                 st.session_state["expander_state"] = False
                 st.rerun()
             
         with col2:
             st.markdown("**🏆 Competitions**")
-            if st.button("YPL2 overview", key="ex7", use_container_width=True):
+            if st.button("YPL2 overview", key="ex7", use_container_width=False):
                 st.session_state["clicked_query"] = "YPL2 overview"
                 st.session_state["expander_state"] = False
                 st.rerun()
-            if st.button("U16 YPL2 ladder", key="ex8", use_container_width=True):
+            if st.button("U16 YPL2 ladder", key="ex8", use_container_width=False):
                 st.session_state["clicked_query"] = "U16 YPL2 ladder"
                 st.session_state["expander_state"] = False
                 st.rerun()
             
             st.markdown("**🟨🟥 Discipline**")
-            if st.button("yellow cards details", key="ex9", use_container_width=True):
+            if st.button("yellow cards details", key="ex9", use_container_width=False):
                 st.session_state["clicked_query"] = "yellow cards details"
                 st.session_state["expander_state"] = False
                 st.rerun()
-            if st.button("red cards in U16", key="ex10", use_container_width=True):
+            if st.button("red cards in U16", key="ex10", use_container_width=False):
                 st.session_state["clicked_query"] = "red cards in U16"
                 st.session_state["expander_state"] = False
                 st.rerun()
-            if st.button("coaches yellow cards", key="ex11", use_container_width=True):
+            if st.button("coaches yellow cards", key="ex11", use_container_width=False):
                 st.session_state["clicked_query"] = "coaches yellow cards"
                 st.session_state["expander_state"] = False
                 st.rerun()
             
         with col3:
             st.markdown("**⚠️ Missing Scores**")
-            if st.button("missing scores", key="ex12", use_container_width=True):
+            if st.button("missing scores", key="ex12", use_container_width=False):
                 st.session_state["clicked_query"] = "missing scores"
                 st.session_state["expander_state"] = False
                 st.rerun()
-            if st.button("missing scores Heidelberg", key="ex13", use_container_width=True):
+            if st.button("missing scores Heidelberg", key="ex13", use_container_width=False):
                 st.session_state["clicked_query"] = "missing scores Heidelberg"
                 st.session_state["expander_state"] = False
                 st.rerun()
-            if st.button("missing scores YPL2", key="ex14", use_container_width=True):
+            if st.button("missing scores YPL2", key="ex14", use_container_width=False):
                 st.session_state["clicked_query"] = "missing scores YPL2"
                 st.session_state["expander_state"] = False
                 st.rerun()
