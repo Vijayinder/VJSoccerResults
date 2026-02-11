@@ -100,6 +100,20 @@ st.markdown("""
         margin: 0.5rem 0;
         border: 1px solid #4CAF50;
     }
+    /* Makes example buttons look like clickable text */
+    div[data-testid="stButton"] button {
+        border: none;
+        padding: 0;
+        background-color: transparent;
+        color: #1E88E5;
+        text-align: left;
+        font-size: 14px;
+    }
+    div[data-testid="stButton"] button:hover {
+        text-decoration: underline;
+        color: #1565C0;
+        background-color: transparent;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -1343,6 +1357,11 @@ def main():
     if not st.session_state["authenticated"]:
         show_login_page()
     else:
+        # User is logged in, now handle the URL search parameter
+        params = st.query_params
+        if "search" in params:
+            # Update the search input state from the URL
+            st.session_state["search_input_value"] = params["search"].replace("+", " ")
         # Check session timeout
         if not check_session_timeout():
             show_login_page()
