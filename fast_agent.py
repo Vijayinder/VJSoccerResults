@@ -1699,95 +1699,95 @@ class FastQueryRouter:
     def __init__(self):
         pass
         
-def process(self, query: str):
-    """Route query to appropriate handler"""
-    q = query.lower().strip()
-    
-    # --- 1. INITIALIZE ALL VARIABLES AT THE START ---
-    # This prevents the UnboundLocalError by ensuring they exist immediately
-    filter_query = ""
-    show_details = False
-    is_non_player_query = any(keyword in q for keyword in ['non player', 'non-player', 'coach', 'staff', 'manager'])
-    is_personal_query = any(keyword in q for keyword in ['my next', 'when do i play', 'where do i play', 'my schedule', 'when is my', 'where is my', 'our next'])
-
-    # --- 2. MISSING SCORES ---
-    missing_keywords = ['missing score', 'missing scores', 'no score', 'scores not entered', 'overdue', 'matches without scores']
-    if any(keyword in q for keyword in missing_keywords):
-        filter_query = re.sub(r'\b(missing|score|scores?|no|not|entered|overdue|matches?|without|for|show|list)\b', '', q).strip()
-        include_all = 'all leagues' in q or 'all league' in q
-        return tool_missing_scores(filter_query, include_all_leagues=include_all)
-
-    # --- 3. COMPETITION OVERVIEW ---
-    comp_overview_keywords = ['competition overview', 'competition standings', 'ypl1 overview', 'ypl2 overview', 'ysl overview', 'vpl overview', 'club rankings', 'overall standings']
-    if any(keyword in q for keyword in comp_overview_keywords) or any(comp in q for comp in ['ypl1', 'ypl2', 'ysl nw', 'ysl se', 'vpl']):
-        if any(word in q for word in ['overview', 'standings', 'ranking', 'competition']):
-            return tool_competition_overview(query)
-
-    # --- 4. FIXTURES / NEXT MATCH ---
-    fixture_keywords = ['next match', 'next game', 'upcoming', 'when do i play', 'where do i play', 'my next', 'schedule', 'fixture', 'fixtures', 'when is my', 'where is my', 'our next']
-    if any(keyword in q for keyword in fixture_keywords):
-        if is_personal_query:
-            return tool_fixtures(query="", limit=5, use_user_team=True)
-        else:
-            team_query = re.sub(r'\b(next|match|game|upcoming|when|where|do|i|play|my|schedule|fixtures?|is)\b', '', q).strip()
-            limit = 5 if team_query else 10
-            return tool_fixtures(team_query, limit, use_user_team=False)
-
-    # --- 5. YELLOW CARDS ---
-    if "yellow card" in q or "yellows" in q:
-        show_details = "detail" in q
-        filter_query = re.sub(r'\b(yellow|card|cards|details?|show|list|with|for|me)\b', '', q).strip()
-        return tool_yellow_cards(filter_query, show_details, include_non_players=is_non_player_query)
-
-    # --- 6. RED CARDS ---
-    if "red card" in q or "reds" in q:
-        show_details = "detail" in q
-        filter_query = re.sub(r'\b(red|card|cards|details?|show|list|with|for|me)\b', '', q).strip()
-        return tool_red_cards(filter_query, show_details, include_non_players=is_non_player_query)
-
-    # --- 7. STANDALONE NON-PLAYER LIST ---
-    if is_non_player_query:
-        filter_query = re.sub(r'\b(non|player|players?|staff|coach|coaches?|manager|managers|for|all|show|list|with|get|me)\b', '', q).strip()
-        return tool_non_players(filter_query)
-
-    # --- 8. TOP SCORERS ---
-    if any(word in q for word in ["top scorer","leading scorer", "top scorers", "golden boot"]):
-        clean = re.sub(r'\b(top|scorer|scorers?|golden|boot|in|for|show|me|list)\b', '', q).strip()
-        team_context = clean if clean else USER_CONFIG["team"]
-        result = tool_top_scorers(team_context)
-        if isinstance(result, dict) and result.get("type") == "table":
-            result["title"] = f"🏆 Here are the top performers for {result.get('title', team_context)}:"
-        return result
+    def process(self, query: str):
+        """Route query to appropriate handler"""
+        q = query.lower().strip()
         
-    # --- 9. TEAM AND PLAYER STATS ---
-    if any(word in q for word in ["stats for", "team stats", "show me", "details for"]):
-        clean = re.sub(r'\b(stats?|for|team|show|me|get|find|details?|profile|about)\b', '', q).strip()
-        detailed = "detail" in q
-        recognized_team = normalize_team(clean)
-        if recognized_team:
-            result = tool_team_stats(recognized_team)
-            if isinstance(result, dict) and result.get("type") == "table":
-                result["title"] = f"📊 Performance data for **{recognized_team}**:"
-            return result
-        else:
-            result = tool_players(clean, detailed)
-            if isinstance(result, dict) and result.get("type") == "table":
-                result["title"] = f"👟 Recent stats for **{clean.title()}**:"
-            return result
+        # --- 1. INITIALIZE ALL VARIABLES AT THE START ---
+        # This prevents the UnboundLocalError by ensuring they exist immediately
+        filter_query = ""
+        show_details = False
+        is_non_player_query = any(keyword in q for keyword in ['non player', 'non-player', 'coach', 'staff', 'manager'])
+        is_personal_query = any(keyword in q for keyword in ['my next', 'when do i play', 'where do i play', 'my schedule', 'when is my', 'where is my', 'our next'])
 
-    # --- 10. LADDER & OTHER TOOLS ---
-    if any(word in q for word in ["ladder", "table", "standings"]):
-        return tool_ladder(query)
-    if "lineup" in q or "starting" in q:
-        return tool_lineups(query)
-    if " vs " in q or " v " in q:
-        return tool_match_centre(query)
-    if "form" in q:
+        # --- 2. MISSING SCORES ---
+        missing_keywords = ['missing score', 'missing scores', 'no score', 'scores not entered', 'overdue', 'matches without scores']
+        if any(keyword in q for keyword in missing_keywords):
+            filter_query = re.sub(r'\b(missing|score|scores?|no|not|entered|overdue|matches?|without|for|show|list)\b', '', q).strip()
+            include_all = 'all leagues' in q or 'all league' in q
+            return tool_missing_scores(filter_query, include_all_leagues=include_all)
+
+        # --- 3. COMPETITION OVERVIEW ---
+        comp_overview_keywords = ['competition overview', 'competition standings', 'ypl1 overview', 'ypl2 overview', 'ysl overview', 'vpl overview', 'club rankings', 'overall standings']
+        if any(keyword in q for keyword in comp_overview_keywords) or any(comp in q for comp in ['ypl1', 'ypl2', 'ysl nw', 'ysl se', 'vpl']):
+            if any(word in q for word in ['overview', 'standings', 'ranking', 'competition']):
+                return tool_competition_overview(query)
+
+        # --- 4. FIXTURES / NEXT MATCH ---
+        fixture_keywords = ['next match', 'next game', 'upcoming', 'when do i play', 'where do i play', 'my next', 'schedule', 'fixture', 'fixtures', 'when is my', 'where is my', 'our next']
+        if any(keyword in q for keyword in fixture_keywords):
+            if is_personal_query:
+                return tool_fixtures(query="", limit=5, use_user_team=True)
+            else:
+                team_query = re.sub(r'\b(next|match|game|upcoming|when|where|do|i|play|my|schedule|fixtures?|is)\b', '', q).strip()
+                limit = 5 if team_query else 10
+                return tool_fixtures(team_query, limit, use_user_team=False)
+
+        # --- 5. YELLOW CARDS ---
+        if "yellow card" in q or "yellows" in q:
+            show_details = "detail" in q
+            filter_query = re.sub(r'\b(yellow|card|cards|details?|show|list|with|for|me)\b', '', q).strip()
+            return tool_yellow_cards(filter_query, show_details, include_non_players=is_non_player_query)
+
+        # --- 6. RED CARDS ---
+        if "red card" in q or "reds" in q:
+            show_details = "detail" in q
+            filter_query = re.sub(r'\b(red|card|cards|details?|show|list|with|for|me)\b', '', q).strip()
+            return tool_red_cards(filter_query, show_details, include_non_players=is_non_player_query)
+
+        # --- 7. STANDALONE NON-PLAYER LIST ---
+        if is_non_player_query:
+            filter_query = re.sub(r'\b(non|player|players?|staff|coach|coaches?|manager|managers|for|all|show|list|with|get|me)\b', '', q).strip()
+            return tool_non_players(filter_query)
+
+        # --- 8. TOP SCORERS ---
+        if any(word in q for word in ["top scorer","leading scorer", "top scorers", "golden boot"]):
+            clean = re.sub(r'\b(top|scorer|scorers?|golden|boot|in|for|show|me|list)\b', '', q).strip()
+            team_context = clean if clean else USER_CONFIG["team"]
+            result = tool_top_scorers(team_context)
+            if isinstance(result, dict) and result.get("type") == "table":
+                result["title"] = f"🏆 Here are the top performers for {result.get('title', team_context)}:"
+            return result
+            
+        # --- 9. TEAM AND PLAYER STATS ---
+        if any(word in q for word in ["stats for", "team stats", "show me", "details for"]):
+            clean = re.sub(r'\b(stats?|for|team|show|me|get|find|details?|profile|about)\b', '', q).strip()
+            detailed = "detail" in q
+            recognized_team = normalize_team(clean)
+            if recognized_team:
+                result = tool_team_stats(recognized_team)
+                if isinstance(result, dict) and result.get("type") == "table":
+                    result["title"] = f"📊 Performance data for **{recognized_team}**:"
+                return result
+            else:
+                result = tool_players(clean, detailed)
+                if isinstance(result, dict) and result.get("type") == "table":
+                    result["title"] = f"👟 Recent stats for **{clean.title()}**:"
+                return result
+
+        # --- 10. LADDER & OTHER TOOLS ---
+        if any(word in q for word in ["ladder", "table", "standings"]):
+            return tool_ladder(query)
+        if "lineup" in q or "starting" in q:
+            return tool_lineups(query)
+        if " vs " in q or " v " in q:
+            return tool_match_centre(query)
+        if "form" in q:
+            team = normalize_team(query)
+            return tool_form(team if team else query)
+        
+        # --- 11. DEFAULT FALLBACK ---
         team = normalize_team(query)
-        return tool_form(team if team else query)
-    
-    # --- 11. DEFAULT FALLBACK ---
-    team = normalize_team(query)
-    if team:
-        return tool_form(team)
-    return tool_matches(query)
+        if team:
+            return tool_form(team)
+        return tool_matches(query)
