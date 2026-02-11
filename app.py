@@ -932,40 +932,40 @@ def main_app():
                         
                         st.dataframe(df, hide_index=True, use_container_width=True, height=final_height)
                         
-                        # --- Download Section ---
-                        col1, col2 = st.columns(2)
-                        
-                        with col1:
-                            csv = df.to_csv(index=False).encode('utf-8')
-                            st.download_button(
-                                label="📥 Download CSV",
-                                data=csv,
-                                file_name=f"data_export.csv",
-                                mime='text/csv'
-                            )
-                            
-                        with col2:
-                            # We import here so the app doesn't crash on startup if installation failed
-                            try:
-                                import plotly.graph_objects as go
-                                
-                                fig = go.Figure(data=[go.Table(
-                                    header=dict(values=list(df.columns), fill_color='#F0F2F6', align='left'),
-                                    cells=dict(values=[df[col] for col in df.columns], fill_color='white', align='left')
-                                )])
-                                fig.update_layout(margin=dict(l=5, r=5, t=5, b=5))
-                                
-                                # Convert to PNG
-                                img_bytes = fig.to_image(format="png", engine="kaleido")
-                                
-                                st.download_button(
-                                    label="🖼️ Download as Image",
-                                    data=img_bytes,
-                                    file_name=f"table_export.png",
-                                    mime="image/png"
-                                )
-                            except (ImportError, ModuleNotFoundError):
-                                st.button("🖼️ Image Export (Install Plotly)", disabled=True, help="Run 'pip install plotly kaleido' in your terminal.")
+#                        # --- Download Section ---
+#                        col1, col2 = st.columns(2)
+#                        
+#                        with col1:
+#                            csv = df.to_csv(index=False).encode('utf-8')
+#                            st.download_button(
+#                                label="📥 Download CSV",
+#                                data=csv,
+#                                file_name=f"data_export.csv",
+#                                mime='text/csv'
+#                            )
+#                            
+#                        with col2:
+#                            # We import here so the app doesn't crash on startup if installation failed
+#                            try:
+#                                import plotly.graph_objects as go
+#                                
+#                                fig = go.Figure(data=[go.Table(
+#                                    header=dict(values=list(df.columns), fill_color='#F0F2F6', align='left'),
+#                                    cells=dict(values=[df[col] for col in df.columns], fill_color='white', align='left')
+#                                )])
+#                                fig.update_layout(margin=dict(l=5, r=5, t=5, b=5))
+#                                
+#                                # Convert to PNG
+#                                img_bytes = fig.to_image(format="png", engine="kaleido")
+#                                
+#                                st.download_button(
+#                                    label="🖼️ Download as Image",
+#                                    data=img_bytes,
+#                                    file_name=f"table_export.png",
+#                                    mime="image/png"
+#                                )
+#                            except (ImportError, ModuleNotFoundError):
+#                                st.button("🖼️ Image Export (Install Plotly)", disabled=True, help="Run 'pip install plotly kaleido' in your terminal.")
 
                 elif answer.get("type") == "error":
                     st.error(answer.get("message", "An error occurred"))
