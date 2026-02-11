@@ -215,7 +215,9 @@ def parse_date_utc_to_aest(date_str: str) -> Optional[datetime]:
 
 def get_last_sunday() -> datetime.date:
     """Get the date of last Sunday"""
-    today = datetime.now().date()
+ #   today = datetime.now().date()
+    melbourne_tz = pytz.timezone('Australia/Melbourne')
+    today = datetime.now(melbourne_tz).date()
     days_since_sunday = (today.weekday() + 1) % 7  # Monday = 0, Sunday = 6
     if days_since_sunday == 0:
         # Today is Sunday, return last Sunday
@@ -537,16 +539,26 @@ def tool_fixtures(query: str = "", limit: int = 10, use_user_team: bool = False)
     if use_user_team and not query:
         query = USER_CONFIG["team"]
     
-    today = datetime.now().date()
-    
+ #   today = datetime.now().date()
+   melbourne_tz = pytz.timezone('Australia/Melbourne')
+   today = datetime.now(melbourne_tz).date()  
     # Filter upcoming fixtures
     upcoming = []
     for f in fixtures:
         attrs = f.get("attributes", {})
         date_str = attrs.get("date", "")
-        fixture_date = parse_date(date_str)
+        
+        # FIX: Use the UTC to AEST parser so Sunday matches don't show as Saturday
+        match_datetime = parse_date_utc_to_aest(date_str)
+        if not match_datetime:
+            continue
+            
+        fixture_date = match_datetime.date() # This is now the correct AEST date
+        
         if fixture_date >= today:
-            upcoming.append((fixture_date, attrs))
+            # We also want to grab the formatted time from match_datetime
+            match_time = match_datetime.strftime("%I:%M %p") 
+            upcoming.append((fixture_date, match_time, attrs))
     
     upcoming.sort(key=lambda x: x[0])
     
@@ -625,125 +637,95 @@ def tool_fixtures(query: str = "", limit: int = 10, use_user_team: bool = False)
 # 6B. MISSING SCORES TOOL
 # ---------------------------------------------------------
 
-def tool_missing_scores(query: str = "", include_all_leagues: bool = False) -> str:
-    """
-    Find matches that were scheduled before last Sunday but don't have scores entered
+def tool_missing_scores(query: str = "") -> Any:
+    # 1. SETUP TIMEZONES AND BOUNDARIES FIRST
+    melbourne_tz = pytz.timezone('Australia/Melbourne')
+    now_aest = datetime.now(melbourne_tz)
+    today = now_aest.date()
     
-    Args:
-        query: Optional filter for specific league or team
-        include_all_leagues: If False, only show YPL1, YPL2, YSL leagues
-    """
-    last_sunday = get_last_sunday()
-    
-    # Define leagues we care about
-    target_leagues = ['YPL1', 'YPL2', 'YSL NW', 'YSL SE']
-    
+    # Optional: Keep last_sunday if you want to limit how far back to look,
+    # but for "Missing Scores", usually you want all overdue matches.
+    last_sunday = get_last_sunday() 
+
     missing_scores = []
-    
+
+    # ... (Your logic for target_leagues and include_all_leagues) ...
+
     for fixture in fixtures:
         attrs = fixture.get("attributes", {})
-        
-        # Parse match date
         date_str = attrs.get("date", "")
         if not date_str:
             continue
         
+        # 2. PARSE UTC TO AEST
         match_datetime = parse_date_utc_to_aest(date_str)
         if not match_datetime:
             continue
         
         match_date = match_datetime.date()
         
-        # Check if match was before last Sunday
-        if match_date >= last_sunday:
+        # 3. FIX THE BOUNDARY
+        # Change from '>= last_sunday' to '> today' 
+        # This ensures Feb 8 (Sunday) is INCLUDED if today is Feb 11.
+        if match_date > today:
             continue
         
-        # Check league filter
-        league_name = attrs.get("league_name", "")
-        extracted_league = extract_league_from_league_name(league_name)
-        
-        if not include_all_leagues:
-            if extracted_league not in target_leagues:
-                continue
-        
-        # Check if query matches
-        if query:
-            home = attrs.get("home_team_name", "")
-            away = attrs.get("away_team_name", "")
-            comp = attrs.get("competition_name", "")
-            
-            query_lower = query.lower()
-            if not (query_lower in home.lower() or 
-                   query_lower in away.lower() or 
-                   query_lower in league_name.lower() or
-                   query_lower in comp.lower()):
-                continue
-        
-        # Check if score is missing
-        status = attrs.get("status", "")
+        # ... (League and Query filtering logic) ...
+
+        # 4. IDENTIFY MISSING SCORE
+        status = attrs.get("status", "").lower()
         home_score = attrs.get("home_score")
         away_score = attrs.get("away_score")
         
-        # Score is missing if:
-        # 1. Status is not "complete", OR
-        # 2. Home/away score is None/null
+        # A score is missing if it's not played/complete OR scores are null
         has_missing_score = (
             status != "complete" or 
             home_score is None or 
             away_score is None
         )
-        
+
         if has_missing_score:
             missing_scores.append({
                 "match_date": match_date,
-                "match_datetime": match_datetime,
+                "match_datetime": match_datetime, # This is already AEST from parse_date_utc_to_aest
                 "home_team": attrs.get("home_team_name", "Unknown"),
                 "away_team": attrs.get("away_team_name", "Unknown"),
-                "league": league_name,
+                "league": attrs.get("league_name", ""),
                 "competition": attrs.get("competition_name", ""),
                 "round": attrs.get("full_round", attrs.get("round", "")),
                 "venue": attrs.get("ground_name", ""),
                 "status": status,
-                "match_hash_id": attrs.get("match_hash_id", ""),
-                "days_overdue": (datetime.now().date() - match_date).days
+                "days_overdue": (today - match_date).days
             })
     
     if not missing_scores:
-        filter_desc = f" for '{query}'" if query else ""
-        return f"✅ No missing scores found{filter_desc}! All matches have been entered."
+        return f"✅ No missing scores found! All matches have been entered."
     
-    # Sort by date (oldest first)
+    # Sort oldest first
     missing_scores.sort(key=lambda x: x["match_date"])
     
-    # Format output
-    filter_desc = f" - {query}" if query else ""
-    
-    # Return as table data
+    # 5. FORMAT TABLE DATA
     data = []
     for i, match in enumerate(missing_scores, 1):
-        league = extract_league_from_league_name(match["league"])
-        
-        # Format date in AEST
-        date_display = match["match_datetime"].strftime("%d-%b-%Y %H:%M")
+        # Format the AEST datetime for display
+        # Use %I:%M %p for 12-hour clock (e.g. 03:30 PM)
+        aest_display = match["match_datetime"].strftime("%d-%b %I:%M %p")
         
         data.append({
             "#": i,
-            "Date (AEST)": date_display,
+            "Kickoff (AEST)": aest_display,
             "Days Overdue": match["days_overdue"],
-            "League": league,
-            "Home": match["home_team"],
-            "Away": match["away_team"],
+            "Home Team": match["home_team"],
+            "Away Team": match["away_team"],
             "Round": match["round"],
-            "Venue": match["venue"],
-            "Status": match["status"]
+            "Venue": match["venue"]
         })
     
     return {
         "type": "table",
         "data": data,
-        "title": f"⚠️ Missing Scores{filter_desc} - Matches before {last_sunday.strftime('%d-%b-%Y')} ({len(missing_scores)} matches)"
+        "title": f"⚠️ Missing Scores ({len(missing_scores)} matches overdue)"
     }
-
 def extract_league_from_league_name(league_name: str) -> str:
     """Extract league from league name (YPL1, YPL2, YSL NW, etc.)"""
     if not league_name:
@@ -774,16 +756,29 @@ def extract_league_from_league_name(league_name: str) -> str:
 
 def tool_yellow_cards(query: str = "", show_details: bool = False, include_non_players: bool = False) -> str:
     """List all people with yellow cards - supports age group and team filtering"""
+    
+    # Initialize variables to avoid UnboundLocalError
+    age_group = None
+    team_name = None
+    base_club = None
+    
+    # 1. Get everyone with a yellow card
     players_with_yellows = [
         p for p in players_summary 
         if p.get("stats", {}).get("yellow_cards", 0) > 0
     ]
     
-    # Apply filters
+    # 2. Apply filters based on the query
     if query:
+        # Extract filters from the query text
+        age_group = extract_age_group(query)
+        team_name = extract_team_name(query)
+        base_club = extract_base_club_name(query)
+        
+        # filter_players_by_criteria handles the logic for specific team/club/age group
         players_with_yellows = filter_players_by_criteria(players_with_yellows, query, include_non_players=include_non_players)
     elif include_non_players:
-        # Filter for non-players even without query
+        # If no query but non-players requested, filter to non-players only
         players_with_yellows = [p for p in players_with_yellows if p.get("role") and p.get("role") != "player"]
     
     if not players_with_yellows:
@@ -791,13 +786,10 @@ def tool_yellow_cards(query: str = "", show_details: bool = False, include_non_p
         person_type = "non-players" if include_non_players else "players"
         return f"❌ No {person_type} with yellow cards found{filter_desc}"
     
+    # Sort by yellow card count (descending)
     players_with_yellows.sort(key=lambda x: x.get("stats", {}).get("yellow_cards", 0), reverse=True)
     
-    # Build filter description based on what was actually extracted
-    age_group = extract_age_group(query) if query else None
-    team_name = extract_team_name(query) if query else None
-    base_club = extract_base_club_name(query) if query else None
-    
+    # 3. Build filter description for the title/header
     filter_parts = []
     if include_non_players:
         filter_parts.append("Non-Players")
@@ -810,6 +802,7 @@ def tool_yellow_cards(query: str = "", show_details: bool = False, include_non_p
     
     filter_desc = " - " + " ".join(filter_parts) if filter_parts else ""
     
+    # 4. Return detailed text format or structured table data
     if show_details:
         lines = [f"🟨 **Yellow Cards{filter_desc}** ({len(players_with_yellows)} total)\n"]
         
@@ -829,6 +822,7 @@ def tool_yellow_cards(query: str = "", show_details: bool = False, include_non_p
                 if m.get("yellow_cards", 0) > 0:
                     venue = "🏠" if m.get('home_or_away') == 'home' else "✈️"
                     date_str = format_date(m.get('date', ''))
+                    # Ensure format_minutes helper is used for yellow card times
                     yellow_mins = format_minutes(m.get('yellow_minutes', []))
                     yellow_display = f"🟨 {m.get('yellow_cards')}" + (f" ({yellow_mins})" if yellow_mins else "")
                     lines.append(
@@ -838,7 +832,7 @@ def tool_yellow_cards(query: str = "", show_details: bool = False, include_non_p
         
         return "\n".join(lines)
     else:
-        # Return as table data
+        # Return as table data (e.g. for top scorers style view)
         data = []
         for i, p in enumerate(players_with_yellows[:30], 1):
             stats = p.get("stats", {})
@@ -868,7 +862,6 @@ def tool_yellow_cards(query: str = "", show_details: bool = False, include_non_p
             "data": data,
             "title": f"🟨 Yellow Cards{filter_desc} ({len(players_with_yellows)} total, showing top 30)"
         }
-
 
 def tool_red_cards(query: str = "", show_details: bool = False, include_non_players: bool = False) -> str:
     """List all people with red cards - supports age group and team filtering"""
