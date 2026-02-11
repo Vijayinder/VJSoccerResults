@@ -100,20 +100,7 @@ st.markdown("""
         margin: 0.5rem 0;
         border: 1px solid #4CAF50;
     }
-    /* Makes example buttons look like clickable text */
-    div[data-testid="stButton"] button {
-        border: none;
-        padding: 0;
-        background-color: transparent;
-        color: #1E88E5;
-        text-align: left;
-        font-size: 14px;
-    }
-    div[data-testid="stButton"] button:hover {
-        text-decoration: underline;
-        color: #1565C0;
-        background-color: transparent;
-    }
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -791,12 +778,7 @@ def show_admin_dashboard():
             st.dataframe(df_recent[available_cols], hide_index=True, use_container_width=True)
         else:
             st.info("No recent activity")
-            
-# Helper to create clickable search links
-def clickable_search(text):
-    # Encode the text for a URL
-    url_query = text.replace(" ", "+")
-    return f'<a href="./?search={url_query}" target="_self" style="color: #1E88E5; text-decoration: none;">• {text}</a>'
+
 # ---------------------------------------------------------
 # Main Application
 # ---------------------------------------------------------
@@ -827,60 +809,85 @@ def main_app():
     players_data = load_players_summary()
     comp_overview = load_competition_overview()
 
-    # --- 1. HANDLE CLICKED LINKS ---
-    params = st.query_params
-    if "search" in params:
-        # This catches the clicked link and puts it into session state
-        st.session_state["search_input_value"] = params["search"].replace("+", " ")
-        
     # Search bar
     st.markdown("### 💬 Ask Me Anything")
-#    search = st.text_input(
-#        "",
-#        key="global_search",
-#        placeholder="Try: 'Stats for Shaurya','top scorers in U16', 'yellow cards Heidelberg', 'missing scores'...",
-#        label_visibility="collapsed"
-#    )
+    
+    # Initialize search input in session state if not present
+    if "search_box" not in st.session_state:
+        st.session_state["search_box"] = ""
+    
     search = st.text_input(
-        "💬 Ask anything:", 
-        value=st.session_state.get("search_input_value", ""), # Link it here
+        "",
         placeholder="Try: 'Stats for Shaurya','top scorers in U16', 'yellow cards Heidelberg', 'missing scores'...",
-        key="main_search_input"
+        key="search_box",
+        label_visibility="collapsed"
     )
     
     # Example queries
-# --- Your Updated Expander ---
     with st.expander("💡 Example Queries", expanded=False):
+        st.markdown("*Click any example to try it:*")
         col1, col2, col3 = st.columns(3)
         
         with col1:
             st.markdown("**📊 Statistics**")
-            st.markdown(clickable_search("top scorers in Heidelberg United U16"), unsafe_allow_html=True)
-            st.markdown(clickable_search("yellow cards Heidelberg United U16"), unsafe_allow_html=True)
-            st.markdown(clickable_search("stats for John Doe"), unsafe_allow_html=True) # Change to a real name
-            st.markdown(clickable_search("team stats for Heidelberg U16"), unsafe_allow_html=True)
+            if st.button("top scorers in Heidelberg United U16", key="ex1", use_container_width=True):
+                st.session_state["search_box"] = "top scorers in Heidelberg United U16"
+                st.rerun()
+            if st.button("yellow cards Heidelberg United U16", key="ex2", use_container_width=True):
+                st.session_state["search_box"] = "yellow cards Heidelberg United U16"
+                st.rerun()
+            if st.button("stats for Shaurya", key="ex3", use_container_width=True):
+                st.session_state["search_box"] = "stats for Shaurya"
+                st.rerun()
+            if st.button("team stats for Heidelberg U16", key="ex4", use_container_width=True):
+                st.session_state["search_box"] = "team stats for Heidelberg U16"
+                st.rerun()
             
-            st.markdown("\n**📅 Fixtures**")
-            st.markdown(clickable_search("when is my next match"), unsafe_allow_html=True)
-            st.markdown(clickable_search("upcoming fixtures Heidelberg United"), unsafe_allow_html=True)
+            st.markdown("**📅 Fixtures**")
+            if st.button("when is my next match", key="ex5", use_container_width=True):
+                st.session_state["search_box"] = "when is my next match"
+                st.rerun()
+            if st.button("upcoming fixtures Heidelberg United", key="ex6", use_container_width=True):
+                st.session_state["search_box"] = "upcoming fixtures Heidelberg United"
+                st.rerun()
             
         with col2:
             st.markdown("**🏆 Competitions**")
-            st.markdown(clickable_search("YPL1 overview"), unsafe_allow_html=True)
-            st.markdown(clickable_search("U16 YPL1 ladder"), unsafe_allow_html=True)
+            if st.button("YPL1 overview", key="ex7", use_container_width=True):
+                st.session_state["search_box"] = "YPL1 overview"
+                st.rerun()
+            if st.button("U16 YPL1 ladder", key="ex8", use_container_width=True):
+                st.session_state["search_box"] = "U16 YPL1 ladder"
+                st.rerun()
             
-            st.markdown("\n**🟨🟥 Discipline**")
-            st.markdown(clickable_search("yellow cards details"), unsafe_allow_html=True)
-            st.markdown(clickable_search("red cards in U15"), unsafe_allow_html=True)
-            st.markdown(clickable_search("coaches yellow cards"), unsafe_allow_html=True)
+            st.markdown("**🟨🟥 Discipline**")
+            if st.button("yellow cards details", key="ex9", use_container_width=True):
+                st.session_state["search_box"] = "yellow cards details"
+                st.rerun()
+            if st.button("red cards in U15", key="ex10", use_container_width=True):
+                st.session_state["search_box"] = "red cards in U15"
+                st.rerun()
+            if st.button("coaches yellow cards", key="ex11", use_container_width=True):
+                st.session_state["search_box"] = "coaches yellow cards"
+                st.rerun()
             
         with col3:
             st.markdown("**⚠️ Missing Scores**")
-            st.markdown(clickable_search("missing scores"), unsafe_allow_html=True)
-            st.markdown(clickable_search("missing scores Heidelberg"), unsafe_allow_html=True)
-            st.markdown(clickable_search("missing scores YPL1"), unsafe_allow_html=True)
-            st.markdown(clickable_search("scores not entered"), unsafe_allow_html=True)
-            st.markdown(clickable_search("overdue matches"), unsafe_allow_html=True)
+            if st.button("missing scores", key="ex12", use_container_width=True):
+                st.session_state["search_box"] = "missing scores"
+                st.rerun()
+            if st.button("missing scores Heidelberg", key="ex13", use_container_width=True):
+                st.session_state["search_box"] = "missing scores Heidelberg"
+                st.rerun()
+            if st.button("missing scores YPL1", key="ex14", use_container_width=True):
+                st.session_state["search_box"] = "missing scores YPL1"
+                st.rerun()
+            if st.button("scores not entered", key="ex15", use_container_width=True):
+                st.session_state["search_box"] = "scores not entered"
+                st.rerun()
+            if st.button("overdue matches", key="ex16", use_container_width=True):
+                st.session_state["search_box"] = "overdue matches"
+                st.rerun()
 
     # Process search queries
     if search and search != st.session_state["last_search"]:
