@@ -15,6 +15,7 @@ Features:
 import os
 import json
 import re
+import pytz
 from typing import List, Dict, Any, Optional
 from datetime import datetime, timedelta
 from collections import defaultdict
@@ -192,25 +193,25 @@ def parse_date(date_str: str) -> datetime.date:
         return datetime.min.date()
 
 def parse_date_utc_to_aest(date_str: str) -> Optional[datetime]:
-    """Parse UTC date string and convert to AEST datetime"""
+    """Parse UTC date string and convert to Melbourne Local Time (AEST/AEDT)"""
     if not date_str:
         return None
     try:
-        # Parse UTC datetime
+        # 1. Parse the UTC string
         if 'Z' in date_str:
-            # Remove 'Z' and parse
             utc_dt = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
-        elif 'T' in date_str:
+        elif '+' in date_str or '-' in date_str:
             utc_dt = datetime.fromisoformat(date_str)
         else:
-            return None
+            # If no timezone info, assume UTC
+            utc_dt = datetime.fromisoformat(date_str).replace(tzinfo=pytz.UTC)
         
-        # Convert to AEST (UTC+10 or UTC+11 depending on DST)
-        from datetime import timezone, timedelta
-        aest = timezone(timedelta(hours=10))  # Standard time (non-DST)
-        aest_dt = utc_dt.astimezone(aest)
-        return aest_dt
-    except (ValueError, AttributeError):
+        # 2. Define Melbourne Timezone (handles AEST vs AEDT automatically)
+        melbourne_tz = pytz.timezone('Australia/Melbourne')
+        
+        # 3. Convert to Melbourne local time
+        return utc_dt.astimezone(melbourne_tz)
+    except (ValueError, AttributeError, Exception):
         return None
 
 def get_last_sunday() -> datetime.date:
@@ -535,114 +536,93 @@ def filter_players_by_criteria(players: List[Dict], query: str, include_non_play
 # ---------------------------------------------------------
 
 def tool_fixtures(query: str = "", limit: int = 10, use_user_team: bool = False) -> str:
-    """Show upcoming fixtures with correct AEST timezone logic"""
-    if use_user_team and not query:
-        query = USER_CONFIG["team"]
+    """Show upcoming fixtures with full DST-aware time support"""
     
+    # Get the precise 'now' in Melbourne
     melbourne_tz = pytz.timezone('Australia/Melbourne')
-    today = datetime.now(melbourne_tz).date()  
+    now_melbourne = datetime.now(melbourne_tz)
+    
+    # Logic for determining the search term and limit
+    if not query and not use_user_team:
+        search_term = USER_CONFIG["club"]
+        limit = 10
+    elif use_user_team and not query:
+        search_term = USER_CONFIG["team"]
+        limit = 5
+    else:
+        search_term = query
+        has_specific_age = any(age in query.upper() for age in ["U13", "U14", "U15", "U16", "U18", "U21"])
+        limit = 5 if has_specific_age else 10
 
     upcoming = []
     for f in fixtures:
         attrs = f.get("attributes", {})
         date_str = attrs.get("date", "")
         
-        # Shift UTC to AEST to get the correct day and time
+        # Convert UTC -> Melbourne (AEDT/AEST)
         match_dt = parse_date_utc_to_aest(date_str)
         if not match_dt:
             continue
             
-        fixture_date = match_dt.date()
-        if fixture_date >= today:
-            # Store the date, the local time string, and attributes
-            local_time = match_dt.strftime("%I:%M %p")
-            upcoming.append((fixture_date, local_time, attrs))
+        # Only show matches that haven't started yet
+        if match_dt >= now_melbourne:
+            home = attrs.get("home_team_name", "").lower()
+            away = attrs.get("away_team_name", "").lower()
+            league = attrs.get("league_name", "").lower()
+            
+            if search_term.lower() in home or search_term.lower() in away or search_term.lower() in league:
+                upcoming.append((match_dt, attrs))
     
-    # Sort by date
+    # Sort strictly by the full datetime (Day + Time)
     upcoming.sort(key=lambda x: x[0])
-    
-    # Filter by team if query provided
-    if query:
-        team = normalize_team(query) or query
-        filtered = []
-        for date, l_time, attrs in upcoming:
-            home = attrs.get("home_team_name", "")
-            away = attrs.get("away_team_name", "")
-            if team.lower() in home.lower() or team.lower() in away.lower():
-                filtered.append((date, l_time, attrs))
-        upcoming = filtered
-    
-    if not upcoming:
-        team_name = query if query else "any team"
-        return f"❌ No upcoming fixtures found for {team_name}"
-    
     upcoming = upcoming[:limit]
     
-    # Heading logic
-    if use_user_team and query == USER_CONFIG["team"]:
-        lines = [f"📅 **Your Upcoming Matches** ({len(upcoming)} matches)\n"]
-    else:
-        team_display = query if query else "All Teams"
-        lines = [f"📅 **Upcoming Fixtures - {team_display}** ({len(upcoming)} matches)\n"]
+    if not upcoming:
+        return f"❌ No upcoming fixtures found for '{search_term}'."
+
+    title_text = f"All {USER_CONFIG['club']} Age Groups" if not query and not use_user_team else search_term.title()
+    lines = [f"📅 **Upcoming Fixtures: {title_text}**\n"]
     
-    for i, (fixture_date, local_time, attrs) in enumerate(upcoming, 1):
+    for i, (m_dt, attrs) in enumerate(upcoming, 1):
+        # Calculate days until using midnight boundaries for natural language
+        days_until = (m_dt.date() - now_melbourne.date()).days
+        
+        # Format: 15-Feb (Sun) 10:30 AM
+        date_display = m_dt.strftime("%d-%b (%a) %I:%M %p")
+        
         home = attrs.get("home_team_name", "Unknown")
         away = attrs.get("away_team_name", "Unknown")
-        venue = attrs.get("ground_name", attrs.get("venue", "TBD")) # Ground name is more accurate in Dribl
-        competition = attrs.get("competition_name", "")
+        league = attrs.get("league_name", "")
+        venue = attrs.get("ground_name", "TBD")
         
-        date_display = fixture_date.strftime("%d-%b-%Y (%a)")
-        days_until = (fixture_date - today).days
-        
-        # Status Badge
         if days_until == 0:
-            days_str = "🔴 TODAY!"
+            status = "🔴 TODAY!"
         elif days_until == 1:
-            days_str = "⚠️ Tomorrow"
+            status = "⚠️ Tomorrow"
         else:
-            days_str = f"🗓️ In {days_until} days"
-        
-        # User Team specific display (HOME/AWAY indicator)
-        if use_user_team and query == USER_CONFIG["team"]:
-            if USER_CONFIG["club"].lower() in home.lower():
-                match_type = "🏠 HOME"
-                opponent = away
-            else:
-                match_type = "✈️ AWAY"
-                opponent = home
-            
-            lines.append(f"**Match {i}:** {days_str}")
-            lines.append(f"    📅 {date_display} at {local_time}")
-            lines.append(f"    {match_type} vs {opponent}")
-            lines.append(f"    🏟️ {venue}")
-        else:
-            lines.append(f"**{date_display}** {days_str}")
-            lines.append(f"    ⏰ {local_time} | 🏟️ {venue}")
-            lines.append(f"    ⚽ {home} vs {away}")
-            
-        if competition:
-            lines.append(f"    🏆 {competition}")
-        lines.append("")
-    
-    return "\n".join(lines)
+            status = f"🗓️ In {days_until} days"
 
+        lines.append(f"**{i}. {date_display}** — {status}")
+        lines.append(f"    🏆 {league}")
+        lines.append(f"    ⚽ {home} vs {away}")
+        lines.append(f"    🏟️ {venue}\n")
+        
+    return "\n".join(lines)
 # ---------------------------------------------------------
 # 6B. MISSING SCORES TOOL
 # ---------------------------------------------------------
 
-def tool_missing_scores(query: str = "") -> Any:
-    # 1. SETUP TIMEZONES AND BOUNDARIES FIRST
-    melbourne_tz = pytz.timezone('Australia/Melbourne')
-    now_aest = datetime.now(melbourne_tz)
-    today = now_aest.date()
+#def tool_missing_scores(query: str = "") -> Any:
+def tool_missing_scores(query: str = "", include_all_leagues: bool = False) -> Any:
+    """Find matches that haven't had scores entered yet (Date only, no time)"""
     
-    # Optional: Keep last_sunday if you want to limit how far back to look,
-    # but for "Missing Scores", usually you want all overdue matches.
-    last_sunday = get_last_sunday() 
-
+    # 1. SETUP TIMEZONE AND DATE
+    # We use Melbourne time to determine what 'today' is locally
+    melbourne_tz = pytz.timezone('Australia/Melbourne')
+    today = datetime.now(melbourne_tz).date()
+    
     missing_scores = []
-
-    # ... (Your logic for target_leagues and include_all_leagues) ...
+    target_leagues = ["YPL1", "YPL2", "YSL NW", "YSL SE", "VPL"]
 
     for fixture in fixtures:
         attrs = fixture.get("attributes", {})
@@ -650,74 +630,80 @@ def tool_missing_scores(query: str = "") -> Any:
         if not date_str:
             continue
         
-        # 2. PARSE UTC TO AEST
-        match_datetime = parse_date_utc_to_aest(date_str)
-        if not match_datetime:
+        # 2. PARSE TO DATE ONLY
+        # parse_date_utc_to_aest handles the shift from UTC to Melbourne day
+        match_dt = parse_date_utc_to_aest(date_str)
+        if not match_dt:
             continue
         
-        match_date = match_datetime.date()
+        match_date = match_dt.date()
         
-        # 3. FIX THE BOUNDARY
-        # Change from '>= last_sunday' to '> today' 
-        # This ensures Feb 8 (Sunday) is INCLUDED if today is Feb 11.
+        # 3. ONLY SHOW COMPLETED DAYS (Matches that should have scores by now)
         if match_date > today:
             continue
+            
+        # 4. LEAGUE FILTERING
+        league_name = attrs.get("league_name", "")
+        extracted_league = extract_league_from_league_name(league_name)
         
-        # ... (League and Query filtering logic) ...
+        if not include_all_leagues:
+            if extracted_league not in target_leagues:
+                continue
 
-        # 4. IDENTIFY MISSING SCORE
+        # 5. QUERY FILTERING (Team search)
+        home_team = attrs.get("home_team_name", "Unknown")
+        away_team = attrs.get("away_team_name", "Unknown")
+        
+        if query:
+            q_lower = query.lower().strip()
+            search_blob = f"{home_team} {away_team} {league_name}".lower()
+            if q_lower not in search_blob:
+                continue
+
+        # 6. IDENTIFY MISSING SCORE
         status = attrs.get("status", "").lower()
         home_score = attrs.get("home_score")
         away_score = attrs.get("away_score")
         
-        # A score is missing if it's not played/complete OR scores are null
-        has_missing_score = (
-            status != "complete" or 
-            home_score is None or 
-            away_score is None
-        )
-
-        if has_missing_score:
+        if status != "complete" or home_score is None or away_score is None:
             missing_scores.append({
                 "match_date": match_date,
-                "match_datetime": match_datetime, # This is already AEST from parse_date_utc_to_aest
-                "home_team": attrs.get("home_team_name", "Unknown"),
-                "away_team": attrs.get("away_team_name", "Unknown"),
-                "league": attrs.get("league_name", ""),
-                "competition": attrs.get("competition_name", ""),
+                "home_team": home_team,
+                "away_team": away_team,
+                "league": extracted_league if extracted_league else league_name,
                 "round": attrs.get("full_round", attrs.get("round", "")),
-                "venue": attrs.get("ground_name", ""),
-                "status": status,
+                "venue": attrs.get("ground_name", "TBD"),
                 "days_overdue": (today - match_date).days
             })
     
     if not missing_scores:
-        return f"✅ No missing scores found! All matches have been entered."
+        term = f" for '{query}'" if query else ""
+        return f"✅ No missing scores found{term}!"
     
     # Sort oldest first
     missing_scores.sort(key=lambda x: x["match_date"])
     
-    # 5. FORMAT TABLE DATA
+    # 7. FORMAT TABLE DATA (DATE ONLY)
     data = []
     for i, match in enumerate(missing_scores, 1):
-        # Format the AEST datetime for display
-        # Use %I:%M %p for 12-hour clock (e.g. 03:30 PM)
-        aest_display = match["match_datetime"].strftime("%d-%b %I:%M %p")
+        # We only use the Date format now (e.g., 08-Feb)
+        date_display = match["match_date"].strftime("%d-%b (%a)")
         
         data.append({
             "#": i,
-            "Kickoff (AEST)": aest_display,
+            "Date": date_display,
             "Days Overdue": match["days_overdue"],
-            "Home Team": match["home_team"],
-            "Away Team": match["away_team"],
+            "League": match["league"],
+            "Match": f"{match['home_team']} vs {match['away_team']}",
             "Round": match["round"],
             "Venue": match["venue"]
         })
     
+    title_prefix = f"⚠️ Missing Scores: {query.title()}" if query else "⚠️ Missing Scores"
     return {
         "type": "table",
         "data": data,
-        "title": f"⚠️ Missing Scores ({len(missing_scores)} matches overdue)"
+        "title": f"{title_prefix} ({len(missing_scores)} matches)"
     }
 def extract_league_from_league_name(league_name: str) -> str:
     """Extract league from league name (YPL1, YPL2, YSL NW, etc.)"""
@@ -1695,7 +1681,6 @@ def tool_non_players(query: str = "") -> str:
 
 class FastQueryRouter:
     """Enhanced pattern-based query router with personal team support"""
-    
     def __init__(self):
         pass
         

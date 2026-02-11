@@ -9,6 +9,8 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 import pytz
 import uuid
+import plotly.graph_objects as go
+import io
 
 # Import authentication and tracking modules
 from config import authenticate_user, ENABLE_GUEST_ACCESS, SESSION_TIMEOUT_MINUTES
@@ -232,13 +234,16 @@ def show_login_page():
     with col2:
         st.markdown("### 🔐 Login")
         
-        username = st.text_input("Username", key="login_username")
-        password = st.text_input("Password", type="password", key="login_password")
-        
-        col_login, col_guest = st.columns(2)
-        
-        with col_login:
-            if st.button("Login", type="primary", use_container_width=True):
+        # 1. Wrap inputs and the Login button in a form
+        with st.form("login_form", clear_on_submit=False):
+            username = st.text_input("Username", key="login_username")
+            password = st.text_input("Password", type="password", key="login_password")
+            
+            # 2. Change the button to a form_submit_button
+            # Note: use_container_width is supported here to keep your layout
+            submit_button = st.form_submit_button("Login", type="primary", use_container_width=True)
+            
+            if submit_button:
                 if username and password:
                     if login_user(username, password):
                         st.success("✅ Login successful!")
@@ -248,15 +253,15 @@ def show_login_page():
                 else:
                     st.warning("⚠️ Please enter username and password")
         
+        # 3. Guest Access stays outside the form to remain independent
         if ENABLE_GUEST_ACCESS:
-            with col_guest:
-                if st.button("Guest Access", use_container_width=True):
-                    st.session_state["authenticated"] = True
-                    st.session_state["username"] = "guest"
-                    st.session_state["full_name"] = "Guest User"
-                    st.session_state["role"] = "guest"
-                    log_login("guest", "Guest User", st.session_state["session_id"])
-                    st.rerun()
+            if st.button("Guest Access", use_container_width=True):
+                st.session_state["authenticated"] = True
+                st.session_state["username"] = "guest"
+                st.session_state["full_name"] = "Guest User"
+                st.session_state["role"] = "guest"
+                log_login("guest", "Guest User", st.session_state["session_id"])
+                st.rerun()
 
 # ---------------------------------------------------------
 # Get last updated timestamp in AEST
@@ -840,7 +845,7 @@ def main_app():
         with col1:
             st.markdown("**📊 Statistics**")
             if st.button("top scorers in Heidelberg United U16", key="ex1", use_container_width=True):
-                st.session_state["clicked_query"] = "top scorers in Heidelberg United U16"
+                st.session_state["clicked_query"] = "top scorers in Heidelberg United"
                 st.rerun()
             if st.button("yellow cards Heidelberg United U16", key="ex2", use_container_width=True):
                 st.session_state["clicked_query"] = "yellow cards Heidelberg United U16"
@@ -866,7 +871,7 @@ def main_app():
                 st.session_state["clicked_query"] = "YPL1 overview"
                 st.rerun()
             if st.button("U16 YPL1 ladder", key="ex8", use_container_width=True):
-                st.session_state["clicked_query"] = "U16 YPL1 ladder"
+                st.session_state["clicked_query"] = "U16 YPL2 ladder"
                 st.rerun()
             
             st.markdown("**🟨🟥 Discipline**")
@@ -874,7 +879,7 @@ def main_app():
                 st.session_state["clicked_query"] = "yellow cards details"
                 st.rerun()
             if st.button("red cards in U15", key="ex10", use_container_width=True):
-                st.session_state["clicked_query"] = "red cards in U15"
+                st.session_state["clicked_query"] = "red cards in U16"
                 st.rerun()
             if st.button("coaches yellow cards", key="ex11", use_container_width=True):
                 st.session_state["clicked_query"] = "coaches yellow cards"
@@ -889,15 +894,9 @@ def main_app():
                 st.session_state["clicked_query"] = "missing scores Heidelberg"
                 st.rerun()
             if st.button("missing scores YPL1", key="ex14", use_container_width=True):
-                st.session_state["clicked_query"] = "missing scores YPL1"
+                st.session_state["clicked_query"] = "missing scores YPL2"
                 st.rerun()
-            if st.button("scores not entered", key="ex15", use_container_width=True):
-                st.session_state["clicked_query"] = "scores not entered"
-                st.rerun()
-            if st.button("overdue matches", key="ex16", use_container_width=True):
-                st.session_state["clicked_query"] = "overdue matches"
-                st.rerun()
-
+    
     # Process search queries
     if search and search != st.session_state["last_search"]:
         st.session_state["last_search"] = search
@@ -917,27 +916,62 @@ def main_app():
                 end = time.time()
 
             st.markdown("---")
-
             if isinstance(answer, dict):
                 if answer.get("type") == "table":
-                    # This displays the conversational title we added in fast_agent.py
-                    st.info(answer.get('title', "Results")) 
-                    df = pd.DataFrame(answer.get('data', []))
-                    st.dataframe(df, hide_index=True, use_container_width=True)
+                    title = answer.get('title', "Results")
+                    st.info(title) 
+                    
+                    data = answer.get('data', [])
+                    if data:
+                        df = pd.DataFrame(data)
+                        
+                        # --- Dynamic Height Logic ---
+                        num_rows = len(df)
+                        # (Rows + Header) * Row Height (35px). Cap at 600px if > 16 rows.
+                        final_height = 600 if num_rows > 16 else (num_rows + 1) * 35
+                        
+                        st.dataframe(df, hide_index=True, use_container_width=True, height=final_height)
+                        
+                        # --- Download Section ---
+                        col1, col2 = st.columns(2)
+                        
+                        with col1:
+                            csv = df.to_csv(index=False).encode('utf-8')
+                            st.download_button(
+                                label="📥 Download CSV",
+                                data=csv,
+                                file_name=f"data_export.csv",
+                                mime='text/csv'
+                            )
+                            
+                        with col2:
+                            # We import here so the app doesn't crash on startup if installation failed
+                            try:
+                                import plotly.graph_objects as go
+                                
+                                fig = go.Figure(data=[go.Table(
+                                    header=dict(values=list(df.columns), fill_color='#F0F2F6', align='left'),
+                                    cells=dict(values=[df[col] for col in df.columns], fill_color='white', align='left')
+                                )])
+                                fig.update_layout(margin=dict(l=5, r=5, t=5, b=5))
+                                
+                                # Convert to PNG
+                                img_bytes = fig.to_image(format="png", engine="kaleido")
+                                
+                                st.download_button(
+                                    label="🖼️ Download as Image",
+                                    data=img_bytes,
+                                    file_name=f"table_export.png",
+                                    mime="image/png"
+                                )
+                            except (ImportError, ModuleNotFoundError):
+                                st.button("🖼️ Image Export (Install Plotly)", disabled=True, help="Run 'pip install plotly kaleido' in your terminal.")
+
                 elif answer.get("type") == "error":
                     st.error(answer.get("message", "An error occurred"))
+
             else:
-                # If it's just a string, display it as a chat bubble
                 st.chat_message("assistant").write(answer)
-#            if isinstance(answer, dict):
- #               if answer.get("type") == "table":
-  #                  st.markdown(f"### {answer.get('title')}")
-   #                 df = pd.DataFrame(answer.get('data', []))
-    #                st.dataframe(df, hide_index=True, use_container_width=True)
-     #           elif answer.get("type") == "error":
-      #              st.error(answer.get("message", "An error occurred"))
-      #      else:
-      #          st.markdown(answer)
 
             st.caption(f"⏱️ Response time: {end - start:.3f}s")
             st.markdown("---")
@@ -1076,7 +1110,7 @@ def main_app():
                 row["GD"] = club.get("total_gf", 0) - club.get("total_ga", 0)
                 rows.append(row)
             df_overview = pd.DataFrame(rows)
-            st.dataframe(df_overview, hide_index=True, use_container_width=True, height=650)
+            st.dataframe(df_overview, hide_index=True, use_container_width=True, height=600)
         else:
             st.info("No competition overview data available for this league.")
 
@@ -1120,7 +1154,7 @@ def main_app():
             disabled=["Pos", "ClubDisplay", "played", "wins", "draws", "losses",
                       "gf", "ga", "gd", "points"],
             use_container_width=True,
-            height=650,  # Increased height to show ~18 rows
+            height=600,  # Increased height to show ~18 rows
             key="ladder_editor"
         )
 
