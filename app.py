@@ -844,7 +844,7 @@ def main_app():
         
         with col1:
             st.markdown("**📊 Statistics**")
-            if st.button("top scorers in Heidelberg United U16", key="ex1", use_container_width=True):
+            if st.button("top scorers in Heidelberg United", key="ex1", use_container_width=True):
                 st.session_state["clicked_query"] = "top scorers in Heidelberg United"
                 st.rerun()
             if st.button("yellow cards Heidelberg United U16", key="ex2", use_container_width=True):
@@ -867,10 +867,10 @@ def main_app():
             
         with col2:
             st.markdown("**🏆 Competitions**")
-            if st.button("YPL1 overview", key="ex7", use_container_width=True):
-                st.session_state["clicked_query"] = "YPL1 overview"
+            if st.button("YPL2 overview", key="ex7", use_container_width=True):
+                st.session_state["clicked_query"] = "YPL2 overview"
                 st.rerun()
-            if st.button("U16 YPL1 ladder", key="ex8", use_container_width=True):
+            if st.button("U16 YPL2 ladder", key="ex8", use_container_width=True):
                 st.session_state["clicked_query"] = "U16 YPL2 ladder"
                 st.rerun()
             
@@ -878,7 +878,7 @@ def main_app():
             if st.button("yellow cards details", key="ex9", use_container_width=True):
                 st.session_state["clicked_query"] = "yellow cards details"
                 st.rerun()
-            if st.button("red cards in U15", key="ex10", use_container_width=True):
+            if st.button("red cards in U16", key="ex10", use_container_width=True):
                 st.session_state["clicked_query"] = "red cards in U16"
                 st.rerun()
             if st.button("coaches yellow cards", key="ex11", use_container_width=True):
@@ -893,7 +893,7 @@ def main_app():
             if st.button("missing scores Heidelberg", key="ex13", use_container_width=True):
                 st.session_state["clicked_query"] = "missing scores Heidelberg"
                 st.rerun()
-            if st.button("missing scores YPL1", key="ex14", use_container_width=True):
+            if st.button("missing scores YPL2", key="ex14", use_container_width=True):
                 st.session_state["clicked_query"] = "missing scores YPL2"
                 st.rerun()
     
