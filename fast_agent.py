@@ -535,42 +535,41 @@ def filter_players_by_criteria(players: List[Dict], query: str, include_non_play
 # ---------------------------------------------------------
 
 def tool_fixtures(query: str = "", limit: int = 10, use_user_team: bool = False) -> str:
-    """Show upcoming fixtures"""
+    """Show upcoming fixtures with correct AEST timezone logic"""
     if use_user_team and not query:
         query = USER_CONFIG["team"]
     
- #   today = datetime.now().date()
-   melbourne_tz = pytz.timezone('Australia/Melbourne')
-   today = datetime.now(melbourne_tz).date()  
-    # Filter upcoming fixtures
+    melbourne_tz = pytz.timezone('Australia/Melbourne')
+    today = datetime.now(melbourne_tz).date()  
+
     upcoming = []
     for f in fixtures:
         attrs = f.get("attributes", {})
         date_str = attrs.get("date", "")
         
-        # FIX: Use the UTC to AEST parser so Sunday matches don't show as Saturday
-        match_datetime = parse_date_utc_to_aest(date_str)
-        if not match_datetime:
+        # Shift UTC to AEST to get the correct day and time
+        match_dt = parse_date_utc_to_aest(date_str)
+        if not match_dt:
             continue
             
-        fixture_date = match_datetime.date() # This is now the correct AEST date
-        
+        fixture_date = match_dt.date()
         if fixture_date >= today:
-            # We also want to grab the formatted time from match_datetime
-            match_time = match_datetime.strftime("%I:%M %p") 
-            upcoming.append((fixture_date, match_time, attrs))
+            # Store the date, the local time string, and attributes
+            local_time = match_dt.strftime("%I:%M %p")
+            upcoming.append((fixture_date, local_time, attrs))
     
+    # Sort by date
     upcoming.sort(key=lambda x: x[0])
     
     # Filter by team if query provided
     if query:
         team = normalize_team(query) or query
         filtered = []
-        for date, attrs in upcoming:
+        for date, l_time, attrs in upcoming:
             home = attrs.get("home_team_name", "")
             away = attrs.get("away_team_name", "")
             if team.lower() in home.lower() or team.lower() in away.lower():
-                filtered.append((date, attrs))
+                filtered.append((date, l_time, attrs))
         upcoming = filtered
     
     if not upcoming:
@@ -579,32 +578,31 @@ def tool_fixtures(query: str = "", limit: int = 10, use_user_team: bool = False)
     
     upcoming = upcoming[:limit]
     
-    # Format output
+    # Heading logic
     if use_user_team and query == USER_CONFIG["team"]:
         lines = [f"📅 **Your Upcoming Matches** ({len(upcoming)} matches)\n"]
     else:
         team_display = query if query else "All Teams"
         lines = [f"📅 **Upcoming Fixtures - {team_display}** ({len(upcoming)} matches)\n"]
     
-    for i, (fixture_date, attrs) in enumerate(upcoming, 1):
+    for i, (fixture_date, local_time, attrs) in enumerate(upcoming, 1):
         home = attrs.get("home_team_name", "Unknown")
         away = attrs.get("away_team_name", "Unknown")
-        venue = attrs.get("venue", "TBD")
-        time = attrs.get("time", "TBD")
+        venue = attrs.get("ground_name", attrs.get("venue", "TBD")) # Ground name is more accurate in Dribl
         competition = attrs.get("competition_name", "")
         
         date_display = fixture_date.strftime("%d-%b-%Y (%a)")
         days_until = (fixture_date - today).days
         
+        # Status Badge
         if days_until == 0:
             days_str = "🔴 TODAY!"
         elif days_until == 1:
             days_str = "⚠️ Tomorrow"
-        elif days_until <= 7:
-            days_str = f"🟡 In {days_until} days"
         else:
-            days_str = f"🟢 In {days_until} days"
+            days_str = f"🗓️ In {days_until} days"
         
+        # User Team specific display (HOME/AWAY indicator)
         if use_user_team and query == USER_CONFIG["team"]:
             if USER_CONFIG["club"].lower() in home.lower():
                 match_type = "🏠 HOME"
@@ -614,23 +612,18 @@ def tool_fixtures(query: str = "", limit: int = 10, use_user_team: bool = False)
                 opponent = home
             
             lines.append(f"**Match {i}:** {days_str}")
-            lines.append(f"   📅 {date_display} at {time}")
-            lines.append(f"   {match_type} vs {opponent}")
-            lines.append(f"   🏟️ {venue}")
-            if competition:
-                lines.append(f"   🏆 {competition}")
-            lines.append("")
+            lines.append(f"    📅 {date_display} at {local_time}")
+            lines.append(f"    {match_type} vs {opponent}")
+            lines.append(f"    🏟️ {venue}")
         else:
-            lines.append(f"🗓️  **{date_display}** {days_str}")
-            lines.append(f"   ⏰ {time}")
-            lines.append(f"   🏟️ {venue}")
-            lines.append(f"   ⚽ {home} vs {away}")
-            if competition:
-                lines.append(f"   🏆 {competition}")
-            lines.append("")
+            lines.append(f"**{date_display}** {days_str}")
+            lines.append(f"    ⏰ {local_time} | 🏟️ {venue}")
+            lines.append(f"    ⚽ {home} vs {away}")
+            
+        if competition:
+            lines.append(f"    🏆 {competition}")
+        lines.append("")
     
-    return "\n".join(lines)
-
     return "\n".join(lines)
 
 # ---------------------------------------------------------
