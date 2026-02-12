@@ -7198,5 +7198,149 @@
                 "href": "https://mc-api.dribl.com/api/results/lNbJjBzPEN"
             }
         }
+    },
+    {
+        "type": "results",
+        "hash_id": "nmYnZXrxYN",
+        "attributes": {
+            "name": "FV54532710 - Northcote City FC v North Geelong Warriors FC",
+            "date": "2026-02-07 23:30:00",
+            "round": "R2",
+            "full_round": "Round 2",
+            "ground_name": "Darebin International Sports Centre",
+            "field_name": "Pitch 1 (S)",
+            "home_team_name": "Northcote City FC U14",
+            "home_logo": "https://ocean.dribl.com/ec9db56b702f499dbe52a5a818301df2",
+            "away_team_name": "North Geelong Warriors FC U14",
+            "away_logo": "https://ocean.dribl.com/c2410d9ee11e4428802e11533c882d4d",
+            "competition_name": "Boys Victorian Youth Premier League 2",
+            "league_name": "U14 YPL2 Boys",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 4,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 1,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": true,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 3,
+            "enable_referees_allocated": false,
+            "match_hash_id": "OmepX4A0bd",
+            "home_team_hash_id": "pN6OY8v2K0",
+            "away_team_hash_id": "4KLnPbgDmq",
+            "forfeit_team_hash_id": null
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/nmYnZXrxYN"
+            }
+        }
+    },
+    {
+        "type": "results",
+        "hash_id": "OmepX4Qgvd",
+        "attributes": {
+            "name": "FV54538752 - Malvern City FC v Manningham United FC",
+            "date": "2026-02-07 22:30:00",
+            "round": "R2",
+            "full_round": "Round 2",
+            "ground_name": "Pettys Reserve",
+            "field_name": "Pitch 1 ",
+            "home_team_name": "Manningham United Blues FC U14",
+            "home_logo": "https://ocean.dribl.com/61b387ca320f429f855d1dc7a192d57e",
+            "away_team_name": "Malvern City FC U14",
+            "away_logo": "https://ocean.dribl.com/f577bb8cd99c494595cca7b6afb2d572",
+            "competition_name": "Boys Victorian Youth Premier League 1",
+            "league_name": "U14 YPL1 Boys",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 1,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 2,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": false,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 2,
+            "enable_referees_allocated": false,
+            "match_hash_id": "1K3pvVYWOd",
+            "home_team_hash_id": "am1qv8JWmw",
+            "away_team_hash_id": "jdye8k6zd5",
+            "forfeit_team_hash_id": null
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/OmepX4Qgvd"
+            }
+        }
+    },
+    {
+        "type": "results",
+        "hash_id": "EN2pnJWqed",
+        "attributes": {
+            "name": "FV54531350 - Northcote City FC v North Geelong Warriors FC",
+            "date": "2026-02-07 22:00:00",
+            "round": "R2",
+            "full_round": "Round 2",
+            "ground_name": "Darebin International Sports Centre",
+            "field_name": "Pitch 1 (S) - Half Field",
+            "home_team_name": "Northcote City FC U13",
+            "home_logo": "https://ocean.dribl.com/ec9db56b702f499dbe52a5a818301df2",
+            "away_team_name": "North Geelong Warriors FC U13",
+            "away_logo": "https://ocean.dribl.com/c2410d9ee11e4428802e11533c882d4d",
+            "competition_name": "Boys Victorian Youth Premier League 2",
+            "league_name": "U13 YPL2 Boys",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 1,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 2,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": true,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 3,
+            "enable_referees_allocated": false,
+            "match_hash_id": "BdDb9PAYJN",
+            "home_team_hash_id": "ld4Ol8Z2KW",
+            "away_team_hash_id": "MNGogZGXNA",
+            "forfeit_team_hash_id": null
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/EN2pnJWqed"
+            }
+        }
     }
 ]

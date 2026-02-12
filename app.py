@@ -580,7 +580,14 @@ def player_played_in_match(player, match_hash_id):
         if m.get("match_hash_id") == match_hash_id:
             return True
     return False
-
+    
+def get_player_match_stats(player, match_hash_id):
+    """Get stats for a specific match"""
+    for m in player.get("matches", []):
+        if m.get("match_hash_id") == match_hash_id:
+            return m
+    return None
+    
 def compute_ladder_from_results(results_for_comp):
     table = defaultdict(lambda: {
         "club": "",
@@ -852,13 +859,16 @@ def main_app():
     if search != st.session_state["search_query"]:
         st.session_state["search_query"] = search
         st.rerun() # Add this to ensure the expander reacts immediately to typing
-    # If the user clears the search bar, re-open the examples
     
+    # Expander control logic
+    # Open expander when search box is empty, close it when there's content
     if not search:
+        # Empty search box -> expand to show examples
         st.session_state["expander_state"] = True
-    else:
-        # If they are typing/searching, keep it closed unless they manualy open it
+    elif search and search == st.session_state.get("last_search"):
+        # Already processed this search -> keep collapsed
         st.session_state["expander_state"] = False
+    
     # Example queries
     with st.expander("💡 Example Queries", expanded=st.session_state["expander_state"]):
         st.markdown("*Click any example to try it:*")
@@ -868,69 +878,69 @@ def main_app():
             st.markdown("**📊 Statistics**")
             if st.button("top scorers in Heidelberg United", key="ex1", use_container_width=False):
                 st.session_state["clicked_query"] = "top scorers in Heidelberg United"
-                st.session_state["expander_state"] = False
+                st.session_state["expander_state"] = True  # Expand first to allow animation
                 st.rerun()
             if st.button("yellow cards Heidelberg United U16", key="ex2", use_container_width=False):
                 st.session_state["clicked_query"] = "yellow cards Heidelberg United U16"
-                st.session_state["expander_state"] = False
+                st.session_state["expander_state"] = True
                 st.rerun()
             if st.button("stats for John Doe", key="ex3", use_container_width=False):
                 st.session_state["clicked_query"] = "stats for John Doe"
-                st.session_state["expander_state"] = False
+                st.session_state["expander_state"] = True
                 st.rerun()
             if st.button("team stats for Heidelberg U16", key="ex4", use_container_width=False):
                 st.session_state["clicked_query"] = "team stats for Heidelberg U16"
-                st.session_state["expander_state"] = False
+                st.session_state["expander_state"] = True
                 st.rerun()
             
             st.markdown("**📅 Fixtures**")
             if st.button("when is my next match", key="ex5", use_container_width=False):
                 st.session_state["clicked_query"] = "when is my next match"
-                st.session_state["expander_state"] = False
+                st.session_state["expander_state"] = True
                 st.rerun()
             if st.button("upcoming fixtures Heidelberg United", key="ex6", use_container_width=False):
                 st.session_state["clicked_query"] = "upcoming fixtures Heidelberg United"
-                st.session_state["expander_state"] = False
+                st.session_state["expander_state"] = True
                 st.rerun()
             
         with col2:
             st.markdown("**🏆 Competitions**")
             if st.button("YPL2 overview", key="ex7", use_container_width=False):
                 st.session_state["clicked_query"] = "YPL2 overview"
-                st.session_state["expander_state"] = False
+                st.session_state["expander_state"] = True
                 st.rerun()
             if st.button("U16 YPL2 ladder", key="ex8", use_container_width=False):
                 st.session_state["clicked_query"] = "U16 YPL2 ladder"
-                st.session_state["expander_state"] = False
+                st.session_state["expander_state"] = True
                 st.rerun()
             
             st.markdown("**🟨🟥 Discipline**")
             if st.button("yellow cards details", key="ex9", use_container_width=False):
                 st.session_state["clicked_query"] = "yellow cards details"
-                st.session_state["expander_state"] = False
+                st.session_state["expander_state"] = True
                 st.rerun()
             if st.button("red cards in U16", key="ex10", use_container_width=False):
                 st.session_state["clicked_query"] = "red cards in U16"
-                st.session_state["expander_state"] = False
+                st.session_state["expander_state"] = True
                 st.rerun()
             if st.button("coaches yellow cards", key="ex11", use_container_width=False):
                 st.session_state["clicked_query"] = "coaches yellow cards"
-                st.session_state["expander_state"] = False
+                st.session_state["expander_state"] = True
                 st.rerun()
             
         with col3:
             st.markdown("**⚠️ Missing Scores**")
             if st.button("missing scores", key="ex12", use_container_width=False):
                 st.session_state["clicked_query"] = "missing scores"
-                st.session_state["expander_state"] = False
+                st.session_state["expander_state"] = True
                 st.rerun()
             if st.button("missing scores Heidelberg", key="ex13", use_container_width=False):
                 st.session_state["clicked_query"] = "missing scores Heidelberg"
-                st.session_state["expander_state"] = False
+                st.session_state["expander_state"] = True
                 st.rerun()
             if st.button("missing scores YPL2", key="ex14", use_container_width=False):
                 st.session_state["clicked_query"] = "missing scores YPL2"
-                st.session_state["expander_state"] = False
+                st.session_state["expander_state"] = True
                 st.rerun()
     
     # Process search queries
@@ -1036,40 +1046,64 @@ def main_app():
         if not leagues:
             st.info("No leagues found.")
             return
-
-        df = pd.DataFrame({
-            "Select": pd.Series([False] * len(leagues), dtype=bool),
-            "League": leagues,
-        })
-
-        edited = st.data_editor(
-            df,
-            hide_index=True,
-            column_config={
-                "Select": st.column_config.CheckboxColumn("Select", help="Click to open", default=False),
-                "League": st.column_config.TextColumn("League", width="large")
-            },
-            disabled=["League"],
-            use_container_width=True,
-            key="league_editor"
-        )
-
-        selected_rows = edited[edited["Select"] == True]
-        if not selected_rows.empty:
-            selected_league = selected_rows.iloc[0]["League"]
-            st.session_state["selected_league"] = selected_league
-            st.session_state["level"] = "competition"
-            
-            # Log the view
-            log_view(
-                username=st.session_state["username"],
-                full_name=st.session_state["full_name"],
-                view_type="league",
-                league=selected_league,
-                session_id=st.session_state["session_id"]
-            )
-            
-            st.rerun()
+        
+        # Add clickable league buttons
+        st.markdown("**Click a league name to open:**")
+        cols = st.columns(min(len(leagues), 4))  # Max 4 columns
+        for idx, league_name in enumerate(leagues):
+            col_idx = idx % 4
+            with cols[col_idx]:
+                if st.button(league_name, key=f"league_btn_{idx}", use_container_width=True):
+                    st.session_state["selected_league"] = league_name
+                    st.session_state["level"] = "competition"
+                    
+                    # Log the view
+                    log_view(
+                        username=st.session_state["username"],
+                        full_name=st.session_state["full_name"],
+                        view_type="league",
+                        league=league_name,
+                        session_id=st.session_state["session_id"]
+                    )
+                    
+                    st.rerun()
+        
+ #       st.markdown("---")
+ #       st.markdown("**Or use checkboxes below:**")
+ #
+ #       df = pd.DataFrame({
+ #           "Select": pd.Series([False] * len(leagues), dtype=bool),
+ #           "League": leagues,
+ #       })
+ #
+ #       edited = st.data_editor(
+ #           df,
+ #           hide_index=True,
+ #           column_config={
+ #               "Select": st.column_config.CheckboxColumn("Select", help="Click to open", default=False),
+ #               "League": st.column_config.TextColumn("League", width="large")
+ #           },
+ #           disabled=["League"],
+ #           use_container_width=False,
+ #           key="league_editor"
+ #       )
+ #
+ #       selected_rows = edited[edited["Select"] == True]
+ #       if not selected_rows.empty:
+ #           selected_league = selected_rows.iloc[0]["League"]
+ #           st.session_state["selected_league"] = selected_league
+ #           st.session_state["level"] = "competition"
+ #           
+ #           # Log the view
+ #           log_view(
+ #               username=st.session_state["username"],
+ #               full_name=st.session_state["full_name"],
+ #               view_type="league",
+ #               league=selected_league,
+ #               session_id=st.session_state["session_id"]
+ #           )
+ #           
+ #           st.rerun()
 
     # LEVEL 2: COMPETITIONS (same structure, with logging)
     elif level == "competition":
@@ -1084,43 +1118,70 @@ def main_app():
         if not comps:
             st.info("No competitions found.")
             return
-
-        df = pd.DataFrame({
-            "Select": pd.Series([False] * len(comps), dtype=bool),
-            "Competition": comps,
-        })
-
-        edited = st.data_editor(
-            df,
-            hide_index=True,
-            column_config={
-                "Select": st.column_config.CheckboxColumn("Select", help="Click to open", default=False),
-                "Competition": st.column_config.TextColumn("Competition", width="large")
-            },
-            disabled=["Competition"],
-            use_container_width=True,
-            key="competition_editor"
-        )
-
-        selected_rows = edited[edited["Select"] == True]
-        if not selected_rows.empty:
-            selected_comp = selected_rows.iloc[0]["Competition"]
-            st.session_state["selected_competition"] = selected_comp
-            st.session_state["level"] = "ladder_clubs"
-            st.session_state["selected_club"] = None
-            st.session_state["selected_match_id"] = None
-            
-            # Log the view
-            log_view(
-                username=st.session_state["username"],
-                full_name=st.session_state["full_name"],
-                view_type="competition",
-                league=league,
-                competition=selected_comp,
-                session_id=st.session_state["session_id"]
-            )
-            
-            st.rerun()
+        
+        # Add clickable competition buttons
+        st.markdown("**Click a competition name to open:**")
+        cols = st.columns(min(len(comps), 4))  # Max 4 columns
+        for idx, comp_name in enumerate(comps):
+            col_idx = idx % 4
+            with cols[col_idx]:
+                if st.button(comp_name, key=f"comp_btn_{idx}", use_container_width=True):
+                    st.session_state["selected_competition"] = comp_name
+                    st.session_state["level"] = "ladder_clubs"
+                    st.session_state["selected_club"] = None
+                    st.session_state["selected_match_id"] = None
+                    
+                    # Log the view
+                    log_view(
+                        username=st.session_state["username"],
+                        full_name=st.session_state["full_name"],
+                        view_type="competition",
+                        league=league,
+                        competition=comp_name,
+                        session_id=st.session_state["session_id"]
+                    )
+                    
+                    st.rerun()
+        
+#       st.markdown("---")
+#       st.markdown("**Or use checkboxes below:**")
+#
+#       df = pd.DataFrame({
+#           "Select": pd.Series([False] * len(comps), dtype=bool),
+#           "Competition": comps,
+#       })
+#
+#       edited = st.data_editor(
+#           df,
+#           hide_index=True,
+#           column_config={
+#               "Select": st.column_config.CheckboxColumn("Select", help="Click to open", default=False),
+#               "Competition": st.column_config.TextColumn("Competition", width="large")
+#           },
+#           disabled=["Competition"],
+#           use_container_width=False,
+#           key="competition_editor"
+#       )
+#
+#       selected_rows = edited[edited["Select"] == True]
+#       if not selected_rows.empty:
+#           selected_comp = selected_rows.iloc[0]["Competition"]
+#           st.session_state["selected_competition"] = selected_comp
+#           st.session_state["level"] = "ladder_clubs"
+#           st.session_state["selected_club"] = None
+#           st.session_state["selected_match_id"] = None
+#           
+#           # Log the view
+#           log_view(
+#               username=st.session_state["username"],
+#               full_name=st.session_state["full_name"],
+#               view_type="competition",
+#               league=league,
+#               competition=selected_comp,
+#               session_id=st.session_state["session_id"]
+#           )
+#           
+#           st.rerun()
 
         # Overall club rankings
         st.markdown("---")
@@ -1133,8 +1194,8 @@ def main_app():
                 row = {
                     "Rank": club.get("overall_rank", 0),
                     "Club": base_club_name(club.get("club", "")),
-                    "Total Pos": club.get("total_position_points", 0),
-                    "Teams": club.get("age_group_count", 0),
+                    "Points": club.get("total_position_points", 0),
+ #                   "Teams": club.get("age_group_count", 0),
                 }
                 # Add age group positions
                 for age in age_groups:
@@ -1146,7 +1207,22 @@ def main_app():
                 row["GD"] = club.get("total_gf", 0) - club.get("total_ga", 0)
                 rows.append(row)
             df_overview = pd.DataFrame(rows)
-            st.dataframe(df_overview, hide_index=True, use_container_width=True, height=600)
+            # --- START OF COLUMN CONFIGURATION ---
+            # 1. Define fixed columns first
+            configs = {
+                "Rank": st.column_config.NumberColumn("Rank", width="small"),
+                "Club": st.column_config.TextColumn("Club", width="large"), # <--- Increased width
+                "Points": st.column_config.NumberColumn("Pts", width="small"),
+                "GF": st.column_config.NumberColumn("GF", width="small"),
+                "GA": st.column_config.NumberColumn("GA", width="small"),
+                "GD": st.column_config.NumberColumn("GD", width="small"),
+            }
+            
+            # 2. Add dynamic age group columns to the config as "small"
+            for age in age_groups:
+                configs[age] = st.column_config.TextColumn(age, width="small")
+            # --- END OF COLUMN CONFIGURATION ---
+            st.dataframe(df_overview, hide_index=True, use_container_width=False, height=598)
         else:
             st.info("No competition overview data available for this league.")
 
@@ -1167,6 +1243,42 @@ def main_app():
         ladder_df.insert(0, "Pos", range(1, len(ladder_df) + 1))
         ladder_df["ClubDisplay"] = ladder_df["club"].apply(base_club_name)
         
+ #       # Add clickable club buttons above the ladder
+ #       st.markdown("**Click a club name to view details:**")
+ #       # Display clubs in 4 columns
+ #       num_clubs = len(ladder_df)
+ #       cols_per_row = 4
+ #       for row_start in range(0, num_clubs, cols_per_row):
+ #           cols = st.columns(cols_per_row)
+ #           for col_idx in range(cols_per_row):
+ #               club_idx = row_start + col_idx
+ #               if club_idx < num_clubs:
+ #                   club_name = ladder_df.iloc[club_idx]["ClubDisplay"]
+ #                   pos = ladder_df.iloc[club_idx]["Pos"]
+ #                   pts = ladder_df.iloc[club_idx]["points"]
+ #                   with cols[col_idx]:
+ #                       # Button shows position, club name, and points
+ #                       btn_label = f"{pos}. {club_name} ({pts}pts)"
+ #                       if st.button(btn_label, key=f"club_btn_{club_idx}", use_container_width=True):
+ #                           st.session_state["selected_club"] = club_name
+ #                           st.session_state["selected_match_id"] = None
+ #                           
+ #                           # Log the view
+ #                           log_view(
+ #                               username=st.session_state["username"],
+ #                               full_name=st.session_state["full_name"],
+ #                               view_type="club",
+ #                               league=league,
+ #                               competition=comp,
+ #                               club=club_name,
+ #                               session_id=st.session_state["session_id"]
+ #                           )
+ #                           
+ #                           st.rerun()
+ #       
+        st.markdown("---")
+        st.markdown("**Select from ladder table below:**")
+        
         currently_selected = st.session_state.get("selected_club")
         ladder_df["Select"] = ladder_df["ClubDisplay"].apply(lambda x: x == currently_selected)
 
@@ -1175,22 +1287,23 @@ def main_app():
                        "gf", "ga", "gd", "points"]],
             hide_index=True,
             column_config={
-                "Select": st.column_config.CheckboxColumn("Select", help="Select club", default=False),
+                "Select": st.column_config.CheckboxColumn("Select", help="Select club",width="small", default=False),
                 "ClubDisplay": st.column_config.TextColumn("Club", width="medium"),
                 "Pos": st.column_config.NumberColumn("Pos", width="small"),
+                "points": st.column_config.NumberColumn("Pts", width="small"),
                 "played": st.column_config.NumberColumn("P", width="small"),
                 "wins": st.column_config.NumberColumn("W", width="small"),
                 "draws": st.column_config.NumberColumn("D", width="small"),
                 "losses": st.column_config.NumberColumn("L", width="small"),
                 "gf": st.column_config.NumberColumn("GF", width="small"),
                 "ga": st.column_config.NumberColumn("GA", width="small"),
-                "gd": st.column_config.NumberColumn("GD", width="small"),
-                "points": st.column_config.NumberColumn("Pts", width="small")
+                "gd": st.column_config.NumberColumn("GD", width="small")
+
             },
-            disabled=["Pos", "ClubDisplay", "played", "wins", "draws", "losses",
-                      "gf", "ga", "gd", "points"],
-            use_container_width=True,
-            height=600,  # Increased height to show ~18 rows
+            disabled=["Pos", "ClubDisplay", "points", "played", "wins", "draws", "losses",
+                      "gf", "ga", "gd"],
+            use_container_width=False,
+            height=590,  # Increased height to show ~18 rows
             key="ladder_editor"
         )
 
@@ -1267,14 +1380,21 @@ def main_app():
                             "Score": st.column_config.TextColumn("Score", width="small")
                         },
                         disabled=["Date", "H/A", "Opponent", "Score"],
-                        use_container_width=True,
+                        use_container_width=False,
                         key="club_matches_editor"
                     )
 
                     selected_match_rows = edited_matches[edited_matches["Select"] == True]
                     if not selected_match_rows.empty:
                         idx = selected_match_rows.index[0]
-                        st.session_state["selected_match_id"] = df_matches.iloc[idx]["_match_hash_id"]
+                        new_match_id = df_matches.iloc[idx]["_match_hash_id"]
+                        # Only rerun if we're selecting a different match
+                        if st.session_state.get("selected_match_id") != new_match_id:
+                            st.session_state["selected_match_id"] = new_match_id
+                            st.rerun()
+                    elif st.session_state.get("selected_match_id"):
+                        # Deselect if checkbox was unchecked
+                        st.session_state["selected_match_id"] = None
                         st.rerun()
                 else:
                     st.info(f"No matches found")
@@ -1294,6 +1414,26 @@ def main_app():
                 selected_match_id = st.session_state.get("selected_match_id")
                 if selected_match_id:
                     st.info(f"🎯 Filtered by selected match")
+                                    # Get the selected match details
+                    selected_match = None
+                    for m in matches:
+                        if m.get("attributes", {}).get("match_hash_id") == selected_match_id:
+                            selected_match = m
+                            break
+                    if selected_match:
+                        attrs = selected_match.get("attributes", {})
+                        home = attrs.get("home_team_name")
+                        away = attrs.get("away_team_name")
+                        hs = attrs.get("home_score")
+                        as_ = attrs.get("away_score")
+                        is_home = (base_club_name(home) == club)
+                        opponent = away if is_home else home
+                        our_score = hs if is_home else as_
+                        opp_score = as_ if is_home else hs
+                        
+                        # Match summary box
+                        st.info(f"**{format_date_full(attrs.get('date', ''))}** vs {base_club_name(opponent)} - **{our_score}-{opp_score}**")
+                    # Filter players who played in this match
                     all_people = [p for p in all_people if player_played_in_match(p, selected_match_id)]
 
                 # Separate players and non-players
@@ -1332,7 +1472,7 @@ def main_app():
                             "🟥": st.column_config.NumberColumn("🟥", width="small")
                         },
                         disabled=["Player", "#", "M", "G", "🟨", "🟥"],
-                        use_container_width=True,
+                        use_container_width=False,
                         key="players_editor"
                     )
 
@@ -1387,7 +1527,7 @@ def main_app():
                             "🟨": st.column_config.NumberColumn("🟨", width="small"),
                             "🟥": st.column_config.NumberColumn("🟥", width="small")
                         },
-                        use_container_width=True,
+                        use_container_width=False,
                     )
 
     # LEVEL 4: PLAYER MATCHES (same as before)
@@ -1422,7 +1562,7 @@ def main_app():
         st.dataframe(
             df, 
             hide_index=True, 
-            use_container_width=True,
+            use_container_width=False,
             column_config={
                 "H/A": st.column_config.TextColumn("", width="small"),
                 "Goals": st.column_config.NumberColumn("G", width="small"),
@@ -1448,7 +1588,6 @@ def main():
         if "search" in params:
             # Update the search input state from the URL
             st.session_state["search_input_value"] = params["search"].replace("+", " ")
- 
         # Check session timeout
         if not check_session_timeout():
             show_login_page()
