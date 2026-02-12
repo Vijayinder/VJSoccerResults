@@ -1437,9 +1437,17 @@ def main_app():
                     all_people = [p for p in all_people if player_played_in_match(p, selected_match_id)]
 
                 # Separate players and non-players
-                players = [p for p in all_people if not p.get("role") or p.get("role") == "player"]
-                non_players = [p for p in all_people if p.get("role") and p.get("role") != "player"]
+#                players = [p for p in all_people if not p.get("role") or p.get("role") == "player"]
+#                non_players = [p for p in all_people if p.get("role") and p.get("role") != "player"]
+                players = [
+                    p for p in all_people 
+                    if not p.get("role") or p.get("role").lower() == "player"
+                ]
 
+                non_players = [
+                    p for p in all_people 
+                    if p.get("role") and p.get("role").lower() != "player"
+                ]
                 # PLAYERS TABLE
                 if players:
                     st.markdown("**Players**")
