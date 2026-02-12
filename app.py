@@ -171,7 +171,10 @@ def init_session_state():
         st.session_state["last_search"] = ""
         
     if "expander_state" not in st.session_state:
-            st.session_state["expander_state"] = False # or True if you want it open by default
+        st.session_state["expander_state"] = False
+    if "expander_collapse_counter" not in st.session_state:
+        st.session_state["expander_collapse_counter"] = 0
+
 def check_session_timeout():
     """Check if session has timed out"""
     if st.session_state["authenticated"]:
@@ -855,21 +858,10 @@ def main_app():
         label_visibility="collapsed"
     )
     
-    # Update session state when user types
-    if search != st.session_state["search_query"]:
-        st.session_state["search_query"] = search
-        st.rerun()
-    
-    # ✅ FIXED: Simple expander control - collapse when search has content
-    if search and search.strip():
-        # Has content -> collapse to show results
-        st.session_state["expander_state"] = False
-    else:
-        # Empty -> expand to show examples
-        st.session_state["expander_state"] = True
-    
-    # Example queries
-    with st.expander("💡 Example Queries", expanded=st.session_state["expander_state"]):
+    # Example queries - collapse after click/search by changing label so Streamlit treats it as new widget
+    _collapse = st.session_state.get("expander_collapse_counter", 0)
+    _expander_label = "💡 Example Queries" + "\u200b" * (_collapse % 50)  # invisible chars force new widget when we want collapsed
+    with st.expander(_expander_label, expanded=False):
         st.markdown("*Click any example to try it:*")
         col1, col2, col3 = st.columns(3)
         
@@ -877,74 +869,76 @@ def main_app():
             st.markdown("**📊 Statistics**")
             if st.button("top scorers in Heidelberg United", key="ex1", use_container_width=False):
                 st.session_state["clicked_query"] = "top scorers in Heidelberg United"
-                st.session_state["expander_state"] = True  # Expand first to allow animation
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
             if st.button("yellow cards Heidelberg United U16", key="ex2", use_container_width=False):
                 st.session_state["clicked_query"] = "yellow cards Heidelberg United U16"
-                st.session_state["expander_state"] = True
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
             if st.button("stats for John Doe", key="ex3", use_container_width=False):
                 st.session_state["clicked_query"] = "stats for John Doe"
-                st.session_state["expander_state"] = True
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
             if st.button("team stats for Heidelberg U16", key="ex4", use_container_width=False):
                 st.session_state["clicked_query"] = "team stats for Heidelberg U16"
-                st.session_state["expander_state"] = True
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
             
             st.markdown("**📅 Fixtures**")
             if st.button("when is my next match", key="ex5", use_container_width=False):
                 st.session_state["clicked_query"] = "when is my next match"
-                st.session_state["expander_state"] = True
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
             if st.button("upcoming fixtures Heidelberg United", key="ex6", use_container_width=False):
                 st.session_state["clicked_query"] = "upcoming fixtures Heidelberg United"
-                st.session_state["expander_state"] = True
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
             
         with col2:
             st.markdown("**🏆 Competitions**")
             if st.button("YPL2 overview", key="ex7", use_container_width=False):
                 st.session_state["clicked_query"] = "YPL2 overview"
-                st.session_state["expander_state"] = True
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
             if st.button("U16 YPL2 ladder", key="ex8", use_container_width=False):
                 st.session_state["clicked_query"] = "U16 YPL2 ladder"
-                st.session_state["expander_state"] = True
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
             
             st.markdown("**🟨🟥 Discipline**")
             if st.button("yellow cards details", key="ex9", use_container_width=False):
                 st.session_state["clicked_query"] = "yellow cards details"
-                st.session_state["expander_state"] = True
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
             if st.button("red cards in U16", key="ex10", use_container_width=False):
                 st.session_state["clicked_query"] = "red cards in U16"
-                st.session_state["expander_state"] = True
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
             if st.button("coaches yellow cards", key="ex11", use_container_width=False):
                 st.session_state["clicked_query"] = "coaches yellow cards"
-                st.session_state["expander_state"] = True
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
             
         with col3:
             st.markdown("**⚠️ Missing Scores**")
             if st.button("missing scores", key="ex12", use_container_width=False):
                 st.session_state["clicked_query"] = "missing scores"
-                st.session_state["expander_state"] = True
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
             if st.button("missing scores Heidelberg", key="ex13", use_container_width=False):
                 st.session_state["clicked_query"] = "missing scores Heidelberg"
-                st.session_state["expander_state"] = True
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
             if st.button("missing scores YPL2", key="ex14", use_container_width=False):
                 st.session_state["clicked_query"] = "missing scores YPL2"
-                st.session_state["expander_state"] = True
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
     
     # Process search queries
     if search and search != st.session_state["last_search"]:
         st.session_state["last_search"] = search
+        st.session_state["expander_state"] = False  # Collapse expander after search
+        st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
 
         if is_natural_language_query(search):
             # Log the search
@@ -1523,6 +1517,7 @@ def main_app():
                         },
                         disabled=["Player", "#", "M", "G", "🟨", "🟥"],
                         use_container_width=False,
+                        height=730,
                         key="players_editor"
                     )
 
