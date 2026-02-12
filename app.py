@@ -858,16 +858,15 @@ def main_app():
     # Update session state when user types
     if search != st.session_state["search_query"]:
         st.session_state["search_query"] = search
-        st.rerun() # Add this to ensure the expander reacts immediately to typing
+        st.rerun()
     
-    # Expander control logic
-    # Open expander when search box is empty, close it when there's content
-    if not search:
-        # Empty search box -> expand to show examples
-        st.session_state["expander_state"] = True
-    elif search and search == st.session_state.get("last_search"):
-        # Already processed this search -> keep collapsed
+    # ✅ FIXED: Simple expander control - collapse when search has content
+    if search and search.strip():
+        # Has content -> collapse to show results
         st.session_state["expander_state"] = False
+    else:
+        # Empty -> expand to show examples
+        st.session_state["expander_state"] = True
     
     # Example queries
     with st.expander("💡 Example Queries", expanded=st.session_state["expander_state"]):
@@ -1454,15 +1453,58 @@ def main_app():
                     rows = []
                     for p in players:
                         full_name = f"{p.get('first_name','')} {p.get('last_name','')}"
-                        rows.append({
-                            "Select": False,
-                            "Player": full_name,
-                            "#": p.get("jersey", ""),
-                            "M": p.get("stats", {}).get("matches_played", 0),
-                            "G": p.get("stats", {}).get("goals", 0),
-                            "🟨": p.get("stats", {}).get("yellow_cards", 0),
-                            "🟥": p.get("stats", {}).get("red_cards", 0),
-                        })
+                        
+                        # ✅ NEW: Check if match selected for match-specific stats
+                        if selected_match_id:
+                            # Get match-specific data
+                            match_data = get_player_match_stats(p, selected_match_id)
+                            
+                            if match_data:
+                                # Add captain/goalie indicators to name
+                                indicators = []
+                                if match_data.get("captain"):
+                                    indicators.append("(C)")
+                                if match_data.get("goalie"):
+                                    indicators.append("🥅")
+                                
+                                if indicators:
+                                    full_name = f"{full_name} {' '.join(indicators)}"
+                                
+                                # Count events in this match for goals/cards
+                                goals_in_match = 0
+                                yellows_in_match = 0
+                                reds_in_match = 0
+                                
+                                for event in match_data.get("events", []):
+                                    event_type = event.get("event_type", "")
+                                    if event_type == "goal":
+                                        goals_in_match += 1
+                                    elif event_type == "yellow_card":
+                                        yellows_in_match += 1
+                                    elif event_type == "red_card":
+                                        reds_in_match += 1
+                                
+                                # Use match-specific stats
+                                rows.append({
+                                    "Select": False,
+                                    "Player": full_name,
+                                    "#": p.get("jersey", ""),
+                                    "M": 1,  # This match
+                                    "G": goals_in_match,
+                                    "🟨": yellows_in_match,
+                                    "🟥": reds_in_match,
+                                })
+                        else:
+                            # No match selected - use season totals
+                            rows.append({
+                                "Select": False,
+                                "Player": full_name,
+                                "#": p.get("jersey", ""),
+                                "M": p.get("stats", {}).get("matches_played", 0),
+                                "G": p.get("stats", {}).get("goals", 0),
+                                "🟨": p.get("stats", {}).get("yellow_cards", 0),
+                                "🟥": p.get("stats", {}).get("red_cards", 0),
+                            })
 
                     df_players = pd.DataFrame(rows)
                     df_players["Select"] = df_players["Select"].astype(bool)
