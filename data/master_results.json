@@ -3480,7 +3480,7 @@
             "home_score_penalty": null,
             "home_score_half": null,
             "home_score_extra_half": null,
-            "away_score": 1,
+            "away_score": 2,
             "away_score_extra": null,
             "away_score_penalty": null,
             "away_score_half": null,
@@ -7340,6 +7340,150 @@
         "links": {
             "self": {
                 "href": "https://mc-api.dribl.com/api/results/4KLlzJwrGK"
+            }
+        }
+    },
+    {
+        "type": "results",
+        "hash_id": "jdywlJ1ZAN",
+        "attributes": {
+            "name": "FV54532062 - Brunswick Juventus FC v Langwarrin SC",
+            "date": "2026-02-01 04:00:00",
+            "round": "R1",
+            "full_round": "Round 1",
+            "ground_name": "De Chene Reserve",
+            "field_name": "Pitch 1",
+            "home_team_name": "Brunswick Juventus FC U16",
+            "home_logo": "https://ocean.dribl.com/30f19f65a6b24790bd1f338143b0cbc5",
+            "away_team_name": "Langwarrin SC U16",
+            "away_logo": "https://ocean.dribl.com/e895f078d0894566a9e7ded5fd256155",
+            "competition_name": "Boys Victorian Youth Premier League 2",
+            "league_name": "U16 YPL2 Boys",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 2,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 2,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": true,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 3,
+            "enable_referees_allocated": false,
+            "match_hash_id": "gdM6EJDXpm",
+            "home_team_hash_id": "bd9X9azRK4",
+            "away_team_hash_id": "ld4OlaYxKW",
+            "forfeit_team_hash_id": null
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/jdywlJ1ZAN"
+            }
+        }
+    },
+    {
+        "type": "results",
+        "hash_id": "ld454n08em",
+        "attributes": {
+            "name": "FV54532702 - Brunswick Juventus FC v Langwarrin SC",
+            "date": "2026-02-01 00:30:00",
+            "round": "R1",
+            "full_round": "Round 1",
+            "ground_name": "De Chene Reserve",
+            "field_name": "Pitch 1",
+            "home_team_name": "Brunswick Juventus FC U14",
+            "home_logo": "https://ocean.dribl.com/30f19f65a6b24790bd1f338143b0cbc5",
+            "away_team_name": "Langwarrin SC U14",
+            "away_logo": "https://ocean.dribl.com/e895f078d0894566a9e7ded5fd256155",
+            "competition_name": "Boys Victorian Youth Premier League 2",
+            "league_name": "U14 YPL2 Boys",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 5,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 2,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": true,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 3,
+            "enable_referees_allocated": false,
+            "match_hash_id": "nmYnZlLQ3N",
+            "home_team_hash_id": "pmvzPnxDmv",
+            "away_team_hash_id": "EN2O4863Kq",
+            "forfeit_team_hash_id": null
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/ld454n08em"
+            }
+        }
+    },
+    {
+        "type": "results",
+        "hash_id": "gdM6EBZ81m",
+        "attributes": {
+            "name": "FV54531343 - Geelong SC v Heidelberg United",
+            "date": "2026-01-31 22:00:00",
+            "round": "R1",
+            "full_round": "Round 1",
+            "ground_name": "Stead Park ",
+            "field_name": "Pitch 2 - Half Field",
+            "home_team_name": "Geelong SC U13",
+            "home_logo": "https://ocean.dribl.com/be70bafbe9ac4da887edd6723c35e495",
+            "away_team_name": "Heidelberg United FC U13",
+            "away_logo": "https://ocean.dribl.com/8f105df7d73e4f1696cfd6edb2b418fd",
+            "competition_name": "Boys Victorian Youth Premier League 2",
+            "league_name": "U13 YPL2 Boys",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 6,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 1,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": true,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 3,
+            "enable_referees_allocated": false,
+            "match_hash_id": "PmrGqZaYrN",
+            "home_team_hash_id": "BdD1BeYJmb",
+            "away_team_hash_id": "bd9X9QMYK4",
+            "forfeit_team_hash_id": null
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/gdM6EBZ81m"
             }
         }
     }

@@ -140,6 +140,8 @@ def load_json(name: str):
     # Return appropriate empty data structure based on filename
     if "players_summary" in name:
         return {"players": []}
+    elif "staff_summary" in name:
+        return {"staff": []}
     elif "competition_overview" in name:
         return {}
     elif "fixtures" in name or "results" in name or "match_centre" in name or "lineups" in name:
@@ -151,10 +153,69 @@ def load_json(name: str):
 results = load_json("master_results.json")
 fixtures = load_json("fixtures.json")
 players_data = load_json("players_summary.json")
-players_summary = players_data.get("players", [])
+staff_data = load_json("staff_summary.json")
 match_centre_data = load_json("master_match_centre.json")
 lineups_data = load_json("master_lineups.json")
 competition_overview = load_json("competition_overview.json")
+
+
+def _normalize_person(p: Dict, is_player: bool) -> Dict:
+    """
+    Normalize person record (player or staff) to common format for tools.
+    Handles both legacy (team_name, league_name) and new (teams[], leagues[]) formats.
+    For staff matches: converts opponent->opponent_team_name, events->yellow_cards/yellow_minutes.
+    """
+    out = dict(p)
+    # Normalize team/league from arrays if needed
+    if not out.get("team_name") and out.get("teams"):
+        out["team_name"] = out["teams"][0] if out["teams"] else ""
+    if not out.get("league_name") and out.get("leagues"):
+        out["league_name"] = out["leagues"][0] if out["leagues"] else ""
+    if not out.get("competition_name") and out.get("league_name"):
+        out["competition_name"] = out["league_name"]
+    # Normalize role
+    if not out.get("role"):
+        role_slug = out.get("role_slug", "player")
+        roles = out.get("roles", [])
+        out["role"] = roles[0].lower() if roles and role_slug == "staff" else ("player" if role_slug == "player" else (roles[0] if roles else "staff"))
+    # Staff don't have jersey
+    if "jersey" not in out and not is_player:
+        out["jersey"] = ""
+    # Ensure stats structure
+    stats = out.get("stats", {})
+    if is_player and "matches_played" not in stats:
+        stats["matches_played"] = stats.get("matches_attended", 0)
+    if not is_player:
+        stats.setdefault("matches_played", stats.get("matches_attended", 0))
+    out["stats"] = stats
+    # Normalize matches for staff (opponent, events -> opponent_team_name, yellow_cards, etc.)
+    matches = out.get("matches", [])
+    for m in matches:
+        if "opponent_team_name" not in m and m.get("opponent"):
+            m["opponent_team_name"] = m["opponent"]
+        # Staff: aggregate card events into yellow_cards, yellow_minutes, red_cards, red_minutes
+        events = m.get("events", [])
+        if events:
+            y_mins = [e.get("minute") for e in events if (e.get("type") or "").lower() == "yellow_card" and e.get("minute")]
+            r_mins = [e.get("minute") for e in events if (e.get("type") or "").lower() == "red_card" and e.get("minute")]
+            if "yellow_cards" not in m:
+                m["yellow_cards"] = len([e for e in events if (e.get("type") or "").lower() == "yellow_card"])
+            if "yellow_minutes" not in m:
+                m["yellow_minutes"] = y_mins
+            if "red_cards" not in m:
+                m["red_cards"] = len([e for e in events if (e.get("type") or "").lower() == "red_card"])
+            if "red_minutes" not in m:
+                m["red_minutes"] = r_mins
+    return out
+
+
+# Players only - for player queries (top scorers, stats for player, yellow cards for players)
+_raw_players = players_data.get("players", [])
+players_summary = [_normalize_person(p, is_player=True) for p in _raw_players]
+
+# Staff only - for coach/staff queries (coaches yellow cards, staff list, etc.)
+_raw_staff = staff_data.get("staff", [])
+staff_summary = [_normalize_person(p, is_player=False) for p in _raw_staff]
 
 # ---------------------------------------------------------
 # 2. Date formatting helper
@@ -254,7 +315,7 @@ def fuzzy_find(query: str, choices: List[str], threshold: int = 60) -> Optional[
     match, score, _ = res
     return match if score >= threshold else None
 
-# Build player index
+# Build player index (players only - for "stats for X", top scorers, etc.)
 player_names = []
 player_lookup = {}
 
@@ -262,30 +323,39 @@ for p in players_summary:
     first = p.get("first_name", "")
     last = p.get("last_name", "")
     full_name = f"{first} {last}".strip()
-    
     if full_name:
         player_names.append(full_name)
         player_lookup[full_name.lower()] = p
 
-# Build team index
+# Build staff index (for coach/staff queries - "coaches yellow cards", etc.)
+staff_names = []
+staff_lookup = {}
+for p in staff_summary:
+    first = p.get("first_name", "")
+    last = p.get("last_name", "")
+    full_name = f"{first} {last}".strip()
+    if full_name:
+        staff_names.append(full_name)
+        staff_lookup[full_name.lower()] = p
+
+# Build team/league/competition indices from BOTH players and staff
+_all_people = players_summary + staff_summary
 team_names = sorted({
-    p.get("team_name", "")
-    for p in players_summary
-    if p.get("team_name")
+    p.get("team_name", "") or (p.get("teams", [None])[0] or "")
+    for p in _all_people
+    if p.get("team_name") or p.get("teams")
 })
 
-# Build league index
 league_names = sorted({
-    p.get("league_name", "")
-    for p in players_summary
-    if p.get("league_name")
+    p.get("league_name", "") or (p.get("leagues", [None])[0] or "")
+    for p in _all_people
+    if p.get("league_name") or p.get("leagues")
 })
 
-# Build competition index
 competition_names = sorted({
-    p.get("competition_name", "")
-    for p in players_summary
-    if p.get("competition_name")
+    p.get("competition_name", "") or p.get("league_name", "") or (p.get("leagues", [None])[0] or "")
+    for p in _all_people
+    if p.get("competition_name") or p.get("league_name") or p.get("leagues")
 })
 
 def fuzzy_team(q: str) -> Optional[str]:
@@ -468,6 +538,15 @@ def extract_base_club_name(text: str) -> Optional[str]:
     
     return None
 
+def _person_teams(p: Dict) -> List[str]:
+    """Get all team names for a person (handles both team_name and teams array)."""
+    teams = p.get("teams", [])
+    if teams:
+        return teams
+    tn = p.get("team_name", "")
+    return [tn] if tn else []
+
+
 def filter_players_by_criteria(players: List[Dict], query: str, include_non_players: bool = False) -> List[Dict]:
     """
     Filter players by age group and/or team name from query
@@ -483,51 +562,36 @@ def filter_players_by_criteria(players: List[Dict], query: str, include_non_play
     
     filtered = players
     
-    # Filter by role if looking for non-players
+    # Filter by role if looking for non-players (only when source may contain both)
     if include_non_players:
         filtered = [
             p for p in filtered
-            if p.get("role") and p.get("role") != "player"
+            if p.get("role") and str(p.get("role", "")).lower() != "player"
         ]
     else:
         # Only players
         filtered = [
             p for p in filtered
-            if not p.get("role") or p.get("role") == "player"
+            if not p.get("role") or str(p.get("role", "")).lower() == "player"
         ]
     
-    # Now apply team/age filters
-    # Priority order:
-    # 1. Specific team name (full name with age group) - most specific
-    # 2. Base club + age group - build exact match
-    # 3. Base club only - match all age groups
-    # 4. Age group only - match all clubs
+    def _team_match(p: Dict, check_fn) -> bool:
+        """Check if any of person's teams matches the criterion."""
+        for t in _person_teams(p):
+            if check_fn(t):
+                return True
+        return False
     
+    # Now apply team/age filters (handles multi-team staff)
     if team_name:
-        # Has full team name - use exact match
-        filtered = [
-            p for p in filtered
-            if team_name.lower() in p.get("team_name", "").lower()
-        ]
+        filtered = [p for p in filtered if _team_match(p, lambda t: team_name.lower() in (t or "").lower())]
     elif base_club and age_group:
-        # Has both club and age group - build exact team name
         exact_team = f"{base_club} {age_group}"
-        filtered = [
-            p for p in filtered
-            if exact_team.lower() in p.get("team_name", "").lower()
-        ]
+        filtered = [p for p in filtered if _team_match(p, lambda t: exact_team.lower() in (t or "").lower())]
     elif base_club:
-        # Has club only - match all age groups from this club
-        filtered = [
-            p for p in filtered
-            if base_club.lower() in p.get("team_name", "").lower()
-        ]
+        filtered = [p for p in filtered if _team_match(p, lambda t: base_club.lower() in (t or "").lower())]
     elif age_group:
-        # Has age group only - match all clubs with this age group
-        filtered = [
-            p for p in filtered
-            if age_group.lower() in p.get("team_name", "").lower()
-        ]
+        filtered = [p for p in filtered if _team_match(p, lambda t: age_group.lower() in (t or "").lower())]
     
     return filtered
 
@@ -566,9 +630,10 @@ def tool_fixtures(query: str = "", limit: int = 10, use_user_team: bool = False)
             
         # Only show matches that haven't started yet
         if match_dt >= now_melbourne:
-            home = attrs.get("home_team_name", "").lower()
-            away = attrs.get("away_team_name", "").lower()
-            league = attrs.get("league_name", "").lower()
+            # Handle None values - use 'or ""' to ensure string
+            home = (attrs.get("home_team_name") or "").lower()
+            away = (attrs.get("away_team_name") or "").lower()
+            league = (attrs.get("league_name") or "").lower()
             
             if search_term.lower() in home or search_term.lower() in away or search_term.lower() in league:
                 upcoming.append((match_dt, attrs))
@@ -590,10 +655,11 @@ def tool_fixtures(query: str = "", limit: int = 10, use_user_team: bool = False)
         # Format: 15-Feb (Sun) 10:30 AM
         date_display = m_dt.strftime("%d-%b (%a) %I:%M %p")
         
-        home = attrs.get("home_team_name", "Unknown")
-        away = attrs.get("away_team_name", "Unknown")
-        league = attrs.get("league_name", "")
-        venue = attrs.get("ground_name", "TBD")
+        # Handle None values properly
+        home = attrs.get("home_team_name") or "Unknown"
+        away = attrs.get("away_team_name") or "Unknown"
+        league = attrs.get("league_name") or ""
+        venue = attrs.get("ground_name") or "TBD"
         
         if days_until == 0:
             status = "🔴 TODAY!"
@@ -661,7 +727,7 @@ def tool_missing_scores(query: str = "", include_all_leagues: bool = False) -> A
                 continue
 
         # 6. IDENTIFY MISSING SCORE
-        status = attrs.get("status", "").lower()
+        status = (attrs.get("status") or "").lower()
         home_score = attrs.get("home_score")
         away_score = attrs.get("away_score")
         
@@ -734,16 +800,18 @@ def extract_league_from_league_name(league_name: str) -> str:
 # ---------------------------------------------------------
 
 def tool_yellow_cards(query: str = "", show_details: bool = False, include_non_players: bool = False) -> str:
-    """List all people with yellow cards - supports age group and team filtering"""
+    """List all people with yellow cards - supports age group and team filtering.
+    Uses staff_summary for coach/staff queries, players_summary for players."""
     
     # Initialize variables to avoid UnboundLocalError
     age_group = None
     team_name = None
     base_club = None
     
-    # 1. Get everyone with a yellow card
+    # 1. Use staff_summary for coach/staff queries, players_summary otherwise
+    source = staff_summary if include_non_players else players_summary
     players_with_yellows = [
-        p for p in players_summary 
+        p for p in source
         if p.get("stats", {}).get("yellow_cards", 0) > 0
     ]
     
@@ -843,9 +911,11 @@ def tool_yellow_cards(query: str = "", show_details: bool = False, include_non_p
         }
 
 def tool_red_cards(query: str = "", show_details: bool = False, include_non_players: bool = False) -> str:
-    """List all people with red cards - supports age group and team filtering"""
+    """List all people with red cards - supports age group and team filtering.
+    Uses staff_summary for coach/staff queries, players_summary for players."""
+    source = staff_summary if include_non_players else players_summary
     players_with_reds = [
-        p for p in players_summary 
+        p for p in source
         if p.get("stats", {}).get("red_cards", 0) > 0
     ]
     
@@ -1039,25 +1109,25 @@ def tool_team_stats(query: str = "") -> str:
         # Fall back to normalize_team
         team_filter = normalize_team(team_query) or team_query
     
-    # Filter players - use exact match if we have canonical name, otherwise substring
+    # Filter players - use _person_teams for multi-team support
+    def _matches_team(p, check):
+        return any(check(t) for t in _person_teams(p))
     if canonical_club:
-        # Exact matching for canonical club names
         if age_group:
-            players = [p for p in players_summary if p.get("team_name", "") == team_filter]
+            players = [p for p in players_summary if _matches_team(p, lambda t: t == team_filter)]
         else:
-            # Match all teams from this club (any age group)
-            players = [p for p in players_summary if p.get("team_name", "").startswith(canonical_club)]
+            players = [p for p in players_summary if _matches_team(p, lambda t: (t or "").startswith(canonical_club))]
     else:
-        # Substring matching for other cases
-        players = [p for p in players_summary if team_filter.lower() in p.get("team_name", "").lower()]
+        players = [p for p in players_summary if _matches_team(p, lambda t: team_filter.lower() in (t or "").lower())]
     
     # Filter to only players (not coaches/staff)
-    players = [p for p in players if not p.get("role") or p.get("role") == "player"]
+    players = [p for p in players if not p.get("role") or str(p.get("role", "")).lower() == "player"]
     
     if not players:
         return f"❌ No players found for team: {query}"
     
-    lines = [f"📊 **Team Statistics: {players[0].get('team_name', team_filter)}**\n"]
+    display_team = _person_teams(players[0])[0] if _person_teams(players[0]) else team_filter
+    lines = [f"📊 **Team Statistics: {display_team}**\n"]
     
     # Overall stats
     total_goals = sum(p.get("stats", {}).get("goals", 0) for p in players)
@@ -1111,13 +1181,17 @@ def tool_team_stats(query: str = "") -> str:
             hs = a.get('home_score')
             as_ = a.get('away_score')
             
-            is_home = team_name_to_match.lower() in a.get('home_team_name', '').lower()
+            # Handle None values properly
+            home_team = a.get('home_team_name') or ''
+            away_team = a.get('away_team_name') or ''
+            
+            is_home = team_name_to_match.lower() in home_team.lower()
             if is_home:
                 result = "🟢 W" if int(hs) > int(as_) else ("🔴 L" if int(hs) < int(as_) else "🟡 D")
             else:
                 result = "🟢 W" if int(as_) > int(hs) else ("🔴 L" if int(as_) < int(hs) else "🟡 D")
             
-            lines.append(f"  {result} {date_str}: {a.get('home_team_name')} {hs}-{as_} {a.get('away_team_name')}")
+            lines.append(f"  {result} {date_str}: {home_team} {hs}-{as_} {away_team}")
 
     return "\n".join(lines)
 
@@ -1191,14 +1265,52 @@ def tool_competition_overview(query: str = ""):
 # ---------------------------------------------------------
 
 def tool_players(query: str, detailed: bool = False) -> str:
-    """Search for player and show stats"""
+    """Search for player or staff and show stats. Uses players_summary for players, staff_summary for staff."""
     q = query.lower().strip()
     
-    # Exact substring match
+    # Exact substring match in players first
     exact_matches = []
     for full_name, player_data in player_lookup.items():
         if q in full_name:
             exact_matches.append(player_data)
+    
+    # If no player match, try staff (e.g. "stats for Coach Name")
+    if not exact_matches:
+        staff_matches = []
+        for full_name, staff_data in staff_lookup.items():
+            if q in full_name:
+                staff_matches.append(staff_data)
+        if len(staff_matches) == 1:
+            p = staff_matches[0]
+            stats = p.get("stats", {})
+            teams = ", ".join(p.get("teams", []) or [p.get("team_name", "")])
+            role = (p.get("roles") or [p.get("role", "Staff")])[0] if (p.get("roles") or p.get("role")) else "Staff"
+            lines = [
+                f"👤 **{p.get('first_name')} {p.get('last_name')}** ({role})",
+                f"   Teams: {teams}",
+                f"   Matches Attended: {stats.get('matches_attended', stats.get('matches_played', 0))}",
+                f"   🟨 Yellow Cards: {stats.get('yellow_cards', 0)}",
+                f"   🟥 Red Cards: {stats.get('red_cards', 0)}",
+            ]
+            matches = p.get("matches", [])
+            if detailed and matches:
+                lines.append(f"\n📅 **Match-by-Match:** ({len(matches)} matches)\n")
+                for m in matches:
+                    date_str = format_date(m.get('date', ''))
+                    opp = m.get('opponent_team_name') or m.get('opponent', '')
+                    role_match = m.get('role_in_match', '')
+                    perf = []
+                    if m.get('yellow_cards', 0) > 0:
+                        ym = format_minutes(m.get('yellow_minutes', []))
+                        perf.append(f"🟨 ({ym})" if ym else "🟨")
+                    if m.get('red_cards', 0) > 0:
+                        rm = format_minutes(m.get('red_minutes', []))
+                        perf.append(f"🟥 ({rm})" if rm else "🟥")
+                    lines.append(f"   {date_str} vs {opp} - {role_match} " + (" ".join(perf) if perf else ""))
+            return "\n".join(lines)
+        elif len(staff_matches) > 1:
+            data = [{"Name": f"{s.get('first_name')} {s.get('last_name')}", "Role": (s.get("roles") or ["Staff"])[0], "Team": (s.get("teams") or [""])[0], "Yellow": s.get("stats", {}).get("yellow_cards", 0), "Red": s.get("stats", {}).get("red_cards", 0)} for s in staff_matches[:10]]
+            return {"type": "table", "data": data, "title": f"👤 Found {len(staff_matches)} staff matching '{query}'"}
     
     if exact_matches:
         if len(exact_matches) == 1:
@@ -1384,20 +1496,17 @@ def tool_team_overview(query: str) -> str:
     
     lines = [f"🏟️ **{query}**\n"]
 
-    # Filter players - use exact match if we have canonical name, otherwise substring
+    def _mt(p, check):
+        return any(check(t) for t in _person_teams(p))
     if canonical_club:
-        # Exact matching for canonical club names
         if age_group:
-            players = [p for p in players_summary if p.get("team_name", "") == team_filter]
+            players = [p for p in players_summary if _mt(p, lambda t: t == team_filter)]
         else:
-            # Match all teams from this club (any age group)
-            players = [p for p in players_summary if p.get("team_name", "").startswith(canonical_club)]
+            players = [p for p in players_summary if _mt(p, lambda t: (t or "").startswith(canonical_club))]
     else:
-        # Substring matching for other cases
-        players = [p for p in players_summary if team_filter.lower() in p.get("team_name", "").lower()]
+        players = [p for p in players_summary if _mt(p, lambda t: team_filter.lower() in (t or "").lower())]
     
-    # Filter to only players (not coaches/staff)
-    players = [p for p in players if not p.get("role") or p.get("role") == "player"]
+    players = [p for p in players if not p.get("role") or str(p.get("role", "")).lower() == "player"]
     
     if players:
         total_goals = sum(p.get("stats", {}).get("goals", 0) for p in players)
@@ -1417,7 +1526,7 @@ def tool_team_overview(query: str) -> str:
                     lines.append(f"  ⚽ {p.get('first_name')} {p.get('last_name')} - {goals}")
     
     # Get team name to match in results
-    team_name_to_match = players[0].get('team_name', '') if players else team_filter
+    team_name_to_match = (_person_teams(players[0])[0] if _person_teams(players[0]) else players[0].get('team_name', '')) if players else team_filter
     
     team_results = []
     for r in results:
@@ -1445,13 +1554,17 @@ def tool_ladder(query: str) -> str:
 
     for r in results:
         a = r.get("attributes", {})
-        if league and league not in a.get("league_name", "").lower():
+        # Handle None values properly
+        league_name = (a.get("league_name") or "").lower()
+        comp_name = (a.get("competition_name") or "").lower()
+        
+        if league and league not in league_name:
             continue
-        if comp and comp not in a.get("competition_name", "").lower():
+        if comp and comp not in comp_name:
             continue
 
-        home = a.get("home_team_name", "")
-        away = a.get("away_team_name", "")
+        home = a.get("home_team_name") or ""
+        away = a.get("away_team_name") or ""
         try:
             hs = int(a.get("home_score", 0))
             as_ = int(a.get("away_score", 0))
@@ -1608,11 +1721,9 @@ def tool_lineups(query: str) -> str:
 # ---------------------------------------------------------
 
 def tool_non_players(query: str = "") -> str:
-    """List non-players (coaches, staff) with optional team filtering and card info"""
-    non_players = [
-        p for p in players_summary 
-        if p.get("role") and p.get("role") != "player"
-    ]
+    """List non-players (coaches, staff) with optional team filtering and card info.
+    Uses staff_summary.json as the data source."""
+    non_players = list(staff_summary)
     
     if not non_players:
         return "❌ No non-players (coaches/staff) found in the data"

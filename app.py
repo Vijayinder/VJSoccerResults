@@ -402,6 +402,35 @@ def load_players_summary():
         st.error(f"Error loading players: {str(e)}")
         return {"players": []}
 
+
+@st.cache_resource
+def load_staff_summary():
+    """Load staff_summary.json"""
+    path = os.path.join(DATA_DIR, "staff_summary.json")
+    
+    if not os.path.exists(path):
+        return {"staff": []}
+    
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        
+        if isinstance(data, dict):
+            if "staff" in data:
+                return data
+            else:
+                for key, value in data.items():
+                    if isinstance(value, list):
+                        return {"staff": value}
+                return {"staff": []}
+        elif isinstance(data, list):
+            return {"staff": data}
+        else:
+            return {"staff": []}
+    except Exception as e:
+        st.error(f"Error loading staff: {str(e)}")
+        return {"staff": []}
+
 @st.cache_resource
 def load_competition_overview():
     """Load competition_overview.json"""
@@ -553,27 +582,79 @@ def get_matches_for_club_in_comp(results, club_name, competition):
             matches.append(item)
     return matches
 
-def get_players_for_club(players_data, club_name, competition=None):
+def _person_teams_and_leagues(p):
+    """Get (team, league) pairs for a person. Handles both team_name/league_name and teams/leagues arrays."""
+    teams = p.get("teams", [])
+    leagues = p.get("leagues", [])
+    if teams or leagues:
+        if len(teams) == len(leagues):
+            return list(zip(teams, leagues))
+        if teams:
+            league = leagues[0] if leagues else ""
+            return [(t, league) for t in teams]
+        team = teams[0] if teams else ""
+        return [(team, lg) for lg in leagues]
+    tn = p.get("team_name", "")
+    ln = p.get("league_name", "")
+    return [(tn, ln)] if tn or ln else []
+
+
+def get_players_for_club(players_data, club_name, competition=None, staff_data=None):
     """
-    Get players for a specific club, optionally filtered by competition
+    Get players and staff for a specific club, optionally filtered by competition.
+    Merges players_summary.json and staff_summary.json for the structured club view.
     """
-    players = []
+    def normalize(p, is_staff=False):
+        out = dict(p)
+        if not out.get("team_name") and out.get("teams"):
+            out["team_name"] = out["teams"][0] if out["teams"] else ""
+        if not out.get("league_name") and out.get("leagues"):
+            out["league_name"] = out["leagues"][0] if out["leagues"] else ""
+        if not out.get("role"):
+            if is_staff:
+                roles = out.get("roles", [])
+                out["role"] = (roles[0] if roles else "staff")
+            else:
+                out["role"] = "player"
+        if is_staff and "jersey" not in out:
+            out["jersey"] = ""
+        return out
+
+    result = []
+    seen_ids = set()
+
     for p in players_data.get("players", []):
-        team = p.get("team_name", "")
-        
-        # Check club name match
-        if base_club_name(team) != club_name:
-            continue
-        
-        # If competition specified, filter by it
-        if competition:
-            # Extract competition from team's league name
-            team_comp = extract_competition_from_league_name(p.get("league_name", ""))
-            if team_comp != competition:
+        pn = normalize(p, False)
+        for team, league in _person_teams_and_leagues(pn):
+            if not team:
                 continue
-        
-        players.append(p)
-    return players
+            if base_club_name(team) != club_name:
+                continue
+            if competition and extract_competition_from_league_name(league or pn.get("league_name", "")) != competition:
+                continue
+            pid = pn.get("person_id") or f"{pn.get('first_name','')}_{pn.get('last_name','')}"
+            if pid not in seen_ids:
+                seen_ids.add(pid)
+                result.append(pn)
+            break
+
+    if staff_data:
+        for p in staff_data.get("staff", []):
+            pn = normalize(p, True)
+            for team, league in _person_teams_and_leagues(pn):
+                if not team:
+                    continue
+                if base_club_name(team) != club_name:
+                    continue
+                if competition and extract_competition_from_league_name(league or pn.get("league_name", "")) != competition:
+                    continue
+                pid = pn.get("person_id") or f"{pn.get('first_name','')}_{pn.get('last_name','')}"
+                if pid not in seen_ids:
+                    seen_ids.add(pid)
+                    result.append(pn)
+                break
+
+    return result
 
 def get_matches_for_player(player):
     return player.get("matches", [])
@@ -727,7 +808,8 @@ def is_natural_language_query(query):
         "details for", "top scorer", "ladder", "table", "form",
         "yellow card", "red card", "lineup", "vs", " v ",
         "team", "overview", "competition", "standings", "rankings",
-        "ypl1", "ypl2", "ysl", "missing score", "no score", "overdue"
+        "ypl1", "ypl2", "ysl", "missing score", "no score", "overdue",
+        "coach", "coaches", "staff", "manager", "managers"  # Added for coach/staff queries
     ]
     return any(keyword in query.lower() for keyword in keywords)
 
@@ -837,6 +919,7 @@ def main_app():
     results = load_master_results()
     fixtures = load_fixtures()
     players_data = load_players_summary()
+    staff_data = load_staff_summary()
     comp_overview = load_competition_overview()
 
     # Search bar
@@ -866,7 +949,7 @@ def main_app():
         col1, col2, col3 = st.columns(3)
         
         with col1:
-            st.markdown("**📊 Statistics**")
+            st.markdown("**📊 Player Stats**")
             if st.button("top scorers in Heidelberg United", key="ex1", use_container_width=False):
                 st.session_state["clicked_query"] = "top scorers in Heidelberg United"
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
@@ -885,12 +968,16 @@ def main_app():
                 st.rerun()
             
             st.markdown("**📅 Fixtures**")
-            if st.button("when is my next match", key="ex5", use_container_width=False):
-                st.session_state["clicked_query"] = "when is my next match"
+            if st.button("my next match", key="ex5", use_container_width=False):
+                st.session_state["clicked_query"] = "my next match"
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
-            if st.button("upcoming fixtures Heidelberg United", key="ex6", use_container_width=False):
-                st.session_state["clicked_query"] = "upcoming fixtures Heidelberg United"
+            if st.button("upcoming fixtures Heidelberg", key="ex6", use_container_width=False):
+                st.session_state["clicked_query"] = "upcoming fixtures Heidelberg"
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
+            if st.button("next U16 match", key="ex15", use_container_width=False):
+                st.session_state["clicked_query"] = "next U16 match"
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
             
@@ -905,6 +992,21 @@ def main_app():
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
             
+            st.markdown("**👔 Coaches & Staff**")
+            if st.button("coaches for Heidelberg", key="ex16", use_container_width=False):
+                st.session_state["clicked_query"] = "coaches for Heidelberg"
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
+            if st.button("staff with yellow cards", key="ex17", use_container_width=False):
+                st.session_state["clicked_query"] = "staff with yellow cards"
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
+            if st.button("coaches in U16", key="ex18", use_container_width=False):
+                st.session_state["clicked_query"] = "coaches in U16"
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
+            
+        with col3:
             st.markdown("**🟨🟥 Discipline**")
             if st.button("yellow cards details", key="ex9", use_container_width=False):
                 st.session_state["clicked_query"] = "yellow cards details"
@@ -919,7 +1021,6 @@ def main_app():
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
             
-        with col3:
             st.markdown("**⚠️ Missing Scores**")
             if st.button("missing scores", key="ex12", use_container_width=False):
                 st.session_state["clicked_query"] = "missing scores"
@@ -1395,8 +1496,8 @@ def main_app():
             with col_players:
                 st.markdown(f"### 👤 Squad")
                 
-                # Get all people (players + non-players) for this club in this competition
-                all_people = get_players_for_club(players_data, club, comp)
+                # Get all people (players + staff) for this club in this competition
+                all_people = get_players_for_club(players_data, club, comp, staff_data)
 
                 if search and not is_natural_language_query(search):
                     all_people = [
