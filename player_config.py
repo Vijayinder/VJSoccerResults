@@ -370,21 +370,19 @@ def get_admin_credentials() -> Dict:
     }
 
 def verify_admin(username: str, password: str) -> Optional[Dict]:
-    """
-    Verify admin credentials from Streamlit secrets or environment variables
-    Returns admin info if successful, None otherwise
-    """
-    admins = get_admin_credentials()
-    
-    if username in admins:
-        admin_data = admins[username]
-        if hash_password(password) == admin_data["password_hash"]:
+    # This reaches out to your .streamlit/secrets.toml file
+    try:
+        creds = st.secrets["admin_credentials"]
+        
+        if username == creds["username"] and password == creds["password"]:
             return {
-                "username": username,
-                "full_name": admin_data.get("full_name", username),
-                "role": "admin"
+                "username": creds["username"],
+                "full_name": creds["full_name"]
             }
-    
+    except Exception:
+        # This catches errors if the secrets file is missing or formatted wrong
+        return None
+        
     return None
 
 def list_admin_users() -> List[str]:
