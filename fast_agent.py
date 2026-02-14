@@ -951,7 +951,7 @@ def tool_todays_results(query: str = "") -> Any:
     """
     
     # ========== TESTING OVERRIDE - UNCOMMENT TO FORCE LAST SUNDAY ==========
-    FORCE_LAST_SUNDAY = True  # Uncomment this line to test with last Sunday's data
+    #FORCE_LAST_SUNDAY = True  # Uncomment this line to test with last Sunday's data
     # ========================================================================
     
     # Check if testing override is active
