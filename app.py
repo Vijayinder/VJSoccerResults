@@ -198,7 +198,10 @@ def init_session_state():
     
     if "player_role" not in st.session_state:
         st.session_state["player_role"] = None
-        
+    
+    if "player_league" not in st.session_state:
+        st.session_state["player_league"] = None
+
 def check_session_timeout():
     """Check if session has timed out"""
     if st.session_state["authenticated"]:
@@ -238,6 +241,8 @@ def logout_user():
     st.session_state["player_age_group"] = None  # ADD
     st.session_state["player_role"] = None  # ADD
     st.session_state["session_id"] = str(uuid.uuid4())
+    st.session_state["player_league"] = None  # ADD THIS
+    st.session_state["player_competition"] = None  # ADD THIS
 
 # ---------------------------------------------------------
 # Login Page
@@ -247,7 +252,7 @@ def show_login_page():
     """Display player selection page"""
     st.markdown("""
         <div class="main-header">
-            <h1 style='margin:0; padding:0;'>⚽ Junior Pro Football Intelligence</h1>
+            <h2 style='margin:0; padding:0;'>⚽ Junior Pro Football Intelligence</h2>
             <p style='margin:0.5rem 0 0 0; font-size:16px; opacity:0.9;'>
                 Welcome! Please select your profile to continue
             </p>
@@ -280,10 +285,18 @@ def show_login_page():
                     st.session_state["player_role"] = saved_selection["role"]
                     st.session_state["role"] = saved_selection["role"]
                     st.session_state["last_activity"] = datetime.now()
-                    
+                    st.session_state["player_league"] = selected_person.get("league", "")
+                    st.session_state["player_competition"] = selected_person.get("competition", "")
                     # Update USER_CONFIG in fast_agent
                     update_user_config(saved_selection["club"], saved_selection.get("age_group", ""))
-                    
+                    # Look up league and competition from player data
+                    league, competition = get_player_league_info(
+                        saved_selection["name"],
+                        saved_selection["club"],
+                        saved_selection.get("age_group", "")
+                    )
+                    st.session_state["player_league"] = league
+                    st.session_state["player_competition"] = competition
                     # Log the login
                     log_login(
                         username=saved_selection["player_id"],
@@ -299,7 +312,7 @@ def show_login_page():
             st.markdown("---")
         
         # Player/Coach selection
-        st.markdown("### 👤 Select Your Profile")
+        st.markdown("### 👤 Select Player/Coach Profile")
         
         # Load all players and coaches
         people = get_players_and_coaches_list(DATA_DIR)
@@ -327,39 +340,52 @@ def show_login_page():
                     break
             
             if selected_person:
-                # Show confirmation
-                st.success(f"✅ Selected: {selected_person['name']}")
-                club_display = selected_person['club']
-                if selected_person.get('age_group'):
-                    club_display += f" ({selected_person.get('age_group', '')})"
-                st.info(f"**Club:** {club_display}")
-                st.info(f"**Role:** {selected_person['role']}")
-                
-                if st.button("Continue", type="primary", use_container_width=True):
-                    # Login with player selection
-                    st.session_state["authenticated"] = True
-                    st.session_state["user_type"] = "player"
-                    st.session_state["username"] = selected_person["player_id"]
-                    st.session_state["full_name"] = selected_person["name"]
-                    st.session_state["player_club"] = selected_person["club"]
-                    st.session_state["player_age_group"] = selected_person.get("age_group", "")
-                    st.session_state["player_role"] = selected_person["role"]
-                    st.session_state["role"] = selected_person["role"]
-                    st.session_state["last_activity"] = datetime.now()
+                # 1. Extract data for clarity
+                name = selected_person['name']
+                role = selected_person['role']
+                club = selected_person['club']
+                age = selected_person.get('age_group', 'N/A')
+
+                # 2. Display the success message outside the form for styling
+                st.success(f"✅ Selected: {role} **{name}** from **{club}** in age group **{age}**")
+
+                # 3. Use a form to capture the "Enter" keypress
+                with st.form("confirmation_form", border=False):
+                    # We need a submit button for the Enter key to trigger
+                    submit = st.form_submit_button("Continue", type="primary", use_container_width=True)
                     
-                    # Save selection
-                    save_player_selection(st.session_state["session_id"], selected_person)
-                    
-                    # Update USER_CONFIG in fast_agent
-                    update_user_config(selected_person["club"], selected_person.get("age_group", ""))
-                    
-                    # Log the login
-                    log_login(
-                        username=selected_person["player_id"],
-                        full_name=selected_person["name"],
-                        session_id=st.session_state["session_id"]
-                    )
-                    st.rerun()
+                    if submit:
+                        # Login logic
+                        st.session_state["authenticated"] = True
+                        st.session_state["user_type"] = "player"
+                        st.session_state["username"] = selected_person["player_id"]
+                        st.session_state["full_name"] = selected_person["name"]
+                        st.session_state["player_club"] = selected_person["club"]
+                        st.session_state["player_age_group"] = selected_person.get("age_group", "")
+                        st.session_state["player_role"] = selected_person["role"]
+                        st.session_state["role"] = selected_person["role"]
+                        st.session_state["last_activity"] = datetime.now()
+                        
+                        # Save selection
+                        save_player_selection(st.session_state["session_id"], selected_person)
+                        
+                        # Update USER_CONFIG
+                        update_user_config(selected_person["club"], selected_person.get("age_group", ""))
+                        # Look up league and competition from player data
+                        league, competition = get_player_league_info(
+                            selected_person["name"],
+                            selected_person["club"],
+                            selected_person.get("age_group", "")
+                        )
+                        st.session_state["player_league"] = league
+                        st.session_state["player_competition"] = competition
+                        # Log the login
+                        log_login(
+                            username=selected_person["player_id"],
+                            full_name=selected_person["name"],
+                            session_id=st.session_state["session_id"]
+                        )
+                        st.rerun()
         
         # Admin login section
         st.markdown("---")
@@ -600,23 +626,58 @@ def extract_league_from_league_name(league_name: str) -> str:
     
     return "Other"
 
-def extract_competition_from_league_name(league_name: str) -> str:
+def extract_competition_from_league(league_name: str) -> str:
+    """Extract competition code from full league name"""
     if not league_name:
-        return league_name
-    parts = league_name.split()
-    if len(parts) < 2:
-        return league_name
-    age = parts[0]
-    if "YPL1" in league_name:
-        return f"{age} YPL1"
-    if "YPL2" in league_name:
-        return f"{age} YPL2"
-    if "YSL Boys - North-West" in league_name:
-        return f"{age} YSL NW"
-    if "YSL Boys - South-East" in league_name:
-        return f"{age} YSL SE"
+        return ""
+    
+    league_lower = league_name.lower()
+    
+    # Check for each competition type
+    if "ypl1" in league_lower or "ypl 1" in league_lower:
+        return "YPL1"
+    elif "ypl2" in league_lower or "ypl 2" in league_lower:
+        return "YPL2"
+    elif "ysl" in league_lower and ("north-west" in league_lower or "nw" in league_lower or "north west" in league_lower):
+        return "YSL NW"
+    elif "ysl" in league_lower and ("south-east" in league_lower or "se" in league_lower or "south east" in league_lower):
+        return "YSL SE"
+    elif "vpl men" in league_lower:
+        return "VPL Men"
+    elif "vpl women" in league_lower:
+        return "VPL Women"
+    elif "ysl" in league_lower:
+        return "YSL"
+    elif "vpl" in league_lower:
+        return "VPL"
+    
+    # If no match, return original
     return league_name
 
+def extract_league_from_league_name(league_name: str) -> str:
+    """Extract league from league name (YPL1, YPL2, YSL NW, etc.)"""
+    if not league_name:
+        return "Other"
+    
+    league_name_lower = str(league_name).lower()
+    
+    if "ypl1" in league_name_lower or "ypl 1" in league_name_lower:
+        return "YPL1"
+    if "ypl2" in league_name_lower or "ypl 2" in league_name_lower:
+        return "YPL2"
+    if "ysl" in league_name_lower and ("north-west" in league_name_lower or "nw" in league_name_lower or "north west" in league_name_lower):
+        return "YSL NW"
+    if "ysl" in league_name_lower and ("south-east" in league_name_lower or "se" in league_name_lower or "south east" in league_name_lower):
+        return "YSL SE"
+    if "vpl men" in league_name_lower:
+        return "VPL Men"
+    if "vpl women" in league_name_lower:
+        return "VPL Women"
+    if "ysl" in league_name_lower:
+        return "YSL"
+    
+    return "Other"
+    
 def get_all_leagues(results, fixtures):
     leagues = set()
     
@@ -888,13 +949,13 @@ def header():
     # Main Title and Subtitle
     st.markdown(f"""
         <div class="main-header" style="text-align: center;">
-        <h1 style='margin:0; padding:0;'>⚽ Junior Pro Football Intelligence</h1>
+        <h3 style='margin:0; padding:0;'>⚽ Junior Pro Football Intelligence</h3>
         <p style='margin:0.5rem 0 0 0; font-size:16px; opacity:0.9;'>
             {st.session_state.get('player_club') or 'League'} 
             → {st.session_state.get('player_age_group') or 'Competition'} 
             → Players
         </p>
-        <span style="font-size: 10px; color: #000000; text-transform: uppercase; letter-spacing: 1px;">
+        <span style="font-size: 12px; color: #000000; text-transform: uppercase; letter-spacing: 1px;">
                 📅 Data Updated: {last_updated}
             </span>
     </div>
@@ -1035,6 +1096,70 @@ def update_user_config(club_name: str, age_group: str):
         
     except Exception as e:
         print(f"Error updating USER_CONFIG: {e}")
+def get_player_league_info(player_name: str, club: str, age_group: str):
+    """Look up player's league and competition from loaded data"""
+    try:
+        # Load player data
+        players_data = load_players_summary()
+        players = players_data.get("players", [])
+        
+        # Split name
+        name_parts = player_name.split()
+        if len(name_parts) >= 2:
+            first_name = name_parts[0]
+            last_name = " ".join(name_parts[1:])
+        else:
+            first_name = player_name
+            last_name = ""
+        
+        # Find matching player
+        for p in players:
+            if (p.get('first_name', '').lower() == first_name.lower() and 
+                p.get('last_name', '').lower() == last_name.lower()):
+                
+                # Get full league name - try multiple fields
+                league = (p.get('league_name') or 
+                         (p.get('leagues', [None])[0] if p.get('leagues') else None) or
+                         p.get('competition_name') or
+                         '')
+                
+                # Extract just the competition part (YPL1, YPL2, etc.)
+                competition = extract_competition_from_league(league)
+                
+                print(f"DEBUG: Found player {player_name}")
+                print(f"  Full league: {league}")
+                print(f"  Competition: {competition}")
+                
+                return league, competition
+        
+        # If not found in players, try staff
+        staff_data = load_staff_summary()
+        staff = staff_data.get("staff", [])
+        
+        for s in staff:
+            if (s.get('first_name', '').lower() == first_name.lower() and 
+                s.get('last_name', '').lower() == last_name.lower()):
+                
+                league = (s.get('league_name') or 
+                         (s.get('leagues', [None])[0] if s.get('leagues') else None) or
+                         s.get('competition_name') or
+                         '')
+                
+                competition = extract_competition_from_league(league)
+                
+                print(f"DEBUG: Found staff {player_name}")
+                print(f"  Full league: {league}")
+                print(f"  Competition: {competition}")
+                
+                return league, competition
+        
+        # If player not found, return empty - NO GUESSING!
+        print(f"WARNING: Could not find league info for {player_name}")
+        return '', ''
+        
+    except Exception as e:
+        print(f"Error getting league info: {e}")
+        return '', ''     
 # ---------------------------------------------------------
 # Main Application
 # ---------------------------------------------------------
@@ -1046,7 +1171,12 @@ def main_app():
     first_name = st.session_state.get('full_name', 'Champ').split()[0]
     club = st.session_state.get('player_club', 'The League')
     age = st.session_state.get('player_age_group', '')
-    col_left, col_mid, col_right = st.columns([2, 7, 1])
+    league = st.session_state.get('player_league', '')
+    Comp = st.session_state.get('player_competition', '')
+    
+    
+    
+    col_left, col_mid, col_right = st.columns([2, 6, 2])
     
     with col_left:
         if st.session_state.get("user_type") == "admin":
@@ -1057,61 +1187,62 @@ def main_app():
             """, unsafe_allow_html=True)
         else:
             st.markdown(f"""
-            <div style="padding-top: 10px;">
-                <div style="background: rgba(255, 255, 255, 0.05); padding: 8px 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); display: inline-block;">
-                    <span style="font-size: 14px; color: #ffffff; font-weight: 500;">👤 {st.session_state.get('full_name')}</span>
-                    <span style="color: #888; margin: 0 8px;">|</span>
-                    <span style="font-size: 13px; color: #888;">⚽ {club} {age}</span>
+            <div style="padding: 10px 0;">
+                <div style=" display: inline-block;box-shadow: 0 2px 4px rgba(0,0,0,0.1)">
+                    <span style="font-size: 18px;  font-weight: 500;">👤 {st.session_state.get('full_name')}</span>
+                    <p><span style="font-size: 15px; ">⚽ {club} {age}</span></p>
                 </div>
             </div>
             """, unsafe_allow_html=True)
-    with col_mid:
-        # 1. Expanded list of funny football-themed messages
-        funny_greetings = [
-            "Ready to kick some grass?",
-            "Don't let the ball be smarter than you today!",
-            "Remember: 7 days without football makes one weak.",
-            "Time to turn those 'clangers' into 'blinders'!",
-            "Your boots called... they're bored. Let's play!",
-            "Go out there and play for the badge on the front!",
-            "Even the pros trip over their shoelaces occasionally.",
-            "Eat. Sleep. Football. Repeat.",
-            "Is it 'squeaky-bum time' yet? Let's go!",
-            "Drink some water. Your muscles aren't cacti.",
-            "If you can't beat 'em, outrun 'em.",
-            "Warning: May contain extreme football obsession.",
-            "The ball doesn't sweat. Let it do the work!",
-            "I'm not saying you're slow, but the grass is growing under your feet!",
-            "Keep calm and pass the ball.",
-            "Your heatmap today should look like a spicy pepperoni pizza!",
-            "Unless you're a goalie, keep your hands off the goods!",
-            " nutmegging your teammates in training doesn't count as a career highlight.",
-            "Shoot for the moon... if you miss, at least it's a corner kick."
-        ]
-
-        # 2. Pick a random quote
-        daily_quote = random.choice(funny_greetings)
-
-        # 3. Time-based greeting logic
-        aest = pytz.timezone('Australia/Melbourne')
-        hour = datetime.now(aest).hour
-        if hour < 12:
-            time_greeting = "Morning"
-        elif 12 <= hour < 18:
-            time_greeting = "Afternoon"
-        else:
-            time_greeting = "Evening"
-#            <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #39FF14; opacity: 0.6; margin-bottom: 8px;">
-#                    {time_greeting} Inspiration
+#    <p><span style="font-size: 15px; ">⚽ {league} </span></p>
+#                    <p><span style="font-size: 15px; ">⚽ {Comp} </span></p>
+#      with col_mid:
+#        # 1. Expanded list of funny football-themed messages
+#        funny_greetings = [
+#            "Ready to kick some grass?",
+#            "Don't let the ball be smarter than you today!",
+#            "Remember: 7 days without football makes one weak.",
+#            "Time to turn those 'clangers' into 'blinders'!",
+#            "Your boots called... they're bored. Let's play!",
+#            "Go out there and play for the badge on the front!",
+#            "Even the pros trip over their shoelaces occasionally.",
+#            "Eat. Sleep. Football. Repeat.",
+#            "Is it 'squeaky-bum time' yet? Let's go!",
+#            "Drink some water. Your muscles aren't cacti.",
+#            "If you can't beat 'em, outrun 'em.",
+#            "Warning: May contain extreme football obsession.",
+#            "The ball doesn't sweat. Let it do the work!",
+#            "I'm not saying you're slow, but the grass is growing under your feet!",
+#            "Keep calm and pass the ball.",
+#            "Your heatmap today should look like a spicy pepperoni pizza!",
+#            "Unless you're a goalie, keep your hands off the goods!",
+#            " nutmegging your teammates in training doesn't count as a career highlight.",
+#            "Shoot for the moon... if you miss, at least it's a corner kick."
+#        ]
+#
+#        # 2. Pick a random quote
+#        daily_quote = random.choice(funny_greetings)
+#
+#        # 3. Time-based greeting logic
+#        aest = pytz.timezone('Australia/Melbourne')
+#        hour = datetime.now(aest).hour
+#        if hour < 12:
+#            time_greeting = "Morning"
+#        elif 12 <= hour < 18:
+#            time_greeting = "Afternoon"
+#        else:
+#            time_greeting = "Evening"
+##            <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #39FF14; opacity: 0.6; margin-bottom: 8px;">
+##                    {time_greeting} Inspiration
+##                </div>
+#    
+#        # 5. The "Smile-Inducing" Badge
+#        st.markdown(f"""
+#                <div style="font-size: 20px; font-weight: 300; font-style: italic; line-height: 1.1; text-align: center;">
+#                    "{daily_quote}"
 #                </div>
-    
-        # 5. The "Smile-Inducing" Badge
-        st.markdown(f"""
-                <div style="font-size: 20px; font-weight: 300; color: #bbbbbb; font-style: italic; line-height: 1.1; max-width: 600px; margin: 0 auto; text-align: center;">
-                    "{daily_quote}"
-                </div>
-        """, unsafe_allow_html=True)
-        #st.markdown("---")
+#        """, unsafe_allow_html=True)
+#        #st.markdown("---")
     with col_right:
         if st.button("🚪 Logout", key="logout_button", use_container_width=True):
             st.session_state.clear()
@@ -1162,7 +1293,9 @@ def main_app():
     user_club = st.session_state.get("player_club") or "Heidelberg United"
     user_age = st.session_state.get("player_age_group") or "U16"
     user_name = st.session_state.get("full_name") or "John Doe"
-    
+    user_league = st.session_state.get("player_league") or "YPL2"  # ADD THIS
+    user_competition = st.session_state.get("player_competition") or "YPL2"  
+
     # Example queries - collapse after click/search by changing label so Streamlit treats it as new widget
     _collapse = st.session_state.get("expander_collapse_counter", 0)
     _expander_label = "💡 Example Queries" + "\u200b" * (_collapse % 50)  # invisible chars force new widget when we want collapsed
@@ -1217,12 +1350,13 @@ def main_app():
     with col2:
         st.markdown("**🏆 Competitions**")
         # You can keep these generic or tie them to the competition the age group plays in
-        if st.button("YPL2 overview", key="ex7", use_container_width=False):
-            st.session_state["clicked_query"] = "YPL2 overview"
+        q7 = f"{user_league} ladder"  # Instead of f"{user_age} YPL2 ladder"
+        if st.button(q7, key="ex7", use_container_width=False):
+            st.session_state["clicked_query"] = q7
             st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
             st.rerun()
         
-        q8 = f"{user_age} YPL2 ladder"
+        q8 = f"{user_competition} ladder"  # Instead of f"{user_age} YPL2 ladder"
         if st.button(q8, key="ex8", use_container_width=False):
             st.session_state["clicked_query"] = q8
             st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
@@ -1250,7 +1384,19 @@ def main_app():
             st.session_state["clicked_query"] = q13
             st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
             st.rerun()
-    
+        st.markdown("**📊 Today's Games**")
+        
+        q14 = "today's results"
+        if st.button(q14, key="q14", use_container_width=False):
+            st.session_state["clicked_query"] = q14
+            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+            st.rerun()
+            
+        q15 = "missing scores today"
+        if st.button(q15, key="q15", use_container_width=False):
+            st.session_state["clicked_query"] = q15
+            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+            st.rerun()
     # Process search queries
     if search and search != st.session_state["last_search"]:
         st.session_state["last_search"] = search

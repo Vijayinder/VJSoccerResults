@@ -68,10 +68,15 @@ CLUB_ALIASES = {
     "magic": "Altona Magic SC",
     "altona sc": "Altona Magic SC",
     
+    # Eltham Redbacks FC variations
+    "redbacks": "Eltham Redbacks FC",
+    "eltham": "Eltham Redbacks FC",
+        
+     
     # Box Hill variations
-    "box hill": "Box Hill United SC",
-    "box hill united": "Box Hill United SC",
-    "boxhill": "Box Hill United SC",
+    "box hill": "Box Hill United Pythagoras FC",
+    "box hill united": "Box Hill United Pythagoras FC",
+    "boxhill": "Box Hill United Pythagoras FC",
     
     # Manningham variations
     "manningham": "Manningham United Blues FC",
@@ -288,6 +293,28 @@ def get_last_sunday() -> datetime.date:
         last_sunday = today - timedelta(days=days_since_sunday)
     return last_sunday
 
+def get_match_day_date() -> datetime.date:
+    """
+    Get the relevant match day date.
+    If today is Sunday, return today.
+    Otherwise, return last Sunday.
+    """
+    melbourne_tz = pytz.timezone('Australia/Melbourne')
+    today = datetime.now(melbourne_tz).date()
+    
+    # Check if today is Sunday (weekday() returns 6 for Sunday)
+    if today.weekday() == 6:
+        return today
+    else:
+        # Calculate last Sunday
+        days_since_sunday = (today.weekday() + 1) % 7
+        if days_since_sunday == 0:
+            # Today is Sunday
+            return today
+        else:
+            last_sunday = today - timedelta(days=days_since_sunday)
+            return last_sunday
+            
 def format_minutes(minutes_list: List) -> str:
     """Format list of minutes into readable string"""
     if not minutes_list:
@@ -771,6 +798,195 @@ def tool_missing_scores(query: str = "", include_all_leagues: bool = False) -> A
         "data": data,
         "title": f"{title_prefix} ({len(missing_scores)} matches)"
     }
+
+def tool_todays_results(query: str = "") -> Any:
+    """
+    Show results from today (if Sunday) or last Sunday.
+    Optionally filter by team/club.
+    """
+    # Get the match day (today if Sunday, else last Sunday)
+    match_day = get_match_day_date()
+    
+    melbourne_tz = pytz.timezone('Australia/Melbourne')
+    today = datetime.now(melbourne_tz).date()
+    
+    # Determine the label
+    if match_day == today:
+        day_label = "Today"
+    else:
+        day_label = f"Last Sunday ({match_day.strftime('%d-%b')})"
+    
+    # ADD DEBUG
+    print(f"DEBUG tool_todays_results - Looking for matches on: {match_day}")
+    print(f"DEBUG tool_todays_results - Day label: {day_label}")
+    print(f"DEBUG tool_todays_results - Total results available: {len(results)}")
+    
+    # Filter results for this date
+    todays_results = []
+    
+    for result in results:
+        attrs = result.get("attributes", {})
+        date_str = attrs.get("date", "")
+        if not date_str:
+            continue
+        
+        # Parse to Melbourne date
+        match_dt = parse_date_utc_to_aest(date_str)
+        if not match_dt:
+            continue
+        
+        match_date = match_dt.date()
+        
+        # ADD DEBUG - show first few matches
+        if len(todays_results) < 3:
+            print(f"  Checking match: {attrs.get('home_team_name')} vs {attrs.get('away_team_name')} on {match_date}")
+        
+        # Check if match is on our target date
+        if match_date != match_day:
+            continue
+        
+        # Optional query filter
+        if query:
+            q_lower = query.lower().strip()
+            home_team = attrs.get("home_team_name", "Unknown")
+            away_team = attrs.get("away_team_name", "Unknown")
+            league = attrs.get("league_name", "")
+            
+            search_blob = f"{home_team} {away_team} {league}".lower()
+            if q_lower not in search_blob:
+                continue
+        
+        # Check if scores are entered
+        home_score = attrs.get("home_score")
+        away_score = attrs.get("away_score")
+        status = (attrs.get("status") or "").lower()
+        
+        if status == "complete" and home_score is not None and away_score is not None:
+            todays_results.append({
+                "time": match_dt.strftime("%I:%M %p"),
+                "league": extract_league_from_league_name(attrs.get("league_name", "")),
+                "home_team": home_team,
+                "away_team": away_team,
+                "home_score": home_score,
+                "away_score": away_score,
+                "round": attrs.get("full_round", attrs.get("round", "")),
+            })
+    
+    # ADD DEBUG
+    print(f"DEBUG tool_todays_results - Found {len(todays_results)} results")
+    
+    if not todays_results:
+        filter_text = f" matching '{query}'" if query else ""
+        return f"❌ No results found for {day_label}{filter_text}"
+    
+    # Sort by time
+    todays_results.sort(key=lambda x: x["time"])
+    
+    # Format as table
+    data = []
+    for i, match in enumerate(todays_results, 1):
+        data.append({
+            "#": i,
+            "Time": match["time"],
+            "League": match["league"],
+            "Match": f"{match['home_team']} {match['home_score']}-{match['away_score']} {match['away_team']}",
+            "Round": match["round"]
+        })
+    
+    filter_suffix = f" - {query}" if query else ""
+    return {
+        "type": "table",
+        "data": data,
+        "title": f"⚽ {day_label}'s Results{filter_suffix} ({len(todays_results)} matches)"
+    }
+
+def tool_missing_scores_today(query: str = "") -> Any:
+    """
+    Show matches from today (if Sunday) or last Sunday that don't have scores entered yet.
+    """
+    # Get the match day (today if Sunday, else last Sunday)
+    match_day = get_match_day_date()
+    
+    melbourne_tz = pytz.timezone('Australia/Melbourne')
+    today = datetime.now(melbourne_tz).date()
+    
+    # Determine the label
+    if match_day == today:
+        day_label = "Today"
+    else:
+        day_label = f"Last Sunday ({match_day.strftime('%d-%b')})"
+    
+    missing_scores = []
+    
+    for fixture in fixtures:
+        attrs = fixture.get("attributes", {})
+        date_str = attrs.get("date", "")
+        if not date_str:
+            continue
+        
+        # Parse to Melbourne date
+        match_dt = parse_date_utc_to_aest(date_str)
+        if not match_dt:
+            continue
+        
+        match_date = match_dt.date()
+        
+        # Only show matches from our target date
+        if match_date != match_day:
+            continue
+        
+        # Optional query filter
+        home_team = attrs.get("home_team_name", "Unknown")
+        away_team = attrs.get("away_team_name", "Unknown")
+        league = attrs.get("league_name", "")
+        
+        if query:
+            q_lower = query.lower().strip()
+            search_blob = f"{home_team} {away_team} {league}".lower()
+            if q_lower not in search_blob:
+                continue
+        
+        # Check if scores are missing
+        status = (attrs.get("status") or "").lower()
+        home_score = attrs.get("home_score")
+        away_score = attrs.get("away_score")
+        
+        if status != "complete" or home_score is None or away_score is None:
+            missing_scores.append({
+                "time": match_dt.strftime("%I:%M %p"),
+                "league": extract_league_from_league_name(league),
+                "home_team": home_team,
+                "away_team": away_team,
+                "round": attrs.get("full_round", attrs.get("round", "")),
+                "venue": attrs.get("ground_name", "TBD")
+            })
+    
+    if not missing_scores:
+        filter_text = f" matching '{query}'" if query else ""
+        return f"✅ All scores entered for {day_label}{filter_text}!"
+    
+    # Sort by time
+    missing_scores.sort(key=lambda x: x["time"])
+    
+    # Format as table
+    data = []
+    for i, match in enumerate(missing_scores, 1):
+        data.append({
+            "#": i,
+            "Time": match["time"],
+            "League": match["league"],
+            "Match": f"{match['home_team']} vs {match['away_team']}",
+            "Round": match["round"],
+            "Venue": match["venue"]
+        })
+    
+    filter_suffix = f" - {query}" if query else ""
+    return {
+        "type": "table",
+        "data": data,
+        "title": f"⚠️ Missing Scores for {day_label}{filter_suffix} ({len(missing_scores)} matches)"
+    }
+    
 def extract_league_from_league_name(league_name: str) -> str:
     """Extract league from league name (YPL1, YPL2, YSL NW, etc.)"""
     if not league_name:
@@ -1547,21 +1763,52 @@ def tool_team_overview(query: str) -> str:
 
 def tool_ladder(query: str) -> str:
     q = query.lower()
+    
+    # DEBUG
+    print(f"DEBUG tool_ladder - Query: '{query}'")
+    
     league = fuzzy_find(q, [l.lower() for l in league_names], threshold=50)
     comp = fuzzy_find(q, [c.lower() for c in competition_names], threshold=50)
+    
+    print(f"DEBUG tool_ladder - Matched league: {league}")
+    print(f"DEBUG tool_ladder - Matched competition: {comp}")
+    
+    # EXTRACT the competition code from the matched league/comp
+    # This handles cases like "u15 ypl1 boys" -> "ypl1"
+    competition_to_use = None
+    
+    if league:
+        competition_to_use = extract_league_from_league_name(league)
+        print(f"DEBUG tool_ladder - Extracted competition from league: {competition_to_use}")
+    elif comp:
+        competition_to_use = extract_league_from_league_name(comp)
+        print(f"DEBUG tool_ladder - Extracted competition from comp: {competition_to_use}")
+    
+    if not competition_to_use:
+        # Try extracting directly from query
+        competition_to_use = extract_league_from_league_name(query)
+        print(f"DEBUG tool_ladder - Extracted competition from query: {competition_to_use}")
+    
+    if not competition_to_use:
+        return f"❌ No ladder found for: {query}\n\nTry: 'YPL1 ladder', 'YPL2 ladder', 'YSL NW ladder'"
+    
+    # Convert back to lowercase for matching
+    competition_to_use = competition_to_use.lower()
+    print(f"DEBUG tool_ladder - Using competition for filtering: {competition_to_use}")
 
     table = defaultdict(lambda: {"P": 0, "W": 0, "D": 0, "L": 0, "GF": 0, "GA": 0, "PTS": 0})
-
+    
+    matches_found = 0
     for r in results:
         a = r.get("attributes", {})
-        # Handle None values properly
         league_name = (a.get("league_name") or "").lower()
         comp_name = (a.get("competition_name") or "").lower()
         
-        if league and league not in league_name:
+        # Check if the competition code is in the league name
+        if competition_to_use not in league_name and competition_to_use not in comp_name:
             continue
-        if comp and comp not in comp_name:
-            continue
+        
+        matches_found += 1
 
         home = a.get("home_team_name") or ""
         away = a.get("away_team_name") or ""
@@ -1591,9 +1838,12 @@ def tool_ladder(query: str) -> str:
             table[away]["D"] += 1
             table[home]["PTS"] += 1
             table[away]["PTS"] += 1
+    
+    print(f"DEBUG tool_ladder - Matches found: {matches_found}")
+    print(f"DEBUG tool_ladder - Teams in table: {len(table)}")
 
     if not table:
-        return f"❌ No ladder for: {query}"
+        return f"❌ No ladder for: {query}\n\nFound competition '{competition_to_use.upper()}' but no completed matches.\n\nTry: 'YPL1 ladder', 'YPL2 ladder', 'YSL NW ladder'"
 
     ladder = sorted(
         table.items(),
@@ -1601,16 +1851,28 @@ def tool_ladder(query: str) -> str:
         reverse=True,
     )
 
-    lines = [f"📊 **{query}**\n", "Pos | Team | P | W | D | L | GF | GA | GD | PTS", "-" * 55]
-    for pos, (team, row) in enumerate(ladder[:20], 1):
+    data = []
+    for pos, (team, row) in enumerate(ladder, 1):
         gd = row["GF"] - row["GA"]
-        lines.append(
-            f"{pos:>2}. {team[:25]:<25} {row['P']:>2} {row['W']:>2} {row['D']:>2} {row['L']:>2} "
-            f"{row['GF']:>2} {row['GA']:>2} {gd:>+3} {row['PTS']:>3}"
-        )
-
-    return "\n".join(lines)
-
+        data.append({
+            "Pos": pos,
+            "Team": team,
+            "P": row["P"],
+            "W": row["W"],
+            "D": row["D"],
+            "L": row["L"],
+            "GF": row["GF"],
+            "GA": row["GA"],
+            "GD": gd,
+            "PTS": row["PTS"]
+        })
+    
+    return {
+        "type": "table",
+        "data": data,
+        "title": f"📊 {competition_to_use.upper()} Ladder ({len(ladder)} teams)"
+    }
+    
 def tool_form(query: str) -> str:
     team = normalize_team(query) or query
     matches = []
@@ -1629,7 +1891,7 @@ def tool_form(query: str) -> str:
         return f"❌ No form data for: {team}"
 
     form = []
-    lines = [f"📈 **{team}**\n"]
+    match_data = []
     
     for m in matches:
         try:
@@ -1650,10 +1912,20 @@ def tool_form(query: str) -> str:
         
         form.append(result)
         date_str = format_date(m.get('date', ''))
-        lines.append(f"{icon} {date_str}: {home} {hs}-{as_} {away}")
-
-    lines.insert(1, f"**{' '.join(form)}**\n")
-    return "\n".join(lines)
+        
+        match_data.append({
+            "Date": date_str,
+            "Result": icon + " " + result,
+            "Match": f"{home} {hs}-{as_} {away}",
+            "Score": f"{hs}-{as_}"
+        })
+    
+    # Return table format
+    return {
+        "type": "table",
+        "data": match_data,
+        "title": f"📈 Recent Form: {team} - {' '.join(form)}"
+    }
 
 def tool_match_centre(query: str) -> str:
     q = query.strip()
@@ -1812,7 +2084,19 @@ class FastQueryRouter:
             filter_query = re.sub(r'\b(missing|score|scores?|no|not|entered|overdue|matches?|without|for|show|list)\b', '', q).strip()
             include_all = 'all leagues' in q or 'all league' in q
             return tool_missing_scores(filter_query, include_all_leagues=include_all)
+            
+        # --- 2B. TODAY'S RESULTS ---
+        todays_results_keywords = ['today results', 'todays results', "today's results", 'results today', 'results for today']
+        if any(keyword in q for keyword in todays_results_keywords):
+            filter_query = re.sub(r'\b(today|todays|today\'s|results?|for|show|list|me)\\b', '', q).strip()
+            return tool_todays_results(filter_query)
 
+        # --- 2C. MISSING SCORES TODAY ---
+        missing_today_keywords = ['missing scores today', 'missing today', 'scores not entered today', 'todays missing scores']
+        if any(keyword in q for keyword in missing_today_keywords):
+            filter_query = re.sub(r'\b(missing|today|todays|today\'s|scores?|not|entered|for|show|list|me)\\b', '', q).strip()
+            return tool_missing_scores_today(filter_query)
+            
         # --- 3. COMPETITION OVERVIEW ---
         comp_overview_keywords = ['competition overview', 'competition standings', 'ypl1 overview', 'ypl2 overview', 'ysl overview', 'vpl overview', 'club rankings', 'overall standings']
         if any(keyword in q for keyword in comp_overview_keywords) or any(comp in q for comp in ['ypl1', 'ypl2', 'ysl nw', 'ysl se', 'vpl']):
