@@ -971,7 +971,9 @@ def is_natural_language_query(query):
         "yellow card", "red card", "lineup", "vs", " v ",
         "team", "overview", "competition", "standings", "rankings",
         "ypl1", "ypl2", "ysl", "missing score", "no score", "overdue",
-        "coach", "coaches", "staff", "manager", "managers"  # Added for coach/staff queries
+        "coach", "coaches", "staff", "manager", "managers",
+        # ✅ NEW: Today's matches keywords
+        "today", "todays", "result"  # Catches "todays results", "results today", "today's results"
     ]
     return any(keyword in query.lower() for keyword in keywords)
 
@@ -1286,7 +1288,7 @@ def main_app():
     search = st.text_input(
         "",
         value=st.session_state["search_query"],
-        placeholder="Try: 'Stats for Mark','top scorers in U16', 'yellow cards Heidelberg', 'missing scores'...",
+        placeholder="Try: 'Stats for Shaurya','top scorers in U16', 'yellow cards Heidelberg', 'missing scores'...",
         label_visibility="collapsed"
     )
     # 1. Define dynamic labels based on session state
@@ -1386,8 +1388,8 @@ def main_app():
             st.rerun()
         st.markdown("**📊 Today's Games**")
         
-        q14 = "today's results"
-        if st.button(q14, key="q14", use_container_width=False):
+        q14 = "todays results"
+        if st.button("Today's Results", key="q14", use_container_width=False):  # ← Nice label
             st.session_state["clicked_query"] = q14
             st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
             st.rerun()
@@ -1434,40 +1436,6 @@ def main_app():
                         
                         st.dataframe(df, hide_index=True, use_container_width=True, height=final_height)
                         
-#                        # --- Download Section ---
-#                        col1, col2 = st.columns(2)
-#                        
-#                        with col1:
-#                            csv = df.to_csv(index=False).encode('utf-8')
-#                            st.download_button(
-#                                label="📥 Download CSV",
-#                                data=csv,
-#                                file_name=f"data_export.csv",
-#                                mime='text/csv'
-#                            )
-#                            
-#                        with col2:
-#                            # We import here so the app doesn't crash on startup if installation failed
-#                            try:
-#                                import plotly.graph_objects as go
-#                                
-#                                fig = go.Figure(data=[go.Table(
-#                                    header=dict(values=list(df.columns), fill_color='#F0F2F6', align='left'),
-#                                    cells=dict(values=[df[col] for col in df.columns], fill_color='white', align='left')
-#                                )])
-#                                fig.update_layout(margin=dict(l=5, r=5, t=5, b=5))
-#                                
-#                                # Convert to PNG
-#                                img_bytes = fig.to_image(format="png", engine="kaleido")
-#                                
-#                                st.download_button(
-#                                    label="🖼️ Download as Image",
-#                                    data=img_bytes,
-#                                    file_name=f"table_export.png",
-#                                    mime="image/png"
-#                                )
-#                            except (ImportError, ModuleNotFoundError):
-#                                st.button("🖼️ Image Export (Install Plotly)", disabled=True, help="Run 'pip install plotly kaleido' in your terminal.")
 
                 elif answer.get("type") == "error":
                     st.error(answer.get("message", "An error occurred"))
