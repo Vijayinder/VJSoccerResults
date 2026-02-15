@@ -1032,25 +1032,39 @@ def tool_todays_results(query: str = "") -> Any:
         if query:
             q_lower = query.lower().strip()
             
-            # Check if query matches league code (YPL1, YPL2, etc.)
-            league_code = extract_league_from_league_name(league)
+            # Extract filters from query
+            age_group = extract_age_group(q_lower)
+            canonical_club = get_canonical_club_name(q_lower)
+            
+            # Extract league code from the match
+            match_league_code = extract_league_from_league_name(league)
             
             # Build comprehensive search blob
-            search_blob = f"{home_team} {away_team} {league} {league_code}".lower()
+            search_blob = f"{home_team} {away_team} {league} {match_league_code}".lower()
             
-            # Also check for age group matches (U16, U15, etc.)
-            age_group = extract_age_group(q_lower)
+            # Check if query specifies a league code (YPL1, YPL2, YSL NW, etc.)
+            query_league_code = None
+            for possible_league in ['ypl1', 'ypl2', 'ysl nw', 'ysl se', 'vpl men', 'vpl women', 'ypl 1', 'ypl 2']:
+                if possible_league in q_lower:
+                    query_league_code = extract_league_from_league_name(possible_league)
+                    break
+            
+            # If user specified a league code, match must have it
+            if query_league_code and match_league_code.lower() != query_league_code.lower():
+                continue
+            
+            # If user specified age group, match must have it
             if age_group and age_group.lower() not in search_blob:
                 continue
             
-            # Check for canonical club name
-            canonical_club = get_canonical_club_name(q_lower)
+            # If user specified club name, match must have it
             if canonical_club and canonical_club.lower() not in search_blob:
                 continue
             
-            # Fallback to basic substring match if no specific filters matched
-            if not age_group and not canonical_club and q_lower not in search_blob:
-                continue
+            # Fallback: if no specific filters, do basic substring match
+            if not age_group and not canonical_club and not query_league_code:
+                if q_lower not in search_blob:
+                    continue
         
         # Check if scores are entered
         home_score = attrs.get("home_score")
@@ -1144,25 +1158,39 @@ def tool_top_scorers_today(query: str = "") -> Any:
         if query:
             q_lower = query.lower().strip()
             
-            # Check if query matches league code (YPL1, YPL2, etc.)
-            league_code = extract_league_from_league_name(league)
+            # Extract filters from query
+            age_group = extract_age_group(q_lower)
+            canonical_club = get_canonical_club_name(q_lower)
+            
+            # Extract league code from the match
+            match_league_code = extract_league_from_league_name(league)
             
             # Build comprehensive search blob
-            search_blob = f"{home_team} {away_team} {league} {league_code}".lower()
+            search_blob = f"{home_team} {away_team} {league} {match_league_code}".lower()
             
-            # Also check for age group matches (U16, U15, etc.)
-            age_group = extract_age_group(q_lower)
+            # Check if query specifies a league code (YPL1, YPL2, YSL NW, etc.)
+            query_league_code = None
+            for possible_league in ['ypl1', 'ypl2', 'ysl nw', 'ysl se', 'vpl men', 'vpl women', 'ypl 1', 'ypl 2']:
+                if possible_league in q_lower:
+                    query_league_code = extract_league_from_league_name(possible_league)
+                    break
+            
+            # If user specified a league code, match must have it
+            if query_league_code and match_league_code.lower() != query_league_code.lower():
+                continue
+            
+            # If user specified age group, match must have it
             if age_group and age_group.lower() not in search_blob:
                 continue
             
-            # Check for canonical club name
-            canonical_club = get_canonical_club_name(q_lower)
+            # If user specified club name, match must have it
             if canonical_club and canonical_club.lower() not in search_blob:
                 continue
             
-            # Fallback to basic substring match if no specific filters matched
-            if not age_group and not canonical_club and q_lower not in search_blob:
-                continue
+            # Fallback: if no specific filters, do basic substring match
+            if not age_group and not canonical_club and not query_league_code:
+                if q_lower not in search_blob:
+                    continue
         # Extract goal scorers from this match
         match_hash = result.get("match_hash_id", "")
         if not match_hash:
@@ -1271,25 +1299,39 @@ def tool_teams_lost_today(query: str = "") -> Any:
         if query:
             q_lower = query.lower().strip()
             
-            # Check if query matches league code (YPL1, YPL2, etc.)
-            league_code = extract_league_from_league_name(league)
+            # Extract filters from query
+            age_group = extract_age_group(q_lower)
+            canonical_club = get_canonical_club_name(q_lower)
+            
+            # Extract league code from the match
+            match_league_code = extract_league_from_league_name(league)
             
             # Build comprehensive search blob
-            search_blob = f"{home_team} {away_team} {league} {league_code}".lower()
+            search_blob = f"{home_team} {away_team} {league} {match_league_code}".lower()
             
-            # Also check for age group matches (U16, U15, etc.)
-            age_group = extract_age_group(q_lower)
+            # Check if query specifies a league code (YPL1, YPL2, YSL NW, etc.)
+            query_league_code = None
+            for possible_league in ['ypl1', 'ypl2', 'ysl nw', 'ysl se', 'vpl men', 'vpl women', 'ypl 1', 'ypl 2']:
+                if possible_league in q_lower:
+                    query_league_code = extract_league_from_league_name(possible_league)
+                    break
+            
+            # If user specified a league code, match must have it
+            if query_league_code and match_league_code.lower() != query_league_code.lower():
+                continue
+            
+            # If user specified age group, match must have it
             if age_group and age_group.lower() not in search_blob:
                 continue
             
-            # Check for canonical club name
-            canonical_club = get_canonical_club_name(q_lower)
+            # If user specified club name, match must have it
             if canonical_club and canonical_club.lower() not in search_blob:
                 continue
             
-            # Fallback to basic substring match if no specific filters matched
-            if not age_group and not canonical_club and q_lower not in search_blob:
-                continue
+            # Fallback: if no specific filters, do basic substring match
+            if not age_group and not canonical_club and not query_league_code:
+                if q_lower not in search_blob:
+                    continue
         
         # Determine losers
         if hs > as_score:
