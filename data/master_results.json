@@ -7966,5 +7966,53 @@
                 "href": "https://mc-api.dribl.com/api/results/nmYnZBXYaN"
             }
         }
+    },
+    {
+        "type": "results",
+        "hash_id": "BdDb9zLrxN",
+        "attributes": {
+            "name": "FV54531358 - Brunswick Juventus FC v Oakleigh Cannons FC",
+            "date": "2026-02-14 23:00:00",
+            "round": "R3",
+            "full_round": "Round 3",
+            "ground_name": "De Chene Reserve",
+            "field_name": "Pitch 1 - Half Field",
+            "home_team_name": "Brunswick Juventus FC U13",
+            "home_logo": "https://ocean.dribl.com/30f19f65a6b24790bd1f338143b0cbc5",
+            "away_team_name": "Oakleigh Cannons FC U13",
+            "away_logo": "https://ocean.dribl.com/83022e3737d94f8d9724dba79fb76086",
+            "competition_name": "Boys Victorian Youth Premier League 2",
+            "league_name": "U13 YPL2 Boys",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 2,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 1,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": false,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 2,
+            "enable_referees_allocated": false,
+            "match_hash_id": "EN2pnDxQBd",
+            "home_team_hash_id": "Pmrk76YLNo",
+            "away_team_hash_id": "vmZwn4x2Nq",
+            "forfeit_team_hash_id": null
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/BdDb9zLrxN"
+            }
+        }
     }
 ]
