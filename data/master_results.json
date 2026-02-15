@@ -11566,5 +11566,101 @@
                 "href": "https://mc-api.dribl.com/api/results/EN2pnJJYBd"
             }
         }
+    },
+    {
+        "type": "results",
+        "hash_id": "am14QGDPWd",
+        "attributes": {
+            "name": "FV54533288 - Doreen United SC v Keilor Park SC",
+            "date": "2026-02-15 02:45:00",
+            "round": "R1",
+            "full_round": "Round 1",
+            "ground_name": "Painted Hills Recreation Reserve",
+            "field_name": "Pitch 1",
+            "home_team_name": "Doreen United SC U16",
+            "home_logo": "https://ocean.dribl.com/1147cfb5cfae4c359ea05fde3287b930",
+            "away_team_name": "Keilor Park SC U16",
+            "away_logo": "https://ocean.dribl.com/1bf28338faf447938d8d30fed7c924a4",
+            "competition_name": "Boys Youth State League North-West",
+            "league_name": "U16 YSL Boys - North-West",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 2,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 1,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": true,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 3,
+            "enable_referees_allocated": false,
+            "match_hash_id": "jmazBD1L6N",
+            "home_team_hash_id": "jmaVX2eANR",
+            "away_team_hash_id": "pmvzPogDmv",
+            "forfeit_team_hash_id": null
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/am14QGDPWd"
+            }
+        }
+    },
+    {
+        "type": "results",
+        "hash_id": "OmepXrxXyd",
+        "attributes": {
+            "name": "FV54532084 - North Geelong Warriors FC v Melbourne Knights FC",
+            "date": "2026-02-15 02:00:00",
+            "round": "R3",
+            "full_round": "Round 3",
+            "ground_name": "Elcho Park",
+            "field_name": "Pitch 1",
+            "home_team_name": "North Geelong Warriors FC U16",
+            "home_logo": "https://ocean.dribl.com/c2410d9ee11e4428802e11533c882d4d",
+            "away_team_name": "Melbourne Knights FC U16",
+            "away_logo": "https://ocean.dribl.com/3036ac26577e4a46a4f35197841b7baf",
+            "competition_name": "Boys Victorian Youth Premier League 2",
+            "league_name": "U16 YPL2 Boys",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 3,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 1,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": true,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 3,
+            "enable_referees_allocated": false,
+            "match_hash_id": "1K3pvVn1Rd",
+            "home_team_hash_id": "vmZwnq9RNq",
+            "away_team_hash_id": "MNGogqxLNA",
+            "forfeit_team_hash_id": null
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/OmepXrxXyd"
+            }
+        }
     }
 ]
