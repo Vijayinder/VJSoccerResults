@@ -1249,7 +1249,39 @@ def main_app():
         if st.button("🚪 Logout", key="logout_button", use_container_width=True):
             st.session_state.clear()
             st.rerun()
-
+    # In your sidebar (after logout button or admin controls)
+    with st.sidebar:
+        st.markdown("---")
+        
+        with st.expander("📧 Contact Us"):
+            with st.form("contact_form", clear_on_submit=True):
+                st.markdown("**Get in touch with us**")
+                
+                name = st.text_input("Name*", key="contact_name")
+                email = st.text_input("Email*", key="contact_email")
+                subject = st.selectbox("Subject*", [
+                    "General Inquiry",
+                    "Technical Support",
+                    "Feature Request",
+                    "Report an Issue",
+                    "Data Question",
+                    "Other"
+                ])
+                message = st.text_area("Message*", height=100, key="contact_message")
+                
+                submitted = st.form_submit_button("Send Message", use_container_width=True)
+                
+                if submitted:
+                    if name and email and message:
+                        # Create mailto link
+                        import urllib.parse
+                        email_body = f"From: {name} ({email})\n\nSubject: {subject}\n\nMessage:\n{message}"
+                        mailto = f"mailto:juniorprofootball@gmail.com?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(email_body)}"
+                        
+                        st.markdown(f"[📧 Click here to send email]({mailto})")
+                        st.info("Your email client should open. If not, click the link above!")
+                    else:
+                        st.error("Please fill in all fields")
     # Check for admin dashboard
     if st.session_state["role"] == "admin":
         # Add admin dashboard option in sidebar
