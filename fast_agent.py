@@ -1136,16 +1136,33 @@ def tool_top_scorers_today(query: str = "") -> Any:
             continue
         
         # Apply query filter (league, team, club, age group)
+        home_team = attrs.get("home_team_name", "")
+        away_team = attrs.get("away_team_name", "")
+        league = attrs.get("league_name", "")
+
+        # Enhanced query filter - supports league, team, club, age group
         if query:
             q_lower = query.lower().strip()
-            home_team = attrs.get("home_team_name", "")
-            away_team = attrs.get("away_team_name", "")
-            league = attrs.get("league_name", "")
             
-            search_blob = f"{home_team} {away_team} {league}".lower()
-            if q_lower not in search_blob:
+            # Check if query matches league code (YPL1, YPL2, etc.)
+            league_code = extract_league_from_league_name(league)
+            
+            # Build comprehensive search blob
+            search_blob = f"{home_team} {away_team} {league} {league_code}".lower()
+            
+            # Also check for age group matches (U16, U15, etc.)
+            age_group = extract_age_group(q_lower)
+            if age_group and age_group.lower() not in search_blob:
                 continue
-        
+            
+            # Check for canonical club name
+            canonical_club = get_canonical_club_name(q_lower)
+            if canonical_club and canonical_club.lower() not in search_blob:
+                continue
+            
+            # Fallback to basic substring match if no specific filters matched
+            if not age_group and not canonical_club and q_lower not in search_blob:
+                continue
         # Extract goal scorers from this match
         match_hash = result.get("match_hash_id", "")
         if not match_hash:
@@ -1250,11 +1267,28 @@ def tool_teams_lost_today(query: str = "") -> Any:
         except (ValueError, TypeError):
             continue
         
-        # Apply query filter
+        # Enhanced query filter - supports league, team, club, age group
         if query:
             q_lower = query.lower().strip()
-            search_blob = f"{home_team} {away_team} {league}".lower()
-            if q_lower not in search_blob:
+            
+            # Check if query matches league code (YPL1, YPL2, etc.)
+            league_code = extract_league_from_league_name(league)
+            
+            # Build comprehensive search blob
+            search_blob = f"{home_team} {away_team} {league} {league_code}".lower()
+            
+            # Also check for age group matches (U16, U15, etc.)
+            age_group = extract_age_group(q_lower)
+            if age_group and age_group.lower() not in search_blob:
+                continue
+            
+            # Check for canonical club name
+            canonical_club = get_canonical_club_name(q_lower)
+            if canonical_club and canonical_club.lower() not in search_blob:
+                continue
+            
+            # Fallback to basic substring match if no specific filters matched
+            if not age_group and not canonical_club and q_lower not in search_blob:
                 continue
         
         # Determine losers

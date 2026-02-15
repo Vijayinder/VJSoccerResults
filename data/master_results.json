@@ -11662,5 +11662,101 @@
                 "href": "https://mc-api.dribl.com/api/results/OmepXrxXyd"
             }
         }
+    },
+    {
+        "type": "results",
+        "hash_id": "lNbJjrx3wN",
+        "attributes": {
+            "name": "FV54531843 - Eltham Redbacks FC v Northcote City FC",
+            "date": "2026-02-15 00:45:00",
+            "round": "R3",
+            "full_round": "Round 3",
+            "ground_name": "Eltham North Reserve",
+            "field_name": "Pitch 1 (S)",
+            "home_team_name": "Eltham Redbacks FC U15",
+            "home_logo": "https://ocean.dribl.com/6356104297464d4d8396995821d96c01",
+            "away_team_name": "Northcote City FC U15",
+            "away_logo": "https://ocean.dribl.com/ec9db56b702f499dbe52a5a818301df2",
+            "competition_name": "Boys Victorian Youth Premier League 2",
+            "league_name": "U15 YPL2 Boys",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 1,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 2,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": true,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 3,
+            "enable_referees_allocated": false,
+            "match_hash_id": "emAney3B9N",
+            "home_team_hash_id": "MNGogqQENA",
+            "away_team_hash_id": "nmYyQqzYmz",
+            "forfeit_team_hash_id": null
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/lNbJjrx3wN"
+            }
+        }
+    },
+    {
+        "type": "results",
+        "hash_id": "lNbJjBrWXN",
+        "attributes": {
+            "name": "FV54533720 - Bendigo City FC v Werribee City FC",
+            "date": "2026-02-14 23:00:00",
+            "round": "R1",
+            "full_round": "Round 1",
+            "ground_name": "Epsom Huntly Recreation Reserve",
+            "field_name": "Kevin Gibson Field (S) - Half Field",
+            "home_team_name": "Bendigo City FC U13",
+            "home_logo": "https://ocean.dribl.com/e5e525f4f0c947d0b0682103cfe8e828",
+            "away_team_name": "Werribee City FC U13",
+            "away_logo": "https://ocean.dribl.com/3a0a89bf994d464e9460ac5cfcf04e9d",
+            "competition_name": "Boys Youth State League North-West",
+            "league_name": "U13 YSL Boys - North-West",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 1,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 7,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": false,
+            "allocated_assistant_referee_2": false,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 1,
+            "enable_referees_allocated": false,
+            "match_hash_id": "emAnePQ0QN",
+            "home_team_hash_id": "2KpvA96PmY",
+            "away_team_hash_id": "pmvzPo1ymv",
+            "forfeit_team_hash_id": null
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/lNbJjBrWXN"
+            }
+        }
     }
 ]
