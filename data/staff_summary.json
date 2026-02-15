@@ -1967,7 +1967,7 @@
                 "U18 YPL1 Boys"
             ],
             "stats": {
-                "matches_attended": 7,
+                "matches_attended": 8,
                 "yellow_cards": 0,
                 "red_cards": 0
             },
@@ -2020,6 +2020,13 @@
                     "role_in_match": "Coach",
                     "opponent": "Western United FC U18",
                     "events": []
+                },
+                {
+                    "match_hash_id": "4KLlzJD8gK",
+                    "date": "2026-02-14T22:00:00.000000Z",
+                    "role_in_match": "Coach",
+                    "opponent": "Western United FC U13",
+                    "events": []
                 }
             ]
         },
@@ -2046,7 +2053,7 @@
                 "U18 YPL1 Boys"
             ],
             "stats": {
-                "matches_attended": 13,
+                "matches_attended": 14,
                 "yellow_cards": 0,
                 "red_cards": 0
             },
@@ -2140,6 +2147,13 @@
                     "date": "2026-02-15T00:10:00.000000Z",
                     "role_in_match": "Coach",
                     "opponent": "Western United FC U18",
+                    "events": []
+                },
+                {
+                    "match_hash_id": "4KLlzJD8gK",
+                    "date": "2026-02-14T22:00:00.000000Z",
+                    "role_in_match": "Coach",
+                    "opponent": "Western United FC U13",
                     "events": []
                 }
             ]
@@ -7528,7 +7542,7 @@
                 "U16 YPL1 Boys"
             ],
             "stats": {
-                "matches_attended": 6,
+                "matches_attended": 7,
                 "yellow_cards": 0,
                 "red_cards": 0
             },
@@ -7573,6 +7587,13 @@
                     "date": "2026-01-31T22:00:00.000000Z",
                     "role_in_match": "Coach",
                     "opponent": "Caroline Springs George Cross FC U13",
+                    "events": []
+                },
+                {
+                    "match_hash_id": "4KLlzJD8gK",
+                    "date": "2026-02-14T22:00:00.000000Z",
+                    "role_in_match": "Coach",
+                    "opponent": "Western United FC U13",
                     "events": []
                 }
             ]
@@ -11525,17 +11546,19 @@
                 "Coach"
             ],
             "teams": [
+                "Glen Eira FC U13",
                 "Glen Eira FC U15",
                 "Glen Eira FC U16",
                 "Glen Eira FC U18"
             ],
             "leagues": [
+                "U13 YPL1 Boys",
                 "U15 YPL1 Boys",
                 "U16 YPL1 Boys",
                 "U18 YPL1 Boys"
             ],
             "stats": {
-                "matches_attended": 4,
+                "matches_attended": 5,
                 "yellow_cards": 0,
                 "red_cards": 0
             },
@@ -11566,6 +11589,13 @@
                     "date": "2026-02-15T00:10:00.000000Z",
                     "role_in_match": "Coach",
                     "opponent": "Western United FC U18",
+                    "events": []
+                },
+                {
+                    "match_hash_id": "4KLlzJD8gK",
+                    "date": "2026-02-14T22:00:00.000000Z",
+                    "role_in_match": "Coach",
+                    "opponent": "Western United FC U13",
                     "events": []
                 }
             ]
