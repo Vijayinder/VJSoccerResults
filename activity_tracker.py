@@ -62,6 +62,25 @@ if ENABLE_ACTIVITY_TRACKING:
 # Activity Logging Functions
 # ---------------------------------------------------------
 
+def log_activity(username, full_name, action_type, ip_address="Unknown", **kwargs):
+    """Log any activity to CSV"""
+    log_file = os.path.join(LOGS_DIR, "activity_log.csv")
+    
+    # Prepare log entry
+    log_entry = {
+        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "username": username,
+        "full_name": full_name,
+        "action_type": action_type,
+        "ip_address": ip_address,  # ✅ Add this
+        "session_id": kwargs.get("session_id", ""),
+        "league": kwargs.get("league", ""),
+        "competition": kwargs.get("competition", ""),
+        "club": kwargs.get("club", ""),
+        "player": kwargs.get("player", ""),
+        "search_query": kwargs.get("search_query", "")
+    }
+    
 def log_activity(
     username: str,
     action_type: str,
@@ -401,10 +420,17 @@ def export_activity_logs(filepath: str, username: str = None):
 # Convenience Functions
 # ---------------------------------------------------------
 
-def log_login(username: str, full_name: str, session_id: str = None):
-    """Log user login"""
-    log_activity(username, 'login', full_name=full_name, session_id=session_id)
 
+def log_login(username: str, full_name: str, session_id: str, ip_address: str = "Unknown"):
+    """Log user login with IP address"""
+    log_activity(
+        username=username,
+        full_name=full_name,
+        action_type="login",
+        session_id=session_id,
+        ip_address=ip_address  # ✅ Add this parameter
+    )
+    
 def log_logout(username: str, full_name: str, session_id: str = None):
     """Log user logout"""
     log_activity(username, 'logout', full_name=full_name, session_id=session_id)
