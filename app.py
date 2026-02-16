@@ -441,7 +441,7 @@ def get_last_updated_time():
 # Router
 # ---------------------------------------------------------
 
-@st.cache_resource
+# Don't cache the router - it needs to access fresh data
 def load_router():
     return FastQueryRouter()
 
@@ -451,7 +451,7 @@ router = load_router()
 # Data loaders
 # ---------------------------------------------------------
 
-@st.cache_resource
+@st.cache_data(ttl=300)  # Auto-refresh every 5 minutes
 def load_master_results():
     """Load master_results.json"""
     path = os.path.join(DATA_DIR, "master_results.json")
@@ -483,7 +483,7 @@ def load_master_results():
         st.error(f"Error loading results: {str(e)}")
         return []
 
-@st.cache_resource
+@st.cache_data(ttl=300)  # Auto-refresh every 5 minutes
 def load_fixtures():
     """Load fixtures.json"""
     path = os.path.join(DATA_DIR, "fixtures.json")
@@ -515,7 +515,7 @@ def load_fixtures():
         st.error(f"Error loading fixtures: {str(e)}")
         return []
 
-@st.cache_resource
+@st.cache_data(ttl=300)  # Auto-refresh every 5 minutes
 def load_players_summary():
     """Load players_summary.json"""
     path = os.path.join(DATA_DIR, "players_summary.json")
@@ -544,7 +544,7 @@ def load_players_summary():
         return {"players": []}
 
 
-@st.cache_resource
+@st.cache_data(ttl=300)  # Auto-refresh every 5 minutes
 def load_staff_summary():
     """Load staff_summary.json"""
     path = os.path.join(DATA_DIR, "staff_summary.json")
@@ -572,7 +572,7 @@ def load_staff_summary():
         st.error(f"Error loading staff: {str(e)}")
         return {"staff": []}
 
-@st.cache_resource
+@st.cache_data(ttl=300)  # Auto-refresh every 5 minutes
 def load_competition_overview():
     """Load competition_overview.json"""
     path = os.path.join(DATA_DIR, "competition_overview.json")
@@ -1251,6 +1251,24 @@ def main_app():
             st.rerun()
     # In your sidebar (after logout button or admin controls)
     with st.sidebar:
+        st.markdown("---")
+        
+        # ✅ Manual Data Refresh Section
+        st.markdown("### 🔄 Data Controls")
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("🔄 Refresh Data", use_container_width=True, help="Reload data from files"):
+                # Clear all caches
+                st.cache_data.clear()
+                st.success("✅ Data refreshed!")
+                st.rerun()
+        
+        with col2:
+            # Show last update time
+            last_update = get_last_updated_time()
+            st.caption(f"📅 Updated:\n{last_update.split(',')[1] if ',' in last_update else last_update}")
+        
         st.markdown("---")
         
         with st.expander("📧 Contact Us"):

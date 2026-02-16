@@ -2551,7 +2551,7 @@
                 "U18 YPL1 Boys"
             ],
             "stats": {
-                "matches_attended": 3,
+                "matches_attended": 4,
                 "yellow_cards": 0,
                 "red_cards": 0
             },
@@ -2575,6 +2575,13 @@
                     "date": "2026-02-15T02:15:00.000000Z",
                     "role_in_match": "Manager",
                     "opponent": "Dandenong City SC U16",
+                    "events": []
+                },
+                {
+                    "match_hash_id": "pmvvw7z0Lm",
+                    "date": "2026-02-01T01:20:00.000000Z",
+                    "role_in_match": "Manager",
+                    "opponent": "Melbourne Victory FC U16",
                     "events": []
                 }
             ]
@@ -7956,7 +7963,7 @@
                 "U16 YPL1 Boys"
             ],
             "stats": {
-                "matches_attended": 2,
+                "matches_attended": 3,
                 "yellow_cards": 0,
                 "red_cards": 0
             },
@@ -7973,6 +7980,13 @@
                     "date": "2026-02-15T02:15:00.000000Z",
                     "role_in_match": "Coach",
                     "opponent": "Dandenong City SC U16",
+                    "events": []
+                },
+                {
+                    "match_hash_id": "pmvvw7z0Lm",
+                    "date": "2026-02-01T01:20:00.000000Z",
+                    "role_in_match": "Coach",
+                    "opponent": "Melbourne Victory FC U16",
                     "events": []
                 }
             ]
@@ -8314,7 +8328,7 @@
                 "U16 YPL1 Boys"
             ],
             "stats": {
-                "matches_attended": 2,
+                "matches_attended": 3,
                 "yellow_cards": 0,
                 "red_cards": 0
             },
@@ -8331,6 +8345,13 @@
                     "date": "2026-02-15T01:20:00.000000Z",
                     "role_in_match": "Coach",
                     "opponent": "FC Bulleen Lions U16",
+                    "events": []
+                },
+                {
+                    "match_hash_id": "pmvvw7z0Lm",
+                    "date": "2026-02-01T01:20:00.000000Z",
+                    "role_in_match": "Coach",
+                    "opponent": "Essendon Royals SC U16",
                     "events": []
                 }
             ]
@@ -8350,7 +8371,7 @@
                 "U16 YPL1 Boys"
             ],
             "stats": {
-                "matches_attended": 2,
+                "matches_attended": 3,
                 "yellow_cards": 0,
                 "red_cards": 0
             },
@@ -8367,6 +8388,13 @@
                     "date": "2026-02-15T01:20:00.000000Z",
                     "role_in_match": "Coach",
                     "opponent": "FC Bulleen Lions U16",
+                    "events": []
+                },
+                {
+                    "match_hash_id": "pmvvw7z0Lm",
+                    "date": "2026-02-01T01:20:00.000000Z",
+                    "role_in_match": "Coach",
+                    "opponent": "Essendon Royals SC U16",
                     "events": []
                 }
             ]

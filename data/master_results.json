@@ -13150,5 +13150,53 @@
                 "href": "https://mc-api.dribl.com/api/results/nmYnZBO1YN"
             }
         }
+    },
+    {
+        "type": "results",
+        "hash_id": "MNGJx1lzzm",
+        "attributes": {
+            "name": "FV54539220 - Melbourne Victory FC v Essendon Royals SC",
+            "date": "2026-02-01 01:20:00",
+            "round": "R1",
+            "full_round": "Round 1",
+            "ground_name": "Darebin International Sports Centre",
+            "field_name": "Pitch 1 (S)",
+            "home_team_name": "Melbourne Victory FC U16",
+            "home_logo": "https://ocean.dribl.com/60ef68c86da74576ae32ad8caf6970ff",
+            "away_team_name": "Essendon Royals SC U16",
+            "away_logo": "https://ocean.dribl.com/aeae5452dfeb45aaa2eca9cc9f4a3755",
+            "competition_name": "Boys Victorian Youth Premier League 1",
+            "league_name": "U16 YPL1 Boys",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 6,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 1,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": true,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 3,
+            "enable_referees_allocated": false,
+            "match_hash_id": "pmvvw7z0Lm",
+            "home_team_hash_id": "nmYyQvLpmz",
+            "away_team_hash_id": "jmaVX9j7NR",
+            "forfeit_team_hash_id": null
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/MNGJx1lzzm"
+            }
+        }
     }
 ]
