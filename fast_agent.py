@@ -2211,6 +2211,16 @@ def tool_ladder(query: str) -> str:
     if not competition_to_use:
         return f"❌ No ladder found for: {query}\n\nTry: 'YPL1 ladder', 'YPL2 ladder', 'YSL NW ladder'"
     
+    # ✅ NEW: Extract age group and append if present
+    age_group = extract_age_group(query)
+    if age_group:
+        competition_to_use = f"{competition_to_use} {age_group}"
+        print(f"DEBUG tool_ladder - Added age group: {competition_to_use}")
+
+    # Convert back to lowercase for matching
+    competition_to_use = competition_to_use.lower()
+    print(f"DEBUG tool_ladder - Using competition for filtering: {competition_to_use}")
+
     # Convert back to lowercase for matching
     competition_to_use = competition_to_use.lower()
     print(f"DEBUG tool_ladder - Using competition for filtering: {competition_to_use}")

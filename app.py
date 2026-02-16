@@ -11,22 +11,9 @@ import pytz
 import uuid
 import plotly.graph_objects as go
 import io
-import random
-
 
 # Import authentication and tracking modules
-from player_config import (
-    get_players_and_coaches_list,
-    format_player_display,
-    save_player_selection,
-    get_player_selection,
-    clear_player_selection,
-    verify_admin,
-    get_player_selection_stats
-)
-# ADD after imports:
-SESSION_TIMEOUT_MINUTES = 240  # 4 hours
-
+from config import authenticate_user, ENABLE_GUEST_ACCESS, SESSION_TIMEOUT_MINUTES
 from activity_tracker import (
     log_login, log_logout, log_search, log_view,
     get_recent_activity, get_user_stats, get_active_users_today
@@ -184,24 +171,7 @@ def init_session_state():
         st.session_state["last_search"] = ""
         
     if "expander_state" not in st.session_state:
-        st.session_state["expander_state"] = False
-    if "expander_collapse_counter" not in st.session_state:
-        st.session_state["expander_collapse_counter"] = 0
-    if "user_type" not in st.session_state:
-        st.session_state["user_type"] = None  # 'player' or 'admin'
-    
-    if "player_club" not in st.session_state:
-        st.session_state["player_club"] = None
-    
-    if "player_age_group" not in st.session_state:
-        st.session_state["player_age_group"] = None
-    
-    if "player_role" not in st.session_state:
-        st.session_state["player_role"] = None
-    
-    if "player_league" not in st.session_state:
-        st.session_state["player_league"] = None
-
+            st.session_state["expander_state"] = False # or True if you want it open by default
 def check_session_timeout():
     """Check if session has timed out"""
     if st.session_state["authenticated"]:
@@ -215,7 +185,27 @@ def check_session_timeout():
         st.session_state["last_activity"] = datetime.now()
     return True
 
-   
+def login_user(username: str, password: str):
+    """Authenticate and login user"""
+    user = authenticate_user(username, password)
+    
+    if user:
+        st.session_state["authenticated"] = True
+        st.session_state["username"] = user["username"]
+        st.session_state["full_name"] = user["full_name"]
+        st.session_state["role"] = user["role"]
+        st.session_state["last_activity"] = datetime.now()
+        
+        # Log the login
+        log_login(
+            username=user["username"],
+            full_name=user["full_name"],
+            session_id=st.session_state["session_id"]
+        )
+        
+        return True
+    return False
+    
 def search_link(label, query):
     """Generates an HTML link that reloads the page with a search parameter"""
     # URL encode the query for the link
@@ -226,35 +216,30 @@ def search_link(label, query):
 def logout_user():
     """Logout current user"""
     if st.session_state["authenticated"]:
+        # Log the logout
         log_logout(
-            username=st.session_state.get("username", "unknown"),
-            full_name=st.session_state.get("full_name", "Unknown"),
+            username=st.session_state["username"],
+            full_name=st.session_state["full_name"],
             session_id=st.session_state["session_id"]
         )
     
     st.session_state["authenticated"] = False
-    st.session_state["user_type"] = None  # ADD
     st.session_state["username"] = None
     st.session_state["full_name"] = None
     st.session_state["role"] = None
-    st.session_state["player_club"] = None  # ADD
-    st.session_state["player_age_group"] = None  # ADD
-    st.session_state["player_role"] = None  # ADD
     st.session_state["session_id"] = str(uuid.uuid4())
-    st.session_state["player_league"] = None  # ADD THIS
-    st.session_state["player_competition"] = None  # ADD THIS
 
 # ---------------------------------------------------------
 # Login Page
 # ---------------------------------------------------------
 
 def show_login_page():
-    """Display player selection page"""
+    """Display login page"""
     st.markdown("""
         <div class="main-header">
-            <h2 style='margin:0; padding:0;'>⚽ Junior Pro Football Intelligence</h2>
+            <h1 style='margin:0; padding:0;'>⚽ Junior Pro Football Intelligence</h1>
             <p style='margin:0.5rem 0 0 0; font-size:16px; opacity:0.9;'>
-                Welcome! Please select your profile to continue
+                Please login to continue
             </p>
         </div>
     """, unsafe_allow_html=True)
@@ -262,165 +247,36 @@ def show_login_page():
     col1, col2, col3 = st.columns([1, 2, 1])
     
     with col2:
-        # Check for saved selection
-        saved_selection = get_player_selection(st.session_state["session_id"])
+        st.markdown("### 🔐 Login")
         
-        if saved_selection:
-            st.success(f"👋 Welcome back, {saved_selection['name']}!")
-            club_display = saved_selection['club']
-            if saved_selection.get('age_group'):
-                club_display += f" ({saved_selection['age_group']})"
-            st.info(f"**Club:** {club_display}")
+        # 1. Wrap inputs and the Login button in a form
+        with st.form("login_form", clear_on_submit=False):
+            username = st.text_input("Username", key="login_username")
+            password = st.text_input("Password", type="password", key="login_password")
             
-            col_a, col_b = st.columns(2)
-            with col_a:
-                if st.button("Continue as " + saved_selection['name'], type="primary", use_container_width=True):
-                    # Login with saved selection
-                    st.session_state["authenticated"] = True
-                    st.session_state["user_type"] = "player"
-                    st.session_state["username"] = saved_selection["player_id"]
-                    st.session_state["full_name"] = saved_selection["name"]
-                    st.session_state["player_club"] = saved_selection["club"]
-                    st.session_state["player_age_group"] = saved_selection.get("age_group", "")
-                    st.session_state["player_role"] = saved_selection["role"]
-                    st.session_state["role"] = saved_selection["role"]
-                    st.session_state["last_activity"] = datetime.now()
-                    st.session_state["player_league"] = selected_person.get("league", "")
-                    st.session_state["player_competition"] = selected_person.get("competition", "")
-                    # Update USER_CONFIG in fast_agent
-                    update_user_config(saved_selection["club"], saved_selection.get("age_group", ""))
-                    # Look up league and competition from player data
-                    league, competition = get_player_league_info(
-                        saved_selection["name"],
-                        saved_selection["club"],
-                        saved_selection.get("age_group", "")
-                    )
-                    st.session_state["player_league"] = league
-                    st.session_state["player_competition"] = competition
-                    # Log the login
-                    log_login(
-                        username=saved_selection["player_id"],
-                        full_name=saved_selection["name"],
-                        session_id=st.session_state["session_id"]
-                    )
-                    st.rerun()
-            with col_b:
-                if st.button("Select Different Profile", use_container_width=True):
-                    clear_player_selection(st.session_state["session_id"])
-                    st.rerun()
+            # 2. Change the button to a form_submit_button
+            # Note: use_container_width is supported here to keep your layout
+            submit_button = st.form_submit_button("Login", type="primary", use_container_width=True)
             
-            st.markdown("---")
-        
-        # Player/Coach selection
-        st.markdown("### 👤 Select Player/Coach Profile")
-        
-        # Load all players and coaches
-        people = get_players_and_coaches_list(DATA_DIR)
-        
-        if not people:
-            st.error("❌ No player or coach data found. Please ensure data files are loaded.")
-            return
-        
-        # Create dropdown options
-        options = [""] + [format_player_display(p) for p in people]
-        
-        selected_display = st.selectbox(
-            "Who brought you here?",
-            options=options,
-            format_func=lambda x: "Select your name..." if x == "" else x,
-            help="Start typing to search for your name"
-        )
-        
-        if selected_display and selected_display != "":
-            # Find the person data
-            selected_person = None
-            for person in people:
-                if format_player_display(person) == selected_display:
-                    selected_person = person
-                    break
-            
-            if selected_person:
-                # 1. Extract data for clarity
-                name = selected_person['name']
-                role = selected_person['role']
-                club = selected_person['club']
-                age = selected_person.get('age_group', 'N/A')
-
-                # 2. Display the success message outside the form for styling
-                st.success(f"✅ Selected: {role} **{name}** from **{club}** in age group **{age}**")
-
-                # 3. Use a form to capture the "Enter" keypress
-                with st.form("confirmation_form", border=False):
-                    # We need a submit button for the Enter key to trigger
-                    submit = st.form_submit_button("Continue", type="primary", use_container_width=True)
-                    
-                    if submit:
-                        # Login logic
-                        st.session_state["authenticated"] = True
-                        st.session_state["user_type"] = "player"
-                        st.session_state["username"] = selected_person["player_id"]
-                        st.session_state["full_name"] = selected_person["name"]
-                        st.session_state["player_club"] = selected_person["club"]
-                        st.session_state["player_age_group"] = selected_person.get("age_group", "")
-                        st.session_state["player_role"] = selected_person["role"]
-                        st.session_state["role"] = selected_person["role"]
-                        st.session_state["last_activity"] = datetime.now()
-                        
-                        # Save selection
-                        save_player_selection(st.session_state["session_id"], selected_person)
-                        
-                        # Update USER_CONFIG
-                        update_user_config(selected_person["club"], selected_person.get("age_group", ""))
-                        # Look up league and competition from player data
-                        league, competition = get_player_league_info(
-                            selected_person["name"],
-                            selected_person["club"],
-                            selected_person.get("age_group", "")
-                        )
-                        st.session_state["player_league"] = league
-                        st.session_state["player_competition"] = competition
-                        # Log the login
-                        log_login(
-                            username=selected_person["player_id"],
-                            full_name=selected_person["name"],
-                            session_id=st.session_state["session_id"]
-                        )
+            if submit_button:
+                if username and password:
+                    if login_user(username, password):
+                        st.success("✅ Login successful!")
                         st.rerun()
-        
-        # Admin login section
-        st.markdown("---")
-        with st.expander("🔐 Admin Login"):
-            st.markdown("### Administrator Access")
-            
-            with st.form("admin_login_form"):
-                admin_username = st.text_input("Admin Username")
-                admin_password = st.text_input("Admin Password", type="password")
-                admin_submit = st.form_submit_button("Login as Admin", use_container_width=True)
-                
-                if admin_submit:
-                    if admin_username and admin_password:
-                        admin = verify_admin(admin_username, admin_password)
-                        if admin:
-                            st.session_state["authenticated"] = True
-                            st.session_state["user_type"] = "admin"
-                            st.session_state["username"] = admin["username"]
-                            st.session_state["full_name"] = admin["full_name"]
-                            st.session_state["role"] = "admin"
-                            st.session_state["last_activity"] = datetime.now()
-                            
-                            # Log the login
-                            log_login(
-                                username=admin["username"],
-                                full_name=admin["full_name"],
-                                session_id=st.session_state["session_id"]
-                            )
-                            
-                            st.success("✅ Admin login successful!")
-                            st.rerun()
-                        else:
-                            st.error("❌ Invalid admin credentials")
                     else:
-                        st.warning("⚠️ Please enter username and password")
+                        st.error("❌ Invalid username or password")
+                else:
+                    st.warning("⚠️ Please enter username and password")
+        
+        # 3. Guest Access stays outside the form to remain independent
+        if ENABLE_GUEST_ACCESS:
+            if st.button("Guest Access", use_container_width=True):
+                st.session_state["authenticated"] = True
+                st.session_state["username"] = "guest"
+                st.session_state["full_name"] = "Guest User"
+                st.session_state["role"] = "guest"
+                log_login("guest", "Guest User", st.session_state["session_id"])
+                st.rerun()
 
 # ---------------------------------------------------------
 # Get last updated timestamp in AEST
@@ -434,7 +290,7 @@ def get_last_updated_time():
         utc_time = datetime.fromtimestamp(mod_time, tz=pytz.UTC)
         aest = pytz.timezone('Australia/Melbourne')
         aest_time = utc_time.astimezone(aest)
-        return aest_time.strftime("%a, %d %b %Y, %I:%M %p AEST")
+        return aest_time.strftime("%d %b %Y, %I:%M %p AEST")
     return "Unknown"
 
 # ---------------------------------------------------------
@@ -443,7 +299,6 @@ def get_last_updated_time():
 
 @st.cache_resource
 def load_router():
-    """Load the query router (cached per session)"""
     return FastQueryRouter()
 
 router = load_router()
@@ -452,7 +307,7 @@ router = load_router()
 # Data loaders
 # ---------------------------------------------------------
 
-@st.cache_data(ttl=900)  # Auto-refresh every 5 minutes
+@st.cache_resource
 def load_master_results():
     """Load master_results.json"""
     path = os.path.join(DATA_DIR, "master_results.json")
@@ -484,7 +339,7 @@ def load_master_results():
         st.error(f"Error loading results: {str(e)}")
         return []
 
-@st.cache_data(ttl=900)  # Auto-refresh every 5 minutes
+@st.cache_resource
 def load_fixtures():
     """Load fixtures.json"""
     path = os.path.join(DATA_DIR, "fixtures.json")
@@ -516,7 +371,7 @@ def load_fixtures():
         st.error(f"Error loading fixtures: {str(e)}")
         return []
 
-@st.cache_data(ttl=900)  # Auto-refresh every 5 minutes
+@st.cache_resource
 def load_players_summary():
     """Load players_summary.json"""
     path = os.path.join(DATA_DIR, "players_summary.json")
@@ -544,36 +399,7 @@ def load_players_summary():
         st.error(f"Error loading players: {str(e)}")
         return {"players": []}
 
-
-@st.cache_data(ttl=900)  # Auto-refresh every 5 minutes
-def load_staff_summary():
-    """Load staff_summary.json"""
-    path = os.path.join(DATA_DIR, "staff_summary.json")
-    
-    if not os.path.exists(path):
-        return {"staff": []}
-    
-    try:
-        with open(path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-        
-        if isinstance(data, dict):
-            if "staff" in data:
-                return data
-            else:
-                for key, value in data.items():
-                    if isinstance(value, list):
-                        return {"staff": value}
-                return {"staff": []}
-        elif isinstance(data, list):
-            return {"staff": data}
-        else:
-            return {"staff": []}
-    except Exception as e:
-        st.error(f"Error loading staff: {str(e)}")
-        return {"staff": []}
-
-@st.cache_data(ttl=900)  # Auto-refresh every 5 minutes
+@st.cache_resource
 def load_competition_overview():
     """Load competition_overview.json"""
     path = os.path.join(DATA_DIR, "competition_overview.json")
@@ -592,24 +418,6 @@ def load_competition_overview():
     except Exception as e:
         st.error(f"Error loading competition overview: {str(e)}")
         return {}
-
-def force_reload_all_data():
-    """Force reload of all data including fast_agent module data"""
-    import importlib
-    import sys
-    
-    # Clear Streamlit caches
-    st.cache_data.clear()
-    st.cache_resource.clear()
-    
-    # Force reimport of fast_agent to reload its module-level data
-    if 'fast_agent' in sys.modules:
-        importlib.reload(sys.modules['fast_agent'])
-    
-    # Reinitialize router with fresh data
-    global router
-    from fast_agent import FastQueryRouter
-    router = FastQueryRouter()
 
 # ---------------------------------------------------------
 # Helper functions (same as before)
@@ -645,58 +453,23 @@ def extract_league_from_league_name(league_name: str) -> str:
     
     return "Other"
 
-def extract_competition_from_league(league_name: str) -> str:
-    """Extract competition code from full league name"""
+def extract_competition_from_league_name(league_name: str) -> str:
     if not league_name:
-        return ""
-    
-    league_lower = league_name.lower()
-    
-    # Check for each competition type
-    if "ypl1" in league_lower or "ypl 1" in league_lower:
-        return "YPL1"
-    elif "ypl2" in league_lower or "ypl 2" in league_lower:
-        return "YPL2"
-    elif "ysl" in league_lower and ("north-west" in league_lower or "nw" in league_lower or "north west" in league_lower):
-        return "YSL NW"
-    elif "ysl" in league_lower and ("south-east" in league_lower or "se" in league_lower or "south east" in league_lower):
-        return "YSL SE"
-    elif "vpl men" in league_lower:
-        return "VPL Men"
-    elif "vpl women" in league_lower:
-        return "VPL Women"
-    elif "ysl" in league_lower:
-        return "YSL"
-    elif "vpl" in league_lower:
-        return "VPL"
-    
-    # If no match, return original
+        return league_name
+    parts = league_name.split()
+    if len(parts) < 2:
+        return league_name
+    age = parts[0]
+    if "YPL1" in league_name:
+        return f"{age} YPL1"
+    if "YPL2" in league_name:
+        return f"{age} YPL2"
+    if "YSL Boys - North-West" in league_name:
+        return f"{age} YSL NW"
+    if "YSL Boys - South-East" in league_name:
+        return f"{age} YSL SE"
     return league_name
 
-def extract_league_from_league_name(league_name: str) -> str:
-    """Extract league from league name (YPL1, YPL2, YSL NW, etc.)"""
-    if not league_name:
-        return "Other"
-    
-    league_name_lower = str(league_name).lower()
-    
-    if "ypl1" in league_name_lower or "ypl 1" in league_name_lower:
-        return "YPL1"
-    if "ypl2" in league_name_lower or "ypl 2" in league_name_lower:
-        return "YPL2"
-    if "ysl" in league_name_lower and ("north-west" in league_name_lower or "nw" in league_name_lower or "north west" in league_name_lower):
-        return "YSL NW"
-    if "ysl" in league_name_lower and ("south-east" in league_name_lower or "se" in league_name_lower or "south east" in league_name_lower):
-        return "YSL SE"
-    if "vpl men" in league_name_lower:
-        return "VPL Men"
-    if "vpl women" in league_name_lower:
-        return "VPL Women"
-    if "ysl" in league_name_lower:
-        return "YSL"
-    
-    return "Other"
-    
 def get_all_leagues(results, fixtures):
     leagues = set()
     
@@ -740,12 +513,12 @@ def get_competitions_for_league(results, fixtures, league):
         attrs = item.get("attributes", {})
         league_name = attrs.get("league_name")
         if league_name and extract_league_from_league_name(league_name) == league:
-            comps.add(extract_league_from_league_name(league_name))
+            comps.add(extract_competition_from_league_name(league_name))
     for item in fixtures:
         attrs = item.get("attributes", {})
         league_name = attrs.get("league_name")
         if league_name and extract_league_from_league_name(league_name) == league:
-            comps.add(extract_league_from_league_name(league_name))
+            comps.add(extract_competition_from_league_name(league_name))
     return sorted(list(comps))
 
 def get_results_for_competition(results, competition):
@@ -755,7 +528,7 @@ def get_results_for_competition(results, competition):
         league_name = attrs.get("league_name")
         status = attrs.get("status")
         if league_name and status == "complete":
-            if extract_league_from_league_name(league_name) == competition:
+            if extract_competition_from_league_name(league_name) == competition:
                 matches.append(item)
     return matches
 
@@ -767,7 +540,7 @@ def get_matches_for_club_in_comp(results, club_name, competition):
         status = attrs.get("status")
         if status != "complete":
             continue
-        if extract_league_from_league_name(league_name) != competition:
+        if extract_competition_from_league_name(league_name) != competition:
             continue
         home = attrs.get("home_team_name")
         away = attrs.get("away_team_name")
@@ -777,79 +550,27 @@ def get_matches_for_club_in_comp(results, club_name, competition):
             matches.append(item)
     return matches
 
-def _person_teams_and_leagues(p):
-    """Get (team, league) pairs for a person. Handles both team_name/league_name and teams/leagues arrays."""
-    teams = p.get("teams", [])
-    leagues = p.get("leagues", [])
-    if teams or leagues:
-        if len(teams) == len(leagues):
-            return list(zip(teams, leagues))
-        if teams:
-            league = leagues[0] if leagues else ""
-            return [(t, league) for t in teams]
-        team = teams[0] if teams else ""
-        return [(team, lg) for lg in leagues]
-    tn = p.get("team_name", "")
-    ln = p.get("league_name", "")
-    return [(tn, ln)] if tn or ln else []
-
-
-def get_players_for_club(players_data, club_name, competition=None, staff_data=None):
+def get_players_for_club(players_data, club_name, competition=None):
     """
-    Get players and staff for a specific club, optionally filtered by competition.
-    Merges players_summary.json and staff_summary.json for the structured club view.
+    Get players for a specific club, optionally filtered by competition
     """
-    def normalize(p, is_staff=False):
-        out = dict(p)
-        if not out.get("team_name") and out.get("teams"):
-            out["team_name"] = out["teams"][0] if out["teams"] else ""
-        if not out.get("league_name") and out.get("leagues"):
-            out["league_name"] = out["leagues"][0] if out["leagues"] else ""
-        if not out.get("role"):
-            if is_staff:
-                roles = out.get("roles", [])
-                out["role"] = (roles[0] if roles else "staff")
-            else:
-                out["role"] = "player"
-        if is_staff and "jersey" not in out:
-            out["jersey"] = ""
-        return out
-
-    result = []
-    seen_ids = set()
-
+    players = []
     for p in players_data.get("players", []):
-        pn = normalize(p, False)
-        for team, league in _person_teams_and_leagues(pn):
-            if not team:
+        team = p.get("team_name", "")
+        
+        # Check club name match
+        if base_club_name(team) != club_name:
+            continue
+        
+        # If competition specified, filter by it
+        if competition:
+            # Extract competition from team's league name
+            team_comp = extract_competition_from_league_name(p.get("league_name", ""))
+            if team_comp != competition:
                 continue
-            if base_club_name(team) != club_name:
-                continue
-            if competition and extract_league_from_league_name(league or pn.get("league_name", "")) != competition:
-                continue
-            pid = pn.get("person_id") or f"{pn.get('first_name','')}_{pn.get('last_name','')}"
-            if pid not in seen_ids:
-                seen_ids.add(pid)
-                result.append(pn)
-            break
-
-    if staff_data:
-        for p in staff_data.get("staff", []):
-            pn = normalize(p, True)
-            for team, league in _person_teams_and_leagues(pn):
-                if not team:
-                    continue
-                if base_club_name(team) != club_name:
-                    continue
-                if competition and extract_league_from_league_name(league or pn.get("league_name", "")) != competition:
-                    continue
-                pid = pn.get("person_id") or f"{pn.get('first_name','')}_{pn.get('last_name','')}"
-                if pid not in seen_ids:
-                    seen_ids.add(pid)
-                    result.append(pn)
-                break
-
-    return result
+        
+        players.append(p)
+    return players
 
 def get_matches_for_player(player):
     return player.get("matches", [])
@@ -963,23 +684,37 @@ def back_one_level():
 # ---------------------------------------------------------
 
 def header():
-    """Renders the full-width app header and last updated timestamp"""
+    col1, col2 = st.columns([4, 1])
+    
+    with col1:
+        st.markdown("""
+            <div class="main-header">
+                <h1 style='margin:0; padding:0;'>⚽ Junior Pro Football Intelligence</h1>
+                <p style='margin:0.5rem 0 0 0; font-size:16px; opacity:0.9;'>
+                    League → Competition → Ladder → Club → Players
+                </p>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown(f"""
+            <div class="user-badge">
+                👤 {st.session_state['full_name']}
+                {' 🛡️' if st.session_state['role'] == 'admin' else ''}
+            </div>
+        """, unsafe_allow_html=True)
+        
+        if st.button("🚪 Logout", use_container_width=True):
+            logout_user()
+            st.rerun()
+    
+    # Show last updated time
     last_updated = get_last_updated_time()
-    # Main Title and Subtitle
     st.markdown(f"""
-        <div class="main-header" style="text-align: center;">
-        <h3 style='margin:0; padding:0;'>⚽ Junior Pro Football Intelligence</h3>
-        <p style='margin:0.5rem 0 0 0; font-size:16px; opacity:0.9;'>
-            {st.session_state.get('player_club') or 'League'} 
-            → {st.session_state.get('player_age_group') or 'Competition'} 
-            → Players
-        </p>
-        <span style="font-size: 12px; color: #000000; text-transform: uppercase; letter-spacing: 1px;">
-                📅 Data Updated: {last_updated}
-            </span>
-    </div>
+        <div class="last-updated">
+            📅 Last updated: {last_updated}
+        </div>
     """, unsafe_allow_html=True)
-
 
 def is_natural_language_query(query):
     keywords = [
@@ -989,10 +724,7 @@ def is_natural_language_query(query):
         "details for", "top scorer", "ladder", "table", "form",
         "yellow card", "red card", "lineup", "vs", " v ",
         "team", "overview", "competition", "standings", "rankings",
-        "ypl1", "ypl2", "ysl", "missing score", "no score", "overdue",
-        "coach", "coaches", "staff", "manager", "managers",
-        # ✅ NEW: Today's matches keywords
-        "today", "todays", "result"  # Catches "todays results", "results today", "today's results"
+        "ypl1", "ypl2", "ysl", "missing score", "no score", "overdue"
     ]
     return any(keyword in query.lower() for keyword in keywords)
 
@@ -1057,20 +789,6 @@ def show_admin_dashboard():
         active_today = get_active_users_today()
         if active_today:
             df_active = pd.DataFrame(active_today)
-            
-            # --- Convert last_activity column to AEST ---
-            if 'last_activity' in df_active.columns:
-                try:
-                    aest = pytz.timezone('Australia/Melbourne')
-                    # Convert strings to datetime objects (assuming UTC)
-                    df_active['last_activity'] = pd.to_datetime(df_active['last_activity'], utc=True)
-                    # Convert to Melbourne time
-                    df_active['last_activity'] = df_active['last_activity'].dt.tz_convert(aest)
-                    # Format: Mon, 16-Feb 14:30:05
-                    df_active['last_activity'] = df_active['last_activity'].dt.strftime("%a, %d-%b %H:%M:%S")
-                except Exception as e:
-                    st.error(f"Error formatting last_activity: {e}")
-            
             st.dataframe(df_active, hide_index=True, use_container_width=True)
         else:
             st.info("No active users today")
@@ -1081,106 +799,13 @@ def show_admin_dashboard():
         recent = get_recent_activity(limit=50)
         if recent:
             df_recent = pd.DataFrame(recent)
-# --- Convert timestamp column to AEST ---
-            if 'timestamp' in df_recent.columns:
-                try:
-                    aest = pytz.timezone('Australia/Melbourne')
-                    # Convert to datetime objects, ensure they are UTC, then convert to AEST
-                    df_recent['timestamp'] = pd.to_datetime(df_recent['timestamp'], utc=True)
-                    df_recent['timestamp'] = df_recent['timestamp'].dt.tz_convert(aest)
-                    # Apply the requested format: Fri, 13-Feb 21:53:00
-                    df_recent['timestamp'] = df_recent['timestamp'].dt.strftime("%a, %d-%b %H:%M:%S")
-                except Exception as e:
-                    st.error(f"Error formatting timestamps: {e}")
-            
-            # Select and show columns
+            # Select relevant columns
             display_cols = ['timestamp', 'username', 'full_name', 'action_type', 'league', 'competition', 'club', 'player', 'search_query']
             available_cols = [col for col in display_cols if col in df_recent.columns]
             st.dataframe(df_recent[available_cols], hide_index=True, use_container_width=True)
         else:
             st.info("No recent activity")
-            
-def update_user_config(club_name: str, age_group: str):
-    """Update USER_CONFIG in fast_agent module with player's club and age group"""
-    try:
-        import fast_agent
-        
-        # Build team name
-        team_name = club_name
-        if age_group:
-            team_name = f"{club_name} {age_group}"
-        
-        # Update the USER_CONFIG dictionary
-        fast_agent.USER_CONFIG["team"] = team_name
-        fast_agent.USER_CONFIG["club"] = club_name
-        fast_agent.USER_CONFIG["age_group"] = age_group if age_group else ""
-        
-    except Exception as e:
-        print(f"Error updating USER_CONFIG: {e}")
-def get_player_league_info(player_name: str, club: str, age_group: str):
-    """Look up player's league and competition from loaded data"""
-    try:
-        # Load player data
-        players_data = load_players_summary()
-        players = players_data.get("players", [])
-        
-        # Split name
-        name_parts = player_name.split()
-        if len(name_parts) >= 2:
-            first_name = name_parts[0]
-            last_name = " ".join(name_parts[1:])
-        else:
-            first_name = player_name
-            last_name = ""
-        
-        # Find matching player
-        for p in players:
-            if (p.get('first_name', '').lower() == first_name.lower() and 
-                p.get('last_name', '').lower() == last_name.lower()):
-                
-                # Get full league name - try multiple fields
-                league = (p.get('league_name') or 
-                         (p.get('leagues', [None])[0] if p.get('leagues') else None) or
-                         p.get('competition_name') or
-                         '')
-                
-                # Extract just the competition part (YPL1, YPL2, etc.)
-                competition = extract_competition_from_league(league)
-                
-                print(f"DEBUG: Found player {player_name}")
-                print(f"  Full league: {league}")
-                print(f"  Competition: {competition}")
-                
-                return league, competition
-        
-        # If not found in players, try staff
-        staff_data = load_staff_summary()
-        staff = staff_data.get("staff", [])
-        
-        for s in staff:
-            if (s.get('first_name', '').lower() == first_name.lower() and 
-                s.get('last_name', '').lower() == last_name.lower()):
-                
-                league = (s.get('league_name') or 
-                         (s.get('leagues', [None])[0] if s.get('leagues') else None) or
-                         s.get('competition_name') or
-                         '')
-                
-                competition = extract_competition_from_league(league)
-                
-                print(f"DEBUG: Found staff {player_name}")
-                print(f"  Full league: {league}")
-                print(f"  Competition: {competition}")
-                
-                return league, competition
-        
-        # If player not found, return empty - NO GUESSING!
-        print(f"WARNING: Could not find league info for {player_name}")
-        return '', ''
-        
-    except Exception as e:
-        print(f"Error getting league info: {e}")
-        return '', ''     
+
 # ---------------------------------------------------------
 # Main Application
 # ---------------------------------------------------------
@@ -1188,138 +813,7 @@ def get_player_league_info(player_name: str, club: str, age_group: str):
 def main_app():
     """Main application logic"""
     header()
-    # 4. Extract names and club info safely
-    first_name = st.session_state.get('full_name', 'Champ').split()[0]
-    club = st.session_state.get('player_club', 'The League')
-    age = st.session_state.get('player_age_group', '')
-    league = st.session_state.get('player_league', '')
-    Comp = st.session_state.get('player_competition', '')
     
-    
-    
-    col_left, col_mid, col_right = st.columns([2, 6, 2])
-    
-    with col_left:
-        if st.session_state.get("user_type") == "admin":
-            st.markdown(f"""
-                <div class="user-badge">
-                    🔑 Admin: {st.session_state['full_name']}
-                </div>
-            """, unsafe_allow_html=True)
-        else:
-            st.markdown(f"""
-            <div style="padding: 10px 0;">
-                <div style=" display: inline-block;box-shadow: 0 2px 4px rgba(0,0,0,0.1)">
-                    <span style="font-size: 18px;  font-weight: 500;">👤 {st.session_state.get('full_name')}</span>
-                    <p><span style="font-size: 15px; ">⚽ {club} {age}</span></p>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-#    <p><span style="font-size: 15px; ">⚽ {league} </span></p>
-#                    <p><span style="font-size: 15px; ">⚽ {Comp} </span></p>
-#      with col_mid:
-#        # 1. Expanded list of funny football-themed messages
-#        funny_greetings = [
-#            "Ready to kick some grass?",
-#            "Don't let the ball be smarter than you today!",
-#            "Remember: 7 days without football makes one weak.",
-#            "Time to turn those 'clangers' into 'blinders'!",
-#            "Your boots called... they're bored. Let's play!",
-#            "Go out there and play for the badge on the front!",
-#            "Even the pros trip over their shoelaces occasionally.",
-#            "Eat. Sleep. Football. Repeat.",
-#            "Is it 'squeaky-bum time' yet? Let's go!",
-#            "Drink some water. Your muscles aren't cacti.",
-#            "If you can't beat 'em, outrun 'em.",
-#            "Warning: May contain extreme football obsession.",
-#            "The ball doesn't sweat. Let it do the work!",
-#            "I'm not saying you're slow, but the grass is growing under your feet!",
-#            "Keep calm and pass the ball.",
-#            "Your heatmap today should look like a spicy pepperoni pizza!",
-#            "Unless you're a goalie, keep your hands off the goods!",
-#            " nutmegging your teammates in training doesn't count as a career highlight.",
-#            "Shoot for the moon... if you miss, at least it's a corner kick."
-#        ]
-#
-#        # 2. Pick a random quote
-#        daily_quote = random.choice(funny_greetings)
-#
-#        # 3. Time-based greeting logic
-#        aest = pytz.timezone('Australia/Melbourne')
-#        hour = datetime.now(aest).hour
-#        if hour < 12:
-#            time_greeting = "Morning"
-#        elif 12 <= hour < 18:
-#            time_greeting = "Afternoon"
-#        else:
-#            time_greeting = "Evening"
-##            <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #39FF14; opacity: 0.6; margin-bottom: 8px;">
-##                    {time_greeting} Inspiration
-##                </div>
-#    
-#        # 5. The "Smile-Inducing" Badge
-#        st.markdown(f"""
-#                <div style="font-size: 20px; font-weight: 300; font-style: italic; line-height: 1.1; text-align: center;">
-#                    "{daily_quote}"
-#                </div>
-#        """, unsafe_allow_html=True)
-#        #st.markdown("---")
-    with col_right:
-        if st.button("🚪 Logout", key="logout_button", use_container_width=True):
-            st.session_state.clear()
-            st.rerun()
-    # In your sidebar (after logout button or admin controls)
-    with st.sidebar:
-        st.markdown("---")
-        
-        # ✅ Admin-Only Manual Data Refresh Section
-        if st.session_state.get("role") == "admin":
-            st.markdown("### 🔄 Admin Controls")
-            
-            col1, col2 = st.columns(2)
-            with col1:
-                if st.button("🔄 Refresh Data", use_container_width=True, help="Reload all data from files"):
-                    force_reload_all_data()
-                    st.success("✅ All data refreshed!")
-                    st.rerun()
-            
-            with col2:
-                # Show last update time
-                last_update = get_last_updated_time()
-                st.caption(f"📅 Updated:\n{last_update.split(',')[1] if ',' in last_update else last_update}")
-            
-            st.markdown("---")
-        
-        # Contact form (available to everyone)
-        with st.expander("📧 Contact Us"):
-            with st.form("contact_form", clear_on_submit=True):
-                st.markdown("**Get in touch with us**")
-                
-                name = st.text_input("Name*", key="contact_name")
-                email = st.text_input("Email*", key="contact_email")
-                subject = st.selectbox("Subject*", [
-                    "General Inquiry",
-                    "Technical Support",
-                    "Feature Request",
-                    "Report an Issue",
-                    "Data Question",
-                    "Other"
-                ])
-                message = st.text_area("Message*", height=100, key="contact_message")
-                
-                submitted = st.form_submit_button("Send Message", use_container_width=True)
-                
-                if submitted:
-                    if name and email and message:
-                        # Create mailto link
-                        import urllib.parse
-                        email_body = f"From: {name} ({email})\n\nSubject: {subject}\n\nMessage:\n{message}"
-                        mailto = f"mailto:juniorprofootball@gmail.com?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(email_body)}"
-                        
-                        st.markdown(f"[📧 Click here to send email]({mailto})")
-                        st.info("Your email client should open. If not, click the link above!")
-                    else:
-                        st.error("Please fill in all fields")
     # Check for admin dashboard
     if st.session_state["role"] == "admin":
         # Add admin dashboard option in sidebar
@@ -1340,7 +834,6 @@ def main_app():
     results = load_master_results()
     fixtures = load_fixtures()
     players_data = load_players_summary()
-    staff_data = load_staff_summary()
     comp_overview = load_competition_overview()
 
     # Search bar
@@ -1358,122 +851,100 @@ def main_app():
     search = st.text_input(
         "",
         value=st.session_state["search_query"],
-        placeholder="Try: 'Stats for Shaurya','top scorers in U16', 'yellow cards Heidelberg', 'missing scores'...",
+        placeholder="Try: 'Stats for Mark','top scorers in U16', 'yellow cards Heidelberg', 'missing scores'...",
         label_visibility="collapsed"
     )
-    # 1. Define dynamic labels based on session state
-    user_club = st.session_state.get("player_club") or "Heidelberg United"
-    user_age = st.session_state.get("player_age_group") or "U16"
-    user_name = st.session_state.get("full_name") or "John Doe"
-    user_league = st.session_state.get("player_league") or "YPL2"  # ADD THIS
-    user_competition = st.session_state.get("player_competition") or "YPL2"  
-
-    # Example queries - collapse after click/search by changing label so Streamlit treats it as new widget
-    _collapse = st.session_state.get("expander_collapse_counter", 0)
-    _expander_label = "💡 Example Queries" + "\u200b" * (_collapse % 50)  # invisible chars force new widget when we want collapsed
-    with st.expander(_expander_label, expanded=False):
+    
+    # Update session state when user types
+    if search != st.session_state["search_query"]:
+        st.session_state["search_query"] = search
+        st.rerun()
+    
+    # ✅ FIXED: Simple expander control - collapse when search has content
+    if search and search.strip():
+        # Has content -> collapse to show results
+        st.session_state["expander_state"] = False
+    else:
+        # Empty -> expand to show examples
+        st.session_state["expander_state"] = True
+    
+    # Example queries
+    with st.expander("💡 Example Queries", expanded=st.session_state["expander_state"]):
         st.markdown("*Click any example to try it:*")
         col1, col2, col3 = st.columns(3)
         
-    with col1:
-        st.markdown("**📊 Player Stats**")
-        
-        # Dynamic top scorers
-        q1 = f"top scorers in {user_club}"
-        if st.button(q1, key="ex1", use_container_width=False):
-            st.session_state["clicked_query"] = q1
-            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-            st.rerun()
-        
-        # Dynamic yellow cards
-        q2 = f"yellow cards {user_club} {user_age}"
-        if st.button(q2, key="ex2", use_container_width=False):
-            st.session_state["clicked_query"] = q2
-            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-            st.rerun()
-        
-        # Dynamic personal stats
-        q3 = f"stats for {user_name}"
-        if st.button(f"my stats ({user_name})", key="ex3", use_container_width=False):
-            st.session_state["clicked_query"] = q3
-            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-            st.rerun()
-
-        # Dynamic team stats
-        q4 = f"team stats for {user_club} {user_age}"
-        if st.button(q4, key="ex4", use_container_width=False):
-            st.session_state["clicked_query"] = q4
-            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-            st.rerun()
-        
-        st.markdown("**📅 Fixtures**")
-        if st.button("my next match", key="ex5", use_container_width=False):
-            # The agent logic should handle "my next match" based on session user info
-            st.session_state["clicked_query"] = "my next match"
-            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-            st.rerun()
-        
-        q6 = f"upcoming fixtures {user_club}"
-        if st.button(q6, key="ex6", use_container_width=False):
-            st.session_state["clicked_query"] = q6
-            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-            st.rerun()
-
-    with col2:
-        st.markdown("**🏆 Competitions**")
-        # You can keep these generic or tie them to the competition the age group plays in
-        q7 = f"{user_league} ladder"  # Instead of f"{user_age} YPL2 ladder"
-        if st.button(q7, key="ex7", use_container_width=False):
-            st.session_state["clicked_query"] = q7
-            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-            st.rerun()
-        
-        q8 = f"{user_competition} ladder"  # Instead of f"{user_age} YPL2 ladder"
-        if st.button(q8, key="ex8", use_container_width=False):
-            st.session_state["clicked_query"] = q8
-            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-            st.rerun()
-        
-        st.markdown("**👔 Coaches & Staff**")
-        q16 = f"coaches for {user_club}"
-        if st.button(q16, key="ex16", use_container_width=False):
-            st.session_state["clicked_query"] = q16
-            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-            st.rerun()
-
-    with col3:
-        st.markdown("**🟨🟥 Discipline**")
-        # ... previous red cards logic ...
-        q10 = f"red cards in {user_age}"
-        if st.button(q10, key="ex10", use_container_width=False):
-            st.session_state["clicked_query"] = q10
-            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-            st.rerun()
+        with col1:
+            st.markdown("**📊 Statistics**")
+            if st.button("top scorers in Heidelberg United", key="ex1", use_container_width=False):
+                st.session_state["clicked_query"] = "top scorers in Heidelberg United"
+                st.session_state["expander_state"] = True  # Expand first to allow animation
+                st.rerun()
+            if st.button("yellow cards Heidelberg United U16", key="ex2", use_container_width=False):
+                st.session_state["clicked_query"] = "yellow cards Heidelberg United U16"
+                st.session_state["expander_state"] = True
+                st.rerun()
+            if st.button("stats for John Doe", key="ex3", use_container_width=False):
+                st.session_state["clicked_query"] = "stats for John Doe"
+                st.session_state["expander_state"] = True
+                st.rerun()
+            if st.button("team stats for Heidelberg U16", key="ex4", use_container_width=False):
+                st.session_state["clicked_query"] = "team stats for Heidelberg U16"
+                st.session_state["expander_state"] = True
+                st.rerun()
             
-        st.markdown("**⚠️ Missing Scores**")
-        q13 = f"missing scores {user_club}"
-        if st.button(q13, key="ex13", use_container_width=False):
-            st.session_state["clicked_query"] = q13
-            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-            st.rerun()
-        st.markdown("**📊 Today's Games**")
-        
-        q14 = "todays results"
-        if st.button("Today's Results", key="q14", use_container_width=False):  # ← Nice label
-            st.session_state["clicked_query"] = q14
-            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-            st.rerun()
+            st.markdown("**📅 Fixtures**")
+            if st.button("when is my next match", key="ex5", use_container_width=False):
+                st.session_state["clicked_query"] = "when is my next match"
+                st.session_state["expander_state"] = True
+                st.rerun()
+            if st.button("upcoming fixtures Heidelberg United", key="ex6", use_container_width=False):
+                st.session_state["clicked_query"] = "upcoming fixtures Heidelberg United"
+                st.session_state["expander_state"] = True
+                st.rerun()
             
-        q15 = "missing scores today"
-        if st.button(q15, key="q15", use_container_width=False):
-            st.session_state["clicked_query"] = q15
-            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-            st.rerun()
+        with col2:
+            st.markdown("**🏆 Competitions**")
+            if st.button("YPL2 overview", key="ex7", use_container_width=False):
+                st.session_state["clicked_query"] = "YPL2 overview"
+                st.session_state["expander_state"] = True
+                st.rerun()
+            if st.button("U16 YPL2 ladder", key="ex8", use_container_width=False):
+                st.session_state["clicked_query"] = "U16 YPL2 ladder"
+                st.session_state["expander_state"] = True
+                st.rerun()
+            
+            st.markdown("**🟨🟥 Discipline**")
+            if st.button("yellow cards details", key="ex9", use_container_width=False):
+                st.session_state["clicked_query"] = "yellow cards details"
+                st.session_state["expander_state"] = True
+                st.rerun()
+            if st.button("red cards in U16", key="ex10", use_container_width=False):
+                st.session_state["clicked_query"] = "red cards in U16"
+                st.session_state["expander_state"] = True
+                st.rerun()
+            if st.button("coaches yellow cards", key="ex11", use_container_width=False):
+                st.session_state["clicked_query"] = "coaches yellow cards"
+                st.session_state["expander_state"] = True
+                st.rerun()
+            
+        with col3:
+            st.markdown("**⚠️ Missing Scores**")
+            if st.button("missing scores", key="ex12", use_container_width=False):
+                st.session_state["clicked_query"] = "missing scores"
+                st.session_state["expander_state"] = True
+                st.rerun()
+            if st.button("missing scores Heidelberg", key="ex13", use_container_width=False):
+                st.session_state["clicked_query"] = "missing scores Heidelberg"
+                st.session_state["expander_state"] = True
+                st.rerun()
+            if st.button("missing scores YPL2", key="ex14", use_container_width=False):
+                st.session_state["clicked_query"] = "missing scores YPL2"
+                st.session_state["expander_state"] = True
+                st.rerun()
+    
     # Process search queries
     if search and search != st.session_state["last_search"]:
         st.session_state["last_search"] = search
-        st.session_state["expander_state"] = False  # Collapse expander after search
-        st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
 
         if is_natural_language_query(search):
             # Log the search
@@ -1506,6 +977,40 @@ def main_app():
                         
                         st.dataframe(df, hide_index=True, use_container_width=True, height=final_height)
                         
+#                        # --- Download Section ---
+#                        col1, col2 = st.columns(2)
+#                        
+#                        with col1:
+#                            csv = df.to_csv(index=False).encode('utf-8')
+#                            st.download_button(
+#                                label="📥 Download CSV",
+#                                data=csv,
+#                                file_name=f"data_export.csv",
+#                                mime='text/csv'
+#                            )
+#                            
+#                        with col2:
+#                            # We import here so the app doesn't crash on startup if installation failed
+#                            try:
+#                                import plotly.graph_objects as go
+#                                
+#                                fig = go.Figure(data=[go.Table(
+#                                    header=dict(values=list(df.columns), fill_color='#F0F2F6', align='left'),
+#                                    cells=dict(values=[df[col] for col in df.columns], fill_color='white', align='left')
+#                                )])
+#                                fig.update_layout(margin=dict(l=5, r=5, t=5, b=5))
+#                                
+#                                # Convert to PNG
+#                                img_bytes = fig.to_image(format="png", engine="kaleido")
+#                                
+#                                st.download_button(
+#                                    label="🖼️ Download as Image",
+#                                    data=img_bytes,
+#                                    file_name=f"table_export.png",
+#                                    mime="image/png"
+#                                )
+#                            except (ImportError, ModuleNotFoundError):
+#                                st.button("🖼️ Image Export (Install Plotly)", disabled=True, help="Run 'pip install plotly kaleido' in your terminal.")
 
                 elif answer.get("type") == "error":
                     st.error(answer.get("message", "An error occurred"))
@@ -1879,17 +1384,6 @@ def main_app():
                     )
 
                     selected_match_rows = edited_matches[edited_matches["Select"] == True]
-                    current_selection_ids = list(df_matches.iloc[selected_match_rows.index]["_match_hash_id"])
-                    # If more than one is selected, we want the "newest" one (the last in the list)
-                    if len(current_selection_ids) > 0:
-                        new_match_id = current_selection_ids[-1] # Take the most recent click
-                        if st.session_state.get("selected_match_id") != new_match_id:
-                            st.session_state["selected_match_id"] = new_match_id
-                            st.rerun()
-                    elif st.session_state.get("selected_match_id") is not None:
-                        # If everything was unselected, clear the state
-                        st.session_state["selected_match_id"] = None
-                        st.rerun()
                     if not selected_match_rows.empty:
                         idx = selected_match_rows.index[0]
                         new_match_id = df_matches.iloc[idx]["_match_hash_id"]
@@ -1907,8 +1401,8 @@ def main_app():
             with col_players:
                 st.markdown(f"### 👤 Squad")
                 
-                # Get all people (players + staff) for this club in this competition
-                all_people = get_players_for_club(players_data, club, comp, staff_data)
+                # Get all people (players + non-players) for this club in this competition
+                all_people = get_players_for_club(players_data, club, comp)
 
                 if search and not is_natural_language_query(search):
                     all_people = [
@@ -2029,7 +1523,6 @@ def main_app():
                         },
                         disabled=["Player", "#", "M", "G", "🟨", "🟥"],
                         use_container_width=False,
-                        height=730,
                         key="players_editor"
                     )
 
