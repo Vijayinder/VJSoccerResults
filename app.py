@@ -452,7 +452,7 @@ router = load_router()
 # Data loaders
 # ---------------------------------------------------------
 
-@st.cache_data(ttl=300)  # Auto-refresh every 5 minutes
+@st.cache_data(ttl=900)  # Auto-refresh every 5 minutes
 def load_master_results():
     """Load master_results.json"""
     path = os.path.join(DATA_DIR, "master_results.json")
@@ -484,7 +484,7 @@ def load_master_results():
         st.error(f"Error loading results: {str(e)}")
         return []
 
-@st.cache_data(ttl=300)  # Auto-refresh every 5 minutes
+@st.cache_data(ttl=900)  # Auto-refresh every 5 minutes
 def load_fixtures():
     """Load fixtures.json"""
     path = os.path.join(DATA_DIR, "fixtures.json")
@@ -516,7 +516,7 @@ def load_fixtures():
         st.error(f"Error loading fixtures: {str(e)}")
         return []
 
-@st.cache_data(ttl=300)  # Auto-refresh every 5 minutes
+@st.cache_data(ttl=900)  # Auto-refresh every 5 minutes
 def load_players_summary():
     """Load players_summary.json"""
     path = os.path.join(DATA_DIR, "players_summary.json")
@@ -545,7 +545,7 @@ def load_players_summary():
         return {"players": []}
 
 
-@st.cache_data(ttl=300)  # Auto-refresh every 5 minutes
+@st.cache_data(ttl=900)  # Auto-refresh every 5 minutes
 def load_staff_summary():
     """Load staff_summary.json"""
     path = os.path.join(DATA_DIR, "staff_summary.json")
@@ -573,7 +573,7 @@ def load_staff_summary():
         st.error(f"Error loading staff: {str(e)}")
         return {"staff": []}
 
-@st.cache_data(ttl=300)  # Auto-refresh every 5 minutes
+@st.cache_data(ttl=900)  # Auto-refresh every 5 minutes
 def load_competition_overview():
     """Load competition_overview.json"""
     path = os.path.join(DATA_DIR, "competition_overview.json")

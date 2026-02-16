@@ -833,19 +833,40 @@ def tool_missing_scores(query: str = "", include_all_leagues: bool = False, toda
         # Apply query filter
         if query:
             q_lower = query.lower().strip()
-            league_code = extract_league_from_league_name(league)
-            search_blob = f"{home_team} {away_team} {league} {league_code}".lower()
             
+            # Extract filters from query
             age_group = extract_age_group(q_lower)
+            canonical_club = get_canonical_club_name(q_lower)
+            
+            # Extract league code from the match
+            match_league_code = extract_league_from_league_name(league)
+            
+            # Build comprehensive search blob
+            search_blob = f"{home_team} {away_team} {league} {match_league_code}".lower()
+            
+            # Check if query specifies a league code (YPL1, YPL2, YSL NW, etc.)
+            query_league_code = None
+            for possible_league in ['ypl1', 'ypl2', 'ysl nw', 'ysl se', 'vpl men', 'vpl women', 'ypl 1', 'ypl 2']:
+                if possible_league in q_lower:
+                    query_league_code = extract_league_from_league_name(possible_league)
+                    break
+            
+            # If user specified a league code, match must have it
+            if query_league_code and match_league_code.lower() != query_league_code.lower():
+                continue
+            
+            # If user specified age group, match must have it
             if age_group and age_group.lower() not in search_blob:
                 continue
             
-            canonical_club = get_canonical_club_name(q_lower)
+            # If user specified club name, match must have it
             if canonical_club and canonical_club.lower() not in search_blob:
                 continue
             
-            if not age_group and not canonical_club and q_lower not in search_blob:
-                continue
+            # Fallback: if no specific filters, do basic substring match
+            if not age_group and not canonical_club and not query_league_code:
+                if q_lower not in search_blob:
+                    continue
         
         matches_after_query_filter += 1
         
