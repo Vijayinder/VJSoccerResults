@@ -441,8 +441,9 @@ def get_last_updated_time():
 # Router
 # ---------------------------------------------------------
 
-# Don't cache the router - it needs to access fresh data
+@st.cache_resource
 def load_router():
+    """Load the query router (cached per session)"""
     return FastQueryRouter()
 
 router = load_router()
@@ -592,6 +593,24 @@ def load_competition_overview():
         st.error(f"Error loading competition overview: {str(e)}")
         return {}
 
+def force_reload_all_data():
+    """Force reload of all data including fast_agent module data"""
+    import importlib
+    import sys
+    
+    # Clear Streamlit caches
+    st.cache_data.clear()
+    st.cache_resource.clear()
+    
+    # Force reimport of fast_agent to reload its module-level data
+    if 'fast_agent' in sys.modules:
+        importlib.reload(sys.modules['fast_agent'])
+    
+    # Reinitialize router with fresh data
+    global router
+    from fast_agent import FastQueryRouter
+    router = FastQueryRouter()
+
 # ---------------------------------------------------------
 # Helper functions (same as before)
 # ---------------------------------------------------------
@@ -721,12 +740,12 @@ def get_competitions_for_league(results, fixtures, league):
         attrs = item.get("attributes", {})
         league_name = attrs.get("league_name")
         if league_name and extract_league_from_league_name(league_name) == league:
-            comps.add(extract_competition_from_league_name(league_name))
+            comps.add(extract_league_from_league_name(league_name))
     for item in fixtures:
         attrs = item.get("attributes", {})
         league_name = attrs.get("league_name")
         if league_name and extract_league_from_league_name(league_name) == league:
-            comps.add(extract_competition_from_league_name(league_name))
+            comps.add(extract_league_from_league_name(league_name))
     return sorted(list(comps))
 
 def get_results_for_competition(results, competition):
@@ -736,7 +755,7 @@ def get_results_for_competition(results, competition):
         league_name = attrs.get("league_name")
         status = attrs.get("status")
         if league_name and status == "complete":
-            if extract_competition_from_league_name(league_name) == competition:
+            if extract_league_from_league_name(league_name) == competition:
                 matches.append(item)
     return matches
 
@@ -748,7 +767,7 @@ def get_matches_for_club_in_comp(results, club_name, competition):
         status = attrs.get("status")
         if status != "complete":
             continue
-        if extract_competition_from_league_name(league_name) != competition:
+        if extract_league_from_league_name(league_name) != competition:
             continue
         home = attrs.get("home_team_name")
         away = attrs.get("away_team_name")
@@ -806,7 +825,7 @@ def get_players_for_club(players_data, club_name, competition=None, staff_data=N
                 continue
             if base_club_name(team) != club_name:
                 continue
-            if competition and extract_competition_from_league_name(league or pn.get("league_name", "")) != competition:
+            if competition and extract_league_from_league_name(league or pn.get("league_name", "")) != competition:
                 continue
             pid = pn.get("person_id") or f"{pn.get('first_name','')}_{pn.get('last_name','')}"
             if pid not in seen_ids:
@@ -822,7 +841,7 @@ def get_players_for_club(players_data, club_name, competition=None, staff_data=N
                     continue
                 if base_club_name(team) != club_name:
                     continue
-                if competition and extract_competition_from_league_name(league or pn.get("league_name", "")) != competition:
+                if competition and extract_league_from_league_name(league or pn.get("league_name", "")) != competition:
                     continue
                 pid = pn.get("person_id") or f"{pn.get('first_name','')}_{pn.get('last_name','')}"
                 if pid not in seen_ids:
@@ -1253,24 +1272,25 @@ def main_app():
     with st.sidebar:
         st.markdown("---")
         
-        # ✅ Manual Data Refresh Section
-        st.markdown("### 🔄 Data Controls")
+        # ✅ Admin-Only Manual Data Refresh Section
+        if st.session_state.get("role") == "admin":
+            st.markdown("### 🔄 Admin Controls")
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                if st.button("🔄 Refresh Data", use_container_width=True, help="Reload all data from files"):
+                    force_reload_all_data()
+                    st.success("✅ All data refreshed!")
+                    st.rerun()
+            
+            with col2:
+                # Show last update time
+                last_update = get_last_updated_time()
+                st.caption(f"📅 Updated:\n{last_update.split(',')[1] if ',' in last_update else last_update}")
+            
+            st.markdown("---")
         
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button("🔄 Refresh Data", use_container_width=True, help="Reload data from files"):
-                # Clear all caches
-                st.cache_data.clear()
-                st.success("✅ Data refreshed!")
-                st.rerun()
-        
-        with col2:
-            # Show last update time
-            last_update = get_last_updated_time()
-            st.caption(f"📅 Updated:\n{last_update.split(',')[1] if ',' in last_update else last_update}")
-        
-        st.markdown("---")
-        
+        # Contact form (available to everyone)
         with st.expander("📧 Contact Us"):
             with st.form("contact_form", clear_on_submit=True):
                 st.markdown("**Get in touch with us**")
