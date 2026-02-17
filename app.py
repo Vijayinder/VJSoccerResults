@@ -27,6 +27,36 @@ from player_config import (
 # ADD after imports:
 SESSION_TIMEOUT_MINUTES = 240  # 4 hours
 
+def get_client_ip():
+    """Get client IP address from Streamlit request headers"""
+    try:
+        # Try to get from Streamlit headers
+        from streamlit.web.server.websocket_headers import _get_websocket_headers
+        headers = _get_websocket_headers()
+        
+        # Check common proxy headers first
+        if headers:
+            # X-Forwarded-For is used by proxies/load balancers
+            if 'x-forwarded-for' in headers:
+                # Get first IP in chain (original client)
+                return headers['x-forwarded-for'].split(',')[0].strip()
+            
+            # X-Real-IP is used by some proxies
+            if 'x-real-ip' in headers:
+                return headers['x-real-ip']
+        
+        # Fallback: try to get from context
+        from streamlit.runtime.scriptrunner import get_script_run_ctx
+        ctx = get_script_run_ctx()
+        if ctx:
+            session_info = ctx.session_info
+            if hasattr(session_info, 'client_ip'):
+                return session_info.client_ip
+        
+        return "Unknown"
+    except:
+        return "Unknown"
+        
 from activity_tracker import (
     log_login, log_logout, log_search, log_view,
     get_recent_activity, get_user_stats, get_active_users_today
@@ -247,6 +277,7 @@ def logout_user():
 # ---------------------------------------------------------
 # Login Page
 # ---------------------------------------------------------
+
 
 def show_login_page():
     """Display player selection page"""
@@ -1016,8 +1047,8 @@ def show_admin_dashboard():
     st.markdown("## 📊 Admin Dashboard")
     
     # Tabs for different views
-    tab1, tab2, tab3 = st.tabs(["📈 Analytics", "👥 Users", "📋 Recent Activity"])
-    
+
+    ab1, tab2, tab3, tab4 = st.tabs(["📈 Analytics", "👥 Users", "📋 Recent Activity", "🌐 IP Tracking"])
     with tab1:
         # Get overall stats
         stats = get_user_stats()
@@ -1086,30 +1117,68 @@ def show_admin_dashboard():
         else:
             st.info("No active users today")
     
-    with tab3:
-        # Recent activity
-        st.markdown("### Recent Activity (Last 50)")
-        recent = get_recent_activity(limit=50)
-        if recent:
-            df_recent = pd.DataFrame(recent)
-# --- Convert timestamp column to AEST ---
-            if 'timestamp' in df_recent.columns:
-                try:
-                    aest = pytz.timezone('Australia/Melbourne')
-                    # Convert to datetime objects, ensure they are UTC, then convert to AEST
-                    df_recent['timestamp'] = pd.to_datetime(df_recent['timestamp'], utc=True)
-                    df_recent['timestamp'] = df_recent['timestamp'].dt.tz_convert(aest)
-                    # Apply the requested format: Fri, 13-Feb 21:53:00
-                    df_recent['timestamp'] = df_recent['timestamp'].dt.strftime("%a, %d-%b %H:%M:%S")
-                except Exception as e:
-                    st.error(f"Error formatting timestamps: {e}")
+        with tab3:
+            # Recent activity
+            st.markdown("### Recent Activity (Last 50)")
+            recent = get_recent_activity(limit=50)
+            if recent:
+                df_recent = pd.DataFrame(recent)
+                
+                # Select relevant columns INCLUDING IP address
+                display_cols = ['timestamp', 'username', 'full_name', 'ip_address', 'action_type', 'league', 'competition', 'club', 'search_query']
+                available_cols = [col for col in display_cols if col in df_recent.columns]
+                
+                st.dataframe(
+                    df_recent[available_cols], 
+                    hide_index=True, 
+                    use_container_width=True,
+                    column_config={
+                        "timestamp": st.column_config.TextColumn("Time", width="medium"),
+                        "username": st.column_config.TextColumn("User", width="small"),
+                        "ip_address": st.column_config.TextColumn("IP Address", width="medium"),
+                        "action_type": st.column_config.TextColumn("Action", width="small")
+                    }
+                )
+            else:
+                st.info("No recent activity")
+        with tab4:
+            st.markdown("### 🌐 IP Address Analytics")
             
-            # Select and show columns
-            display_cols = ['timestamp', 'username', 'full_name', 'action_type', 'league', 'competition', 'club', 'player', 'search_query']
-            available_cols = [col for col in display_cols if col in df_recent.columns]
-            st.dataframe(df_recent[available_cols], hide_index=True, use_container_width=True)
-        else:
-            st.info("No recent activity")
+            recent = get_recent_activity(limit=1000)
+            if recent:
+                df = pd.DataFrame(recent)
+                
+                if 'ip_address' in df.columns and not df['ip_address'].isna().all():
+                    # Filter out Unknown/None IPs
+                    df_valid_ip = df[df['ip_address'].notna() & (df['ip_address'] != 'Unknown')]
+                    
+                    col1, col2 = st.columns(2)
+                    
+                    with col1:
+                        st.markdown("#### 📊 IP Statistics")
+                        unique_ips = df_valid_ip['ip_address'].nunique()
+                        st.metric("Unique IP Addresses", unique_ips)
+                        
+                        # Top IPs by activity
+                        st.markdown("**Most Active IPs**")
+                        ip_counts = df_valid_ip['ip_address'].value_counts().head(10).reset_index()
+                        ip_counts.columns = ['IP Address', 'Activities']
+                        st.dataframe(ip_counts, hide_index=True, use_container_width=True)
+                    
+                    with col2:
+                        st.markdown("#### 🔐 Recent Logins by IP")
+                        logins = df[df['action_type'] == 'login'][['timestamp', 'username', 'full_name', 'ip_address']].head(20)
+                        st.dataframe(logins, hide_index=True, use_container_width=True)
+                        
+                        st.markdown("#### 🔍 IP to User Mapping")
+                        # Show which users use which IPs
+                        user_ip_map = df_valid_ip.groupby(['username', 'ip_address']).size().reset_index(name='count')
+                        user_ip_map = user_ip_map.sort_values('count', ascending=False).head(20)
+                        st.dataframe(user_ip_map, hide_index=True, use_container_width=True)
+                else:
+                    st.info("No IP address data available yet. IP tracking will start with the next login.")
+            else:
+                st.info("No activity data")
             
 def update_user_config(club_name: str, age_group: str):
     """Update USER_CONFIG in fast_agent module with player's club and age group"""
