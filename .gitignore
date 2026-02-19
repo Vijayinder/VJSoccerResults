@@ -16,8 +16,16 @@ activity_logs.db
 __pycache__/
 *.py[cod]
 *$py.class
+*.py0
+*.pyc
 *.so
 .Python
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+player_selections.db
 
 # Environment variables
 .env
