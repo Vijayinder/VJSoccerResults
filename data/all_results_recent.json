@@ -3169,6 +3169,54 @@
     },
     {
         "type": "results",
+        "hash_id": "lNbJjzBL6N",
+        "attributes": {
+            "name": "FV54537056 - Alamein FC v Avondale FC",
+            "date": "2026-02-15 01:00:00",
+            "round": "R3",
+            "full_round": "Round 3",
+            "ground_name": "Dorothy Laver West Reserve",
+            "field_name": "Main Pitch",
+            "home_team_name": "Alamein FC U17",
+            "home_logo": "https://ocean.dribl.com/806054041589451aa80bc6087de3d60d",
+            "away_team_name": "Avondale FC U17",
+            "away_logo": "https://ocean.dribl.com/aa620c163b524970beec05f0b0d95879",
+            "competition_name": "Girls Victorian Youth Premier League",
+            "league_name": "U17 YPLG Female",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 4,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 1,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": false,
+            "allocated_assistant_referee_2": true,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 2,
+            "enable_referees_allocated": false,
+            "match_hash_id": "nmYnZgWZ3N",
+            "home_team_hash_id": "vmZwn2yBNq",
+            "away_team_hash_id": "lNb3V2Z6Kx",
+            "forfeit_team_hash_id": null
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/lNbJjzBL6N"
+            }
+        }
+    },
+    {
+        "type": "results",
         "hash_id": "lNbJjzMryN",
         "attributes": {
             "name": "FV54521026 - Hume City v Altona Magic SC",
@@ -4988,6 +5036,54 @@
         "links": {
             "self": {
                 "href": "https://mc-api.dribl.com/api/results/nmYnZX3VyN"
+            }
+        }
+    },
+    {
+        "type": "results",
+        "hash_id": "ld454WJoOm",
+        "attributes": {
+            "name": "FV54536816 - Alamein FC v Avondale FC",
+            "date": "2026-02-14 23:20:00",
+            "round": "R3",
+            "full_round": "Round 3",
+            "ground_name": "Dorothy Laver West Reserve",
+            "field_name": "Main Pitch",
+            "home_team_name": "Alamein FC U15",
+            "home_logo": "https://ocean.dribl.com/806054041589451aa80bc6087de3d60d",
+            "away_team_name": "Avondale FC U15",
+            "away_logo": "https://ocean.dribl.com/aa620c163b524970beec05f0b0d95879",
+            "competition_name": "Girls Victorian Youth Premier League",
+            "league_name": "U15 YPLG Female",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 1,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 1,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": false,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 2,
+            "enable_referees_allocated": false,
+            "match_hash_id": "ld454zk40m",
+            "home_team_hash_id": "MNGogqPXNA",
+            "away_team_hash_id": "ld4Olan2KW",
+            "forfeit_team_hash_id": null
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/ld454WJoOm"
             }
         }
     },
@@ -7580,6 +7676,54 @@
         "links": {
             "self": {
                 "href": "https://mc-api.dribl.com/api/results/pmvvwrgMom"
+            }
+        }
+    },
+    {
+        "type": "results",
+        "hash_id": "jdywlpkLEN",
+        "attributes": {
+            "name": "FV54536112 - Moreland City FC v Altona City FC",
+            "date": "2026-02-14 05:15:00",
+            "round": "R1",
+            "full_round": "Round 1",
+            "ground_name": "CB Smith Reserve",
+            "field_name": "Pitch 3 (S)",
+            "home_team_name": "Moreland City SC U23",
+            "home_logo": "https://ocean.dribl.com/103e02b66d464f608a35bc8a80af7ac0",
+            "away_team_name": "Altona City SC U23",
+            "away_logo": "https://ocean.dribl.com/00f4b15358984725ad4e3df3af44989a",
+            "competition_name": "VPL Men 2",
+            "league_name": "VPL Men 2 - U23",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 0,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 6,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": true,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 3,
+            "enable_referees_allocated": false,
+            "match_hash_id": "gdM6EV7pQm",
+            "home_team_hash_id": "BdD1BeD4mb",
+            "away_team_hash_id": "MNGogjabNA",
+            "forfeit_team_hash_id": null
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/jdywlpkLEN"
             }
         }
     },
