@@ -7585,6 +7585,54 @@
     },
     {
         "type": "results",
+        "hash_id": "AN0ok2Z47m",
+        "attributes": {
+            "name": "Doveton SC Seniors  vs Brandon Park SC Seniors ",
+            "date": "2026-02-14 06:00:00",
+            "round": "R0",
+            "full_round": "Round 0",
+            "ground_name": "Waratah Reserve",
+            "field_name": "Pitch 1",
+            "home_team_name": "Doveton SC Seniors",
+            "home_logo": "https://ocean.dribl.com/70e0c27ea4504e77a6c2811a5a0e014c",
+            "away_team_name": "Brandon Park SC Seniors",
+            "away_logo": "https://ocean.dribl.com/47f23d4eeefa4bd1af45981f7db84f5a",
+            "competition_name": "Pre-Season Matches",
+            "league_name": "Pre-Season Matches - SLM",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 1,
+            "home_score_extra": 0,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 0,
+            "away_score_extra": 0,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": true,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 3,
+            "enable_referees_allocated": false,
+            "match_hash_id": "wNl4A7RzMN",
+            "home_team_hash_id": "ld4OoA80KW",
+            "away_team_hash_id": "bd9Xy91DK4",
+            "forfeit_team_hash_id": null
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/AN0ok2Z47m"
+            }
+        }
+    },
+    {
+        "type": "results",
         "hash_id": "4KLlzMErGK",
         "attributes": {
             "name": "FV54535286 - Langwarrin SC v North Sunshine Eagles FC",
@@ -9048,7 +9096,7 @@
             "home_score_penalty": null,
             "home_score_half": null,
             "home_score_extra_half": null,
-            "away_score": 3,
+            "away_score": 4,
             "away_score_extra": null,
             "away_score_penalty": null,
             "away_score_half": null,
@@ -16460,6 +16508,54 @@
         "links": {
             "self": {
                 "href": "https://mc-api.dribl.com/api/results/vmZp9LBjDK"
+            }
+        }
+    },
+    {
+        "type": "results",
+        "hash_id": "emAne0YRxN",
+        "attributes": {
+            "name": "Lara United SC Reserves  vs No Team",
+            "date": "2026-02-07 01:00:00",
+            "round": "R0",
+            "full_round": "Round 0",
+            "ground_name": "Lara Recreation Reserve",
+            "field_name": "Pitch 1",
+            "home_team_name": "Lara United SC Reserves",
+            "home_logo": "https://ocean.dribl.com/7d6c9c7f0f654618a79af83e5f7b8f49",
+            "away_team_name": "Bacchus Marsh SC Reserves ",
+            "away_logo": "https://ocean.dribl.com/2dfa56d2767f41fb8bbac406435fa72a",
+            "competition_name": "Pre-Season Matches",
+            "league_name": "Pre-Season Matches - SLM",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": true,
+            "league_result_access": "public",
+            "home_score": 5,
+            "home_score_extra": 0,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 3,
+            "away_score_extra": 0,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": false,
+            "allocated_assistant_referee_2": false,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 1,
+            "enable_referees_allocated": false,
+            "match_hash_id": "BdDb9O5pJN",
+            "home_team_hash_id": "1K3YZZ8BmQ",
+            "away_team_hash_id": null,
+            "forfeit_team_hash_id": null
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/emAne0YRxN"
             }
         }
     },
