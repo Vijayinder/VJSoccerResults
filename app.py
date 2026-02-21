@@ -1988,18 +1988,12 @@ def main_app():
                         is_home = (base_club_name(home) == club)
                         opponent = away if is_home else home
                         home_away = "🏠" if is_home else "✈️"
-
-                        # Build score with W/D/L indicator so result is immediately clear
+# Score shown from club's perspective with W/D/L indicator
                         if hs is not None and as_ is not None:
                             our = int(hs) if is_home else int(as_)
                             opp = int(as_) if is_home else int(hs)
-                            if our > opp:
-                                result_icon = "🟢"
-                            elif our < opp:
-                                result_icon = "🔴"
-                            else:
-                                result_icon = "🟡"
-                            score = f"{result_icon} {our}-{opp}"
+                            icon = "🟢" if our > opp else ("🔴" if our < opp else "🟡")
+                            score = f"{icon} {our}-{opp}"
                         else:
                             score = ""
 
@@ -2015,7 +2009,7 @@ def main_app():
                     df_matches = pd.DataFrame(match_rows)
                     df_matches["Select"] = df_matches["Select"].astype(bool)
 
-                    # Pre-tick whichever match is currently selected
+                    # Pre-tick the currently selected match
                     current_id = st.session_state.get("selected_match_id")
                     if current_id:
                         df_matches["Select"] = df_matches["_match_hash_id"] == current_id
@@ -2024,7 +2018,7 @@ def main_app():
                         df_matches[["Select", "Date", "H/A", "Opponent", "Score"]],
                         hide_index=True,
                         column_config={
-                            "Select": st.column_config.CheckboxColumn("", help="Select match", default=False, width="small"),
+                            "Select": st.column_config.CheckboxColumn("", default=False, width="small"),
                             "Date": st.column_config.TextColumn("Date", width="small"),
                             "H/A": st.column_config.TextColumn("", width="small"),
                             "Opponent": st.column_config.TextColumn("Opponent", width="medium"),
@@ -2035,7 +2029,7 @@ def main_app():
                         key="club_matches_editor"
                     )
 
-                    # Single selection block — pick the first checked row only
+                    # Single clean selection block — no duplicates
                     selected_rows = edited_matches[edited_matches["Select"] == True]
                     if not selected_rows.empty:
                         new_match_id = df_matches.iloc[selected_rows.index[0]]["_match_hash_id"]
@@ -2083,12 +2077,7 @@ def main_app():
                         # Match summary box
                         st.info(f"**{format_date_full(attrs.get('date', ''))}** vs {base_club_name(opponent)} - **{our_score}-{opp_score}**")
                     # Filter players who played in this match
-                    # Filter players by match — but always keep coaches/staff visible
-                    all_people = [
-                        p for p in all_people
-                        if p.get("role", "").lower() != "player"  # always keep staff
-                        or player_played_in_match(p, selected_match_id)  # players only if in match
-                    ]
+                    all_people = [p for p in all_people if player_played_in_match(p, selected_match_id)]
 
                 # Separate players and non-players
 #                players = [p for p in all_people if not p.get("role") or p.get("role") == "player"]
@@ -2126,25 +2115,25 @@ def main_app():
                                     full_name = f"{full_name} {' '.join(indicators)}"
                                 
                                 # Count events in this match for goals/cards
-                                goals_in_match = 0
-                                yellows_in_match = 0
-                                reds_in_match = 0
-                                
-                                for event in match_data.get("events", []):
-                                    event_type = event.get("event_type", "")
-                                    if event_type == "goal":
-                                        goals_in_match += 1
-                                    elif event_type == "yellow_card":
-                                        yellows_in_match += 1
-                                    elif event_type == "red_card":
-                                        reds_in_match += 1
-                                
-                                # Use match-specific stats
+                                events = match_data.get("events", [])
+                                goals_in_match   = sum(1 for e in events if e.get("type") == "goal")
+                                yellows_in_match = sum(1 for e in events if e.get("type") == "yellow_card")
+                                reds_in_match    = sum(1 for e in events if e.get("type") == "red_card")
+
+                                # Captain indicator — check match record and stats
+                                is_captain = (
+                                    match_data.get("captain") or
+                                    match_data.get("role_in_match", "").lower() == "captain" or
+                                    p.get("stats", {}).get("matches_captained", 0) > 0
+                                )
+                                if is_captain and "(C)" not in full_name:
+                                    full_name = f"{full_name} (C)"
+
                                 rows.append({
                                     "Select": False,
                                     "Player": full_name,
                                     "#": p.get("jersey", ""),
-                                    "M": 1,  # This match
+                                    "M": 1,
                                     "G": goals_in_match,
                                     "🟨": yellows_in_match,
                                     "🟥": reds_in_match,
@@ -2186,7 +2175,7 @@ def main_app():
                     if not selected_player_rows.empty:
                         idx = selected_player_rows.index[0]
                         selected_player = players[idx]
-                        # Store player but stay on ladder_clubs — details show below
+                        # Stay on ladder_clubs — show details below instead of navigating away
                         if st.session_state.get("selected_player") != selected_player:
                             st.session_state["selected_player"] = selected_player
                             player_name = f"{selected_player.get('first_name','')} {selected_player.get('last_name','')}"
@@ -2202,7 +2191,6 @@ def main_app():
                             )
                             st.rerun()
                     else:
-                        # Deselect player when unchecked
                         if st.session_state.get("selected_player") is not None:
                             st.session_state["selected_player"] = None
                             st.rerun()
@@ -2238,51 +2226,38 @@ def main_app():
                         },
                         use_container_width=False,
                     )
-                # PLAYER DETAIL PANEL — shown inline below squad when a player is selected
+# PLAYER DETAIL PANEL — inline below squad
                 selected_player = st.session_state.get("selected_player")
                 if selected_player:
                     pname = f"{selected_player.get('first_name','')} {selected_player.get('last_name','')}"
                     st.markdown("---")
-                    st.markdown(f"### 👤 {pname} — Match History")
-
-                    col_info, col_clear = st.columns([6, 1])
-                    with col_info:
+                    col_ph, col_px = st.columns([6, 1])
+                    with col_ph:
                         stats = selected_player.get("stats", {})
+                        st.markdown(f"### 👤 {pname}")
                         st.caption(
                             f"Jersey #{selected_player.get('jersey','—')}  |  "
-                            f"⚽ {stats.get('goals',0)} goals  |  "
-                            f"🎮 {stats.get('matches_played',0)} matches  |  "
-                            f"🟨 {stats.get('yellow_cards',0)}  🟥 {stats.get('red_cards',0)}"
+                            f"⚽ {stats.get('goals', 0)} goals  |  "
+                            f"🎮 {stats.get('matches_played', 0)} matches  |  "
+                            f"🟨 {stats.get('yellow_cards', 0)}  🟥 {stats.get('red_cards', 0)}"
                         )
-                    with col_clear:
-                        if st.button("✖ Close", key="close_player"):
+                    with col_px:
+                        if st.button("✖ Close", key="close_player_detail"):
                             st.session_state["selected_player"] = None
                             st.rerun()
 
-                    player_matches = get_matches_for_player(selected_player)
+                    player_matches = selected_player.get("matches", [])
                     if player_matches:
                         match_rows = []
-                        
                         for m in player_matches:
-                            # Opponent: use "opponent" field, strip age group suffix
                             opponent = base_club_name(
-                                m.get("opponent_team_name") or
-                                m.get("opponent") or
-                                "—"
+                                m.get("opponent_team_name") or m.get("opponent") or "—"
                             )
-
-                            # Count goals and cards from events array
                             events = m.get("events", [])
                             goals = sum(1 for e in events if e.get("type") == "goal")
                             yellows = sum(1 for e in events if e.get("type") == "yellow_card")
                             reds = sum(1 for e in events if e.get("type") == "red_card")
-
                             started = "✅" if m.get("started") else "🪑"
-
-                            goals = m.get("goals", 0)
-                            yellows = m.get("yellow_cards", 0)
-                            reds = m.get("red_cards", 0)
-                           
                             match_rows.append({
                                 "Date": format_date(m.get("date", "")),
                                 "Started": started,
@@ -2291,7 +2266,6 @@ def main_app():
                                 "🟨": yellows,
                                 "🟥": reds,
                             })
-
                         df_player = pd.DataFrame(match_rows)
                         st.dataframe(
                             df_player,
@@ -2307,9 +2281,9 @@ def main_app():
                             }
                         )
                     else:
-                        st.info("No match history found for this player.")
+                        st.info("No match history found.")
 
-    # LEVEL 4: PLAYER MATCHES (same as before) 
+    # LEVEL 4: PLAYER MATCHES (same as before)
     elif level == "matches":
         player = st.session_state["selected_player"]
         if not player:
