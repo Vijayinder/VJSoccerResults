@@ -1,6 +1,102 @@
 [
     {
         "type": "results",
+        "hash_id": "jmazBoJ65N",
+        "attributes": {
+            "name": "Spring Hills FC U13  vs South Melbourne FC U13 ",
+            "date": "2026-02-20 23:00:00",
+            "round": "R4",
+            "full_round": "Round 4",
+            "ground_name": "Springside Recreational Reserve",
+            "field_name": "Junior Pitch (S) - Half Field",
+            "home_team_name": "Spring Hills FC U13",
+            "home_logo": "https://ocean.dribl.com/2c3fa2714acd458cbe67d4ec7b14df1e",
+            "away_team_name": "South Melbourne FC U13",
+            "away_logo": "https://ocean.dribl.com/8592473f82b34aab870d14c51df0ec8d",
+            "competition_name": "Girls Victorian Youth Premier League",
+            "league_name": "U13 YPLG Female",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 3,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 3,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": false,
+            "allocated_assistant_referee_2": false,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 1,
+            "enable_referees_allocated": false,
+            "match_hash_id": "BdDb9PVW1N",
+            "home_team_hash_id": "BdD1BqP1mb",
+            "away_team_hash_id": "pN6OYa30K0",
+            "forfeit_team_hash_id": null
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/jmazBoJ65N"
+            }
+        }
+    },
+    {
+        "type": "results",
+        "hash_id": "gdM6EBLY1m",
+        "attributes": {
+            "name": "Heidelberg United FC U13  vs Southern United FC U13 ",
+            "date": "2026-02-20 22:00:00",
+            "round": "R4",
+            "full_round": "Round 4",
+            "ground_name": "Darebin International Sports Centre",
+            "field_name": "Pitch 2 (S) - Half Field",
+            "home_team_name": "Heidelberg United FC U13",
+            "home_logo": "https://ocean.dribl.com/8f105df7d73e4f1696cfd6edb2b418fd",
+            "away_team_name": "Southern United FC U13",
+            "away_logo": "https://ocean.dribl.com/4dbaecb9f53c4440852097ed5014c9a1",
+            "competition_name": "Girls Victorian Youth Premier League",
+            "league_name": "U13 YPLG Female",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": true,
+            "league_result_access": "public",
+            "home_score": 1,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 3,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": true,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 3,
+            "enable_referees_allocated": false,
+            "match_hash_id": "2Kp0pZDJzK",
+            "home_team_hash_id": "8NOD8qMWKZ",
+            "away_team_hash_id": "2KpvA3ZzmY",
+            "forfeit_team_hash_id": null
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/gdM6EBLY1m"
+            }
+        }
+    },
+    {
+        "type": "results",
         "hash_id": "ld454WL1em",
         "attributes": {
             "name": "Bentleigh Greens SC Seniors  vs Avondale FC Seniors ",
