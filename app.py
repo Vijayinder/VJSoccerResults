@@ -342,8 +342,34 @@ def show_login_page():
             
             st.markdown("---")
         
-        # Player/Coach selection
-        st.markdown("### 👤 Select Player/Coach Profile")
+ # Quick login - no player selection needed
+        st.markdown("### 👋 Quick Login")
+        st.caption("Jump straight in — defaults to Heidelberg United U16 / Guest")
+        if st.button("⚡ Login Now", type="primary", use_container_width=True, key="quick_login"):
+            league, competition = get_player_league_info("Guest", "Heidelberg United", "U16")
+            st.session_state["authenticated"] = True
+            st.session_state["user_type"] = "player"
+            st.session_state["username"] = "guest_default"
+            st.session_state["full_name"] = "Guest Player"
+            st.session_state["player_club"] = "Heidelberg United"
+            st.session_state["player_age_group"] = "U16"
+            st.session_state["player_role"] = "player"
+            st.session_state["role"] = "player"
+            st.session_state["last_activity"] = datetime.now()
+            st.session_state["player_league"] = league
+            st.session_state["player_competition"] = competition
+            update_user_config("Heidelberg United", "U16")
+            log_login(
+                username="shaurya_default",
+                full_name="Shaurya",
+                session_id=st.session_state["session_id"]
+            )
+            st.rerun()
+
+        st.markdown("---")
+
+        # Player/Coach selection (optional)
+        st.markdown("### 👤 Or Select a Specific Player/Coach Profile")
         
         # Load all players and coaches
         people = get_players_and_coaches_list(DATA_DIR)
@@ -356,7 +382,7 @@ def show_login_page():
         options = [""] + [format_player_display(p) for p in people]
         
         selected_display = st.selectbox(
-            "Who brought you here?",
+            "Search your name (optional):",
             options=options,
             format_func=lambda x: "Select your name..." if x == "" else x,
             help="Start typing to search for your name"
@@ -382,8 +408,7 @@ def show_login_page():
 
                 # 3. Use a form to capture the "Enter" keypress
                 with st.form("confirmation_form", border=False):
-                    # We need a submit button for the Enter key to trigger
-                    submit = st.form_submit_button("Continue", type="primary", use_container_width=True)
+                    submit = st.form_submit_button("Continue as this player", type="primary", use_container_width=True)
                     
                     if submit:
                         # Login logic
@@ -416,8 +441,7 @@ def show_login_page():
                             full_name=selected_person["name"],
                             session_id=st.session_state["session_id"]
                         )
-                        st.rerun()
-        
+                        st.rerun()       
         # Admin login section
         st.markdown("---")
         with st.expander("🔐 Admin Login"):
@@ -438,6 +462,13 @@ def show_login_page():
                             st.session_state["full_name"] = admin["full_name"]
                             st.session_state["role"] = "admin"
                             st.session_state["last_activity"] = datetime.now()
+                            # Default player context to Shaurya / Heidelberg United U16
+                            st.session_state["player_club"] = "Heidelberg United"
+                            st.session_state["player_age_group"] = "U16"
+                            st.session_state["player_role"] = "player"
+                            admin_league, admin_comp = get_player_league_info("Shaurya", "Heidelberg United", "U16")
+                            st.session_state["player_league"] = admin_league
+                            st.session_state["player_competition"] = admin_comp
                             
                             # Log the login
                             log_login(
@@ -997,6 +1028,89 @@ def compute_ladder_from_results(results_for_comp):
             r["ga"],
             r["club"].lower(),
         )
+    )
+    return ladder
+
+def compute_overall_points_ladder(results, league):
+    """
+    Overall ladder based on actual match POINTS (W=3, D=1, L=0) summed
+    across ALL age groups in a league. Uses base club name to merge teams.
+    """
+    table = defaultdict(lambda: {
+        "club": "",
+        "played": 0,
+        "wins": 0,
+        "draws": 0,
+        "losses": 0,
+        "gf": 0,
+        "ga": 0,
+        "gd": 0,
+        "points": 0,
+    })
+
+    for item in results:
+        attrs = item.get("attributes", {})
+        league_name = attrs.get("league_name", "")
+        if not league_name:
+            continue
+        if extract_league_from_league_name(league_name) != league:
+            continue
+        if attrs.get("status") != "complete":
+            continue
+
+        home = attrs.get("home_team_name")
+        away = attrs.get("away_team_name")
+        hs = attrs.get("home_score")
+        as_ = attrs.get("away_score")
+
+        if home is None or away is None or hs is None or as_ is None:
+            continue
+
+        try:
+            hs = int(hs)
+            as_ = int(as_)
+        except Exception:
+            continue
+
+        home_base = base_club_name(home)
+        away_base = base_club_name(away)
+
+        for team_base in [home_base, away_base]:
+            if table[team_base]["club"] == "":
+                table[team_base]["club"] = team_base
+
+        table[home_base]["played"] += 1
+        table[away_base]["played"] += 1
+        table[home_base]["gf"] += hs
+        table[home_base]["ga"] += as_
+        table[away_base]["gf"] += as_
+        table[away_base]["ga"] += hs
+
+        if hs > as_:
+            table[home_base]["wins"] += 1
+            table[away_base]["losses"] += 1
+            table[home_base]["points"] += 3
+        elif hs < as_:
+            table[away_base]["wins"] += 1
+            table[home_base]["losses"] += 1
+            table[away_base]["points"] += 3
+        else:
+            table[home_base]["draws"] += 1
+            table[away_base]["draws"] += 1
+            table[home_base]["points"] += 1
+            table[away_base]["points"] += 1
+
+    for team, row in table.items():
+        row["gd"] = row["gf"] - row["ga"]
+
+    ladder = sorted(
+        table.values(),
+        key=lambda r: (
+            -r["points"],
+            -r["gd"],
+            -r["gf"],
+            r["club"].lower(),
+        ),
     )
     return ladder
 
@@ -1656,47 +1770,71 @@ def main_app():
                     st.rerun()
         
         # Overall club rankings
+# Overall club rankings - tabbed: Old (position-based) vs New (points-based)
         st.markdown("---")
         st.markdown(f"### 📈 Overall Club Rankings - {league}")
-        if league in comp_overview:
-            data = comp_overview[league]
-            age_groups = data.get("age_groups", [])
-            rows = []
-            for club in data.get("clubs", []):
-                row = {
-                    "Rank": club.get("overall_rank", 0),
-                    "Club": base_club_name(club.get("club", "")),
-                    "Points": club.get("total_position_points", 0),
- #                   "Teams": club.get("age_group_count", 0),
+
+        tab_old, tab_new = st.tabs(["🏅 Old Ladder (by Position)", "⚡ Overall Points Ladder"])
+
+        with tab_old:
+            if league in comp_overview:
+                data = comp_overview[league]
+                age_groups = data.get("age_groups", [])
+                rows = []
+                for club in data.get("clubs", []):
+                    row = {
+                        "Rank": club.get("overall_rank", 0),
+                        "Club": base_club_name(club.get("club", "")),
+                        "Points": club.get("total_position_points", 0),
+                    }
+                    for age in age_groups:
+                        pos = club.get("age_groups", {}).get(age, {}).get("position")
+                        row[age] = pos if pos else "-"
+                    row["GF"] = club.get("total_gf", 0)
+                    row["GA"] = club.get("total_ga", 0)
+                    row["GD"] = club.get("total_gf", 0) - club.get("total_ga", 0)
+                    rows.append(row)
+                df_overview = pd.DataFrame(rows)
+                configs = {
+                    "Rank": st.column_config.NumberColumn("Rank", width="small"),
+                    "Club": st.column_config.TextColumn("Club", width="large"),
+                    "Points": st.column_config.NumberColumn("Pts", width="small"),
+                    "GF": st.column_config.NumberColumn("GF", width="small"),
+                    "GA": st.column_config.NumberColumn("GA", width="small"),
+                    "GD": st.column_config.NumberColumn("GD", width="small"),
                 }
-                # Add age group positions
                 for age in age_groups:
-                    pos = club.get("age_groups", {}).get(age, {}).get("position")
-                    row[age] = pos if pos else "-"
-                # Add GF, GA, GD as last 3 columns
-                row["GF"] = club.get("total_gf", 0)
-                row["GA"] = club.get("total_ga", 0)
-                row["GD"] = club.get("total_gf", 0) - club.get("total_ga", 0)
-                rows.append(row)
-            df_overview = pd.DataFrame(rows)
-            # --- START OF COLUMN CONFIGURATION ---
-            # 1. Define fixed columns first
-            configs = {
-                "Rank": st.column_config.NumberColumn("Rank", width="small"),
-                "Club": st.column_config.TextColumn("Club", width="large"), # <--- Increased width
-                "Points": st.column_config.NumberColumn("Pts", width="small"),
-                "GF": st.column_config.NumberColumn("GF", width="small"),
-                "GA": st.column_config.NumberColumn("GA", width="small"),
-                "GD": st.column_config.NumberColumn("GD", width="small"),
-            }
-            
-            # 2. Add dynamic age group columns to the config as "small"
-            for age in age_groups:
-                configs[age] = st.column_config.TextColumn(age, width="small")
-            # --- END OF COLUMN CONFIGURATION ---
-            st.dataframe(df_overview, hide_index=True, use_container_width=False, height=598)
-        else:
-            st.info("No competition overview data available for this league.")
+                    configs[age] = st.column_config.TextColumn(age, width="small")
+                st.dataframe(df_overview, hide_index=True, use_container_width=False, height=598, column_config=configs)
+            else:
+                st.info("No competition overview data available for this league.")
+
+        with tab_new:
+            st.caption("Rankings based on total match points (W=3, D=1, L=0) earned across all age groups in this league.")
+            overall_ladder = compute_overall_points_ladder(results, league)
+            if overall_ladder:
+                overall_ladder_df = pd.DataFrame(overall_ladder)
+                overall_ladder_df.insert(0, "Rank", range(1, len(overall_ladder_df) + 1))
+                st.dataframe(
+                    overall_ladder_df[["Rank", "club", "played", "wins", "draws", "losses", "gf", "ga", "gd", "points"]],
+                    hide_index=True,
+                    use_container_width=False,
+                    height=598,
+                    column_config={
+                        "Rank": st.column_config.NumberColumn("Rank", width="small"),
+                        "club": st.column_config.TextColumn("Club", width="large"),
+                        "played": st.column_config.NumberColumn("P", width="small"),
+                        "wins": st.column_config.NumberColumn("W", width="small"),
+                        "draws": st.column_config.NumberColumn("D", width="small"),
+                        "losses": st.column_config.NumberColumn("L", width="small"),
+                        "gf": st.column_config.NumberColumn("GF", width="small"),
+                        "ga": st.column_config.NumberColumn("GA", width="small"),
+                        "gd": st.column_config.NumberColumn("GD", width="small"),
+                        "points": st.column_config.NumberColumn("Pts", width="small"),
+                    },
+                )
+            else:
+                st.info("No results data found to build the points ladder for this league.")
 
     # LEVEL 3: LADDER + CLUB (with logging when club selected)
     elif level == "ladder_clubs":
