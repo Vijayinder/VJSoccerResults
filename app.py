@@ -961,7 +961,40 @@ def get_player_match_stats(player, match_hash_id):
         if m.get("match_hash_id") == match_hash_id:
             return m
     return None
-    
+ 
+def style_ladder(df, comp):
+    """Apply promotion/relegation zone colours based on competition."""
+    n = len(df)
+    # Build a list of background colours, one per row, default blank
+    colours = [""] * n
+
+    comp_upper = comp.upper()
+
+    if "YPL1" in comp_upper:
+        # Bottom 2 = light red
+        for i in range(max(0, n - 2), n):
+            colours[i] = "background-color: #FFCCCC"
+
+    elif "YPL2" in comp_upper:
+        # Top 2 = light green, bottom 2 = light red
+        for i in range(min(2, n)):
+            colours[i] = "background-color: #CCFFCC"
+        for i in range(max(0, n - 2), n):
+            colours[i] = "background-color: #FFCCCC"
+
+    elif "YSL" in comp_upper:
+        # Top 1 = light green
+        if n > 0:
+            colours[0] = "background-color: #CCFFCC"
+
+    # Apply same colour to every cell in the row
+    return pd.DataFrame(
+        [([c] * len(df.columns)) for c in colours],
+        index=df.index,
+        columns=df.columns,
+    )
+
+ 
 def compute_ladder_from_results(results_for_comp):
     table = defaultdict(lambda: {
         "club": "",
@@ -1533,7 +1566,7 @@ def main_app():
     # 1. Define dynamic labels based on session state
     user_club = st.session_state.get("player_club") or "Heidelberg United"
     user_age = st.session_state.get("player_age_group") or "U16"
-    user_name = st.session_state.get("full_name") or "John Doe"
+    user_name = st.session_state.get("full_name") or "Guest"
     user_league = st.session_state.get("player_league") or "YPL2"  # ADD THIS
     user_competition = st.session_state.get("player_competition") or "YPL2"  
 
@@ -1591,7 +1624,7 @@ def main_app():
     with col2:
         st.markdown("**🏆 Competitions**")
         # You can keep these generic or tie them to the competition the age group plays in
-        q7 = f"{user_league} ladder"  # Instead of f"{user_age} YPL2 ladder"
+        q7 = f"{user_age} {user_league} ladder"  # Instead of f"{user_age} YPL2 ladder"
         if st.button(q7, key="ex7", use_container_width=False):
             st.session_state["clicked_query"] = q7
             st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
@@ -1747,9 +1780,9 @@ def main_app():
         
         # Add clickable competition buttons
         st.markdown("**Click a competition name to open:**")
-        cols = st.columns(min(len(comps), 4))  # Max 4 columns
+        cols = st.columns(min(len(comps), 5))  # Max 4 columns
         for idx, comp_name in enumerate(comps):
-            col_idx = idx % 4
+            col_idx = idx % 5
             with cols[col_idx]:
                 if st.button(comp_name, key=f"comp_btn_{idx}", use_container_width=True):
                     st.session_state["selected_competition"] = comp_name
@@ -1776,6 +1809,33 @@ def main_app():
 
         tab_old, tab_new = st.tabs(["🏅 Old Ladder (by Position)", "⚡ Overall Points Ladder"])
 
+        with tab_new:
+            st.caption("Rankings based on total match points (W=3, D=1, L=0) earned across all age groups in this league.")
+            overall_ladder = compute_overall_points_ladder(results, league)
+            if overall_ladder:
+                overall_ladder_df = pd.DataFrame(overall_ladder)
+                overall_ladder_df.insert(0, "Rank", range(1, len(overall_ladder_df) + 1))
+                st.dataframe(
+                    overall_ladder_df[["Rank", "club", "played", "wins", "draws", "losses", "gf", "ga", "gd", "points"]],
+                    hide_index=True,
+                    use_container_width=False,
+                    height=598,
+                    column_config={
+                        "Rank": st.column_config.NumberColumn("Rank", width="small"),
+                        "club": st.column_config.TextColumn("Club", width="large"),
+                        "played": st.column_config.NumberColumn("P", width="small"),
+                        "wins": st.column_config.NumberColumn("W", width="small"),
+                        "draws": st.column_config.NumberColumn("D", width="small"),
+                        "losses": st.column_config.NumberColumn("L", width="small"),
+                        "gf": st.column_config.NumberColumn("GF", width="small"),
+                        "ga": st.column_config.NumberColumn("GA", width="small"),
+                        "gd": st.column_config.NumberColumn("GD", width="small"),
+                        "points": st.column_config.NumberColumn("Pts", width="small"),
+                    },
+                )
+            else:
+                st.info("No results data found to build the points ladder for this league.")
+                
         with tab_old:
             if league in comp_overview:
                 data = comp_overview[league]
@@ -1809,32 +1869,6 @@ def main_app():
             else:
                 st.info("No competition overview data available for this league.")
 
-        with tab_new:
-            st.caption("Rankings based on total match points (W=3, D=1, L=0) earned across all age groups in this league.")
-            overall_ladder = compute_overall_points_ladder(results, league)
-            if overall_ladder:
-                overall_ladder_df = pd.DataFrame(overall_ladder)
-                overall_ladder_df.insert(0, "Rank", range(1, len(overall_ladder_df) + 1))
-                st.dataframe(
-                    overall_ladder_df[["Rank", "club", "played", "wins", "draws", "losses", "gf", "ga", "gd", "points"]],
-                    hide_index=True,
-                    use_container_width=False,
-                    height=598,
-                    column_config={
-                        "Rank": st.column_config.NumberColumn("Rank", width="small"),
-                        "club": st.column_config.TextColumn("Club", width="large"),
-                        "played": st.column_config.NumberColumn("P", width="small"),
-                        "wins": st.column_config.NumberColumn("W", width="small"),
-                        "draws": st.column_config.NumberColumn("D", width="small"),
-                        "losses": st.column_config.NumberColumn("L", width="small"),
-                        "gf": st.column_config.NumberColumn("GF", width="small"),
-                        "ga": st.column_config.NumberColumn("GA", width="small"),
-                        "gd": st.column_config.NumberColumn("GD", width="small"),
-                        "points": st.column_config.NumberColumn("Pts", width="small"),
-                    },
-                )
-            else:
-                st.info("No results data found to build the points ladder for this league.")
 
     # LEVEL 3: LADDER + CLUB (with logging when club selected)
     elif level == "ladder_clubs":
@@ -1854,61 +1888,53 @@ def main_app():
         ladder_df["ClubDisplay"] = ladder_df["club"].apply(base_club_name)
         
         st.markdown("---")
-        st.markdown("**Select from ladder table below:**")
-        
-        currently_selected = st.session_state.get("selected_club")
-        ladder_df["Select"] = ladder_df["ClubDisplay"].apply(lambda x: x == currently_selected)
 
-        edited = st.data_editor(
-            ladder_df[["Select", "Pos", "ClubDisplay", "played", "wins", "draws", "losses",
-                       "gf", "ga", "gd", "points"]],
+        # Build display dataframe (no Select column needed)
+        display_df = ladder_df[["Pos", "ClubDisplay", "played", "wins", "draws", "losses",
+                                 "gf", "ga", "gd", "points"]].copy()
+        display_df.columns = ["Pos", "Club", "P", "W", "D", "L", "GF", "GA", "GD", "Pts"]
+
+        # Apply zone colours
+        styled = display_df.style.apply(style_ladder, comp=comp, axis=None)
+
+        st.dataframe(
+            styled,
             hide_index=True,
-            column_config={
-                "Select": st.column_config.CheckboxColumn("Select", help="Select club",width="small", default=False),
-                "ClubDisplay": st.column_config.TextColumn("Club", width="medium"),
-                "Pos": st.column_config.NumberColumn("Pos", width="small"),
-                "points": st.column_config.NumberColumn("Pts", width="small"),
-                "played": st.column_config.NumberColumn("P", width="small"),
-                "wins": st.column_config.NumberColumn("W", width="small"),
-                "draws": st.column_config.NumberColumn("D", width="small"),
-                "losses": st.column_config.NumberColumn("L", width="small"),
-                "gf": st.column_config.NumberColumn("GF", width="small"),
-                "ga": st.column_config.NumberColumn("GA", width="small"),
-                "gd": st.column_config.NumberColumn("GD", width="small")
-
-            },
-            disabled=["Pos", "ClubDisplay", "points", "played", "wins", "draws", "losses",
-                      "gf", "ga", "gd"],
             use_container_width=False,
-            height=590,  # Increased height to show ~18 rows
-            key="ladder_editor"
+            height=590,
         )
 
-        selected_rows = edited[edited["Select"] == True]
-        if not selected_rows.empty:
-            idx = selected_rows.index[0]
-            new_club = ladder_df.iloc[idx]["ClubDisplay"]
-            
-            if st.session_state.get("selected_club") != new_club:
-                st.session_state["selected_club"] = new_club
-                st.session_state["selected_match_id"] = None
-                
-                # Log the view
-                log_view(
-                    username=st.session_state["username"],
-                    full_name=st.session_state["full_name"],
-                    view_type="club",
-                    league=league,
-                    competition=comp,
-                    club=new_club,
-                    session_id=st.session_state["session_id"]
-                )
-                
-                st.rerun()
-        elif currently_selected:
+        # Club selector below the table
+        club_options = [""] + list(ladder_df["ClubDisplay"])
+        currently_selected = st.session_state.get("selected_club")
+        default_idx = club_options.index(currently_selected) if currently_selected in club_options else 0
+
+        chosen_club = st.selectbox(
+            "🏟️ Select a club to view squad & matches:",
+            options=club_options,
+            index=default_idx,
+            format_func=lambda x: "— pick a club —" if x == "" else x,
+            key="club_selector"
+        )
+
+        if chosen_club and chosen_club != currently_selected:
+            st.session_state["selected_club"] = chosen_club
+            st.session_state["selected_match_id"] = None
+            log_view(
+                username=st.session_state["username"],
+                full_name=st.session_state["full_name"],
+                view_type="club",
+                league=league,
+                competition=comp,
+                club=chosen_club,
+                session_id=st.session_state["session_id"]
+            )
+            st.rerun()
+        elif not chosen_club and currently_selected:
             st.session_state["selected_club"] = None
             st.session_state["selected_match_id"] = None
             st.rerun()
+            
 
         # Show club details (same as before)
         club = st.session_state.get("selected_club")

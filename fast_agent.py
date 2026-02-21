@@ -1822,7 +1822,7 @@ def tool_team_stats(query: str = "") -> str:
             else:
                 result = "🟢 W" if int(as_) > int(hs) else ("🔴 L" if int(as_) < int(hs) else "🟡 D")
             
-            lines.append(f"  {result} {date_str}: {home_team} {hs}-{as_} {away_team}")
+            lines.append(f"\n  {result} {date_str}: {home_team} {hs}-{as_} {away_team}")
 
     return "\n".join(lines)
 
@@ -2511,7 +2511,7 @@ class FastQueryRouter:
         # This prevents the UnboundLocalError by ensuring they exist immediately
         filter_query = ""
         show_details = False
-        is_non_player_query = any(keyword in q for keyword in ['non player', 'non-player', 'coach', 'staff', 'manager'])
+        is_non_player_query = any(keyword in q for keyword in ['non player', 'non-player', 'coach', 'coaches', 'staff', 'manager'])
         is_personal_query = any(keyword in q for keyword in ['my next', 'when do i play', 'where do i play', 'my schedule', 'when is my', 'where is my', 'our next'])
 
         # --- 2. MISSING SCORES ---
