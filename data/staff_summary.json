@@ -23521,7 +23521,7 @@
         "U13 YSL Boys - North-West"
       ],
       "stats": {
-        "matches_attended": 1,
+        "matches_attended": 2,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -23531,6 +23531,13 @@
           "date": "2026-02-14T21:45:00.000000Z",
           "role_in_match": "Manager",
           "opponent": "Brimbank Stallions FC U13",
+          "events": []
+        },
+        {
+          "match_hash_id": "1K3pvQ7LGd",
+          "date": "2026-02-21T21:45:00.000000Z",
+          "role_in_match": "Manager",
+          "opponent": "St Albans Saints Dinamo SC U13",
           "events": []
         }
       ]
@@ -23552,7 +23559,7 @@
         "U15 YSL Boys - North-West"
       ],
       "stats": {
-        "matches_attended": 2,
+        "matches_attended": 3,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -23569,6 +23576,13 @@
           "date": "2026-02-15T00:30:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "Brimbank Stallions FC U15",
+          "events": []
+        },
+        {
+          "match_hash_id": "1K3pvQ7LGd",
+          "date": "2026-02-21T21:45:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "St Albans Saints Dinamo SC U13",
           "events": []
         }
       ]
@@ -23596,7 +23610,7 @@
         "U18 YSL Boys - North-West"
       ],
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -23635,6 +23649,13 @@
           "role_in_match": "Teamstaff",
           "opponent": "Brimbank Stallions FC U14",
           "events": []
+        },
+        {
+          "match_hash_id": "1K3pvQ7LGd",
+          "date": "2026-02-21T21:45:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "St Albans Saints Dinamo SC U13",
+          "events": []
         }
       ]
     },
@@ -23653,7 +23674,7 @@
         "U13 YSL Boys - North-West"
       ],
       "stats": {
-        "matches_attended": 1,
+        "matches_attended": 2,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -23663,6 +23684,13 @@
           "date": "2026-02-14T21:45:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "Brimbank Stallions FC U13",
+          "events": []
+        },
+        {
+          "match_hash_id": "1K3pvQ7LGd",
+          "date": "2026-02-21T21:45:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "St Albans Saints Dinamo SC U13",
           "events": []
         }
       ]
@@ -24464,7 +24492,7 @@
         "U18 YSL Boys - North-West"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -24488,6 +24516,13 @@
           "date": "2026-02-14T22:00:00.000000Z",
           "role_in_match": "Manager",
           "opponent": "Moreland City SC U13",
+          "events": []
+        },
+        {
+          "match_hash_id": "1K3pvQ7LGd",
+          "date": "2026-02-21T21:45:00.000000Z",
+          "role_in_match": "Manager",
+          "opponent": "Brunswick City SC U13",
           "events": []
         }
       ]
@@ -29048,7 +29083,7 @@
         "U13 YSL Boys - North-West"
       ],
       "stats": {
-        "matches_attended": 1,
+        "matches_attended": 2,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -29058,6 +29093,13 @@
           "date": "2026-02-14T22:00:00.000000Z",
           "role_in_match": "Head Coach",
           "opponent": "Moreland City SC U13",
+          "events": []
+        },
+        {
+          "match_hash_id": "1K3pvQ7LGd",
+          "date": "2026-02-21T21:45:00.000000Z",
+          "role_in_match": "Head Coach",
+          "opponent": "Brunswick City SC U13",
           "events": []
         }
       ]
@@ -29077,7 +29119,7 @@
         "U13 YSL Boys - North-West"
       ],
       "stats": {
-        "matches_attended": 1,
+        "matches_attended": 2,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -29087,6 +29129,13 @@
           "date": "2026-02-14T22:00:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "Moreland City SC U13",
+          "events": []
+        },
+        {
+          "match_hash_id": "1K3pvQ7LGd",
+          "date": "2026-02-21T21:45:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Brunswick City SC U13",
           "events": []
         }
       ]
@@ -31862,5 +31911,5 @@
       ]
     }
   ],
-  "_last_updated": "2026-02-22T10:00:17.290802"
+  "_last_updated": "2026-02-22T10:14:36.436311"
 }

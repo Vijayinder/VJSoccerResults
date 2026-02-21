@@ -2115,14 +2115,14 @@
         "age_groups": {
           "U13": {
             "position": 1,
-            "played": 1,
+            "played": 2,
             "wins": 1,
-            "draws": 0,
+            "draws": 1,
             "losses": 0,
-            "gf": 16,
-            "ga": 2,
+            "gf": 18,
+            "ga": 4,
             "gd": 14,
-            "points": 3
+            "points": 4
           },
           "U18": {
             "position": 1,
@@ -2170,8 +2170,8 @@
           }
         },
         "total_position_points": 9,
-        "total_gf": 31,
-        "total_ga": 7,
+        "total_gf": 33,
+        "total_ga": 9,
         "age_group_count": 5,
         "overall_rank": 1
       },
@@ -2310,14 +2310,14 @@
         "age_groups": {
           "U13": {
             "position": 6,
-            "played": 1,
+            "played": 2,
             "wins": 0,
-            "draws": 0,
+            "draws": 1,
             "losses": 1,
-            "gf": 1,
-            "ga": 2,
+            "gf": 3,
+            "ga": 4,
             "gd": -1,
-            "points": 0
+            "points": 1
           },
           "U18": {
             "position": 5,
@@ -2365,8 +2365,8 @@
           }
         },
         "total_position_points": 22,
-        "total_gf": 8,
-        "total_ga": 4,
+        "total_gf": 10,
+        "total_ga": 6,
         "age_group_count": 5,
         "overall_rank": 4
       },
@@ -3401,5 +3401,5 @@
       }
     ]
   },
-  "_last_updated": "2026-02-22T10:00:15.755269"
+  "_last_updated": "2026-02-22T10:14:34.737153"
 }
