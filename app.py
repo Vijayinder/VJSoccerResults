@@ -1988,12 +1988,26 @@ def main_app():
                         is_home = (base_club_name(home) == club)
                         opponent = away if is_home else home
                         home_away = "🏠" if is_home else "✈️"
-                        score = f"{hs}-{as_}" if hs is not None and as_ is not None else ""
+
+                        # Build score with W/D/L indicator so result is immediately clear
+                        if hs is not None and as_ is not None:
+                            our = int(hs) if is_home else int(as_)
+                            opp = int(as_) if is_home else int(hs)
+                            if our > opp:
+                                result_icon = "🟢"
+                            elif our < opp:
+                                result_icon = "🔴"
+                            else:
+                                result_icon = "🟡"
+                            score = f"{result_icon} {our}-{opp}"
+                        else:
+                            score = ""
+
                         match_rows.append({
                             "Select": False,
                             "Date": format_date(attrs.get("date", "")),
-                            "Opponent": base_club_name(opponent),
                             "H/A": home_away,
+                            "Opponent": base_club_name(opponent),
                             "Score": score,
                             "_match_hash_id": attrs.get("match_hash_id"),
                         })
@@ -2001,11 +2015,16 @@ def main_app():
                     df_matches = pd.DataFrame(match_rows)
                     df_matches["Select"] = df_matches["Select"].astype(bool)
 
+                    # Pre-tick whichever match is currently selected
+                    current_id = st.session_state.get("selected_match_id")
+                    if current_id:
+                        df_matches["Select"] = df_matches["_match_hash_id"] == current_id
+
                     edited_matches = st.data_editor(
                         df_matches[["Select", "Date", "H/A", "Opponent", "Score"]],
                         hide_index=True,
                         column_config={
-                            "Select": st.column_config.CheckboxColumn("Select", help="Filter players by match", default=False),
+                            "Select": st.column_config.CheckboxColumn("", help="Select match", default=False, width="small"),
                             "Date": st.column_config.TextColumn("Date", width="small"),
                             "H/A": st.column_config.TextColumn("", width="small"),
                             "Opponent": st.column_config.TextColumn("Opponent", width="medium"),
@@ -2016,27 +2035,14 @@ def main_app():
                         key="club_matches_editor"
                     )
 
-                    selected_match_rows = edited_matches[edited_matches["Select"] == True]
-                    current_selection_ids = list(df_matches.iloc[selected_match_rows.index]["_match_hash_id"])
-                    # If more than one is selected, we want the "newest" one (the last in the list)
-                    if len(current_selection_ids) > 0:
-                        new_match_id = current_selection_ids[-1] # Take the most recent click
+                    # Single selection block — pick the first checked row only
+                    selected_rows = edited_matches[edited_matches["Select"] == True]
+                    if not selected_rows.empty:
+                        new_match_id = df_matches.iloc[selected_rows.index[0]]["_match_hash_id"]
                         if st.session_state.get("selected_match_id") != new_match_id:
                             st.session_state["selected_match_id"] = new_match_id
                             st.rerun()
                     elif st.session_state.get("selected_match_id") is not None:
-                        # If everything was unselected, clear the state
-                        st.session_state["selected_match_id"] = None
-                        st.rerun()
-                    if not selected_match_rows.empty:
-                        idx = selected_match_rows.index[0]
-                        new_match_id = df_matches.iloc[idx]["_match_hash_id"]
-                        # Only rerun if we're selecting a different match
-                        if st.session_state.get("selected_match_id") != new_match_id:
-                            st.session_state["selected_match_id"] = new_match_id
-                            st.rerun()
-                    elif st.session_state.get("selected_match_id"):
-                        # Deselect if checkbox was unchecked
                         st.session_state["selected_match_id"] = None
                         st.rerun()
                 else:
@@ -2077,7 +2083,12 @@ def main_app():
                         # Match summary box
                         st.info(f"**{format_date_full(attrs.get('date', ''))}** vs {base_club_name(opponent)} - **{our_score}-{opp_score}**")
                     # Filter players who played in this match
-                    all_people = [p for p in all_people if player_played_in_match(p, selected_match_id)]
+                    # Filter players by match — but always keep coaches/staff visible
+                    all_people = [
+                        p for p in all_people
+                        if p.get("role", "").lower() != "player"  # always keep staff
+                        or player_played_in_match(p, selected_match_id)  # players only if in match
+                    ]
 
                 # Separate players and non-players
 #                players = [p for p in all_people if not p.get("role") or p.get("role") == "player"]
@@ -2175,23 +2186,26 @@ def main_app():
                     if not selected_player_rows.empty:
                         idx = selected_player_rows.index[0]
                         selected_player = players[idx]
-                        st.session_state["selected_player"] = selected_player
-                        st.session_state["level"] = "matches"
-                        
-                        # Log the view
-                        player_name = f"{selected_player.get('first_name','')} {selected_player.get('last_name','')}"
-                        log_view(
-                            username=st.session_state["username"],
-                            full_name=st.session_state["full_name"],
-                            view_type="player",
-                            league=league,
-                            competition=comp,
-                            club=club,
-                            player=player_name,
-                            session_id=st.session_state["session_id"]
-                        )
-                        
-                        st.rerun()
+                        # Store player but stay on ladder_clubs — details show below
+                        if st.session_state.get("selected_player") != selected_player:
+                            st.session_state["selected_player"] = selected_player
+                            player_name = f"{selected_player.get('first_name','')} {selected_player.get('last_name','')}"
+                            log_view(
+                                username=st.session_state["username"],
+                                full_name=st.session_state["full_name"],
+                                view_type="player",
+                                league=league,
+                                competition=comp,
+                                club=club,
+                                player=player_name,
+                                session_id=st.session_state["session_id"]
+                            )
+                            st.rerun()
+                    else:
+                        # Deselect player when unchecked
+                        if st.session_state.get("selected_player") is not None:
+                            st.session_state["selected_player"] = None
+                            st.rerun()
                 else:
                     if selected_match_id:
                         st.info("No players in selected match")
@@ -2224,8 +2238,78 @@ def main_app():
                         },
                         use_container_width=False,
                     )
+                # PLAYER DETAIL PANEL — shown inline below squad when a player is selected
+                selected_player = st.session_state.get("selected_player")
+                if selected_player:
+                    pname = f"{selected_player.get('first_name','')} {selected_player.get('last_name','')}"
+                    st.markdown("---")
+                    st.markdown(f"### 👤 {pname} — Match History")
 
-    # LEVEL 4: PLAYER MATCHES (same as before)
+                    col_info, col_clear = st.columns([6, 1])
+                    with col_info:
+                        stats = selected_player.get("stats", {})
+                        st.caption(
+                            f"Jersey #{selected_player.get('jersey','—')}  |  "
+                            f"⚽ {stats.get('goals',0)} goals  |  "
+                            f"🎮 {stats.get('matches_played',0)} matches  |  "
+                            f"🟨 {stats.get('yellow_cards',0)}  🟥 {stats.get('red_cards',0)}"
+                        )
+                    with col_clear:
+                        if st.button("✖ Close", key="close_player"):
+                            st.session_state["selected_player"] = None
+                            st.rerun()
+
+                    player_matches = get_matches_for_player(selected_player)
+                    if player_matches:
+                        match_rows = []
+                        
+                        for m in player_matches:
+                            # Opponent: use "opponent" field, strip age group suffix
+                            opponent = base_club_name(
+                                m.get("opponent_team_name") or
+                                m.get("opponent") or
+                                "—"
+                            )
+
+                            # Count goals and cards from events array
+                            events = m.get("events", [])
+                            goals = sum(1 for e in events if e.get("type") == "goal")
+                            yellows = sum(1 for e in events if e.get("type") == "yellow_card")
+                            reds = sum(1 for e in events if e.get("type") == "red_card")
+
+                            started = "✅" if m.get("started") else "🪑"
+
+                            goals = m.get("goals", 0)
+                            yellows = m.get("yellow_cards", 0)
+                            reds = m.get("red_cards", 0)
+                           
+                            match_rows.append({
+                                "Date": format_date(m.get("date", "")),
+                                "Started": started,
+                                "Opponent": opponent,
+                                "G": goals,
+                                "🟨": yellows,
+                                "🟥": reds,
+                            })
+
+                        df_player = pd.DataFrame(match_rows)
+                        st.dataframe(
+                            df_player,
+                            hide_index=True,
+                            use_container_width=False,
+                            column_config={
+                                "Date": st.column_config.TextColumn("Date", width="small"),
+                                "Started": st.column_config.TextColumn("", width="small"),
+                                "Opponent": st.column_config.TextColumn("Opponent", width="medium"),
+                                "G": st.column_config.NumberColumn("G", width="small"),
+                                "🟨": st.column_config.NumberColumn("🟨", width="small"),
+                                "🟥": st.column_config.NumberColumn("🟥", width="small"),
+                            }
+                        )
+                    else:
+                        st.info("No match history found for this player.")
+
+    # LEVEL 4: PLAYER MATCHES (same as before) 
     elif level == "matches":
         player = st.session_state["selected_player"]
         if not player:

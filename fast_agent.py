@@ -263,20 +263,28 @@ def parse_date_utc_to_aest(date_str: str) -> Optional[datetime]:
     if not date_str:
         return None
     try:
-        # 1. Parse the UTC string
-        if 'Z' in date_str:
-            utc_dt = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
-        elif '+' in date_str or '-' in date_str:
-            utc_dt = datetime.fromisoformat(date_str)
-        else:
-            # If no timezone info, assume UTC
-            utc_dt = datetime.fromisoformat(date_str).replace(tzinfo=pytz.UTC)
-        
-        # 2. Define Melbourne Timezone (handles AEST vs AEDT automatically)
         melbourne_tz = pytz.timezone('Australia/Melbourne')
-        
-        # 3. Convert to Melbourne local time
+
+        if 'Z' in date_str:
+            # Explicit UTC marker
+            utc_dt = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
+
+        elif 'T' in date_str and ('+' in date_str[10:] or '-' in date_str[10:]):
+            # Has timezone offset already (e.g. +10:00) — parse as-is
+            utc_dt = datetime.fromisoformat(date_str)
+
+        elif 'T' in date_str:
+            # Has time but no timezone — assume UTC
+            utc_dt = datetime.fromisoformat(date_str).replace(tzinfo=pytz.UTC)
+
+        else:
+            # Date only (e.g. "2026-02-22") — assume midnight UTC
+            utc_dt = datetime.fromisoformat(date_str).replace(
+                hour=0, minute=0, second=0, tzinfo=pytz.UTC
+            )
+
         return utc_dt.astimezone(melbourne_tz)
+
     except (ValueError, AttributeError, Exception):
         return None
 
@@ -295,25 +303,21 @@ def get_last_sunday() -> datetime.date:
 
 def get_match_day_date() -> datetime.date:
     """
-    Get the relevant match day date.
-    If today is Sunday, return today.
-    Otherwise, return last Sunday.
+    Returns today's date in AEST if it's Sunday,
+    otherwise returns the most recent Sunday in AEST.
+    Always uses AEST — never raw UTC — so a UTC Saturday night
+    that is Sunday AEST is treated correctly.
     """
     melbourne_tz = pytz.timezone('Australia/Melbourne')
-    today = datetime.now(melbourne_tz).date()
-    
-    # Check if today is Sunday (weekday() returns 6 for Sunday)
-    if today.weekday() == 6:
-        return today
-    else:
-        # Calculate last Sunday
-        days_since_sunday = (today.weekday() + 1) % 7
-        if days_since_sunday == 0:
-            # Today is Sunday
-            return today
-        else:
-            last_sunday = today - timedelta(days=days_since_sunday)
-            return last_sunday
+    today_aest = datetime.now(melbourne_tz).date()
+
+    # weekday(): Monday=0 ... Sunday=6
+    if today_aest.weekday() == 6:
+        return today_aest
+
+    # How many days since last Sunday
+    days_since_sunday = (today_aest.weekday() + 1) % 7
+    return today_aest - timedelta(days=days_since_sunday)
             
 def format_minutes(minutes_list: List) -> str:
     """Format list of minutes into readable string"""
@@ -706,63 +710,87 @@ def tool_fixtures(query: str = "", limit: int = 10, use_user_team: bool = False)
 # ---------------------------------------------------------
 
 #def tool_missing_scores(query: str = "") -> Any:
-def tool_missing_scores(query: str = "", include_all_leagues: bool = False, today_only: bool = False) -> Any:
+def tool_missing_scores(query: str = "", include_all_leagues: bool = False, today_only: bool = False, last_week: bool = False, round_filter: int = None) -> Any:
     """
     Show matches without scores entered.
     
     Args:
         query: Filter by team/league name
         include_all_leagues: Show all leagues or just target leagues
-        today_only: Only show today's matches (or last Sunday if not Sunday)
+        today_only: Only show today's (or last Sunday's) matches
+        last_week: Show the Sunday before the current match day
+        round_filter: If set, filter by this round number (ignores date window)
     """
-    
+    melbourne_tz = pytz.timezone('Australia/Melbourne')
+    today = datetime.now(melbourne_tz).date()
+
     print(f"\n{'='*80}")
     print(f"DEBUG tool_missing_scores START")
-    print(f"  query='{query}'")
-    print(f"  today_only={today_only}")
-    print(f"  include_all_leagues={include_all_leagues}")
-    
+    print(f"  query='{query}', today_only={today_only}, last_week={last_week}, round_filter={round_filter}")
+
     # Target leagues if not showing all
     target_leagues = ["YPL1", "YPL2", "YSL NW", "YSL SE", "VPL"] if not include_all_leagues else []
-    
+
     missing_scores = []
-    
-    # Determine date range based on today_only flag
-    if today_only:
+
+    # --- Determine date mode ---
+    match_day = None
+    day_label = ""
+    date_display = ""
+
+    if round_filter is not None:
+        # Round mode — no date window, filter by round number instead
+        day_label = f" for Round {round_filter}"
+        date_display = f"📋 **Round {round_filter}**"
+
+    elif today_only:
         match_day = get_match_day_date()
-        melbourne_tz = pytz.timezone('Australia/Melbourne')
-        today = datetime.now(melbourne_tz).date()
-        
         if match_day == today:
             day_label = " for Today"
             date_display = f"📅 **TODAY ({today.strftime('%A, %d %B %Y')})**"
         else:
             day_label = f" for Last Sunday ({match_day.strftime('%d-%b')})"
             date_display = f"📅 **LAST SUNDAY ({match_day.strftime('%A, %d %B %Y')})**"
+
+    elif last_week:
+        # The Sunday before the current match day
+        current_match_day = get_match_day_date()
+        match_day = current_match_day - timedelta(days=7)
+        day_label = f" for Last Week ({match_day.strftime('%d-%b')})"
+        date_display = f"📅 **LAST WEEK — {match_day.strftime('%A, %d %B %Y')}**"
+
     else:
-        match_day = None
         day_label = ""
+        date_display = ""
     
-    # CHECK BOTH FIXTURES AND RESULTS
-    all_matches = []
-    
+    # Build result lookup keyed by match_hash_id
+    result_lookup = {}
+    for result in results:
+        r_attrs = result.get("attributes", {})
+        mid = r_attrs.get("match_hash_id")
+        if mid:
+            result_lookup[mid] = r_attrs
+
     print(f"\n  DATA SOURCES:")
     print(f"    Fixtures available: {len(fixtures)}")
-    print(f"    Results available: {len(results)}")
-    
-    # Add fixtures
+    print(f"    Results available (lookup): {len(result_lookup)}")
+
+    # Use fixtures as single source — merge result data in where it exists
+    # This prevents every match appearing twice (once from fixture, once from result)
+    all_matches = []
     for fixture in fixtures:
-        attrs = fixture.get("attributes", {})
-        attrs['source'] = 'fixtures'
-        all_matches.append(attrs)
-    
-    # Add results
-    for result in results:
-        attrs = result.get("attributes", {})
-        attrs['source'] = 'results'
-        all_matches.append(attrs)
-    
-    print(f"    Total matches to check: {len(all_matches)}")
+        f_attrs = fixture.get("attributes", {})
+        mid = f_attrs.get("match_hash_id")
+        if mid and mid in result_lookup:
+            merged = dict(f_attrs)
+            merged.update(result_lookup[mid])  # result overwrites score/status fields
+            merged["source"] = "result"
+        else:
+            merged = dict(f_attrs)
+            merged["source"] = "fixture_only"
+        all_matches.append(merged)
+
+    print(f"    Total unique matches: {len(all_matches)} ({len(result_lookup)} have results)")
     
     matches_on_target_date = 0
     matches_with_target_leagues = 0
@@ -811,25 +839,44 @@ def tool_missing_scores(query: str = "", include_all_leagues: bool = False, toda
                 print(f"    Source: {attrs.get('source')}")
         
         # If not today_only, skip matches that are too far in the future or past
-        if not today_only:
-            melbourne_tz = pytz.timezone('Australia/Melbourne')
-            now = datetime.now(melbourne_tz)
-            days_diff = (match_date - now.date()).days
-            
+        # --- Date window filtering ---
+        if round_filter is not None:
+            # Round mode: skip date window entirely, filter by round number below
+            pass
+
+        elif match_day is not None:
+            # today_only or last_week: must be exactly that Sunday
+            if match_date != match_day:
+                continue
+
+        else:
+            # Default: show past 14 days + next 2 days
+            days_diff = (match_date - today).days
             if days_diff > 2 or days_diff < -14:
                 continue
         
         home_team = attrs.get("home_team_name", "Unknown")
         away_team = attrs.get("away_team_name", "Unknown")
         league = attrs.get("league_name", "")
-        
+
+        # Skip bye matches — identified by missing team hash IDs
+        if not attrs.get("home_team_hash_id") or not attrs.get("away_team_hash_id"):
+            continue
         # Filter by target leagues if specified
         if target_leagues:
             league_code = extract_league_from_league_name(league)
             if league_code not in target_leagues:
                 continue
             matches_with_target_leagues += 1
-        
+        # Get round info for this match (needed for both round_filter and search blob)
+        match_round = str(attrs.get("round", "") or attrs.get("full_round", "") or "")
+
+        # Round filter — skip matches not in that round
+        if round_filter is not None:
+            round_number_match = re.search(r'(\d+)', match_round)
+            if not round_number_match or int(round_number_match.group(1)) != round_filter:
+                continue
+
         # Apply query filter
         if query:
             q_lower = query.lower().strip()
@@ -841,9 +888,8 @@ def tool_missing_scores(query: str = "", include_all_leagues: bool = False, toda
             # Extract league code from the match
             match_league_code = extract_league_from_league_name(league)
             
-            # Build comprehensive search blob
-            search_blob = f"{home_team} {away_team} {league} {match_league_code}".lower()
-            
+            # Build comprehensive search blob including round
+            search_blob = f"{home_team} {away_team} {league} {match_league_code} {match_round}".lower()
             # Check if query specifies a league code (YPL1, YPL2, YSL NW, etc.)
             query_league_code = None
             for possible_league in ['ypl1', 'ypl2', 'ysl nw', 'ysl se', 'vpl men', 'vpl women', 'ypl 1', 'ypl 2']:
@@ -1044,11 +1090,13 @@ def tool_todays_results(query: str = "") -> Any:
         if match_date != match_day:
             continue
 
-        # Get team names and league (needed whether filtering or not)
         home_team = attrs.get("home_team_name", "Unknown")
         away_team = attrs.get("away_team_name", "Unknown")
         league = attrs.get("league_name", "")
 
+        # Skip bye matches — identified by missing team hash IDs
+        if not attrs.get("home_team_hash_id") or not attrs.get("away_team_hash_id"):
+            continue
         # Enhanced query filter - supports league, team, club, age group
         if query:
             q_lower = query.lower().strip()
@@ -2182,40 +2230,32 @@ def tool_team_overview(query: str) -> str:
 
 def tool_ladder(query: str) -> str:
     q = query.lower()
-    
-    # DEBUG
+
     print(f"DEBUG tool_ladder - Query: '{query}'")
-    
-    league = fuzzy_find(q, [l.lower() for l in league_names], threshold=50)
-    comp = fuzzy_find(q, [c.lower() for c in competition_names], threshold=50)
-    
-    print(f"DEBUG tool_ladder - Matched league: {league}")
-    print(f"DEBUG tool_ladder - Matched competition: {comp}")
-    
-    # EXTRACT the competition code from the matched league/comp
-    # This handles cases like "u15 ypl1 boys" -> "ypl1"
-    competition_to_use = None
-    
-    if league:
-        competition_to_use = extract_league_from_league_name(league)
-        print(f"DEBUG tool_ladder - Extracted competition from league: {competition_to_use}")
-    elif comp:
-        competition_to_use = extract_league_from_league_name(comp)
-        print(f"DEBUG tool_ladder - Extracted competition from comp: {competition_to_use}")
-    
-    if not competition_to_use:
-        # Try extracting directly from query
-        competition_to_use = extract_league_from_league_name(query)
-        print(f"DEBUG tool_ladder - Extracted competition from query: {competition_to_use}")
-    
-    if not competition_to_use:
+
+    # Step 1: Try to extract competition code directly from the query
+    # This is the most reliable method — handles "YPL2", "YPL 2", "ypl2" etc
+    competition_to_use = extract_league_from_league_name(q)
+
+    # Step 2: Only fall back to fuzzy matching if direct extraction failed
+    if not competition_to_use or competition_to_use == "Other":
+        league = fuzzy_find(q, [l.lower() for l in league_names], threshold=60)
+        comp = fuzzy_find(q, [c.lower() for c in competition_names], threshold=60)
+        print(f"DEBUG tool_ladder - Fuzzy matched league: {league}, comp: {comp}")
+
+        if league:
+            competition_to_use = extract_league_from_league_name(league)
+        elif comp:
+            competition_to_use = extract_league_from_league_name(comp)
+
+    if not competition_to_use or competition_to_use == "Other":
         return f"❌ No ladder found for: {query}\n\nTry: 'YPL1 ladder', 'YPL2 ladder', 'YSL NW ladder'"
-    
-    # Extract age group for separate filtering (don't concatenate — order differs in data)
+
+    # Extract age group separately — never concatenate with competition
+    # Data stores them in different orders e.g. "U16 Boys Victorian Youth Premier League 2"
     age_group = extract_age_group(query)
     age_group_lower = age_group.lower() if age_group else None
 
-    # Convert competition code to lowercase for matching
     competition_to_use = competition_to_use.lower()
     print(f"DEBUG tool_ladder - Using competition: {competition_to_use}, age_group: {age_group_lower}")
 
@@ -2516,16 +2556,28 @@ class FastQueryRouter:
         # --- 2. MISSING SCORES ---
         missing_keywords = ['missing score', 'missing scores', 'no score', 'scores not entered', 'overdue', 'matches without scores', 'todays missing', 'missing scores today']
         if any(keyword in q for keyword in missing_keywords):
-            # Check if user wants today only FIRST
             today_only = 'today' in q or 'todays' in q or "today's" in q
-            
-            # Remove common words INCLUDING 'today' from filter query
-            filter_query = re.sub(r'\b(missing|score|scores?|no|not|entered|overdue|matches?|without|for|show|list|today|todays|today\'s)\b', '', q).strip()
-            
+            last_week = 'last week' in q or 'previous week' in q
+
+            # Extract round number if present e.g. "round 5" or "r5"
+            round_match = re.search(r'\bround\s*(\d+)\b', q)
+            round_filter = int(round_match.group(1)) if round_match else None
+
+            # Strip known keywords including round/week words
+            filter_query = re.sub(
+                r'\b(missing|score|scores?|no|not|entered|overdue|matches?|without|for|show|list|today|todays|today\'s|last|previous|week|round|\d+)\b',
+                '', q
+            ).strip()
+
             include_all = 'all leagues' in q or 'all league' in q
-            
-            # CRITICAL: Must pass today_only=today_only parameter!
-            return tool_missing_scores(filter_query, include_all_leagues=include_all, today_only=today_only)            
+
+            return tool_missing_scores(
+                filter_query,
+                include_all_leagues=include_all,
+                today_only=today_only,
+                last_week=last_week,
+                round_filter=round_filter
+            )       
 
         # --- 2B. TODAY'S RESULTS ---
         todays_results_keywords = [
