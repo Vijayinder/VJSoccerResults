@@ -409,7 +409,6 @@ def show_login_page():
                 # 3. Use a form to capture the "Enter" keypress
                 with st.form("confirmation_form", border=False):
                     submit = st.form_submit_button("Continue as this player", type="primary", use_container_width=True)
-                    
                     if submit:
                         # Login logic
                         st.session_state["authenticated"] = True
@@ -441,7 +440,9 @@ def show_login_page():
                             full_name=selected_person["name"],
                             session_id=st.session_state["session_id"]
                         )
-                        st.rerun()       
+                        # ✅ Write their player_id into the URL so their personal link is bookmarkable
+                        st.query_params["uid"] = selected_person["player_id"]
+                        st.rerun()    
         # Admin login section
         st.markdown("---")
         with st.expander("🔐 Admin Login"):
@@ -2272,22 +2273,53 @@ def main_app():
 def main():
     """Main entry point"""
     init_session_state()
-    
-    # Check if authenticated
+
+    params = st.query_params
+
+    # Handle URL search param (always, regardless of auth state)
+    if "search" in params:
+        st.session_state["search_input_value"] = params["search"].replace("+", " ")
+
+    # ✅ Auto-login if uid is in the URL and not yet authenticated
+    if not st.session_state["authenticated"] and "uid" in params:
+        uid = params["uid"]
+        people = get_players_and_coaches_list(DATA_DIR)
+        matched = next((p for p in people if p.get("player_id") == uid), None)
+        if matched:
+            league, competition = get_player_league_info(
+                matched["name"],
+                matched["club"],
+                matched.get("age_group", "")
+            )
+            st.session_state["authenticated"] = True
+            st.session_state["user_type"] = "player"
+            st.session_state["username"] = matched["player_id"]
+            st.session_state["full_name"] = matched["name"]
+            st.session_state["player_club"] = matched["club"]
+            st.session_state["player_age_group"] = matched.get("age_group", "")
+            st.session_state["player_role"] = matched["role"]
+            st.session_state["role"] = matched["role"]
+            st.session_state["last_activity"] = datetime.now()
+            st.session_state["player_league"] = league
+            st.session_state["player_competition"] = competition
+            update_user_config(matched["club"], matched.get("age_group", ""))
+            log_login(
+                username=matched["player_id"],
+                full_name=matched["name"],
+                session_id=st.session_state["session_id"]
+            )
+            st.rerun()
+
+    # Not authenticated and no uid — show login page
     if not st.session_state["authenticated"]:
         show_login_page()
+        return
+
+    # Authenticated — check timeout then show app
+    if not check_session_timeout():
+        show_login_page()
     else:
-        # User is logged in, now handle the URL search parameter
-        params = st.query_params
-        if "search" in params:
-            # Update the search input state from the URL
-            st.session_state["search_input_value"] = params["search"].replace("+", " ")
-        # Check session timeout
-        if not check_session_timeout():
-            show_login_page()
-        else:
-            main_app()
-# app.py
+        main_app()
 
 
         
