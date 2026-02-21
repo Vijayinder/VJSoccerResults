@@ -1674,9 +1674,15 @@ def main_app():
     # Process search queries
     if search and search != st.session_state["last_search"]:
         st.session_state["last_search"] = search
-        st.session_state["expander_state"] = False  # Collapse expander after search
+        st.session_state["expander_state"] = False
         st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-
+        # Reset navigation back to leagues view when a search is run
+        st.session_state["level"] = "league"
+        st.session_state["selected_league"] = None
+        st.session_state["selected_competition"] = None
+        st.session_state["selected_club"] = None
+        st.session_state["selected_player"] = None
+        st.session_state["selected_match_id"] = None
         if is_natural_language_query(search):
             # Log the search
             log_search(
@@ -1752,6 +1758,8 @@ def main_app():
                 if st.button(league_name, key=f"league_btn_{idx}", use_container_width=True):
                     st.session_state["selected_league"] = league_name
                     st.session_state["level"] = "competition"
+                    st.session_state["search_query"] = ""
+                    st.session_state["last_search"] = ""
                     
                     # Log the view
                     log_view(
@@ -1767,7 +1775,24 @@ def main_app():
    # LEVEL 2: COMPETITIONS (same structure, with logging)
     elif level == "competition":
         league = st.session_state["selected_league"]
-        st.markdown(f"### 📘 Competitions in {league}")
+
+        # Always show leagues so user can switch without hitting Back
+        st.markdown("### 🏆 Leagues")
+        all_leagues = get_all_leagues(results, fixtures)
+        league_cols = st.columns(min(len(all_leagues), 4))
+        for idx, league_name in enumerate(all_leagues):
+            col_idx = idx % 4
+            with league_cols[col_idx]:
+                btn_type = "primary" if league_name == league else "secondary"
+                if st.button(league_name, key=f"league_btn2_{idx}", use_container_width=True, type=btn_type):
+                    st.session_state["selected_league"] = league_name
+                    st.session_state["level"] = "competition"
+                    st.session_state["selected_competition"] = None
+                    st.session_state["selected_club"] = None
+                    st.rerun()
+
+        st.markdown("---")
+        st.markdown(f"### 📘 Age Groups in **{league}**")
 
         comps = get_competitions_for_league(results, fixtures, league)
 
@@ -1815,22 +1840,25 @@ def main_app():
             if overall_ladder:
                 overall_ladder_df = pd.DataFrame(overall_ladder)
                 overall_ladder_df.insert(0, "Rank", range(1, len(overall_ladder_df) + 1))
+                overall_display_df = overall_ladder_df[["Rank", "club", "played", "wins", "draws", "losses", "gf", "ga", "gd", "points"]].copy()
+                overall_display_df.columns = ["Rank", "Club", "P", "W", "D", "L", "GF", "GA", "GD", "Pts"]
+                styled_overall = overall_display_df.style.apply(style_ladder, comp=league, axis=None)
                 st.dataframe(
-                    overall_ladder_df[["Rank", "club", "played", "wins", "draws", "losses", "gf", "ga", "gd", "points"]],
+                    styled_overall,
                     hide_index=True,
                     use_container_width=False,
                     height=598,
                     column_config={
                         "Rank": st.column_config.NumberColumn("Rank", width="small"),
-                        "club": st.column_config.TextColumn("Club", width="large"),
-                        "played": st.column_config.NumberColumn("P", width="small"),
-                        "wins": st.column_config.NumberColumn("W", width="small"),
-                        "draws": st.column_config.NumberColumn("D", width="small"),
-                        "losses": st.column_config.NumberColumn("L", width="small"),
-                        "gf": st.column_config.NumberColumn("GF", width="small"),
-                        "ga": st.column_config.NumberColumn("GA", width="small"),
-                        "gd": st.column_config.NumberColumn("GD", width="small"),
-                        "points": st.column_config.NumberColumn("Pts", width="small"),
+                        "Club": st.column_config.TextColumn("Club", width="large"),
+                        "P": st.column_config.NumberColumn("P", width="small"),
+                        "W": st.column_config.NumberColumn("W", width="small"),
+                        "D": st.column_config.NumberColumn("D", width="small"),
+                        "L": st.column_config.NumberColumn("L", width="small"),
+                        "GF": st.column_config.NumberColumn("GF", width="small"),
+                        "GA": st.column_config.NumberColumn("GA", width="small"),
+                        "GD": st.column_config.NumberColumn("GD", width="small"),
+                        "Pts": st.column_config.NumberColumn("Pts", width="small"),
                     },
                 )
             else:
@@ -1895,10 +1923,10 @@ def main_app():
         display_df.columns = ["Pos", "Club", "P", "W", "D", "L", "GF", "GA", "GD", "Pts"]
 
         # Apply zone colours
-        styled = display_df.style.apply(style_ladder, comp=comp, axis=None)
+      #  styled = display_df.style.apply(style_ladder, comp=comp, axis=None)
 
         st.dataframe(
-            styled,
+            display_df,
             hide_index=True,
             use_container_width=False,
             height=590,

@@ -2211,30 +2211,29 @@ def tool_ladder(query: str) -> str:
     if not competition_to_use:
         return f"❌ No ladder found for: {query}\n\nTry: 'YPL1 ladder', 'YPL2 ladder', 'YSL NW ladder'"
     
-    # ✅ NEW: Extract age group and append if present
+    # Extract age group for separate filtering (don't concatenate — order differs in data)
     age_group = extract_age_group(query)
-    if age_group:
-        competition_to_use = f"{competition_to_use} {age_group}"
-        print(f"DEBUG tool_ladder - Added age group: {competition_to_use}")
+    age_group_lower = age_group.lower() if age_group else None
 
-    # Convert back to lowercase for matching
+    # Convert competition code to lowercase for matching
     competition_to_use = competition_to_use.lower()
-    print(f"DEBUG tool_ladder - Using competition for filtering: {competition_to_use}")
-
-    # Convert back to lowercase for matching
-    competition_to_use = competition_to_use.lower()
-    print(f"DEBUG tool_ladder - Using competition for filtering: {competition_to_use}")
+    print(f"DEBUG tool_ladder - Using competition: {competition_to_use}, age_group: {age_group_lower}")
 
     table = defaultdict(lambda: {"P": 0, "W": 0, "D": 0, "L": 0, "GF": 0, "GA": 0, "PTS": 0})
-    
+
     matches_found = 0
     for r in results:
         a = r.get("attributes", {})
         league_name = (a.get("league_name") or "").lower()
         comp_name = (a.get("competition_name") or "").lower()
-        
-        # Check if the competition code is in the league name
-        if competition_to_use not in league_name and competition_to_use not in comp_name:
+
+        # Check competition code appears in league or comp name
+        comp_match = competition_to_use in league_name or competition_to_use in comp_name
+        if not comp_match:
+            continue
+
+        # If age group was specified, ALSO check it appears in the league name separately
+        if age_group_lower and age_group_lower not in league_name and age_group_lower not in comp_name:
             continue
         
         matches_found += 1
