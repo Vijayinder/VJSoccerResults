@@ -458,15 +458,37 @@ def show_login_page():
 # ---------------------------------------------------------
 
 def get_last_updated_time():
-    """Get the last modified time of master_results.json in AEST"""
+    """Get the last data update time from JSON (not file timestamp)"""
     results_path = os.path.join(DATA_DIR, "master_results.json")
-    if os.path.exists(results_path):
+    
+    if not os.path.exists(results_path):
+        return "Data file not found"
+    
+    try:
+        # Try to get from JSON first
+        with open(results_path, 'r') as f:
+            data = json.load(f)
+        
+        if '_last_updated' in data:
+            update_time = datetime.fromisoformat(data['_last_updated'])
+            aest = pytz.timezone('Australia/Melbourne')
+            
+            if update_time.tzinfo is None:
+                utc = pytz.UTC
+                update_time = utc.localize(update_time)
+            
+            aest_time = update_time.astimezone(aest)
+            return aest_time.strftime("%a, %d %b %Y, %I:%M %p AEST")
+        
+        # Fallback: use file timestamp (for local testing with old files)
         mod_time = os.path.getmtime(results_path)
         utc_time = datetime.fromtimestamp(mod_time, tz=pytz.UTC)
         aest = pytz.timezone('Australia/Melbourne')
         aest_time = utc_time.astimezone(aest)
-        return aest_time.strftime("%a, %d %b %Y, %I:%M %p AEST")
-    return "Unknown"
+        return aest_time.strftime("%a, %d %b %Y, %I:%M %p AEST") + " (file time)"
+        
+    except Exception as e:
+        return f"Error reading timestamp: {str(e)}"
 
 # ---------------------------------------------------------
 # Router
@@ -2086,10 +2108,3 @@ if __name__ == "__main__":
 # Last auto-update: 2026-02-20 00:00:17 AEDT
 # Last auto-update: 2026-02-20 04:00:18 AEDT
 # Last auto-update: 2026-02-20 08:00:17 AEDT
-# Last auto-update: 2026-02-20 12:00:17 AEDT
-# Last auto-update: 2026-02-20 16:00:17 AEDT
-# Last auto-update: 2026-02-20 20:00:17 AEDT
-# Last auto-update: 2026-02-21 00:00:16 AEDT
-# Last auto-update: 2026-02-21 04:00:17 AEDT
-# Last auto-update: 2026-02-21 08:00:16 AEDT
-# Last auto-update: 2026-02-21 12:00:16 AEDT
