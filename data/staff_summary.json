@@ -15,7 +15,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -39,6 +39,13 @@
           "date": "2026-02-14T01:00:00.000000Z",
           "role_in_match": "Assistant Coach",
           "opponent": "Brunswick Juventus FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "1K3pvVn89d",
+          "date": "2026-02-22T08:30:00.000000Z",
+          "role_in_match": "Assistant Coach",
+          "opponent": "Heidelberg United FC U18",
           "events": []
         }
       ]
@@ -58,7 +65,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -82,6 +89,13 @@
           "date": "2026-02-14T01:00:00.000000Z",
           "role_in_match": "Team Manager",
           "opponent": "Brunswick Juventus FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "1K3pvVn89d",
+          "date": "2026-02-22T08:30:00.000000Z",
+          "role_in_match": "Team Manager",
+          "opponent": "Heidelberg United FC U18",
           "events": []
         }
       ]
@@ -101,7 +115,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -125,6 +139,13 @@
           "date": "2026-02-14T01:00:00.000000Z",
           "role_in_match": "Head Coach",
           "opponent": "Brunswick Juventus FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "1K3pvVn89d",
+          "date": "2026-02-22T08:30:00.000000Z",
+          "role_in_match": "Head Coach",
+          "opponent": "Heidelberg United FC U18",
           "events": []
         }
       ]
@@ -3426,7 +3447,7 @@
         "U16 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -3450,6 +3471,13 @@
           "date": "2026-02-15T04:00:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "Brunswick Juventus FC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3YQYK",
+          "date": "2026-02-22T06:30:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Heidelberg United FC U16",
           "events": []
         }
       ]
@@ -3469,7 +3497,7 @@
         "U16 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -3493,6 +3521,13 @@
           "date": "2026-02-15T04:00:00.000000Z",
           "role_in_match": "Manager",
           "opponent": "Brunswick Juventus FC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3YQYK",
+          "date": "2026-02-22T06:30:00.000000Z",
+          "role_in_match": "Manager",
+          "opponent": "Heidelberg United FC U16",
           "events": []
         }
       ]
@@ -3512,7 +3547,7 @@
         "U16 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -3536,6 +3571,13 @@
           "date": "2026-02-15T04:00:00.000000Z",
           "role_in_match": "Manager",
           "opponent": "Brunswick Juventus FC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3YQYK",
+          "date": "2026-02-22T06:30:00.000000Z",
+          "role_in_match": "Manager",
+          "opponent": "Heidelberg United FC U16",
           "events": []
         }
       ]
@@ -3555,7 +3597,7 @@
         "U16 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -3579,6 +3621,13 @@
           "date": "2026-02-15T04:00:00.000000Z",
           "role_in_match": "Teamstaff",
           "opponent": "Brunswick Juventus FC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3YQYK",
+          "date": "2026-02-22T06:30:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Heidelberg United FC U16",
           "events": []
         }
       ]
@@ -3598,7 +3647,7 @@
         "U16 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -3622,6 +3671,13 @@
           "date": "2026-02-15T04:00:00.000000Z",
           "role_in_match": "Teamstaff",
           "opponent": "Brunswick Juventus FC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3YQYK",
+          "date": "2026-02-22T06:30:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Heidelberg United FC U16",
           "events": []
         }
       ]
@@ -3641,7 +3697,7 @@
         "U16 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -3665,6 +3721,13 @@
           "date": "2026-02-15T04:00:00.000000Z",
           "role_in_match": "Teamstaff",
           "opponent": "Brunswick Juventus FC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3YQYK",
+          "date": "2026-02-22T06:30:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Heidelberg United FC U16",
           "events": []
         }
       ]
@@ -13146,7 +13209,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 13,
+        "matches_attended": 15,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -13240,6 +13303,20 @@
           "date": "2026-02-22T02:30:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "Oakleigh Cannons FC U14",
+          "events": []
+        },
+        {
+          "match_hash_id": "1K3pvVn89d",
+          "date": "2026-02-22T08:30:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Oakleigh Cannons FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3YQYK",
+          "date": "2026-02-22T06:30:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Oakleigh Cannons FC U16",
           "events": []
         }
       ]
@@ -18764,7 +18841,7 @@
         "U16 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -18788,6 +18865,13 @@
           "date": "2026-02-15T02:30:00.000000Z",
           "role_in_match": "Head Coach",
           "opponent": "Langwarrin SC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3YQYK",
+          "date": "2026-02-22T06:30:00.000000Z",
+          "role_in_match": "Head Coach",
+          "opponent": "Oakleigh Cannons FC U16",
           "events": []
         }
       ]
@@ -18807,7 +18891,7 @@
         "U16 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -18831,6 +18915,13 @@
           "date": "2026-02-15T02:30:00.000000Z",
           "role_in_match": "Manager",
           "opponent": "Langwarrin SC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3YQYK",
+          "date": "2026-02-22T06:30:00.000000Z",
+          "role_in_match": "Manager",
+          "opponent": "Oakleigh Cannons FC U16",
           "events": []
         }
       ]
@@ -19005,7 +19096,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -19029,6 +19120,13 @@
           "date": "2026-02-15T04:15:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "Langwarrin SC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "1K3pvVn89d",
+          "date": "2026-02-22T08:30:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Oakleigh Cannons FC U18",
           "events": []
         }
       ]
@@ -19048,7 +19146,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -19072,6 +19170,13 @@
           "date": "2026-02-15T04:15:00.000000Z",
           "role_in_match": "Manager",
           "opponent": "Langwarrin SC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "1K3pvVn89d",
+          "date": "2026-02-22T08:30:00.000000Z",
+          "role_in_match": "Manager",
+          "opponent": "Oakleigh Cannons FC U18",
           "events": []
         }
       ]
@@ -19091,7 +19196,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -19115,6 +19220,13 @@
           "date": "2026-02-15T04:15:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "Langwarrin SC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "1K3pvVn89d",
+          "date": "2026-02-22T08:30:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Oakleigh Cannons FC U18",
           "events": []
         }
       ]
@@ -24743,13 +24855,15 @@
         "Teamstaff"
       ],
       "teams": [
-        "Heidelberg United FC U14"
+        "Heidelberg United FC U14",
+        "Heidelberg United FC U16"
       ],
       "leagues": [
-        "U14 YPL2 Boys"
+        "U14 YPL2 Boys",
+        "U16 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 8,
+        "matches_attended": 9,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -24808,6 +24922,13 @@
           "date": "2026-02-22T02:30:00.000000Z",
           "role_in_match": "Manager",
           "opponent": "Oakleigh Cannons FC U14",
+          "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3YQYK",
+          "date": "2026-02-22T06:30:00.000000Z",
+          "role_in_match": "Manager",
+          "opponent": "Oakleigh Cannons FC U16",
           "events": []
         }
       ]
@@ -29508,7 +29629,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 7,
+        "matches_attended": 8,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -29560,6 +29681,13 @@
           "date": "2026-02-22T04:30:00.000000Z",
           "role_in_match": "Teamstaff",
           "opponent": "Oakleigh Cannons FC U15",
+          "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3YQYK",
+          "date": "2026-02-22T06:30:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Oakleigh Cannons FC U16",
           "events": []
         }
       ]
@@ -33437,7 +33565,7 @@
         "U16 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -33461,6 +33589,13 @@
           "date": "2026-02-22T02:30:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "Oakleigh Cannons FC U14",
+          "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3YQYK",
+          "date": "2026-02-22T06:30:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Oakleigh Cannons FC U16",
           "events": []
         }
       ]
@@ -39551,7 +39686,36 @@
           "events": []
         }
       ]
+    },
+    {
+      "person_id": "1K3pWAa7Od",
+      "first_name": "Mallan",
+      "last_name": "Roberts",
+      "role_slug": "staff",
+      "roles": [
+        "Coach"
+      ],
+      "teams": [
+        "Heidelberg United FC U16"
+      ],
+      "leagues": [
+        "U16 YPL2 Boys"
+      ],
+      "stats": {
+        "matches_attended": 1,
+        "yellow_cards": 0,
+        "red_cards": 0
+      },
+      "matches": [
+        {
+          "match_hash_id": "bd9pW3YQYK",
+          "date": "2026-02-22T06:30:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Oakleigh Cannons FC U16",
+          "events": []
+        }
+      ]
     }
   ],
-  "_last_updated": "2026-02-22T23:00:19.497196"
+  "_last_updated": "2026-02-23T00:00:21.040897"
 }
