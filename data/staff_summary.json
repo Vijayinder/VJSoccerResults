@@ -7143,7 +7143,7 @@
         "U18 YPL1 Boys"
       ],
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -7181,6 +7181,13 @@
           "date": "2026-02-15T02:30:00.000000Z",
           "role_in_match": "Assistant Coach",
           "opponent": "Hume City FC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "BdDb9a943N",
+          "date": "2026-02-22T04:45:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Western United FC U18",
           "events": []
         }
       ]
@@ -12556,7 +12563,7 @@
         "U18 YPL1 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -12580,6 +12587,13 @@
           "date": "2026-02-15T04:15:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "Hume City FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "BdDb9a943N",
+          "date": "2026-02-22T04:45:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Western United FC U18",
           "events": []
         }
       ]
@@ -39717,5 +39731,5 @@
       ]
     }
   ],
-  "_last_updated": "2026-02-23T06:00:20.506519"
+  "_last_updated": "2026-02-23T07:00:20.230024"
 }

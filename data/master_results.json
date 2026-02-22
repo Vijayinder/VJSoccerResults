@@ -19582,5 +19582,53 @@
                 "href": "https://mc-api.dribl.com/api/results/8NO5XGggnd"
             }
         }
+    },
+    {
+        "type": "results",
+        "hash_id": "EN2pnXG2rd",
+        "attributes": {
+            "name": "FV54539485 - Box Hill United FC v Western United FC",
+            "date": "2026-02-22 04:45:00",
+            "round": "R4",
+            "full_round": "Round 4",
+            "ground_name": "Wembley Park",
+            "field_name": "Main Pitch",
+            "home_team_name": "Box Hill United Pythagoras FC U18",
+            "home_logo": "https://ocean.dribl.com/521e7a2a60b2459ca8d65e846dc0ab57",
+            "away_team_name": "Western United FC U18",
+            "away_logo": "https://ocean.dribl.com/b76c38e7edf04307b1742b682d19203a",
+            "competition_name": "Boys Victorian Youth Premier League 1",
+            "league_name": "U18 YPL1 Boys",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 1,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 2,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": true,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 3,
+            "enable_referees_allocated": false,
+            "match_hash_id": "BdDb9a943N",
+            "home_team_hash_id": "pN6OY8kQK0",
+            "away_team_hash_id": "jmaVX926NR",
+            "forfeit_team_hash_id": null
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/EN2pnXG2rd"
+            }
+        }
     }
 ]
