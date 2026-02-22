@@ -296,7 +296,7 @@
         "U18 YPL1 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -320,6 +320,13 @@
           "date": "2026-02-15T05:30:00.000000Z",
           "role_in_match": "Head Coach",
           "opponent": "Caroline Springs George Cross FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "1K3pvVvxBd",
+          "date": "2026-02-22T05:15:00.000000Z",
+          "role_in_match": "Head Coach",
+          "opponent": "Hume City FC U18",
           "events": []
         }
       ]
@@ -340,7 +347,7 @@
         "U18 YPL1 Boys"
       ],
       "stats": {
-        "matches_attended": 6,
+        "matches_attended": 8,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -385,6 +392,20 @@
           "date": "2026-02-15T05:30:00.000000Z",
           "role_in_match": "Teamstaff",
           "opponent": "Caroline Springs George Cross FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "1K3pvVvxBd",
+          "date": "2026-02-22T05:15:00.000000Z",
+          "role_in_match": "Manager",
+          "opponent": "Hume City FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "1K3pvVvxBd",
+          "date": "2026-02-22T05:15:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Hume City FC U18",
           "events": []
         }
       ]
@@ -404,7 +425,7 @@
         "U18 YPL1 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -428,6 +449,13 @@
           "date": "2026-02-15T05:30:00.000000Z",
           "role_in_match": "Manager",
           "opponent": "Caroline Springs George Cross FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "1K3pvVvxBd",
+          "date": "2026-02-22T05:15:00.000000Z",
+          "role_in_match": "Manager",
+          "opponent": "Hume City FC U18",
           "events": []
         }
       ]
@@ -457,7 +485,7 @@
         "U18 YPL1 Boys"
       ],
       "stats": {
-        "matches_attended": 20,
+        "matches_attended": 22,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -601,6 +629,20 @@
           "role_in_match": "Assistant Coach",
           "opponent": "Hume City FC U16",
           "events": []
+        },
+        {
+          "match_hash_id": "1K3pvVvxBd",
+          "date": "2026-02-22T05:15:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Hume City FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "1K3pvVvxBd",
+          "date": "2026-02-22T05:15:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Hume City FC U18",
+          "events": []
         }
       ]
     },
@@ -619,7 +661,7 @@
         "U18 YPL1 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -643,6 +685,13 @@
           "date": "2026-02-15T05:30:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "Caroline Springs George Cross FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "1K3pvVvxBd",
+          "date": "2026-02-22T05:15:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Hume City FC U18",
           "events": []
         }
       ]
@@ -668,7 +717,7 @@
         "U18 YPL1 Boys"
       ],
       "stats": {
-        "matches_attended": 15,
+        "matches_attended": 16,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -777,6 +826,13 @@
           "role_in_match": "Teamstaff",
           "opponent": "Essendon Royals SC U18",
           "events": []
+        },
+        {
+          "match_hash_id": "nmYnZlZpaN",
+          "date": "2026-02-22T01:30:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Essendon Royals SC U16",
+          "events": []
         }
       ]
     },
@@ -800,7 +856,7 @@
         "U18 YPL1 Boys"
       ],
       "stats": {
-        "matches_attended": 11,
+        "matches_attended": 12,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -880,6 +936,13 @@
           "date": "2026-02-22T03:30:00.000000Z",
           "role_in_match": "Teamstaff",
           "opponent": "Essendon Royals SC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "nmYnZlZpaN",
+          "date": "2026-02-22T01:30:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Essendon Royals SC U16",
           "events": []
         }
       ]
@@ -907,7 +970,7 @@
         "U18 YPL1 Boys"
       ],
       "stats": {
-        "matches_attended": 19,
+        "matches_attended": 20,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -1043,6 +1106,13 @@
           "date": "2026-02-22T03:30:00.000000Z",
           "role_in_match": "Teamstaff",
           "opponent": "Essendon Royals SC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "nmYnZlZpaN",
+          "date": "2026-02-22T01:30:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Essendon Royals SC U16",
           "events": []
         }
       ]
@@ -1070,7 +1140,7 @@
         "U18 YPL1 Boys"
       ],
       "stats": {
-        "matches_attended": 19,
+        "matches_attended": 20,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -1206,6 +1276,13 @@
           "date": "2026-02-22T03:30:00.000000Z",
           "role_in_match": "Teamstaff",
           "opponent": "Essendon Royals SC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "nmYnZlZpaN",
+          "date": "2026-02-22T01:30:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Essendon Royals SC U16",
           "events": []
         }
       ]
@@ -1283,7 +1360,7 @@
         "U18 YPL1 Boys"
       ],
       "stats": {
-        "matches_attended": 19,
+        "matches_attended": 20,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -1419,6 +1496,13 @@
           "date": "2026-02-22T03:30:00.000000Z",
           "role_in_match": "Teamstaff",
           "opponent": "Essendon Royals SC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "nmYnZlZpaN",
+          "date": "2026-02-22T01:30:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Essendon Royals SC U16",
           "events": []
         }
       ]
@@ -2622,7 +2706,7 @@
         "U18 YPL1 Boys"
       ],
       "stats": {
-        "matches_attended": 13,
+        "matches_attended": 14,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -2717,6 +2801,13 @@
           "role_in_match": "Teamstaff",
           "opponent": "Eastern Lions SC U16",
           "events": []
+        },
+        {
+          "match_hash_id": "1K3pvVvxBd",
+          "date": "2026-02-22T05:15:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Eastern Lions SC U18",
+          "events": []
         }
       ]
     },
@@ -2735,7 +2826,7 @@
         "U18 YPL1 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -2759,6 +2850,13 @@
           "date": "2026-02-15T04:15:00.000000Z",
           "role_in_match": "Manager",
           "opponent": "Box Hill United Pythagoras FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "1K3pvVvxBd",
+          "date": "2026-02-22T05:15:00.000000Z",
+          "role_in_match": "Manager",
+          "opponent": "Eastern Lions SC U18",
           "events": []
         }
       ]
@@ -2778,7 +2876,7 @@
         "U18 YPL1 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -2802,6 +2900,13 @@
           "date": "2026-02-15T04:15:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "Box Hill United Pythagoras FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "1K3pvVvxBd",
+          "date": "2026-02-22T05:15:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Eastern Lions SC U18",
           "events": []
         }
       ]
@@ -3078,7 +3183,7 @@
         "U18 YPL1 Boys"
       ],
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -3116,6 +3221,13 @@
           "date": "2026-02-01T03:00:00.000000Z",
           "role_in_match": "Manager",
           "opponent": "Melbourne Victory FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "nmYnZlZpaN",
+          "date": "2026-02-22T01:30:00.000000Z",
+          "role_in_match": "Manager",
+          "opponent": "Melbourne City - NPL U16",
           "events": []
         }
       ]
@@ -8914,7 +9026,7 @@
         "U16 YPL1 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -8938,6 +9050,13 @@
           "date": "2026-02-15T01:30:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "South Melbourne FC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "nmYnZlZpaN",
+          "date": "2026-02-22T01:30:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Essendon Royals SC U16",
           "events": []
         }
       ]
@@ -8957,7 +9076,7 @@
         "U16 YPL1 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -8981,6 +9100,13 @@
           "date": "2026-02-15T01:30:00.000000Z",
           "role_in_match": "Teamstaff",
           "opponent": "South Melbourne FC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "nmYnZlZpaN",
+          "date": "2026-02-22T01:30:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Essendon Royals SC U16",
           "events": []
         }
       ]
@@ -9500,7 +9626,7 @@
         "U16 YPL1 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -9524,6 +9650,13 @@
           "date": "2026-02-01T01:20:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "Melbourne Victory FC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "nmYnZlZpaN",
+          "date": "2026-02-22T01:30:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Melbourne City - NPL U16",
           "events": []
         }
       ]
@@ -13114,7 +13247,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 22,
+        "matches_attended": 24,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -13271,6 +13404,20 @@
           "date": "2026-02-21T23:45:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "Bentleigh Greens SC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld4549vvGm",
+          "date": "2026-02-22T01:30:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Bentleigh Greens SC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld4549vvGm",
+          "date": "2026-02-22T01:30:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Bentleigh Greens SC U18",
           "events": []
         }
       ]
@@ -13300,7 +13447,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 26,
+        "matches_attended": 28,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -13485,6 +13632,20 @@
           "date": "2026-02-21T23:45:00.000000Z",
           "role_in_match": "Team Manager",
           "opponent": "Bentleigh Greens SC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld4549vvGm",
+          "date": "2026-02-22T01:30:00.000000Z",
+          "role_in_match": "Manager",
+          "opponent": "Bentleigh Greens SC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld4549vvGm",
+          "date": "2026-02-22T01:30:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Bentleigh Greens SC U18",
           "events": []
         }
       ]
@@ -13514,7 +13675,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 30,
+        "matches_attended": 32,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -13727,6 +13888,20 @@
           "date": "2026-02-21T23:45:00.000000Z",
           "role_in_match": "Team Manager",
           "opponent": "Bentleigh Greens SC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld4549vvGm",
+          "date": "2026-02-22T01:30:00.000000Z",
+          "role_in_match": "Manager",
+          "opponent": "Bentleigh Greens SC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld4549vvGm",
+          "date": "2026-02-22T01:30:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Bentleigh Greens SC U18",
           "events": []
         }
       ]
@@ -17015,7 +17190,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -17039,6 +17214,13 @@
           "date": "2026-02-15T01:30:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "Geelong SC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld4549vvGm",
+          "date": "2026-02-22T01:30:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Brunswick Juventus FC U18",
           "events": []
         }
       ]
@@ -17058,7 +17240,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -17082,6 +17264,13 @@
           "date": "2026-02-15T01:30:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "Geelong SC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld4549vvGm",
+          "date": "2026-02-22T01:30:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Brunswick Juventus FC U18",
           "events": []
         }
       ]
@@ -17101,7 +17290,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -17125,6 +17314,13 @@
           "date": "2026-02-15T01:30:00.000000Z",
           "role_in_match": "Manager",
           "opponent": "Geelong SC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld4549vvGm",
+          "date": "2026-02-22T01:30:00.000000Z",
+          "role_in_match": "Manager",
+          "opponent": "Brunswick Juventus FC U18",
           "events": []
         }
       ]
@@ -18782,7 +18978,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -18807,6 +19003,13 @@
           "role_in_match": "Assistant Coach",
           "opponent": "Oakleigh Cannons FC U18",
           "events": []
+        },
+        {
+          "match_hash_id": "ld4549vvGm",
+          "date": "2026-02-22T01:30:00.000000Z",
+          "role_in_match": "Assistant Coach",
+          "opponent": "Bentleigh Greens SC U18",
+          "events": []
         }
       ]
     },
@@ -18825,7 +19028,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 1
       },
@@ -18855,6 +19058,13 @@
           "role_in_match": "Head Coach",
           "opponent": "Oakleigh Cannons FC U18",
           "events": []
+        },
+        {
+          "match_hash_id": "ld4549vvGm",
+          "date": "2026-02-22T01:30:00.000000Z",
+          "role_in_match": "Head Coach",
+          "opponent": "Bentleigh Greens SC U18",
+          "events": []
         }
       ]
     },
@@ -18873,7 +19083,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -18898,6 +19108,13 @@
           "role_in_match": "Team Manager",
           "opponent": "Oakleigh Cannons FC U18",
           "events": []
+        },
+        {
+          "match_hash_id": "ld4549vvGm",
+          "date": "2026-02-22T01:30:00.000000Z",
+          "role_in_match": "Team Manager",
+          "opponent": "Bentleigh Greens SC U18",
+          "events": []
         }
       ]
     },
@@ -18918,7 +19135,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 7,
+        "matches_attended": 8,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -18971,6 +19188,13 @@
           "role_in_match": "Manager",
           "opponent": "Bentleigh Greens SC U14",
           "events": []
+        },
+        {
+          "match_hash_id": "ld4549vvGm",
+          "date": "2026-02-22T01:30:00.000000Z",
+          "role_in_match": "Manager",
+          "opponent": "Bentleigh Greens SC U18",
+          "events": []
         }
       ]
     },
@@ -18989,7 +19213,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 2,
+        "matches_attended": 3,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -19006,6 +19230,13 @@
           "date": "2026-02-14T01:00:00.000000Z",
           "role_in_match": "Teamstaff",
           "opponent": "Oakleigh Cannons FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld4549vvGm",
+          "date": "2026-02-22T01:30:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Bentleigh Greens SC U18",
           "events": []
         }
       ]
@@ -28500,7 +28731,7 @@
         "U18 YSL Boys - North-West"
       ],
       "stats": {
-        "matches_attended": 1,
+        "matches_attended": 2,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -28510,6 +28741,13 @@
           "date": "2026-02-15T04:30:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "Doreen United SC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "PmrGqg9QRN",
+          "date": "2026-02-22T04:45:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Bendigo City FC U18",
           "events": []
         }
       ]
@@ -28529,7 +28767,7 @@
         "U18 YSL Boys - North-West"
       ],
       "stats": {
-        "matches_attended": 1,
+        "matches_attended": 2,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -28539,6 +28777,13 @@
           "date": "2026-02-15T04:30:00.000000Z",
           "role_in_match": "Manager",
           "opponent": "Doreen United SC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "PmrGqg9QRN",
+          "date": "2026-02-22T04:45:00.000000Z",
+          "role_in_match": "Manager",
+          "opponent": "Bendigo City FC U18",
           "events": []
         }
       ]
@@ -28566,7 +28811,7 @@
         "U18 YSL Boys - North-West"
       ],
       "stats": {
-        "matches_attended": 9,
+        "matches_attended": 10,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -28632,6 +28877,13 @@
           "date": "2026-02-22T03:00:00.000000Z",
           "role_in_match": "Manager",
           "opponent": "Bendigo City FC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "PmrGqg9QRN",
+          "date": "2026-02-22T04:45:00.000000Z",
+          "role_in_match": "Manager",
+          "opponent": "Bendigo City FC U18",
           "events": []
         }
       ]
@@ -28659,7 +28911,7 @@
         "U18 YSL Boys - North-West"
       ],
       "stats": {
-        "matches_attended": 9,
+        "matches_attended": 10,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -28725,6 +28977,13 @@
           "date": "2026-02-22T03:00:00.000000Z",
           "role_in_match": "Manager",
           "opponent": "Bendigo City FC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "PmrGqg9QRN",
+          "date": "2026-02-22T04:45:00.000000Z",
+          "role_in_match": "Manager",
+          "opponent": "Bendigo City FC U18",
           "events": []
         }
       ]
@@ -29252,7 +29511,7 @@
         "U18 YSL Boys - South-East"
       ],
       "stats": {
-        "matches_attended": 9,
+        "matches_attended": 10,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -29318,6 +29577,13 @@
           "date": "2026-02-22T04:00:00.000000Z",
           "role_in_match": "Teamstaff",
           "opponent": "Boroondara Eagles FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "nmYnZXWB1N",
+          "date": "2026-02-22T02:10:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Boroondara Eagles FC U16",
           "events": []
         }
       ]
@@ -29381,7 +29647,7 @@
         "U18 YSL Boys - South-East"
       ],
       "stats": {
-        "matches_attended": 9,
+        "matches_attended": 10,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -29447,6 +29713,13 @@
           "date": "2026-02-22T04:00:00.000000Z",
           "role_in_match": "Teamstaff",
           "opponent": "Boroondara Eagles FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "nmYnZXWB1N",
+          "date": "2026-02-22T02:10:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Boroondara Eagles FC U16",
           "events": []
         }
       ]
@@ -29541,7 +29814,7 @@
         "U18 YSL Boys - South-East"
       ],
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -29579,6 +29852,13 @@
           "date": "2026-02-22T04:00:00.000000Z",
           "role_in_match": "Teamstaff",
           "opponent": "Boroondara Eagles FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "nmYnZXWB1N",
+          "date": "2026-02-22T02:10:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Boroondara Eagles FC U16",
           "events": []
         }
       ]
@@ -30955,7 +31235,8 @@
       "last_name": "Robson",
       "role_slug": "staff",
       "roles": [
-        "Coach"
+        "Coach",
+        "Head Coach"
       ],
       "teams": [
         "Gippsland United FC U16"
@@ -30964,7 +31245,7 @@
         "U16 YSL Boys - South-East"
       ],
       "stats": {
-        "matches_attended": 1,
+        "matches_attended": 2,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -30974,6 +31255,13 @@
           "date": "2026-02-15T02:10:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "Mornington SC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "nmYnZXWB1N",
+          "date": "2026-02-22T02:10:00.000000Z",
+          "role_in_match": "Head Coach",
+          "opponent": "Boroondara Eagles FC U16",
           "events": []
         }
       ]
@@ -30993,7 +31281,7 @@
         "U16 YSL Boys - South-East"
       ],
       "stats": {
-        "matches_attended": 1,
+        "matches_attended": 2,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -31003,6 +31291,13 @@
           "date": "2026-02-15T02:10:00.000000Z",
           "role_in_match": "Teamstaff",
           "opponent": "Mornington SC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "nmYnZXWB1N",
+          "date": "2026-02-22T02:10:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Boroondara Eagles FC U16",
           "events": []
         }
       ]
@@ -34644,7 +34939,7 @@
         "U18 YSL Boys - North-West"
       ],
       "stats": {
-        "matches_attended": 12,
+        "matches_attended": 14,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -34732,6 +35027,20 @@
           "role_in_match": "Teamstaff",
           "opponent": "Keilor Park SC U16",
           "events": []
+        },
+        {
+          "match_hash_id": "PmrGqg9QRN",
+          "date": "2026-02-22T04:45:00.000000Z",
+          "role_in_match": "Assistant Coach",
+          "opponent": "Keilor Park SC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "PmrGqg9QRN",
+          "date": "2026-02-22T04:45:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Keilor Park SC U18",
+          "events": []
         }
       ]
     },
@@ -34759,7 +35068,7 @@
         "U18 YSL Boys - North-West"
       ],
       "stats": {
-        "matches_attended": 11,
+        "matches_attended": 12,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -34839,6 +35148,13 @@
           "date": "2026-02-22T03:00:00.000000Z",
           "role_in_match": "Teamstaff",
           "opponent": "Keilor Park SC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "PmrGqg9QRN",
+          "date": "2026-02-22T04:45:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Keilor Park SC U18",
           "events": []
         }
       ]
@@ -34866,7 +35182,7 @@
         "U18 YSL Boys - North-West"
       ],
       "stats": {
-        "matches_attended": 9,
+        "matches_attended": 10,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -34932,6 +35248,13 @@
           "date": "2026-02-22T03:00:00.000000Z",
           "role_in_match": "Teamstaff",
           "opponent": "Keilor Park SC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "PmrGqg9QRN",
+          "date": "2026-02-22T04:45:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Keilor Park SC U18",
           "events": []
         }
       ]
@@ -35557,7 +35880,7 @@
         "U18 YSL Boys - North-West"
       ],
       "stats": {
-        "matches_attended": 1,
+        "matches_attended": 2,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -35567,6 +35890,13 @@
           "date": "2026-02-15T04:45:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "Werribee City FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "PmrGqg9QRN",
+          "date": "2026-02-22T04:45:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Keilor Park SC U18",
           "events": []
         }
       ]
@@ -35588,7 +35918,7 @@
         "U18 YSL Boys - North-West"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -35613,6 +35943,13 @@
           "role_in_match": "Coach",
           "opponent": "Keilor Park SC U15",
           "events": []
+        },
+        {
+          "match_hash_id": "PmrGqg9QRN",
+          "date": "2026-02-22T04:45:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Keilor Park SC U18",
+          "events": []
         }
       ]
     },
@@ -35631,7 +35968,7 @@
         "U18 YSL Boys - North-West"
       ],
       "stats": {
-        "matches_attended": 1,
+        "matches_attended": 2,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -35641,6 +35978,13 @@
           "date": "2026-02-15T04:45:00.000000Z",
           "role_in_match": "Manager",
           "opponent": "Werribee City FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "PmrGqg9QRN",
+          "date": "2026-02-22T04:45:00.000000Z",
+          "role_in_match": "Manager",
+          "opponent": "Keilor Park SC U18",
           "events": []
         }
       ]
@@ -35899,7 +36243,7 @@
         "U16 YSL Boys - South-East"
       ],
       "stats": {
-        "matches_attended": 1,
+        "matches_attended": 2,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -35909,6 +36253,13 @@
           "date": "2026-02-15T02:50:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "Ringwood City FC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "nmYnZXWB1N",
+          "date": "2026-02-22T02:10:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Gippsland United FC U16",
           "events": []
         }
       ]
@@ -35928,7 +36279,7 @@
         "U16 YSL Boys - South-East"
       ],
       "stats": {
-        "matches_attended": 1,
+        "matches_attended": 2,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -35938,6 +36289,13 @@
           "date": "2026-02-15T02:50:00.000000Z",
           "role_in_match": "Manager",
           "opponent": "Ringwood City FC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "nmYnZXWB1N",
+          "date": "2026-02-22T02:10:00.000000Z",
+          "role_in_match": "Manager",
+          "opponent": "Gippsland United FC U16",
           "events": []
         }
       ]
@@ -35957,7 +36315,7 @@
         "U16 YSL Boys - South-East"
       ],
       "stats": {
-        "matches_attended": 1,
+        "matches_attended": 2,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -35967,6 +36325,13 @@
           "date": "2026-02-15T02:50:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "Ringwood City FC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "nmYnZXWB1N",
+          "date": "2026-02-22T02:10:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Gippsland United FC U16",
           "events": []
         }
       ]
@@ -38755,5 +39120,5 @@
       ]
     }
   ],
-  "_last_updated": "2026-02-22T19:00:25.365418"
+  "_last_updated": "2026-02-22T20:00:24.219604"
 }
