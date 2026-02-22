@@ -2397,14 +2397,14 @@
           },
           "U16": {
             "position": 5,
-            "played": 1,
+            "played": 2,
             "wins": 1,
-            "draws": 0,
+            "draws": 1,
             "losses": 0,
             "gf": 2,
             "ga": 1,
             "gd": 1,
-            "points": 3
+            "points": 4
           },
           "U15": {
             "position": 6,
@@ -2527,14 +2527,14 @@
           },
           "U16": {
             "position": 8,
-            "played": 1,
+            "played": 2,
             "wins": 0,
-            "draws": 0,
+            "draws": 1,
             "losses": 1,
             "gf": 0,
             "ga": 2,
             "gd": -2,
-            "points": 0
+            "points": 1
           },
           "U15": {
             "position": 8,
@@ -3412,5 +3412,5 @@
       }
     ]
   },
-  "_last_updated": "2026-02-23T07:00:18.431427"
+  "_last_updated": "2026-02-23T08:00:18.336242"
 }
