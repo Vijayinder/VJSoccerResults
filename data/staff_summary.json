@@ -6508,7 +6508,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 27,
+        "matches_attended": 28,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -6700,6 +6700,13 @@
           "date": "2026-02-22T02:30:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "Pascoe Vale FC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld454nb80m",
+          "date": "2026-02-21T22:00:00.000000Z",
+          "role_in_match": "Technical Director",
+          "opponent": "Pascoe Vale FC U13",
           "events": []
         }
       ]
@@ -6728,7 +6735,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 19,
+        "matches_attended": 20,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -6864,6 +6871,13 @@
           "date": "2026-02-22T02:30:00.000000Z",
           "role_in_match": "Convener",
           "opponent": "Pascoe Vale FC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld454nb80m",
+          "date": "2026-02-21T22:00:00.000000Z",
+          "role_in_match": "Convener",
+          "opponent": "Pascoe Vale FC U13",
           "events": []
         }
       ]
@@ -24436,7 +24450,7 @@
         "U13 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -24460,6 +24474,13 @@
           "date": "2026-02-14T22:00:00.000000Z",
           "role_in_match": "Manager",
           "opponent": "Berwick City SC U13",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld454nb80m",
+          "date": "2026-02-21T22:00:00.000000Z",
+          "role_in_match": "Manager",
+          "opponent": "Northcote City FC U13",
           "events": []
         }
       ]
@@ -24479,7 +24500,7 @@
         "U13 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -24503,6 +24524,13 @@
           "date": "2026-02-14T22:00:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "Berwick City SC U13",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld454nb80m",
+          "date": "2026-02-21T22:00:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Northcote City FC U13",
           "events": []
         }
       ]
@@ -26056,7 +26084,7 @@
         "U13 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -26080,6 +26108,13 @@
           "date": "2026-02-14T21:55:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "Eltham Redbacks FC U13",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld454nb80m",
+          "date": "2026-02-21T22:00:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Pascoe Vale FC U13",
           "events": []
         }
       ]
@@ -26099,7 +26134,7 @@
         "U13 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -26123,6 +26158,13 @@
           "date": "2026-02-14T21:55:00.000000Z",
           "role_in_match": "Manager",
           "opponent": "Eltham Redbacks FC U13",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld454nb80m",
+          "date": "2026-02-21T22:00:00.000000Z",
+          "role_in_match": "Manager",
+          "opponent": "Pascoe Vale FC U13",
           "events": []
         }
       ]
@@ -26142,7 +26184,7 @@
         "U13 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -26166,6 +26208,13 @@
           "date": "2026-02-14T21:55:00.000000Z",
           "role_in_match": "Manager",
           "opponent": "Eltham Redbacks FC U13",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld454nb80m",
+          "date": "2026-02-21T22:00:00.000000Z",
+          "role_in_match": "Manager",
+          "opponent": "Pascoe Vale FC U13",
           "events": []
         }
       ]
@@ -26185,7 +26234,7 @@
         "U13 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -26209,6 +26258,13 @@
           "date": "2026-02-14T21:55:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "Eltham Redbacks FC U13",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld454nb80m",
+          "date": "2026-02-21T22:00:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Pascoe Vale FC U13",
           "events": []
         }
       ]
@@ -31450,7 +31506,7 @@
         "U18 YSL Boys - South-East"
       ],
       "stats": {
-        "matches_attended": 9,
+        "matches_attended": 10,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -31516,6 +31572,13 @@
           "date": "2026-02-22T03:00:00.000000Z",
           "role_in_match": "Manager",
           "opponent": "Ringwood City FC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "BdDb9PkJQN",
+          "date": "2026-02-22T04:45:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Ringwood City FC U18",
           "events": []
         }
       ]
@@ -31579,7 +31642,7 @@
         "U18 YSL Boys - South-East"
       ],
       "stats": {
-        "matches_attended": 9,
+        "matches_attended": 10,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -31645,6 +31708,13 @@
           "date": "2026-02-22T03:00:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "Ringwood City FC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "BdDb9PkJQN",
+          "date": "2026-02-22T04:45:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Ringwood City FC U18",
           "events": []
         }
       ]
@@ -32453,13 +32523,15 @@
         "Coach"
       ],
       "teams": [
-        "Ringwood City FC U15"
+        "Ringwood City FC U15",
+        "Ringwood City FC U18"
       ],
       "leagues": [
-        "U15 YSL Boys - South-East"
+        "U15 YSL Boys - South-East",
+        "U18 YSL Boys - South-East"
       ],
       "stats": {
-        "matches_attended": 2,
+        "matches_attended": 3,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -32476,6 +32548,13 @@
           "date": "2026-02-22T01:30:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "Nunawading City FC U15",
+          "events": []
+        },
+        {
+          "match_hash_id": "BdDb9PkJQN",
+          "date": "2026-02-22T04:45:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Nunawading City FC U18",
           "events": []
         }
       ]
@@ -33403,7 +33482,7 @@
         "U18 YSL Boys - South-East"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -33427,6 +33506,13 @@
           "date": "2026-02-22T01:30:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "Ringwood City FC U15",
+          "events": []
+        },
+        {
+          "match_hash_id": "BdDb9PkJQN",
+          "date": "2026-02-22T04:45:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Ringwood City FC U18",
           "events": []
         }
       ]
@@ -36659,7 +36745,7 @@
         "U18 YSL Boys - South-East"
       ],
       "stats": {
-        "matches_attended": 2,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -36676,6 +36762,20 @@
           "date": "2026-02-15T04:15:00.000000Z",
           "role_in_match": "Teamstaff",
           "opponent": "Port Melbourne SC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "BdDb9PkJQN",
+          "date": "2026-02-22T04:45:00.000000Z",
+          "role_in_match": "Manager",
+          "opponent": "Ringwood City FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "BdDb9PkJQN",
+          "date": "2026-02-22T04:45:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Ringwood City FC U18",
           "events": []
         }
       ]
@@ -39036,19 +39136,21 @@
         "Technical Director"
       ],
       "teams": [
+        "Northcote City FC U13",
         "Northcote City FC U14",
         "Northcote City FC U15",
         "Northcote City FC U16",
         "Northcote City FC U18"
       ],
       "leagues": [
+        "U13 YPL2 Boys",
         "U14 YPL2 Boys",
         "U15 YPL2 Boys",
         "U16 YPL2 Boys",
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -39087,6 +39189,13 @@
           "role_in_match": "Technical Director",
           "opponent": "Pascoe Vale FC U16",
           "events": []
+        },
+        {
+          "match_hash_id": "ld454nb80m",
+          "date": "2026-02-21T22:00:00.000000Z",
+          "role_in_match": "Technical Director",
+          "opponent": "Pascoe Vale FC U13",
+          "events": []
         }
       ]
     },
@@ -39099,19 +39208,21 @@
         "Physiotherapist"
       ],
       "teams": [
+        "Northcote City FC U13",
         "Northcote City FC U14",
         "Northcote City FC U15",
         "Northcote City FC U16",
         "Northcote City FC U18"
       ],
       "leagues": [
+        "U13 YPL2 Boys",
         "U14 YPL2 Boys",
         "U15 YPL2 Boys",
         "U16 YPL2 Boys",
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 4,
+        "matches_attended": 5,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -39142,6 +39253,13 @@
           "date": "2026-02-22T02:30:00.000000Z",
           "role_in_match": "Physiotherapist",
           "opponent": "Pascoe Vale FC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld454nb80m",
+          "date": "2026-02-21T22:00:00.000000Z",
+          "role_in_match": "Physiotherapist",
+          "opponent": "Pascoe Vale FC U13",
           "events": []
         }
       ]
@@ -39792,7 +39910,36 @@
           "events": []
         }
       ]
+    },
+    {
+      "person_id": "pmvv6XwZ8m",
+      "first_name": "Jason",
+      "last_name": "Ellis",
+      "role_slug": "staff",
+      "roles": [
+        "Manager"
+      ],
+      "teams": [
+        "Ringwood City FC U18"
+      ],
+      "leagues": [
+        "U18 YSL Boys - South-East"
+      ],
+      "stats": {
+        "matches_attended": 1,
+        "yellow_cards": 0,
+        "red_cards": 0
+      },
+      "matches": [
+        {
+          "match_hash_id": "BdDb9PkJQN",
+          "date": "2026-02-22T04:45:00.000000Z",
+          "role_in_match": "Manager",
+          "opponent": "Nunawading City FC U18",
+          "events": []
+        }
+      ]
     }
   ],
-  "_last_updated": "2026-02-23T09:00:20.085135"
+  "_last_updated": "2026-02-23T10:00:21.996380"
 }
