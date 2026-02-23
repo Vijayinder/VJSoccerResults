@@ -27929,7 +27929,8 @@
       "last_name": "Tomic",
       "role_slug": "staff",
       "roles": [
-        "Teamstaff"
+        "Teamstaff",
+        "Technical Director"
       ],
       "teams": [
         "Brunswick City SC U13",
@@ -27946,7 +27947,7 @@
         "U18 YSL Boys - North-West"
       ],
       "stats": {
-        "matches_attended": 9,
+        "matches_attended": 10,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -28012,6 +28013,13 @@
           "date": "2026-02-22T02:45:00.000000Z",
           "role_in_match": "Teamstaff",
           "opponent": "St Albans Saints Dinamo SC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "EN2pnXLM3d",
+          "date": "2026-02-23T08:30:00.000000Z",
+          "role_in_match": "Technical Director",
+          "opponent": "St Albans Saints Dinamo SC U18",
           "events": []
         }
       ]
@@ -29041,7 +29049,7 @@
         "U18 YSL Boys - North-West"
       ],
       "stats": {
-        "matches_attended": 1,
+        "matches_attended": 2,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -29051,6 +29059,13 @@
           "date": "2026-02-15T05:00:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "Moreland City SC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "EN2pnXLM3d",
+          "date": "2026-02-23T08:30:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Brunswick City SC U18",
           "events": []
         }
       ]
@@ -29070,7 +29085,7 @@
         "U18 YSL Boys - North-West"
       ],
       "stats": {
-        "matches_attended": 1,
+        "matches_attended": 2,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -29080,6 +29095,13 @@
           "date": "2026-02-15T05:00:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "Moreland City SC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "EN2pnXLM3d",
+          "date": "2026-02-23T08:30:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Brunswick City SC U18",
           "events": []
         }
       ]
@@ -29105,7 +29127,7 @@
         "U18 YSL Boys - North-West"
       ],
       "stats": {
-        "matches_attended": 6,
+        "matches_attended": 7,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -29150,6 +29172,13 @@
           "date": "2026-02-22T02:45:00.000000Z",
           "role_in_match": "Manager",
           "opponent": "Brunswick City SC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "EN2pnXLM3d",
+          "date": "2026-02-23T08:30:00.000000Z",
+          "role_in_match": "Manager",
+          "opponent": "Brunswick City SC U18",
           "events": []
         }
       ]
@@ -29861,7 +29890,7 @@
         "U18 YSL Boys - North-West"
       ],
       "stats": {
-        "matches_attended": 1,
+        "matches_attended": 2,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -29872,6 +29901,13 @@
           "role_in_match": "Team Manager",
           "opponent": "Brimbank Stallions FC U18",
           "events": []
+        },
+        {
+          "match_hash_id": "EN2pnXLM3d",
+          "date": "2026-02-23T08:30:00.000000Z",
+          "role_in_match": "Team Manager",
+          "opponent": "St Albans Saints Dinamo SC U18",
+          "events": []
         }
       ]
     },
@@ -29881,7 +29917,8 @@
       "last_name": "Li",
       "role_slug": "staff",
       "roles": [
-        "Coach"
+        "Coach",
+        "Head Coach"
       ],
       "teams": [
         "Brunswick City SC U18"
@@ -29890,7 +29927,7 @@
         "U18 YSL Boys - North-West"
       ],
       "stats": {
-        "matches_attended": 1,
+        "matches_attended": 2,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -29901,6 +29938,13 @@
           "role_in_match": "Coach",
           "opponent": "Brimbank Stallions FC U18",
           "events": []
+        },
+        {
+          "match_hash_id": "EN2pnXLM3d",
+          "date": "2026-02-23T08:30:00.000000Z",
+          "role_in_match": "Head Coach",
+          "opponent": "St Albans Saints Dinamo SC U18",
+          "events": []
         }
       ]
     },
@@ -29910,6 +29954,7 @@
       "last_name": "Pomilio",
       "role_slug": "staff",
       "roles": [
+        "Assistant Coach",
         "Coach"
       ],
       "teams": [
@@ -29919,7 +29964,7 @@
         "U18 YSL Boys - North-West"
       ],
       "stats": {
-        "matches_attended": 1,
+        "matches_attended": 2,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -29929,6 +29974,13 @@
           "date": "2026-02-15T04:00:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "Brimbank Stallions FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "EN2pnXLM3d",
+          "date": "2026-02-23T08:30:00.000000Z",
+          "role_in_match": "Assistant Coach",
+          "opponent": "St Albans Saints Dinamo SC U18",
           "events": []
         }
       ]
@@ -40116,5 +40168,5 @@
       ]
     }
   ],
-  "_last_updated": "2026-02-23T21:00:19.770141"
+  "_last_updated": "2026-02-23T22:00:20.993330"
 }
