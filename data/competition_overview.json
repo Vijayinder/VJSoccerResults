@@ -2179,7 +2179,7 @@
         "club": "St Albans Saints Dinamo SC",
         "age_groups": {
           "U13": {
-            "position": 2,
+            "position": 3,
             "played": 2,
             "wins": 1,
             "draws": 1,
@@ -2234,7 +2234,7 @@
             "points": 3
           }
         },
-        "total_position_points": 18,
+        "total_position_points": 19,
         "total_gf": 36,
         "total_ga": 15,
         "age_group_count": 5,
@@ -2244,7 +2244,7 @@
         "club": "Preston Lions FC",
         "age_groups": {
           "U13": {
-            "position": 3,
+            "position": 4,
             "played": 2,
             "wins": 1,
             "draws": 0,
@@ -2299,7 +2299,7 @@
             "points": 6
           }
         },
-        "total_position_points": 19,
+        "total_position_points": 20,
         "total_gf": 32,
         "total_ga": 15,
         "age_group_count": 5,
@@ -2371,17 +2371,82 @@
         "overall_rank": 4
       },
       {
-        "club": "Doreen United SC",
+        "club": "Brimbank Stallions FC",
         "age_groups": {
           "U13": {
-            "position": 4,
-            "played": 1,
-            "wins": 1,
+            "position": 2,
+            "played": 2,
+            "wins": 2,
             "draws": 0,
             "losses": 0,
             "gf": 3,
-            "ga": 0,
-            "gd": 3,
+            "ga": 1,
+            "gd": 2,
+            "points": 6
+          },
+          "U18": {
+            "position": 2,
+            "played": 2,
+            "wins": 1,
+            "draws": 0,
+            "losses": 1,
+            "gf": 5,
+            "ga": 3,
+            "gd": 2,
+            "points": 3
+          },
+          "U16": {
+            "position": 8,
+            "played": 2,
+            "wins": 0,
+            "draws": 1,
+            "losses": 1,
+            "gf": 0,
+            "ga": 2,
+            "gd": -2,
+            "points": 1
+          },
+          "U15": {
+            "position": 8,
+            "played": 2,
+            "wins": 0,
+            "draws": 1,
+            "losses": 1,
+            "gf": 2,
+            "ga": 3,
+            "gd": -1,
+            "points": 1
+          },
+          "U14": {
+            "position": 7,
+            "played": 2,
+            "wins": 0,
+            "draws": 1,
+            "losses": 1,
+            "gf": 1,
+            "ga": 2,
+            "gd": -1,
+            "points": 1
+          }
+        },
+        "total_position_points": 27,
+        "total_gf": 11,
+        "total_ga": 11,
+        "age_group_count": 5,
+        "overall_rank": 5
+      },
+      {
+        "club": "Doreen United SC",
+        "age_groups": {
+          "U13": {
+            "position": 5,
+            "played": 2,
+            "wins": 1,
+            "draws": 0,
+            "losses": 1,
+            "gf": 3,
+            "ga": 1,
+            "gd": 2,
             "points": 3
           },
           "U18": {
@@ -2408,32 +2473,32 @@
           },
           "U15": {
             "position": 6,
-            "played": 1,
+            "played": 2,
             "wins": 0,
-            "draws": 1,
+            "draws": 2,
             "losses": 0,
-            "gf": 2,
-            "ga": 2,
+            "gf": 3,
+            "ga": 3,
             "gd": 0,
-            "points": 1
+            "points": 2
           },
           "U14": {
             "position": 6,
-            "played": 1,
+            "played": 2,
             "wins": 0,
-            "draws": 1,
+            "draws": 2,
             "losses": 0,
-            "gf": 0,
-            "ga": 0,
+            "gf": 1,
+            "ga": 1,
             "gd": 0,
-            "points": 1
+            "points": 2
           }
         },
-        "total_position_points": 28,
-        "total_gf": 11,
-        "total_ga": 9,
+        "total_position_points": 29,
+        "total_gf": 13,
+        "total_ga": 12,
         "age_group_count": 5,
-        "overall_rank": 5
+        "overall_rank": 6
       },
       {
         "club": "Keilor Park SC",
@@ -2497,71 +2562,6 @@
         "total_position_points": 29,
         "total_gf": 16,
         "total_ga": 16,
-        "age_group_count": 5,
-        "overall_rank": 6
-      },
-      {
-        "club": "Brimbank Stallions FC",
-        "age_groups": {
-          "U13": {
-            "position": 5,
-            "played": 1,
-            "wins": 1,
-            "draws": 0,
-            "losses": 0,
-            "gf": 2,
-            "ga": 1,
-            "gd": 1,
-            "points": 3
-          },
-          "U18": {
-            "position": 2,
-            "played": 2,
-            "wins": 1,
-            "draws": 0,
-            "losses": 1,
-            "gf": 5,
-            "ga": 3,
-            "gd": 2,
-            "points": 3
-          },
-          "U16": {
-            "position": 8,
-            "played": 2,
-            "wins": 0,
-            "draws": 1,
-            "losses": 1,
-            "gf": 0,
-            "ga": 2,
-            "gd": -2,
-            "points": 1
-          },
-          "U15": {
-            "position": 8,
-            "played": 1,
-            "wins": 0,
-            "draws": 0,
-            "losses": 1,
-            "gf": 1,
-            "ga": 2,
-            "gd": -1,
-            "points": 0
-          },
-          "U14": {
-            "position": 7,
-            "played": 1,
-            "wins": 0,
-            "draws": 0,
-            "losses": 1,
-            "gf": 0,
-            "ga": 1,
-            "gd": -1,
-            "points": 0
-          }
-        },
-        "total_position_points": 30,
-        "total_gf": 8,
-        "total_ga": 9,
         "age_group_count": 5,
         "overall_rank": 7
       },
@@ -3412,5 +3412,5 @@
       }
     ]
   },
-  "_last_updated": "2026-02-23T11:00:17.514927"
+  "_last_updated": "2026-02-23T12:00:20.389033"
 }
