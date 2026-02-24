@@ -5970,7 +5970,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 36,
+        "matches_attended": 38,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -6225,6 +6225,20 @@
           "date": "2026-02-21T22:00:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "Eltham Redbacks FC U13",
+          "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMnQ2d",
+          "date": "2026-02-21T23:15:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Eltham Redbacks FC U14",
+          "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMnQ2d",
+          "date": "2026-02-21T23:15:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Eltham Redbacks FC U14",
           "events": []
         }
       ]
@@ -8837,7 +8851,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 13,
+        "matches_attended": 14,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -8931,6 +8945,13 @@
           "date": "2026-02-21T22:00:00.000000Z",
           "role_in_match": "Teamstaff",
           "opponent": "Melbourne Knights FC U13",
+          "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMnQ2d",
+          "date": "2026-02-21T23:15:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Melbourne Knights FC U14",
           "events": []
         }
       ]
@@ -8959,7 +8980,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 13,
+        "matches_attended": 14,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -9053,6 +9074,13 @@
           "date": "2026-02-21T22:00:00.000000Z",
           "role_in_match": "Teamstaff",
           "opponent": "Melbourne Knights FC U13",
+          "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMnQ2d",
+          "date": "2026-02-21T23:15:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Melbourne Knights FC U14",
           "events": []
         }
       ]
@@ -12997,16 +13025,18 @@
       ],
       "teams": [
         "Eltham Redbacks FC U13",
+        "Eltham Redbacks FC U14",
         "Eltham Redbacks FC U16",
         "Eltham Redbacks FC U18"
       ],
       "leagues": [
         "U13 YPL2 Boys",
+        "U14 YPL2 Boys",
         "U16 YPL2 Boys",
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -13044,6 +13074,13 @@
           "date": "2026-02-21T22:00:00.000000Z",
           "role_in_match": "Teamstaff",
           "opponent": "Melbourne Knights FC U13",
+          "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMnQ2d",
+          "date": "2026-02-21T23:15:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Melbourne Knights FC U14",
           "events": []
         }
       ]
@@ -20004,7 +20041,7 @@
         "U14 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -20029,6 +20066,13 @@
           "role_in_match": "Coach",
           "opponent": "North Geelong Warriors FC U14",
           "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMnQ2d",
+          "date": "2026-02-21T23:15:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Eltham Redbacks FC U14",
+          "events": []
         }
       ]
     },
@@ -20047,7 +20091,7 @@
         "U14 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 2,
+        "matches_attended": 3,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -20064,6 +20108,13 @@
           "date": "2026-02-14T22:30:00.000000Z",
           "role_in_match": "Manager",
           "opponent": "North Geelong Warriors FC U14",
+          "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMnQ2d",
+          "date": "2026-02-21T23:15:00.000000Z",
+          "role_in_match": "Manager",
+          "opponent": "Eltham Redbacks FC U14",
           "events": []
         }
       ]
@@ -23721,7 +23772,7 @@
         "U16 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 4,
+        "matches_attended": 5,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -23753,6 +23804,13 @@
           "role_in_match": "Coach",
           "opponent": "Melbourne Knights FC U16",
           "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMnQ2d",
+          "date": "2026-02-21T23:15:00.000000Z",
+          "role_in_match": "Head Coach",
+          "opponent": "Melbourne Knights FC U14",
+          "events": []
         }
       ]
     },
@@ -23771,7 +23829,7 @@
         "U14 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -23795,6 +23853,13 @@
           "date": "2026-02-14T23:15:00.000000Z",
           "role_in_match": "Team Manager",
           "opponent": "Northcote City FC U14",
+          "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMnQ2d",
+          "date": "2026-02-21T23:15:00.000000Z",
+          "role_in_match": "Team Manager",
+          "opponent": "Melbourne Knights FC U14",
           "events": []
         }
       ]
@@ -29550,7 +29615,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 8,
+        "matches_attended": 9,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -29609,6 +29674,13 @@
           "date": "2026-02-21T22:00:00.000000Z",
           "role_in_match": "Manager",
           "opponent": "Melbourne Knights FC U13",
+          "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMnQ2d",
+          "date": "2026-02-21T23:15:00.000000Z",
+          "role_in_match": "Manager",
+          "opponent": "Melbourne Knights FC U14",
           "events": []
         }
       ]
@@ -29636,7 +29708,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 8,
+        "matches_attended": 9,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -29695,6 +29767,13 @@
           "date": "2026-02-21T22:00:00.000000Z",
           "role_in_match": "Teamstaff",
           "opponent": "Melbourne Knights FC U13",
+          "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMnQ2d",
+          "date": "2026-02-21T23:15:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Melbourne Knights FC U14",
           "events": []
         }
       ]
@@ -40168,5 +40247,5 @@
       ]
     }
   ],
-  "_last_updated": "2026-02-24T08:00:20.446252"
+  "_last_updated": "2026-02-24T12:00:20.212795"
 }
