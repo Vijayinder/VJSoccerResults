@@ -1,5 +1,5 @@
 import streamlit as st
-from fast_agent import FastQueryRouter, format_date, format_date_full, extract_league_from_league_name
+from fast_agent import FastQueryRouter, format_date, format_date_full
 import time
 import pandas as pd
 import json
@@ -316,8 +316,8 @@ def show_login_page():
                     st.session_state["player_role"] = saved_selection["role"]
                     st.session_state["role"] = saved_selection["role"]
                     st.session_state["last_activity"] = datetime.now()
-                    st.session_state["player_league"] = ""  # will be set by get_player_league_info below
-                    st.session_state["player_competition"] = ""  # will be set by get_player_league_info below
+                    st.session_state["player_league"] = selected_person.get("league", "")
+                    st.session_state["player_competition"] = selected_person.get("competition", "")
                     # Update USER_CONFIG in fast_agent
                     update_user_config(saved_selection["club"], saved_selection.get("age_group", ""))
                     # Look up league and competition from player data
@@ -601,48 +601,82 @@ def load_fixtures():
         st.error(f"Error loading fixtures: {str(e)}")
         return []
 
-def _load_json_normalised(filename: str, root_key: str = None):
-    """
-    Shared JSON loader used by all load_* helpers below.
-    root_key: normalise result to {root_key: [...]}.  Pass None for plain dicts.
-    """
-    path = os.path.join(DATA_DIR, filename)
-    empty = {root_key: []} if root_key else {}
+@st.cache_data(ttl=900)  # Auto-refresh every 5 minutes
+def load_players_summary():
+    """Load players_summary.json"""
+    path = os.path.join(DATA_DIR, "players_summary.json")
+    
     if not os.path.exists(path):
-        return empty
+        return {"players": []}
+    
     try:
         with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
-        if root_key is None:
-            return data if isinstance(data, dict) else {}
-        if isinstance(data, list):
-            return {root_key: data}
+        
         if isinstance(data, dict):
-            if root_key in data:
+            if "players" in data:
                 return data
-            for val in data.values():
-                if isinstance(val, list):
-                    return {root_key: val}
-        return empty
+            else:
+                for key, value in data.items():
+                    if isinstance(value, list):
+                        return {"players": value}
+                return {"players": []}
+        elif isinstance(data, list):
+            return {"players": data}
+        else:
+            return {"players": []}
     except Exception as e:
-        st.error(f"Error loading {filename}: {str(e)}")
-        return empty
+        st.error(f"Error loading players: {str(e)}")
+        return {"players": []}
 
 
-@st.cache_data(ttl=900)
-def load_players_summary():
-    return _load_json_normalised("players_summary.json", root_key="players")
-
-
-@st.cache_data(ttl=900)
+@st.cache_data(ttl=900)  # Auto-refresh every 5 minutes
 def load_staff_summary():
-    return _load_json_normalised("staff_summary.json", root_key="staff")
+    """Load staff_summary.json"""
+    path = os.path.join(DATA_DIR, "staff_summary.json")
+    
+    if not os.path.exists(path):
+        return {"staff": []}
+    
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        
+        if isinstance(data, dict):
+            if "staff" in data:
+                return data
+            else:
+                for key, value in data.items():
+                    if isinstance(value, list):
+                        return {"staff": value}
+                return {"staff": []}
+        elif isinstance(data, list):
+            return {"staff": data}
+        else:
+            return {"staff": []}
+    except Exception as e:
+        st.error(f"Error loading staff: {str(e)}")
+        return {"staff": []}
 
-
-@st.cache_data(ttl=900)
+@st.cache_data(ttl=900)  # Auto-refresh every 5 minutes
 def load_competition_overview():
-    return _load_json_normalised("competition_overview.json")
-
+    """Load competition_overview.json"""
+    path = os.path.join(DATA_DIR, "competition_overview.json")
+    
+    if not os.path.exists(path):
+        return {}
+    
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        
+        if isinstance(data, dict):
+            return data
+        else:
+            return {}
+    except Exception as e:
+        st.error(f"Error loading competition overview: {str(e)}")
+        return {}
 
 def force_reload_all_data():
     """Force reload of all data including fast_agent module data"""
@@ -673,51 +707,91 @@ def base_club_name(team_name: str) -> str:
     cleaned = re.sub(pattern, '', team_name).strip()
     return cleaned
 
-def extract_competition_short(league_name: str, include_age: bool = False) -> str:
+def extract_competition_from_league_name(league_name: str) -> str:
     """
-    Single source of truth for extracting competition codes from full league names.
-    include_age=True  → "U16 YPL1"  (breadcrumb / display use)
-    include_age=False → "YPL1"      (filtering / grouping use)
+    Extract competition with age group from league name.
+    E.g., "U16 Boys Victorian Youth Premier League 1" → "U16 YPL1"
     """
     if not league_name:
-        return league_name if include_age else "Other"
-
+        return league_name
+    
     parts = league_name.split()
-    age = parts[0] if parts else ""
-    name_lower = league_name.lower()
-
-    if "ypl1" in name_lower or "ypl 1" in name_lower or "youth premier league 1" in name_lower:
-        code = "YPL1"
-    elif "ypl2" in name_lower or "ypl 2" in name_lower or "youth premier league 2" in name_lower:
-        code = "YPL2"
-    elif "ysl" in name_lower and ("north-west" in name_lower or " nw" in name_lower or "north west" in name_lower):
-        code = "YSL NW"
-    elif "ysl" in name_lower and ("south-east" in name_lower or " se" in name_lower or "south east" in name_lower):
-        code = "YSL SE"
-    elif "vpl men" in name_lower:
-        code = "VPL Men"
-    elif "vpl women" in name_lower:
-        code = "VPL Women"
-    elif "ysl" in name_lower:
-        code = "YSL"
-    elif "vpl" in name_lower:
-        code = "VPL"
-    else:
-        return league_name if include_age else "Other"
-
-    return f"{age} {code}" if include_age else code
-
-
-# Backwards-compatible aliases
-def extract_competition_from_league_name(league_name: str) -> str:
-    """Returns e.g. 'U16 YPL1' — used in competition breadcrumbs."""
-    return extract_competition_short(league_name, include_age=True)
-
+    if len(parts) < 2:
+        return league_name
+    
+    # First part is usually the age group (U13, U14, U15, U16, U18)
+    age = parts[0]
+    
+    # Determine which league it belongs to
+    if "YPL1" in league_name or "Youth Premier League 1" in league_name:
+        return f"{age} YPL1"
+    if "YPL2" in league_name or "Youth Premier League 2" in league_name:
+        return f"{age} YPL2"
+    if "YSL" in league_name and ("North-West" in league_name or "NW" in league_name):
+        return f"{age} YSL NW"
+    if "YSL" in league_name and ("South-East" in league_name or "SE" in league_name):
+        return f"{age} YSL SE"
+    if "VPL Men" in league_name:
+        return f"{age} VPL Men"
+    if "VPL Women" in league_name:
+        return f"{age} VPL Women"
+    if "YSL" in league_name:
+        return f"{age} YSL"
+    
+    # Fallback: return original
+    return league_name
+    
 def extract_competition_from_league(league_name: str) -> str:
-    """Returns e.g. 'YPL1' — used for filtering by competition code."""
-    return extract_competition_short(league_name, include_age=False)
+    """Extract competition code from full league name"""
+    if not league_name:
+        return ""
+    
+    league_lower = league_name.lower()
+    
+    # Check for each competition type
+    if "ypl1" in league_lower or "ypl 1" in league_lower:
+        return "YPL1"
+    elif "ypl2" in league_lower or "ypl 2" in league_lower:
+        return "YPL2"
+    elif "ysl" in league_lower and ("north-west" in league_lower or "nw" in league_lower or "north west" in league_lower):
+        return "YSL NW"
+    elif "ysl" in league_lower and ("south-east" in league_lower or "se" in league_lower or "south east" in league_lower):
+        return "YSL SE"
+    elif "vpl men" in league_lower:
+        return "VPL Men"
+    elif "vpl women" in league_lower:
+        return "VPL Women"
+    elif "ysl" in league_lower:
+        return "YSL"
+    elif "vpl" in league_lower:
+        return "VPL"
+    
+    # If no match, return original
+    return league_name
 
-# extract_league_from_league_name is imported from fast_agent (identical logic, no duplication)
+def extract_league_from_league_name(league_name: str) -> str:
+    """Extract league from league name (YPL1, YPL2, YSL NW, etc.)"""
+    if not league_name:
+        return "Other"
+    
+    league_name_lower = str(league_name).lower()
+    
+    if "ypl1" in league_name_lower or "ypl 1" in league_name_lower:
+        return "YPL1"
+    if "ypl2" in league_name_lower or "ypl 2" in league_name_lower:
+        return "YPL2"
+    if "ysl" in league_name_lower and ("north-west" in league_name_lower or "nw" in league_name_lower or "north west" in league_name_lower):
+        return "YSL NW"
+    if "ysl" in league_name_lower and ("south-east" in league_name_lower or "se" in league_name_lower or "south east" in league_name_lower):
+        return "YSL SE"
+    if "vpl men" in league_name_lower:
+        return "VPL Men"
+    if "vpl women" in league_name_lower:
+        return "VPL Women"
+    if "ysl" in league_name_lower:
+        return "YSL"
+    
+    return "Other"
 
 def get_all_leagues(results, fixtures):
     leagues = set()
@@ -1130,10 +1204,7 @@ def is_natural_language_query(query):
         "ypl1", "ypl2", "ysl", "missing score", "no score", "overdue",
         "coach", "coaches", "staff", "manager", "managers",
         # ✅ NEW: Today's matches keywords
-        "today", "todays", "result",  # Catches "todays results", "results today", "today's results"
-        # Dual registration / multi-team
-        "dual", "2 teams", "two teams", "2 clubs", "two clubs",
-        "dual reg", "playing for 2", "playing in 2", "multiple teams"
+        "today", "todays", "result"  # Catches "todays results", "results today", "today's results"
     ]
     return any(keyword in query.lower() for keyword in keywords)
 
@@ -2312,3 +2383,10 @@ def main():
         
 if __name__ == "__main__":
     main()
+# Last auto-update: 2026-02-19 18:46:53 AEDT
+# Last auto-update: 2026-02-19 19:29:21 AEDT
+# Last auto-update: 2026-02-19 19:37:42 AEDT
+# Last auto-update: 2026-02-19 20:00:16 AEDT
+# Last auto-update: 2026-02-20 00:00:17 AEDT
+# Last auto-update: 2026-02-20 04:00:18 AEDT
+# Last auto-update: 2026-02-20 08:00:17 AEDT

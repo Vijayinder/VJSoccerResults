@@ -850,9 +850,9 @@ def tool_missing_scores(query: str = "", include_all_leagues: bool = False, toda
                 continue
 
         else:
-            # Default: show past 14 days + next 2 days
+            # Default: show past 14 days only (no future matches — they can't be "missing" yet)
             days_diff = (match_date - today).days
-            if days_diff > 2 or days_diff < -14:
+            if days_diff > 0 or days_diff < -14:
                 continue
         
         home_team = attrs.get("home_team_name", "Unknown")
@@ -920,16 +920,17 @@ def tool_missing_scores(query: str = "", include_all_leagues: bool = False, toda
         status = (attrs.get("status") or "").lower()
         home_score = attrs.get("home_score")
         away_score = attrs.get("away_score")
-        
-        # Match is missing scores if:
-        # 1. Status is not "complete", OR
-        # 2. Scores are None/empty, OR
-        # 3. Status is empty/scheduled/pending
+
+        # Only flag as missing if match has already taken place (past or today)
+        # Future scheduled fixtures should never appear as "missing scores"
+        is_past_or_today = match_date <= today
+
         needs_score = (
-            status != "complete" or 
-            home_score is None or 
-            away_score is None or
-            status in ["", "scheduled", "pending", "upcoming"]
+            is_past_or_today and (
+                status != "complete" or
+                home_score is None or
+                away_score is None
+            )
         )
         
         if needs_score:
@@ -2527,6 +2528,91 @@ def tool_non_players(query: str = "") -> str:
     }
 
 # ---------------------------------------------------------
+# 11B. DUAL REGISTRATION / PLAYING IN MULTIPLE TEAMS
+# ---------------------------------------------------------
+
+def tool_dual_registration(query: str = "") -> Any:
+    """
+    Find players registered in multiple teams (dual registration).
+    Supports filtering by club name, age group, or league.
+
+    Query examples:
+      "dual registration"
+      "players in 2 teams"
+      "playing for 2 clubs heidelberg"
+      "dual reg U16"
+    """
+    age_group_filter = extract_age_group(query) if query else None
+    base_club_filter = extract_base_club_name(query) if query else None
+    league_code_filter = None
+    if query:
+        for lc in ['ypl1', 'ypl2', 'ysl nw', 'ysl se', 'vpl men', 'vpl women']:
+            if lc in query.lower():
+                league_code_filter = lc.upper()
+                break
+
+    dual_players = []
+    for p in players_summary:
+        teams = p.get("teams", [])
+        if not isinstance(teams, list) or len(teams) < 2:
+            # Also check legacy: player has a team_name but also appears in more than one league
+            leagues = p.get("leagues", [])
+            if not (isinstance(leagues, list) and len(leagues) >= 2):
+                continue
+
+        # Age group filter — at least one team must match
+        if age_group_filter:
+            if not any(age_group_filter.lower() in (t or "").lower() for t in teams):
+                continue
+
+        # Club filter — at least one team must contain the club name
+        if base_club_filter:
+            if not any(base_club_filter.lower() in (t or "").lower() for t in teams):
+                continue
+
+        # League code filter
+        if league_code_filter:
+            player_leagues = p.get("leagues", [])
+            if not any(league_code_filter in extract_league_from_league_name(lg).upper() for lg in player_leagues):
+                continue
+
+        dual_players.append(p)
+
+    if not dual_players:
+        filter_text = f" matching '{query}'" if query else ""
+        return f"❌ No players found registered in multiple teams{filter_text}"
+
+    # Sort by name
+    dual_players.sort(key=lambda p: f"{p.get('first_name','')} {p.get('last_name','')}")
+
+    data = []
+    for i, p in enumerate(dual_players, 1):
+        name = f"{p.get('first_name','')} {p.get('last_name','')}".strip()
+        teams = p.get("teams", [])
+        leagues = p.get("leagues", [])
+        # Shorten league names for display
+        short_leagues = [extract_league_from_league_name(lg) for lg in leagues] if leagues else []
+        stats = p.get("stats", {})
+        data.append({
+            "#": i,
+            "Player": name,
+            "Teams": " / ".join(teams),
+            "Age Groups": " / ".join([t.split()[-1] for t in teams if t.split()]),
+            "Leagues": " / ".join(short_leagues) if short_leagues else "—",
+            "Goals": stats.get("goals", 0),
+            "🟨": stats.get("yellow_cards", 0),
+            "🟥": stats.get("red_cards", 0),
+        })
+
+    filter_suffix = f" — {query.title()}" if query else ""
+    return {
+        "type": "table",
+        "data": data,
+        "title": f"🔄 Dual / Multi-Team Registrations{filter_suffix} ({len(dual_players)} players found)"
+    }
+
+
+# ---------------------------------------------------------
 # 12. Smart Query Router
 # ---------------------------------------------------------
 
@@ -2552,6 +2638,20 @@ class FastQueryRouter:
         show_details = False
         is_non_player_query = any(keyword in q for keyword in ['non player', 'non-player', 'coach', 'coaches', 'staff', 'manager'])
         is_personal_query = any(keyword in q for keyword in ['my next', 'when do i play', 'where do i play', 'my schedule', 'when is my', 'where is my', 'our next'])
+
+        # --- 1B. DUAL REGISTRATION / MULTI-TEAM PLAYERS ---
+        dual_keywords = [
+            'dual registration', 'dual reg', 'playing for 2', 'playing for two',
+            '2 clubs', '2 teams', 'two clubs', 'two teams', 'multi-team',
+            'multiple teams', 'multiple clubs', 'playing in 2', 'registered in 2',
+            'two leagues', '2 leagues', 'both teams', 'in 2 age groups'
+        ]
+        if any(keyword in q for keyword in dual_keywords):
+            filter_query = re.sub(
+                r'\b(dual|registration|reg|playing|for|in|two|2|clubs?|teams?|multiple|multi|registered|both|leagues?|age|groups?)\b',
+                '', q
+            ).strip()
+            return tool_dual_registration(filter_query)
 
         # --- 2. MISSING SCORES ---
         missing_keywords = ['missing score', 'missing scores', 'no score', 'scores not entered', 'overdue', 'matches without scores', 'todays missing', 'missing scores today']
