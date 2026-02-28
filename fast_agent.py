@@ -167,12 +167,16 @@ competition_overview = load_json("competition_overview.json")
 def _normalize_person(p: Dict, is_player: bool) -> Dict:
     """
     Normalize person record to common format for tools.
-    Handles dribl_player_details.py output (teams[], leagues[], jerseys{}, plain role string)
-    and legacy build_player_summary.py format (role_slug, roles[]).
+
+    Handles two JSON formats:
+      NEW  dribl_player_details.py  — teams[], leagues[], jerseys{}, plain role string,
+                                      team_name on every match entry, event_type key
+      OLD  build_player_summary.py  — role_slug + roles[], no jerseys{},
+                                      opponent key (not opponent_team_name), no team_name on matches
     """
     out = dict(p)
 
-    # Team / league: prefer arrays, fall back to scalars
+    # ── Team / league ────────────────────────────────────────────────
     if not out.get("team_name") and out.get("teams"):
         out["team_name"] = out["teams"][0] if out["teams"] else ""
     if not out.get("league_name") and out.get("leagues"):
@@ -180,48 +184,68 @@ def _normalize_person(p: Dict, is_player: bool) -> Dict:
     if not out.get("competition_name") and out.get("league_name"):
         out["competition_name"] = out["league_name"]
 
-    # Role: dribl stores plain string; legacy used role_slug + roles[]
+    # ── Role ────────────────────────────────────────────────────────
     if not out.get("role"):
         role_slug = out.get("role_slug", "player")
         roles     = out.get("roles", [])
-        if role_slug == "player":
+        if role_slug == "player" or (roles and roles[0].lower() == "player"):
             out["role"] = "player"
         elif roles:
             out["role"] = roles[0]
         else:
             out["role"] = role_slug or "staff"
 
-    # Staff don't have jersey
+    # ── Staff jersey ─────────────────────────────────────────────────
     if "jersey" not in out and not is_player:
         out["jersey"] = ""
 
-    # Stats
+    # ── Stats ────────────────────────────────────────────────────────
     stats = out.get("stats", {})
     if "matches_played" not in stats:
         stats["matches_played"] = stats.get("matches_attended", 0)
     out["stats"] = stats
 
-    # Deduplicate match entries by match_hash_id (player can appear in both
-    # home and away lineup for the same match in some data formats)
+    # ── Build age-group → team lookup for inference ──────────────────
+    # Used when old JSON has no team_name on match entries
+    all_teams = out.get("teams", []) or ([out["team_name"]] if out.get("team_name") else [])
+    import re as _re
+    age_to_team: Dict[str, str] = {}
+    for t in all_teams:
+        ag = _re.search(r'U\d{2}', t, _re.IGNORECASE)
+        if ag:
+            age_to_team[ag.group(0).upper()] = t
+
+    # ── Deduplicate match entries by match_hash_id ───────────────────
     raw_matches = out.get("matches", [])
-    seen_match_ids = set()
-    deduped = []
+    seen_ids: set = set()
+    deduped: list = []
     for m in raw_matches:
         mid = m.get("match_hash_id")
         if mid:
-            if mid not in seen_match_ids:
-                seen_match_ids.add(mid)
+            if mid not in seen_ids:
+                seen_ids.add(mid)
                 deduped.append(m)
         else:
             deduped.append(m)
     out["matches"] = deduped
 
-    # Flatten events into convenience fields on each match.
-    # Handles both "type" (matchcentre) and "event_type" (lineup) keys.
+    # ── Normalise each match entry ───────────────────────────────────
     for m in out["matches"]:
+        # Old format uses "opponent", new uses "opponent_team_name"
         if "opponent_team_name" not in m and m.get("opponent"):
             m["opponent_team_name"] = m["opponent"]
 
+        # Infer team_name from opponent age group when missing (old JSON)
+        if not m.get("team_name"):
+            opp = m.get("opponent_team_name", "")
+            ag  = _re.search(r'U\d{2}', opp, _re.IGNORECASE)
+            if ag:
+                inferred = age_to_team.get(ag.group(0).upper())
+                if inferred:
+                    m["team_name"] = inferred
+
+        # Flatten events into per-match convenience fields.
+        # Handles both "type" (matchcentre) and "event_type" (lineup) keys.
         events = m.get("events", [])
         if not events:
             continue
@@ -229,16 +253,16 @@ def _normalize_person(p: Dict, is_player: bool) -> Dict:
         def _etype(e):
             return (e.get("type") or e.get("event_type") or "").lower()
 
-        y_events = [e for e in events if _etype(e) == "yellow_card"]
-        r_events = [e for e in events if _etype(e) == "red_card"]
-        g_events = [e for e in events if _etype(e) == "goal"]
+        y_ev = [e for e in events if _etype(e) == "yellow_card"]
+        r_ev = [e for e in events if _etype(e) == "red_card"]
+        g_ev = [e for e in events if _etype(e) == "goal"]
 
-        if "yellow_cards"   not in m: m["yellow_cards"]   = len(y_events)
-        if "yellow_minutes" not in m: m["yellow_minutes"]  = [e.get("minute") for e in y_events if e.get("minute")]
-        if "red_cards"      not in m: m["red_cards"]       = len(r_events)
-        if "red_minutes"    not in m: m["red_minutes"]     = [e.get("minute") for e in r_events if e.get("minute")]
-        if "goals"          not in m: m["goals"]           = len(g_events)
-        if "goal_minutes"   not in m: m["goal_minutes"]    = [e.get("minute") for e in g_events if e.get("minute")]
+        if "yellow_cards"   not in m: m["yellow_cards"]   = len(y_ev)
+        if "yellow_minutes" not in m: m["yellow_minutes"]  = [e.get("minute") for e in y_ev if e.get("minute")]
+        if "red_cards"      not in m: m["red_cards"]       = len(r_ev)
+        if "red_minutes"    not in m: m["red_minutes"]     = [e.get("minute") for e in r_ev if e.get("minute")]
+        if "goals"          not in m: m["goals"]           = len(g_ev)
+        if "goal_minutes"   not in m: m["goal_minutes"]    = [e.get("minute") for e in g_ev if e.get("minute")]
 
     return out
 
@@ -2029,7 +2053,7 @@ def tool_players(query: str, detailed: bool = False) -> str:
         if len(exact_matches) == 1:
             p = exact_matches[0]
             stats   = p.get("stats", {})
-            matches = p.get("matches", [])   # already deduped by _normalize_person
+            matches = p.get("matches", [])   # deduped + team_name inferred by _normalize_person
 
             all_teams   = p.get("teams", []) or ([p.get("team_name")] if p.get("team_name") else [])
             all_leagues = p.get("leagues", []) or ([p.get("league_name")] if p.get("league_name") else [])
@@ -2037,30 +2061,19 @@ def tool_players(query: str, detailed: bool = False) -> str:
             is_dual_reg = len(all_teams) > 1
             pname       = f"{p.get('first_name')} {p.get('last_name')}"
 
-            # Does the JSON have team_name on match entries? (new dribl format)
-            has_team_in_matches = any(m.get("team_name") for m in matches)
-
             # ── Registration row per club ──────────────────────────────
             reg_rows = []
             for i, t in enumerate(all_teams):
                 jersey = jerseys_map.get(t) or p.get("jersey", "—")
                 league = all_leagues[i] if i < len(all_leagues) else p.get("league_name", "")
 
-                if has_team_in_matches:
-                    tm  = [m for m in matches if m.get("team_name") == t]
-                    mp  = len(tm)
-                    g   = sum(m.get("goals", 0) for m in tm)
-                    yc  = sum(m.get("yellow_cards", 0) for m in tm)
-                    rc  = sum(m.get("red_cards", 0) for m in tm)
-                else:
-                    # Old JSON without team_name on matches — show totals on first row
-                    if i == 0:
-                        mp = stats.get("matches_played", len(matches))
-                        g  = stats.get("goals", 0)
-                        yc = stats.get("yellow_cards", 0)
-                        rc = stats.get("red_cards", 0)
-                    else:
-                        mp, g, yc, rc = "—", "—", "—", "—"
+                # team_name is set on all match entries (new JSON) or inferred
+                # from opponent age group (_normalize_person), so we can always split
+                tm  = [m for m in matches if m.get("team_name") == t]
+                mp  = len(tm)
+                g   = sum(m.get("goals", 0) for m in tm)
+                yc  = sum(m.get("yellow_cards", 0) for m in tm)
+                rc  = sum(m.get("red_cards", 0) for m in tm)
 
                 reg_rows.append({
                     "Club":    t,
@@ -2090,14 +2103,9 @@ def tool_players(query: str, detailed: bool = False) -> str:
                     "🟨":       yellows,
                     "🟥":       reds,
                 }
-                # Show Club column for dual-reg players when data is available
                 if is_dual_reg and m.get("team_name"):
                     row["Club"] = m["team_name"]
                 match_rows.append(row)
-
-            note = ""
-            if is_dual_reg and not has_team_in_matches:
-                note = "Per-club split unavailable — re-run dribl_player_details.py to regenerate JSON"
 
             return {
                 "type":          "player_profile",
@@ -2114,7 +2122,7 @@ def tool_players(query: str, detailed: bool = False) -> str:
                 },
                 "matches":  match_rows,
                 "detailed": detailed,
-                "note":     note,
+                "note":     "",
             }
         else:
             # Multiple players found - return as table
