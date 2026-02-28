@@ -1,5 +1,5 @@
 import streamlit as st
-from fast_agent import FastQueryRouter, format_date, format_date_full, extract_league_from_league_name
+from fast_agent import FastQueryRouter, format_date, format_date_full
 import time
 import pandas as pd
 import json
@@ -316,8 +316,8 @@ def show_login_page():
                     st.session_state["player_role"] = saved_selection["role"]
                     st.session_state["role"] = saved_selection["role"]
                     st.session_state["last_activity"] = datetime.now()
-                    st.session_state["player_league"] = ""  # will be set by get_player_league_info below
-                    st.session_state["player_competition"] = ""  # will be set by get_player_league_info below
+                    st.session_state["player_league"] = selected_person.get("league", "")
+                    st.session_state["player_competition"] = selected_person.get("competition", "")
                     # Update USER_CONFIG in fast_agent
                     update_user_config(saved_selection["club"], saved_selection.get("age_group", ""))
                     # Look up league and competition from player data
@@ -601,48 +601,82 @@ def load_fixtures():
         st.error(f"Error loading fixtures: {str(e)}")
         return []
 
-def _load_json_normalised(filename: str, root_key: str = None):
-    """
-    Shared JSON loader used by all load_* helpers below.
-    root_key: normalise result to {root_key: [...]}.  Pass None for plain dicts.
-    """
-    path = os.path.join(DATA_DIR, filename)
-    empty = {root_key: []} if root_key else {}
+@st.cache_data(ttl=900)  # Auto-refresh every 5 minutes
+def load_players_summary():
+    """Load players_summary.json"""
+    path = os.path.join(DATA_DIR, "players_summary.json")
+    
     if not os.path.exists(path):
-        return empty
+        return {"players": []}
+    
     try:
         with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
-        if root_key is None:
-            return data if isinstance(data, dict) else {}
-        if isinstance(data, list):
-            return {root_key: data}
+        
         if isinstance(data, dict):
-            if root_key in data:
+            if "players" in data:
                 return data
-            for val in data.values():
-                if isinstance(val, list):
-                    return {root_key: val}
-        return empty
+            else:
+                for key, value in data.items():
+                    if isinstance(value, list):
+                        return {"players": value}
+                return {"players": []}
+        elif isinstance(data, list):
+            return {"players": data}
+        else:
+            return {"players": []}
     except Exception as e:
-        st.error(f"Error loading {filename}: {str(e)}")
-        return empty
+        st.error(f"Error loading players: {str(e)}")
+        return {"players": []}
 
 
-@st.cache_data(ttl=900)
-def load_players_summary():
-    return _load_json_normalised("players_summary.json", root_key="players")
-
-
-@st.cache_data(ttl=900)
+@st.cache_data(ttl=900)  # Auto-refresh every 5 minutes
 def load_staff_summary():
-    return _load_json_normalised("staff_summary.json", root_key="staff")
+    """Load staff_summary.json"""
+    path = os.path.join(DATA_DIR, "staff_summary.json")
+    
+    if not os.path.exists(path):
+        return {"staff": []}
+    
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        
+        if isinstance(data, dict):
+            if "staff" in data:
+                return data
+            else:
+                for key, value in data.items():
+                    if isinstance(value, list):
+                        return {"staff": value}
+                return {"staff": []}
+        elif isinstance(data, list):
+            return {"staff": data}
+        else:
+            return {"staff": []}
+    except Exception as e:
+        st.error(f"Error loading staff: {str(e)}")
+        return {"staff": []}
 
-
-@st.cache_data(ttl=900)
+@st.cache_data(ttl=900)  # Auto-refresh every 5 minutes
 def load_competition_overview():
-    return _load_json_normalised("competition_overview.json")
-
+    """Load competition_overview.json"""
+    path = os.path.join(DATA_DIR, "competition_overview.json")
+    
+    if not os.path.exists(path):
+        return {}
+    
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        
+        if isinstance(data, dict):
+            return data
+        else:
+            return {}
+    except Exception as e:
+        st.error(f"Error loading competition overview: {str(e)}")
+        return {}
 
 def force_reload_all_data():
     """Force reload of all data including fast_agent module data"""
@@ -673,51 +707,134 @@ def base_club_name(team_name: str) -> str:
     cleaned = re.sub(pattern, '', team_name).strip()
     return cleaned
 
-def extract_competition_short(league_name: str, include_age: bool = False) -> str:
+
+def get_player_reg_info(player: dict, current_club: str, current_comp: str) -> dict:
+    """Classify dual registrations relative to current club/competition."""
+    p_teams = player.get("teams", [])
+    if not p_teams and player.get("team_name"):
+        p_teams = [player["team_name"]]
+
+    current_age = ""
+    for t in p_teams:
+        if base_club_name(t) == current_club:
+            ag = re.search(r'U\d{2}', t, re.IGNORECASE)
+            if ag:
+                current_age = ag.group(0).upper()
+                break
+    if not current_age:
+        ag = re.search(r'U\d{2}', current_comp or "", re.IGNORECASE)
+        if ag:
+            current_age = ag.group(0).upper()
+
+    current_team = f"{current_club} {current_age}".strip()
+    other_teams  = [t for t in p_teams if t.strip() and t.strip() != current_team]
+
+    same_club_other_ages, diff_clubs = [], []
+    for t in other_teams:
+        b = base_club_name(t)
+        if b == current_club:
+            ag = re.search(r'U\d{2}', t, re.IGNORECASE)
+            if ag:
+                same_club_other_ages.append(ag.group(0).upper())
+        elif b:
+            diff_clubs.append(b)
+
+    badge_parts = []
+    if same_club_other_ages:
+        badge_parts.append("🔁 " + "/".join(same_club_other_ages))
+    if diff_clubs:
+        badge_parts.append("⚡ " + "/".join(c.split()[0] for c in diff_clubs))
+    badge = "  " + " · ".join(badge_parts) if badge_parts else ""
+
+    return {"age": current_age, "same_club_other_ages": same_club_other_ages,
+            "diff_clubs": diff_clubs, "badge": badge}
+
+
+def extract_competition_from_league_name(league_name: str) -> str:
     """
-    Single source of truth for extracting competition codes from full league names.
-    include_age=True  → "U16 YPL1"  (breadcrumb / display use)
-    include_age=False → "YPL1"      (filtering / grouping use)
+    Extract competition with age group from league name.
+    E.g., "U16 Boys Victorian Youth Premier League 1" → "U16 YPL1"
     """
     if not league_name:
-        return league_name if include_age else "Other"
-
+        return league_name
+    
     parts = league_name.split()
-    age = parts[0] if parts else ""
-    name_lower = league_name.lower()
-
-    if "ypl1" in name_lower or "ypl 1" in name_lower or "youth premier league 1" in name_lower:
-        code = "YPL1"
-    elif "ypl2" in name_lower or "ypl 2" in name_lower or "youth premier league 2" in name_lower:
-        code = "YPL2"
-    elif "ysl" in name_lower and ("north-west" in name_lower or " nw" in name_lower or "north west" in name_lower):
-        code = "YSL NW"
-    elif "ysl" in name_lower and ("south-east" in name_lower or " se" in name_lower or "south east" in name_lower):
-        code = "YSL SE"
-    elif "vpl men" in name_lower:
-        code = "VPL Men"
-    elif "vpl women" in name_lower:
-        code = "VPL Women"
-    elif "ysl" in name_lower:
-        code = "YSL"
-    elif "vpl" in name_lower:
-        code = "VPL"
-    else:
-        return league_name if include_age else "Other"
-
-    return f"{age} {code}" if include_age else code
-
-
-# Backwards-compatible aliases
-def extract_competition_from_league_name(league_name: str) -> str:
-    """Returns e.g. 'U16 YPL1' — used in competition breadcrumbs."""
-    return extract_competition_short(league_name, include_age=True)
-
+    if len(parts) < 2:
+        return league_name
+    
+    # First part is usually the age group (U13, U14, U15, U16, U18)
+    age = parts[0]
+    
+    # Determine which league it belongs to
+    if "YPL1" in league_name or "Youth Premier League 1" in league_name:
+        return f"{age} YPL1"
+    if "YPL2" in league_name or "Youth Premier League 2" in league_name:
+        return f"{age} YPL2"
+    if "YSL" in league_name and ("North-West" in league_name or "NW" in league_name):
+        return f"{age} YSL NW"
+    if "YSL" in league_name and ("South-East" in league_name or "SE" in league_name):
+        return f"{age} YSL SE"
+    if "VPL Men" in league_name:
+        return f"{age} VPL Men"
+    if "VPL Women" in league_name:
+        return f"{age} VPL Women"
+    if "YSL" in league_name:
+        return f"{age} YSL"
+    
+    # Fallback: return original
+    return league_name
+    
 def extract_competition_from_league(league_name: str) -> str:
-    """Returns e.g. 'YPL1' — used for filtering by competition code."""
-    return extract_competition_short(league_name, include_age=False)
+    """Extract competition code from full league name"""
+    if not league_name:
+        return ""
+    
+    league_lower = league_name.lower()
+    
+    # Check for each competition type
+    if "ypl1" in league_lower or "ypl 1" in league_lower:
+        return "YPL1"
+    elif "ypl2" in league_lower or "ypl 2" in league_lower:
+        return "YPL2"
+    elif "ysl" in league_lower and ("north-west" in league_lower or "nw" in league_lower or "north west" in league_lower):
+        return "YSL NW"
+    elif "ysl" in league_lower and ("south-east" in league_lower or "se" in league_lower or "south east" in league_lower):
+        return "YSL SE"
+    elif "vpl men" in league_lower:
+        return "VPL Men"
+    elif "vpl women" in league_lower:
+        return "VPL Women"
+    elif "ysl" in league_lower:
+        return "YSL"
+    elif "vpl" in league_lower:
+        return "VPL"
+    
+    # If no match, return original
+    return league_name
 
-# extract_league_from_league_name is imported from fast_agent (identical logic, no duplication)
+def extract_league_from_league_name(league_name: str) -> str:
+    """Extract league from league name (YPL1, YPL2, YSL NW, etc.)"""
+    if not league_name:
+        return "Other"
+    
+    league_name_lower = str(league_name).lower()
+    
+    if "ypl1" in league_name_lower or "ypl 1" in league_name_lower:
+        return "YPL1"
+    if "ypl2" in league_name_lower or "ypl 2" in league_name_lower:
+        return "YPL2"
+    if "ysl" in league_name_lower and ("north-west" in league_name_lower or "nw" in league_name_lower or "north west" in league_name_lower):
+        return "YSL NW"
+    if "ysl" in league_name_lower and ("south-east" in league_name_lower or "se" in league_name_lower or "south east" in league_name_lower):
+        return "YSL SE"
+    if "vpl men" in league_name_lower:
+        return "VPL Men"
+    if "vpl women" in league_name_lower:
+        return "VPL Women"
+    if "ysl" in league_name_lower:
+        return "YSL"
+    
+    return "Other"
 
 def get_all_leagues(results, fixtures):
     leagues = set()
@@ -828,11 +945,9 @@ def get_players_for_club(players_data, club_name, competition=None, staff_data=N
         if not out.get("league_name") and out.get("leagues"):
             out["league_name"] = out["leagues"][0] if out["leagues"] else ""
         if not out.get("role"):
-            if is_staff:
-                roles = out.get("roles", [])
-                out["role"] = (roles[0] if roles else "staff")
-            else:
-                out["role"] = "player"
+            roles     = out.get("roles", [])
+            role_slug = out.get("role_slug", "")
+            out["role"] = (roles[0] if roles else (role_slug or "staff")) if is_staff else "player"
         if is_staff and "jersey" not in out:
             out["jersey"] = ""
         return out
@@ -1130,10 +1245,7 @@ def is_natural_language_query(query):
         "ypl1", "ypl2", "ysl", "missing score", "no score", "overdue",
         "coach", "coaches", "staff", "manager", "managers",
         # ✅ NEW: Today's matches keywords
-        "today", "todays", "result",  # Catches "todays results", "results today", "today's results"
-        # Dual registration / multi-team
-        "dual", "2 teams", "two teams", "2 clubs", "two clubs",
-        "dual reg", "playing for 2", "playing in 2", "multiple teams"
+        "today", "todays", "result"  # Catches "todays results", "results today", "today's results"
     ]
     return any(keyword in query.lower() for keyword in keywords)
 
@@ -1629,7 +1741,41 @@ def main_app():
 
             st.markdown("---")
             if isinstance(answer, dict):
-                if answer.get("type") == "table":
+                if answer.get("type") == "player_profile":
+                    pname    = answer.get("name", "")
+                    is_dual  = answer.get("is_dual", False)
+                    reg_rows = answer.get("registrations", [])
+                    s_stats  = answer.get("season_stats", {})
+                    m_rows   = answer.get("matches", [])
+                    detailed = answer.get("detailed", False)
+                    note     = answer.get("note", "")
+
+                    st.markdown(f"### 👤 {pname}")
+                    if is_dual:
+                        st.caption("🔄 Dual Registration")
+
+                    if reg_rows:
+                        df_reg = pd.DataFrame(reg_rows)
+                        st.dataframe(df_reg, hide_index=True, use_container_width=True,
+                                     height=(len(reg_rows) + 1) * 35 + 10)
+
+                    st.markdown("**📊 Season Totals**")
+                    df_stats = pd.DataFrame([s_stats])
+                    st.dataframe(df_stats, hide_index=True, use_container_width=True, height=70)
+
+                    if m_rows:
+                        label = "📅 Match-by-Match" if detailed else f"📅 Recent Matches (last {len(m_rows)})"
+                        st.markdown(f"**{label}**")
+                        df_m = pd.DataFrame(m_rows)
+                        h = min(600, (len(m_rows) + 1) * 35 + 10)
+                        st.dataframe(df_m, hide_index=True, use_container_width=True, height=h)
+                        if not detailed:
+                            st.caption(f"💡 Say 'details for {pname}' for full match-by-match breakdown")
+
+                    if note:
+                        st.caption(f"ℹ️ {note}")
+
+                elif answer.get("type") == "table":
                     title = answer.get('title', "Results")
                     st.info(title) 
                     
@@ -2023,33 +2169,33 @@ def main_app():
                 # PLAYERS TABLE
                 if players:
                     st.markdown("**Players**")
+                    if any(len(p.get("teams", [])) > 1 for p in players):
+                        st.caption("🔁 = also plays another age group at this club · ⚡ = also registered at a different club")
                     rows = []
                     for p in players:
-                        full_name = f"{p.get('first_name','')} {p.get('last_name','')}"
-                        
-                        # ✅ NEW: Check if match selected for match-specific stats
+                        full_name   = f"{p.get('first_name','')} {p.get('last_name','')}"
+                        reg         = get_player_reg_info(p, club, comp)
+                        player_age  = reg["age"]
+                        dual_badge  = reg["badge"]
+                        jerseys_map = p.get("jerseys", {})
+                        jersey      = jerseys_map.get(
+                            next((t for t in p.get("teams", []) if base_club_name(t) == club), ""),
+                            p.get("jersey", "")
+                        )
+
                         if selected_match_id:
-                            # Get match-specific data
                             match_data = get_player_match_stats(p, selected_match_id)
-                            
                             if match_data:
-                                # Add captain/goalie indicators to name
                                 indicators = []
-                                if match_data.get("captain"):
-                                    indicators.append("(C)")
-                                if match_data.get("goalie"):
-                                    indicators.append("🥅")
-                                
+                                if match_data.get("captain"): indicators.append("(C)")
+                                if match_data.get("goalie"):  indicators.append("🥅")
                                 if indicators:
                                     full_name = f"{full_name} {' '.join(indicators)}"
-                                
-                                # Count events in this match for goals/cards
                                 events = match_data.get("events", [])
-                                goals_in_match   = sum(1 for e in events if e.get("type") == "goal")
-                                yellows_in_match = sum(1 for e in events if e.get("type") == "yellow_card")
-                                reds_in_match    = sum(1 for e in events if e.get("type") == "red_card")
-
-                                # Captain indicator — check match record and stats
+                                def _etype(e): return (e.get("type") or e.get("event_type") or "").lower()
+                                goals_m   = sum(1 for e in events if _etype(e) == "goal")
+                                yellows_m = sum(1 for e in events if _etype(e) == "yellow_card")
+                                reds_m    = sum(1 for e in events if _etype(e) == "red_card")
                                 is_captain = (
                                     match_data.get("captain") or
                                     match_data.get("role_in_match", "").lower() == "captain" or
@@ -2057,22 +2203,15 @@ def main_app():
                                 )
                                 if is_captain and "(C)" not in full_name:
                                     full_name = f"{full_name} (C)"
-
                                 rows.append({
-                                    "Select": False,
-                                    "Player": full_name,
-                                    "#": p.get("jersey", ""),
-                                    "M": 1,
-                                    "G": goals_in_match,
-                                    "🟨": yellows_in_match,
-                                    "🟥": reds_in_match,
+                                    "Select": False, "Age": player_age,
+                                    "Player": f"{full_name}{dual_badge}", "#": jersey,
+                                    "M": 1, "G": goals_m, "🟨": yellows_m, "🟥": reds_m,
                                 })
                         else:
-                            # No match selected - use season totals
                             rows.append({
-                                "Select": False,
-                                "Player": full_name,
-                                "#": p.get("jersey", ""),
+                                "Select": False, "Age": player_age,
+                                "Player": f"{full_name}{dual_badge}", "#": jersey,
                                 "M": p.get("stats", {}).get("matches_played", 0),
                                 "G": p.get("stats", {}).get("goals", 0),
                                 "🟨": p.get("stats", {}).get("yellow_cards", 0),
@@ -2081,23 +2220,20 @@ def main_app():
 
                     df_players = pd.DataFrame(rows)
                     df_players["Select"] = df_players["Select"].astype(bool)
-
                     edited_players = st.data_editor(
-                        df_players,
-                        hide_index=True,
+                        df_players, hide_index=True,
                         column_config={
                             "Select": st.column_config.CheckboxColumn("", help="View details", default=False),
+                            "Age":    st.column_config.TextColumn("Age", width="small"),
                             "Player": st.column_config.TextColumn("Player", width="medium"),
-                            "#": st.column_config.TextColumn("#", width="small"),
-                            "M": st.column_config.NumberColumn("M", width="small", help="Matches"),
-                            "G": st.column_config.NumberColumn("G", width="small", help="Goals"),
-                            "🟨": st.column_config.NumberColumn("🟨", width="small"),
-                            "🟥": st.column_config.NumberColumn("🟥", width="small")
+                            "#":      st.column_config.TextColumn("#", width="small"),
+                            "M":      st.column_config.NumberColumn("M", width="small", help="Matches"),
+                            "G":      st.column_config.NumberColumn("G", width="small", help="Goals"),
+                            "🟨":     st.column_config.NumberColumn("🟨", width="small"),
+                            "🟥":     st.column_config.NumberColumn("🟥", width="small"),
                         },
-                        disabled=["Player", "#", "M", "G", "🟨", "🟥"],
-                        use_container_width=False,
-                        height=730,
-                        key="players_editor"
+                        disabled=["Age", "Player", "#", "M", "G", "🟨", "🟥"],
+                        use_container_width=False, height=730, key="players_editor"
                     )
 
                     selected_player_rows = edited_players[edited_players["Select"] == True]
@@ -2162,13 +2298,27 @@ def main_app():
                     st.markdown("---")
                     col_ph, col_px = st.columns([6, 1])
                     with col_ph:
-                        stats = selected_player.get("stats", {})
+                        stats       = selected_player.get("stats", {})
+                        detail_reg  = get_player_reg_info(selected_player, club, comp)
+                        age_label   = f"  ·  🎂 {detail_reg['age']}" if detail_reg["age"] else ""
+                        dual_parts  = []
+                        if detail_reg["same_club_other_ages"]:
+                            dual_parts.append(f"🔁 Also plays {' & '.join(detail_reg['same_club_other_ages'])} at {club}")
+                        if detail_reg["diff_clubs"]:
+                            dual_parts.append(f"⚡ Also at {', '.join(detail_reg['diff_clubs'])}")
+                        dual_label  = "  ·  " + "  ·  ".join(dual_parts) if dual_parts else ""
+                        jerseys_map = selected_player.get("jerseys", {})
+                        jersey      = jerseys_map.get(
+                            next((t for t in selected_player.get("teams", []) if base_club_name(t) == club), ""),
+                            selected_player.get("jersey", "—")
+                        )
                         st.markdown(f"### 👤 {pname}")
                         st.caption(
-                            f"Jersey #{selected_player.get('jersey','—')}  |  "
+                            f"Jersey #{jersey}{age_label}  |  "
                             f"⚽ {stats.get('goals', 0)} goals  |  "
                             f"🎮 {stats.get('matches_played', 0)} matches  |  "
                             f"🟨 {stats.get('yellow_cards', 0)}  🟥 {stats.get('red_cards', 0)}"
+                            f"{dual_label}"
                         )
                     with col_px:
                         if st.button("✖ Close", key="close_player_detail"):
@@ -2177,38 +2327,38 @@ def main_app():
 
                     player_matches = selected_player.get("matches", [])
                     if player_matches:
+                        is_dual = len(selected_player.get("teams", [])) > 1
                         match_rows = []
                         for m in player_matches:
-                            opponent = base_club_name(
-                                m.get("opponent_team_name") or m.get("opponent") or "—"
-                            )
-                            events = m.get("events", [])
-                            goals = sum(1 for e in events if e.get("type") == "goal")
-                            yellows = sum(1 for e in events if e.get("type") == "yellow_card")
-                            reds = sum(1 for e in events if e.get("type") == "red_card")
-                            started = "✅" if m.get("started") else "🪑"
-                            match_rows.append({
-                                "Date": format_date(m.get("date", "")),
-                                "Started": started,
+                            opponent = base_club_name(m.get("opponent_team_name") or m.get("opponent") or "—")
+                            events   = m.get("events", [])
+                            def _etype(e): return (e.get("type") or e.get("event_type") or "").lower()
+                            goals    = m.get("goals",       sum(1 for e in events if _etype(e) == "goal"))
+                            yellows  = m.get("yellow_cards", sum(1 for e in events if _etype(e) == "yellow_card"))
+                            reds     = m.get("red_cards",    sum(1 for e in events if _etype(e) == "red_card"))
+                            row = {
+                                "Date":     format_date(m.get("date", "")),
+                                "Started":  "✅" if m.get("started") else "🪑",
                                 "Opponent": opponent,
-                                "G": goals,
-                                "🟨": yellows,
-                                "🟥": reds,
-                            })
-                        df_player = pd.DataFrame(match_rows)
-                        st.dataframe(
-                            df_player,
-                            hide_index=True,
-                            use_container_width=False,
-                            column_config={
-                                "Date": st.column_config.TextColumn("Date", width="small"),
-                                "Started": st.column_config.TextColumn("", width="small"),
-                                "Opponent": st.column_config.TextColumn("Opponent", width="medium"),
-                                "G": st.column_config.NumberColumn("G", width="small"),
-                                "🟨": st.column_config.NumberColumn("🟨", width="small"),
-                                "🟥": st.column_config.NumberColumn("🟥", width="small"),
+                                "G": goals, "🟨": yellows, "🟥": reds,
                             }
-                        )
+                            if is_dual and m.get("team_name"):
+                                row["Club"] = base_club_name(m["team_name"])
+                            match_rows.append(row)
+                        df_player = pd.DataFrame(match_rows)
+                        col_cfg = {
+                            "Date":     st.column_config.TextColumn("Date", width="small"),
+                            "Started":  st.column_config.TextColumn("", width="small"),
+                            "Opponent": st.column_config.TextColumn("Opponent", width="medium"),
+                            "G":        st.column_config.NumberColumn("G", width="small"),
+                            "🟨":       st.column_config.NumberColumn("🟨", width="small"),
+                            "🟥":       st.column_config.NumberColumn("🟥", width="small"),
+                        }
+                        if is_dual:
+                            col_cfg["Club"] = st.column_config.TextColumn("Club", width="medium")
+                        h = min(600, (len(match_rows) + 1) * 35 + 10)
+                        st.dataframe(df_player, hide_index=True, use_container_width=False,
+                                     column_config=col_cfg, height=h)
                     else:
                         st.info("No match history found.")
 
@@ -2312,12 +2462,15 @@ def main():
         
 if __name__ == "__main__":
     main()
-# Last auto-update: 2026-02-27 16:00:22 AEDT
-# Last auto-update: 2026-02-27 20:00:21 AEDT
-# Last auto-update: 2026-02-28 00:00:21 AEDT
-# Last auto-update: 2026-02-28 04:00:21 AEDT
-# Last auto-update: 2026-02-28 08:00:21 AEDT
-# Last auto-update: 2026-02-28 12:00:20 AEDT
-# Last auto-update: 2026-02-28 16:00:33 AEDT
-# Last auto-update: 2026-02-28 20:00:30 AEDT
-# Last auto-update: 2026-03-01 00:00:33 AEDT
+# Last auto-update: 2026-02-19 18:46:53 AEDT
+# Last auto-update: 2026-02-19 19:29:21 AEDT
+# Last auto-update: 2026-02-19 19:37:42 AEDT
+# Last auto-update: 2026-02-19 20:00:16 AEDT
+# Last auto-update: 2026-02-20 00:00:17 AEDT
+# Last auto-update: 2026-02-20 04:00:18 AEDT
+# Last auto-update: 2026-02-20 08:00:17 AEDT
+# Last auto-update: 2026-02-27 13:29:39 AEDT
+# Last auto-update: 2026-02-27 13:31:56 AEDT
+# Last auto-update: 2026-02-27 13:40:35 AEDT
+# Last auto-update: 2026-02-27 13:47:18 AEDT
+# Last auto-update: 2026-02-27 14:07:14 AEDT
