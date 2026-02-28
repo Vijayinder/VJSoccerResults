@@ -166,51 +166,80 @@ competition_overview = load_json("competition_overview.json")
 
 def _normalize_person(p: Dict, is_player: bool) -> Dict:
     """
-    Normalize person record (player or staff) to common format for tools.
-    Handles both legacy (team_name, league_name) and new (teams[], leagues[]) formats.
-    For staff matches: converts opponent->opponent_team_name, events->yellow_cards/yellow_minutes.
+    Normalize person record to common format for tools.
+    Handles dribl_player_details.py output (teams[], leagues[], jerseys{}, plain role string)
+    and legacy build_player_summary.py format (role_slug, roles[]).
     """
     out = dict(p)
-    # Normalize team/league from arrays if needed
+
+    # Team / league: prefer arrays, fall back to scalars
     if not out.get("team_name") and out.get("teams"):
         out["team_name"] = out["teams"][0] if out["teams"] else ""
     if not out.get("league_name") and out.get("leagues"):
         out["league_name"] = out["leagues"][0] if out["leagues"] else ""
     if not out.get("competition_name") and out.get("league_name"):
         out["competition_name"] = out["league_name"]
-    # Normalize role
+
+    # Role: dribl stores plain string; legacy used role_slug + roles[]
     if not out.get("role"):
         role_slug = out.get("role_slug", "player")
-        roles = out.get("roles", [])
-        out["role"] = roles[0].lower() if roles and role_slug == "staff" else ("player" if role_slug == "player" else (roles[0] if roles else "staff"))
+        roles     = out.get("roles", [])
+        if role_slug == "player":
+            out["role"] = "player"
+        elif roles:
+            out["role"] = roles[0]
+        else:
+            out["role"] = role_slug or "staff"
+
     # Staff don't have jersey
     if "jersey" not in out and not is_player:
         out["jersey"] = ""
-    # Ensure stats structure
+
+    # Stats
     stats = out.get("stats", {})
-    if is_player and "matches_played" not in stats:
+    if "matches_played" not in stats:
         stats["matches_played"] = stats.get("matches_attended", 0)
-    if not is_player:
-        stats.setdefault("matches_played", stats.get("matches_attended", 0))
     out["stats"] = stats
-    # Normalize matches for staff (opponent, events -> opponent_team_name, yellow_cards, etc.)
-    matches = out.get("matches", [])
-    for m in matches:
+
+    # Deduplicate match entries by match_hash_id (player can appear in both
+    # home and away lineup for the same match in some data formats)
+    raw_matches = out.get("matches", [])
+    seen_match_ids = set()
+    deduped = []
+    for m in raw_matches:
+        mid = m.get("match_hash_id")
+        if mid:
+            if mid not in seen_match_ids:
+                seen_match_ids.add(mid)
+                deduped.append(m)
+        else:
+            deduped.append(m)
+    out["matches"] = deduped
+
+    # Flatten events into convenience fields on each match.
+    # Handles both "type" (matchcentre) and "event_type" (lineup) keys.
+    for m in out["matches"]:
         if "opponent_team_name" not in m and m.get("opponent"):
             m["opponent_team_name"] = m["opponent"]
-        # Staff: aggregate card events into yellow_cards, yellow_minutes, red_cards, red_minutes
+
         events = m.get("events", [])
-        if events:
-            y_mins = [e.get("minute") for e in events if (e.get("type") or "").lower() == "yellow_card" and e.get("minute")]
-            r_mins = [e.get("minute") for e in events if (e.get("type") or "").lower() == "red_card" and e.get("minute")]
-            if "yellow_cards" not in m:
-                m["yellow_cards"] = len([e for e in events if (e.get("type") or "").lower() == "yellow_card"])
-            if "yellow_minutes" not in m:
-                m["yellow_minutes"] = y_mins
-            if "red_cards" not in m:
-                m["red_cards"] = len([e for e in events if (e.get("type") or "").lower() == "red_card"])
-            if "red_minutes" not in m:
-                m["red_minutes"] = r_mins
+        if not events:
+            continue
+
+        def _etype(e):
+            return (e.get("type") or e.get("event_type") or "").lower()
+
+        y_events = [e for e in events if _etype(e) == "yellow_card"]
+        r_events = [e for e in events if _etype(e) == "red_card"]
+        g_events = [e for e in events if _etype(e) == "goal"]
+
+        if "yellow_cards"   not in m: m["yellow_cards"]   = len(y_events)
+        if "yellow_minutes" not in m: m["yellow_minutes"]  = [e.get("minute") for e in y_events if e.get("minute")]
+        if "red_cards"      not in m: m["red_cards"]       = len(r_events)
+        if "red_minutes"    not in m: m["red_minutes"]     = [e.get("minute") for e in r_events if e.get("minute")]
+        if "goals"          not in m: m["goals"]           = len(g_events)
+        if "goal_minutes"   not in m: m["goal_minutes"]    = [e.get("minute") for e in g_events if e.get("minute")]
+
     return out
 
 
@@ -1999,90 +2028,94 @@ def tool_players(query: str, detailed: bool = False) -> str:
     if exact_matches:
         if len(exact_matches) == 1:
             p = exact_matches[0]
-            stats = p.get("stats", {})
-            matches = p.get("matches", [])
-            
-            lines = [
-                f"👤 **{p.get('first_name')} {p.get('last_name')}**",
-                f"   Jersey: #{p.get('jersey')}",
-                f"   Club: {p.get('team_name')}",
-                f"   League: {p.get('league_name')}",
-                f"   Competition: {p.get('competition_name')}\n",
-                f"📊 **Season Statistics:**",
-                f"   ⚽ Goals: {stats.get('goals', 0)}",
-                f"   🎮 Matches Played: {stats.get('matches_played', 0)}",
-                f"   🟢 Matches Started: {stats.get('matches_started', 0)}",
-                f"   🪑 Bench Appearances: {stats.get('bench_appearances', 0)}",
-                f"   🟨 Yellow Cards: {stats.get('yellow_cards', 0)}",
-                f"   🟥 Red Cards: {stats.get('red_cards', 0)}",
-            ]
-            
-            if stats.get('matches_played', 0) > 0:
-                avg = stats.get('goals', 0) / stats.get('matches_played', 0)
-                lines.append(f"   📈 Goals per Match: {avg:.2f}")
-            
-            if detailed and matches:
-                lines.append(f"\n📅 **Match-by-Match Details:** ({len(matches)} matches)\n")
-                
-                for i, m in enumerate(matches, 1):
-                    venue = "🏠 Home" if m.get('home_or_away') == 'home' else "✈️ Away"
-                    date_str = format_date(m.get('date', ''))
-                    opponent = m.get('opponent_team_name')
-                    started = "Started" if m.get('started') else "Bench"
-                    
-                    performance = []
-                    if m.get('goals', 0) > 0:
-                        goal_mins = format_minutes(m.get('goal_minutes', []))
-                        goal_str = f"⚽ {m.get('goals')} goal(s)"
-                        if goal_mins:
-                            goal_str += f" ({goal_mins})"
-                        performance.append(goal_str)
-                    if m.get('yellow_cards', 0) > 0:
-                        yellow_mins = format_minutes(m.get('yellow_minutes', []))
-                        yellow_str = "🟨 Yellow"
-                        if yellow_mins:
-                            yellow_str += f" ({yellow_mins})"
-                        performance.append(yellow_str)
-                    if m.get('red_cards', 0) > 0:
-                        red_mins = format_minutes(m.get('red_minutes', []))
-                        red_str = "🟥 Red"
-                        if red_mins:
-                            red_str += f" ({red_mins})"
-                        performance.append(red_str)
-                    if not performance:
-                        performance.append("No goals/cards")
-                    
-                    lines.append(
-                        f"**Match {i}:** {date_str}\n"
-                        f"   {venue} vs {opponent}\n"
-                        f"   Status: {started}\n"
-                        f"   Performance: {', '.join(performance)}\n"
-                    )
-            elif matches and not detailed:
-                lines.append(f"\n📅 **Recent Matches:** (showing last 5)")
-                for m in matches[:5]:
-                    venue = "🏠" if m.get('home_or_away') == 'home' else "✈️"
-                    date_str = format_date(m.get('date', ''))
-                    
-                    # Build performance string with times
-                    perf_parts = []
-                    if m.get('goals', 0) > 0:
-                        goal_mins = format_minutes(m.get('goal_minutes', []))
-                        perf_parts.append(f"⚽×{m.get('goals')}" + (f"({goal_mins})" if goal_mins else ""))
-                    if m.get('yellow_cards', 0) > 0:
-                        perf_parts.append("🟨")
-                    if m.get('red_cards', 0) > 0:
-                        perf_parts.append("🟥")
-                    
-                    perf_str = " ".join(perf_parts) if perf_parts else ""
-                    
-                    lines.append(
-                        f"   {venue} vs {m.get('opponent_team_name')} - {date_str} {perf_str}"
-                    )
-                
-                lines.append(f"\n💡 Use 'details for {p.get('first_name')} {p.get('last_name')}' for match-by-match breakdown")
-            
-            return "\n".join(lines)
+            stats   = p.get("stats", {})
+            matches = p.get("matches", [])   # already deduped by _normalize_person
+
+            all_teams   = p.get("teams", []) or ([p.get("team_name")] if p.get("team_name") else [])
+            all_leagues = p.get("leagues", []) or ([p.get("league_name")] if p.get("league_name") else [])
+            jerseys_map = p.get("jerseys", {})
+            is_dual_reg = len(all_teams) > 1
+            pname       = f"{p.get('first_name')} {p.get('last_name')}"
+
+            # Does the JSON have team_name on match entries? (new dribl format)
+            has_team_in_matches = any(m.get("team_name") for m in matches)
+
+            # ── Registration row per club ──────────────────────────────
+            reg_rows = []
+            for i, t in enumerate(all_teams):
+                jersey = jerseys_map.get(t) or p.get("jersey", "—")
+                league = all_leagues[i] if i < len(all_leagues) else p.get("league_name", "")
+
+                if has_team_in_matches:
+                    tm  = [m for m in matches if m.get("team_name") == t]
+                    mp  = len(tm)
+                    g   = sum(m.get("goals", 0) for m in tm)
+                    yc  = sum(m.get("yellow_cards", 0) for m in tm)
+                    rc  = sum(m.get("red_cards", 0) for m in tm)
+                else:
+                    # Old JSON without team_name on matches — show totals on first row
+                    if i == 0:
+                        mp = stats.get("matches_played", len(matches))
+                        g  = stats.get("goals", 0)
+                        yc = stats.get("yellow_cards", 0)
+                        rc = stats.get("red_cards", 0)
+                    else:
+                        mp, g, yc, rc = "—", "—", "—", "—"
+
+                reg_rows.append({
+                    "Club":    t,
+                    "League":  league,
+                    "Jersey":  f"#{jersey}",
+                    "Matches": mp,
+                    "⚽":      g,
+                    "🟨":      yc,
+                    "🟥":      rc,
+                })
+
+            # ── Match history rows ─────────────────────────────────────
+            display_matches = matches if detailed else matches[:5]
+            match_rows = []
+            for m in display_matches:
+                events  = m.get("events", [])
+                def _etype(e): return (e.get("type") or e.get("event_type") or "").lower()
+                goals   = m.get("goals",       sum(1 for e in events if _etype(e) == "goal"))
+                yellows = m.get("yellow_cards", sum(1 for e in events if _etype(e) == "yellow_card"))
+                reds    = m.get("red_cards",    sum(1 for e in events if _etype(e) == "red_card"))
+                row = {
+                    "Date":     format_date(m.get("date", "")),
+                    "H/A":      "🏠" if m.get("home_or_away") == "home" else "✈️",
+                    "Opponent": m.get("opponent_team_name", "—"),
+                    "Started":  "✅" if m.get("started") else "🪑",
+                    "⚽":       goals,
+                    "🟨":       yellows,
+                    "🟥":       reds,
+                }
+                # Show Club column for dual-reg players when data is available
+                if is_dual_reg and m.get("team_name"):
+                    row["Club"] = m["team_name"]
+                match_rows.append(row)
+
+            note = ""
+            if is_dual_reg and not has_team_in_matches:
+                note = "Per-club split unavailable — re-run dribl_player_details.py to regenerate JSON"
+
+            return {
+                "type":          "player_profile",
+                "name":          pname,
+                "is_dual":       is_dual_reg,
+                "registrations": reg_rows,
+                "season_stats": {
+                    "Played":   stats.get("matches_played", 0),
+                    "Started":  stats.get("matches_started", 0),
+                    "Bench":    stats.get("bench_appearances", 0),
+                    "⚽ Goals": stats.get("goals", 0),
+                    "🟨":       stats.get("yellow_cards", 0),
+                    "🟥":       stats.get("red_cards", 0),
+                },
+                "matches":  match_rows,
+                "detailed": detailed,
+                "note":     note,
+            }
         else:
             # Multiple players found - return as table
             data = []
