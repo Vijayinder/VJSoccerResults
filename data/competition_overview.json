@@ -2819,20 +2819,20 @@
             "points": 6
           },
           "U13": {
-            "position": 3,
-            "played": 2,
-            "wins": 1,
+            "position": 1,
+            "played": 3,
+            "wins": 2,
             "draws": 1,
             "losses": 0,
-            "gf": 6,
-            "ga": 2,
-            "gd": 4,
-            "points": 4
+            "gf": 8,
+            "ga": 3,
+            "gd": 5,
+            "points": 7
           }
         },
-        "total_position_points": 13,
-        "total_gf": 34,
-        "total_ga": 5,
+        "total_position_points": 11,
+        "total_gf": 36,
+        "total_ga": 6,
         "age_group_count": 5,
         "overall_rank": 1
       },
@@ -2885,19 +2885,19 @@
           },
           "U13": {
             "position": 5,
-            "played": 2,
+            "played": 3,
             "wins": 1,
             "draws": 0,
-            "losses": 1,
-            "gf": 6,
-            "ga": 5,
-            "gd": 1,
+            "losses": 2,
+            "gf": 7,
+            "ga": 7,
+            "gd": 0,
             "points": 3
           }
         },
         "total_position_points": 13,
-        "total_gf": 34,
-        "total_ga": 15,
+        "total_gf": 35,
+        "total_ga": 17,
         "age_group_count": 5,
         "overall_rank": 2
       },
@@ -3014,7 +3014,7 @@
             "points": 1
           },
           "U13": {
-            "position": 1,
+            "position": 2,
             "played": 2,
             "wins": 2,
             "draws": 0,
@@ -3025,7 +3025,7 @@
             "points": 6
           }
         },
-        "total_position_points": 23,
+        "total_position_points": 24,
         "total_gf": 18,
         "total_ga": 12,
         "age_group_count": 5,
@@ -3079,7 +3079,7 @@
             "points": 1
           },
           "U13": {
-            "position": 2,
+            "position": 3,
             "played": 2,
             "wins": 2,
             "draws": 0,
@@ -3090,7 +3090,7 @@
             "points": 6
           }
         },
-        "total_position_points": 25,
+        "total_position_points": 26,
         "total_gf": 22,
         "total_ga": 22,
         "age_group_count": 5,
@@ -3412,5 +3412,5 @@
       }
     ]
   },
-  "_last_updated": "2026-03-01T09:00:32.311839"
+  "_last_updated": "2026-03-01T10:00:29.726944"
 }

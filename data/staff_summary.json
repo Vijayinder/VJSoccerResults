@@ -46281,7 +46281,7 @@
           "red_cards": 0
         },
         "Port Melbourne SC U13": {
-          "matches_played": 2,
+          "matches_played": 3,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -46298,7 +46298,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -46391,6 +46391,15 @@
           "league_name": "U18 YSL Boys - South-East",
           "role_in_match": "Manager",
           "opponent_team_name": "Ashburton United SC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "emAnePrzgN",
+          "date": "2026-02-28T21:30:00.000000Z",
+          "team_name": "Port Melbourne SC U13",
+          "league_name": "U13 YSL Boys - South-East",
+          "role_in_match": "Manager",
+          "opponent_team_name": "Monash City Villarreal FC U13",
           "events": []
         }
       ]
@@ -46451,7 +46460,7 @@
           "red_cards": 0
         },
         "Port Melbourne SC U13": {
-          "matches_played": 4,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -46468,7 +46477,7 @@
         }
       },
       "stats": {
-        "matches_attended": 14,
+        "matches_attended": 16,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -46597,6 +46606,24 @@
           "league_name": "U18 YSL Boys - South-East",
           "role_in_match": "Teamstaff",
           "opponent_team_name": "Ashburton United SC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "emAnePrzgN",
+          "date": "2026-02-28T21:30:00.000000Z",
+          "team_name": "Port Melbourne SC U13",
+          "league_name": "U13 YSL Boys - South-East",
+          "role_in_match": "Coach",
+          "opponent_team_name": "Monash City Villarreal FC U13",
+          "events": []
+        },
+        {
+          "match_hash_id": "emAnePrzgN",
+          "date": "2026-02-28T21:30:00.000000Z",
+          "team_name": "Port Melbourne SC U13",
+          "league_name": "U13 YSL Boys - South-East",
+          "role_in_match": "Teamstaff",
+          "opponent_team_name": "Monash City Villarreal FC U13",
           "events": []
         }
       ]
@@ -52148,7 +52175,7 @@
       },
       "team_stats": {
         "Port Melbourne SC U13": {
-          "matches_played": 2,
+          "matches_played": 3,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -52165,7 +52192,7 @@
         }
       },
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -52195,6 +52222,15 @@
           "league_name": "U13 YSL Boys - South-East",
           "role_in_match": "Coach",
           "opponent_team_name": "Ashburton United SC U13",
+          "events": []
+        },
+        {
+          "match_hash_id": "emAnePrzgN",
+          "date": "2026-02-28T21:30:00.000000Z",
+          "team_name": "Port Melbourne SC U13",
+          "league_name": "U13 YSL Boys - South-East",
+          "role_in_match": "Coach",
+          "opponent_team_name": "Monash City Villarreal FC U13",
           "events": []
         }
       ]
@@ -57599,7 +57635,7 @@
       },
       "team_stats": {
         "Monash City Villarreal FC U13": {
-          "matches_played": 1,
+          "matches_played": 2,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -57632,7 +57668,7 @@
         }
       },
       "stats": {
-        "matches_attended": 4,
+        "matches_attended": 5,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -57672,6 +57708,15 @@
           "role_in_match": "Manager",
           "opponent_team_name": "Goulburn Valley Suns FC U16",
           "events": []
+        },
+        {
+          "match_hash_id": "emAnePrzgN",
+          "date": "2026-02-28T21:30:00.000000Z",
+          "team_name": "Monash City Villarreal FC U13",
+          "league_name": "U13 YSL Boys - South-East",
+          "role_in_match": "Manager",
+          "opponent_team_name": "Port Melbourne SC U13",
+          "events": []
         }
       ]
     },
@@ -57694,7 +57739,7 @@
       },
       "team_stats": {
         "Monash City Villarreal FC U13": {
-          "matches_played": 1,
+          "matches_played": 2,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -57703,7 +57748,7 @@
         }
       },
       "stats": {
-        "matches_attended": 1,
+        "matches_attended": 2,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -57715,6 +57760,15 @@
           "league_name": "U13 YSL Boys - South-East",
           "role_in_match": "Coach",
           "opponent_team_name": "Goulburn Valley Suns FC U13",
+          "events": []
+        },
+        {
+          "match_hash_id": "emAnePrzgN",
+          "date": "2026-02-28T21:30:00.000000Z",
+          "team_name": "Monash City Villarreal FC U13",
+          "league_name": "U13 YSL Boys - South-East",
+          "role_in_match": "Coach",
+          "opponent_team_name": "Port Melbourne SC U13",
           "events": []
         }
       ]
@@ -57741,7 +57795,7 @@
       },
       "team_stats": {
         "Monash City Villarreal FC U13": {
-          "matches_played": 1,
+          "matches_played": 2,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -57758,7 +57812,7 @@
         }
       },
       "stats": {
-        "matches_attended": 2,
+        "matches_attended": 3,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -57779,6 +57833,15 @@
           "league_name": "U15 YSL Boys - South-East",
           "role_in_match": "Coach",
           "opponent_team_name": "Goulburn Valley Suns FC U15",
+          "events": []
+        },
+        {
+          "match_hash_id": "emAnePrzgN",
+          "date": "2026-02-28T21:30:00.000000Z",
+          "team_name": "Monash City Villarreal FC U13",
+          "league_name": "U13 YSL Boys - South-East",
+          "role_in_match": "Coach",
+          "opponent_team_name": "Port Melbourne SC U13",
           "events": []
         }
       ]
@@ -57811,7 +57874,7 @@
       },
       "team_stats": {
         "Monash City Villarreal FC U13": {
-          "matches_played": 1,
+          "matches_played": 2,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -57844,7 +57907,7 @@
         }
       },
       "stats": {
-        "matches_attended": 4,
+        "matches_attended": 5,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -57883,6 +57946,15 @@
           "league_name": "U16 YSL Boys - South-East",
           "role_in_match": "Manager",
           "opponent_team_name": "Goulburn Valley Suns FC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "emAnePrzgN",
+          "date": "2026-02-28T21:30:00.000000Z",
+          "team_name": "Monash City Villarreal FC U13",
+          "league_name": "U13 YSL Boys - South-East",
+          "role_in_match": "Manager",
+          "opponent_team_name": "Port Melbourne SC U13",
           "events": []
         }
       ]
@@ -59666,5 +59738,5 @@
       ]
     }
   ],
-  "_last_updated": "2026-03-01T09:00:36.866546"
+  "_last_updated": "2026-03-01T10:00:34.099972"
 }
