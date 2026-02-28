@@ -13510,7 +13510,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 24,
+        "matches_attended": 26,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -13681,6 +13681,20 @@
           "date": "2026-02-22T01:30:00.000000Z",
           "role_in_match": "Teamstaff",
           "opponent": "Bentleigh Greens SC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlp3gvN",
+          "date": "2026-02-28T01:00:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Dandenong Thunder FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlp3gvN",
+          "date": "2026-02-28T01:00:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Dandenong Thunder FC U18",
           "events": []
         }
       ]
@@ -13710,7 +13724,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 28,
+        "matches_attended": 30,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -13909,6 +13923,20 @@
           "date": "2026-02-22T01:30:00.000000Z",
           "role_in_match": "Teamstaff",
           "opponent": "Bentleigh Greens SC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlp3gvN",
+          "date": "2026-02-28T01:00:00.000000Z",
+          "role_in_match": "Manager",
+          "opponent": "Dandenong Thunder FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlp3gvN",
+          "date": "2026-02-28T01:00:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Dandenong Thunder FC U18",
           "events": []
         }
       ]
@@ -13938,7 +13966,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 32,
+        "matches_attended": 34,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -14165,6 +14193,20 @@
           "date": "2026-02-22T01:30:00.000000Z",
           "role_in_match": "Teamstaff",
           "opponent": "Bentleigh Greens SC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlp3gvN",
+          "date": "2026-02-28T01:00:00.000000Z",
+          "role_in_match": "Manager",
+          "opponent": "Dandenong Thunder FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlp3gvN",
+          "date": "2026-02-28T01:00:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Dandenong Thunder FC U18",
           "events": []
         }
       ]
@@ -18265,7 +18307,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 4,
+        "matches_attended": 5,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -18296,6 +18338,13 @@
           "date": "2026-02-22T04:30:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "Geelong SC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlp3gvN",
+          "date": "2026-02-28T01:00:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Brunswick Juventus FC U18",
           "events": []
         }
       ]
@@ -19311,8 +19360,8 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 4,
-        "yellow_cards": 0,
+        "matches_attended": 5,
+        "yellow_cards": 1,
         "red_cards": 0
       },
       "matches": [
@@ -19343,6 +19392,18 @@
           "role_in_match": "Assistant Coach",
           "opponent": "Bentleigh Greens SC U18",
           "events": []
+        },
+        {
+          "match_hash_id": "jdywlp3gvN",
+          "date": "2026-02-28T01:00:00.000000Z",
+          "role_in_match": "Assistant Coach",
+          "opponent": "Dandenong Thunder FC U18",
+          "events": [
+            {
+              "type": "yellow_card",
+              "minute": "57"
+            }
+          ]
         }
       ]
     },
@@ -19361,7 +19422,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 4,
+        "matches_attended": 5,
         "yellow_cards": 0,
         "red_cards": 1
       },
@@ -19398,6 +19459,13 @@
           "role_in_match": "Head Coach",
           "opponent": "Bentleigh Greens SC U18",
           "events": []
+        },
+        {
+          "match_hash_id": "jdywlp3gvN",
+          "date": "2026-02-28T01:00:00.000000Z",
+          "role_in_match": "Head Coach",
+          "opponent": "Dandenong Thunder FC U18",
+          "events": []
         }
       ]
     },
@@ -19416,7 +19484,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 4,
+        "matches_attended": 5,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -19448,6 +19516,13 @@
           "role_in_match": "Team Manager",
           "opponent": "Bentleigh Greens SC U18",
           "events": []
+        },
+        {
+          "match_hash_id": "jdywlp3gvN",
+          "date": "2026-02-28T01:00:00.000000Z",
+          "role_in_match": "Team Manager",
+          "opponent": "Dandenong Thunder FC U18",
+          "events": []
         }
       ]
     },
@@ -19468,7 +19543,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 8,
+        "matches_attended": 9,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -19528,6 +19603,13 @@
           "role_in_match": "Manager",
           "opponent": "Bentleigh Greens SC U18",
           "events": []
+        },
+        {
+          "match_hash_id": "jdywlp3gvN",
+          "date": "2026-02-28T01:00:00.000000Z",
+          "role_in_match": "Manager",
+          "opponent": "Dandenong Thunder FC U18",
+          "events": []
         }
       ]
     },
@@ -19546,7 +19628,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -19570,6 +19652,13 @@
           "date": "2026-02-22T01:30:00.000000Z",
           "role_in_match": "Teamstaff",
           "opponent": "Bentleigh Greens SC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlp3gvN",
+          "date": "2026-02-28T01:00:00.000000Z",
+          "role_in_match": "Teamstaff",
+          "opponent": "Dandenong Thunder FC U18",
           "events": []
         }
       ]
@@ -38147,7 +38236,7 @@
         "U18 YPL2 Boys"
       ],
       "stats": {
-        "matches_attended": 1,
+        "matches_attended": 2,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -38157,6 +38246,13 @@
           "date": "2026-02-15T04:00:00.000000Z",
           "role_in_match": "Coach",
           "opponent": "Murray United FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlp3gvN",
+          "date": "2026-02-28T01:00:00.000000Z",
+          "role_in_match": "Coach",
+          "opponent": "Brunswick Juventus FC U18",
           "events": []
         }
       ]
@@ -40247,5 +40343,5 @@
       ]
     }
   ],
-  "_last_updated": "2026-02-28T20:00:28.179253"
+  "_last_updated": "2026-03-01T00:00:30.568978"
 }
