@@ -1635,6 +1635,12 @@ def main_app():
             st.session_state["clicked_query"] = q2
             st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
             st.rerun()
+
+        q2b = f"yellow cards {user_age} last week"
+        if st.button(q2b, key="ex2b", use_container_width=False):
+            st.session_state["clicked_query"] = q2b
+            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+            st.rerun()
         
         # Dynamic personal stats
         q3 = f"stats for {user_name}"
@@ -1691,6 +1697,12 @@ def main_app():
         q10 = f"red cards in {user_age}"
         if st.button(q10, key="ex10", use_container_width=False):
             st.session_state["clicked_query"] = q10
+            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+            st.rerun()
+
+        q10b = f"red cards last week"
+        if st.button(q10b, key="ex10b", use_container_width=False):
+            st.session_state["clicked_query"] = q10b
             st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
             st.rerun()
             
@@ -2336,11 +2348,28 @@ def main_app():
                             goals    = m.get("goals",       sum(1 for e in events if _etype(e) == "goal"))
                             yellows  = m.get("yellow_cards", sum(1 for e in events if _etype(e) == "yellow_card"))
                             reds     = m.get("red_cards",    sum(1 for e in events if _etype(e) == "red_card"))
+
+                            # Collect card minutes for display (e.g. "45'" or "45', 78'")
+                            yc_mins = [str(e.get("minute")) for e in events
+                                       if _etype(e) == "yellow_card" and e.get("minute")]
+                            rc_mins = [str(e.get("minute")) for e in events
+                                       if _etype(e) == "red_card" and e.get("minute")]
+                            yc_str = ("🟨 " + ", ".join(f"{m2}'" for m2 in yc_mins)) if yc_mins else ("🟨" if yellows else "")
+                            rc_str = ("🟥 " + ", ".join(f"{m2}'" for m2 in rc_mins)) if rc_mins else ("🟥" if reds else "")
+                            cards_str = "  ".join(filter(None, [yc_str, rc_str])) or "—" if (yellows or reds) else ""
+
+                            # Age group from league_name or team_name on the match entry
+                            _ag_src = m.get("league_name") or m.get("team_name") or ""
+                            _ag_m = re.search(r'U\d{2}', _ag_src, re.IGNORECASE)
+                            age_grp = _ag_m.group(0).upper() if _ag_m else ""
+
                             row = {
                                 "Date":     format_date(m.get("date", "")),
+                                "Age":      age_grp,
                                 "Started":  "✅" if m.get("started") else "🪑",
                                 "Opponent": opponent,
-                                "G": goals, "🟨": yellows, "🟥": reds,
+                                "G": goals,
+                                "Cards":    cards_str,
                             }
                             if is_dual and m.get("team_name"):
                                 row["Club"] = base_club_name(m["team_name"])
@@ -2348,11 +2377,11 @@ def main_app():
                         df_player = pd.DataFrame(match_rows)
                         col_cfg = {
                             "Date":     st.column_config.TextColumn("Date", width="small"),
+                            "Age":      st.column_config.TextColumn("Age", width="small"),
                             "Started":  st.column_config.TextColumn("", width="small"),
                             "Opponent": st.column_config.TextColumn("Opponent", width="medium"),
                             "G":        st.column_config.NumberColumn("G", width="small"),
-                            "🟨":       st.column_config.NumberColumn("🟨", width="small"),
-                            "🟥":       st.column_config.NumberColumn("🟥", width="small"),
+                            "Cards":    st.column_config.TextColumn("Cards", width="small"),
                         }
                         if is_dual:
                             col_cfg["Club"] = st.column_config.TextColumn("Club", width="medium")
@@ -2480,19 +2509,3 @@ if __name__ == "__main__":
 # Last auto-update: 2026-03-01 04:00:32 AEDT
 # Last auto-update: 2026-03-01 05:00:33 AEDT
 # Last auto-update: 2026-03-01 06:00:32 AEDT
-# Last auto-update: 2026-03-01 09:00:38 AEDT
-# Last auto-update: 2026-03-01 10:00:36 AEDT
-# Last auto-update: 2026-03-01 11:00:45 AEDT
-# Last auto-update: 2026-03-01 12:00:50 AEDT
-# Last auto-update: 2026-03-01 13:00:50 AEDT
-# Last auto-update: 2026-03-01 14:00:56 AEDT
-# Last auto-update: 2026-03-01 15:00:50 AEDT
-# Last auto-update: 2026-03-01 16:00:52 AEDT
-# Last auto-update: 2026-03-01 17:00:56 AEDT
-# Last auto-update: 2026-03-01 18:00:50 AEDT
-# Last auto-update: 2026-03-01 19:00:49 AEDT
-# Last auto-update: 2026-03-01 20:00:46 AEDT
-# Last auto-update: 2026-03-01 21:00:50 AEDT
-# Last auto-update: 2026-03-01 22:00:44 AEDT
-# Last auto-update: 2026-03-01 22:30:05 AEDT
-# Last auto-update: 2026-03-01 23:00:45 AEDT
