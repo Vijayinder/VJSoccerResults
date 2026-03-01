@@ -19,7 +19,7 @@
       },
       "team_stats": {
         "Oakleigh Cannons FC U18": {
-          "matches_played": 4,
+          "matches_played": 5,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -28,7 +28,7 @@
         }
       },
       "stats": {
-        "matches_attended": 4,
+        "matches_attended": 5,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -67,6 +67,15 @@
           "league_name": "U18 YPL2 Boys",
           "role_in_match": "Assistant Coach",
           "opponent_team_name": "Heidelberg United FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "2Kp0pg239K",
+          "date": "2026-03-01T04:15:00.000000Z",
+          "team_name": "Oakleigh Cannons FC U18",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Assistant Coach",
+          "opponent_team_name": "Langwarrin SC U18",
           "events": []
         }
       ]
@@ -90,7 +99,7 @@
       },
       "team_stats": {
         "Oakleigh Cannons FC U18": {
-          "matches_played": 4,
+          "matches_played": 5,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -99,7 +108,7 @@
         }
       },
       "stats": {
-        "matches_attended": 4,
+        "matches_attended": 5,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -138,6 +147,15 @@
           "league_name": "U18 YPL2 Boys",
           "role_in_match": "Team Manager",
           "opponent_team_name": "Heidelberg United FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "2Kp0pg239K",
+          "date": "2026-03-01T04:15:00.000000Z",
+          "team_name": "Oakleigh Cannons FC U18",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Team Manager",
+          "opponent_team_name": "Langwarrin SC U18",
           "events": []
         }
       ]
@@ -161,7 +179,7 @@
       },
       "team_stats": {
         "Oakleigh Cannons FC U18": {
-          "matches_played": 4,
+          "matches_played": 5,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -170,7 +188,7 @@
         }
       },
       "stats": {
-        "matches_attended": 4,
+        "matches_attended": 5,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -209,6 +227,15 @@
           "league_name": "U18 YPL2 Boys",
           "role_in_match": "Head Coach",
           "opponent_team_name": "Heidelberg United FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "2Kp0pg239K",
+          "date": "2026-03-01T04:15:00.000000Z",
+          "team_name": "Oakleigh Cannons FC U18",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Head Coach",
+          "opponent_team_name": "Langwarrin SC U18",
           "events": []
         }
       ]
@@ -8157,7 +8184,7 @@
       },
       "team_stats": {
         "Melbourne Victory FC U18": {
-          "matches_played": 4,
+          "matches_played": 5,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -8166,7 +8193,7 @@
         }
       },
       "stats": {
-        "matches_attended": 4,
+        "matches_attended": 5,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -8205,6 +8232,15 @@
           "league_name": "U18 YPL1 Boys",
           "role_in_match": "Teamstaff",
           "opponent_team_name": "Malvern City FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "lNbJjQj2EN",
+          "date": "2026-03-01T03:15:00.000000Z",
+          "team_name": "Melbourne Victory FC U18",
+          "league_name": "U18 YPL1 Boys",
+          "role_in_match": "Teamstaff",
+          "opponent_team_name": "Avondale FC U18",
           "events": []
         }
       ]
@@ -8228,17 +8264,17 @@
       },
       "team_stats": {
         "Melbourne Victory FC U18": {
-          "matches_played": 4,
+          "matches_played": 5,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
-          "yellow_cards": 0,
+          "yellow_cards": 1,
           "red_cards": 0
         }
       },
       "stats": {
-        "matches_attended": 4,
-        "yellow_cards": 0,
+        "matches_attended": 5,
+        "yellow_cards": 1,
         "red_cards": 0
       },
       "matches": [
@@ -8277,6 +8313,20 @@
           "role_in_match": "Coach",
           "opponent_team_name": "Malvern City FC U18",
           "events": []
+        },
+        {
+          "match_hash_id": "lNbJjQj2EN",
+          "date": "2026-03-01T03:15:00.000000Z",
+          "team_name": "Melbourne Victory FC U18",
+          "league_name": "U18 YPL1 Boys",
+          "role_in_match": "Coach",
+          "opponent_team_name": "Avondale FC U18",
+          "events": [
+            {
+              "type": "yellow_card",
+              "minute": "76"
+            }
+          ]
         }
       ]
     },
@@ -9426,7 +9476,7 @@
       },
       "team_stats": {
         "Langwarrin SC U18": {
-          "matches_played": 4,
+          "matches_played": 5,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -9443,7 +9493,7 @@
         }
       },
       "stats": {
-        "matches_attended": 8,
+        "matches_attended": 9,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -9519,6 +9569,15 @@
           "role_in_match": "Manager",
           "opponent_team_name": "North Geelong Warriors FC U18",
           "events": []
+        },
+        {
+          "match_hash_id": "2Kp0pg239K",
+          "date": "2026-03-01T04:15:00.000000Z",
+          "team_name": "Langwarrin SC U18",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Manager",
+          "opponent_team_name": "Oakleigh Cannons FC U18",
+          "events": []
         }
       ]
     },
@@ -9541,7 +9600,7 @@
       },
       "team_stats": {
         "Langwarrin SC U18": {
-          "matches_played": 4,
+          "matches_played": 5,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -9550,7 +9609,7 @@
         }
       },
       "stats": {
-        "matches_attended": 4,
+        "matches_attended": 5,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -9589,6 +9648,15 @@
           "league_name": "U18 YPL2 Boys",
           "role_in_match": "Coach",
           "opponent_team_name": "North Geelong Warriors FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "2Kp0pg239K",
+          "date": "2026-03-01T04:15:00.000000Z",
+          "team_name": "Langwarrin SC U18",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Coach",
+          "opponent_team_name": "Oakleigh Cannons FC U18",
           "events": []
         }
       ]
@@ -13103,7 +13171,8 @@
       "last_name": "Miljkovic",
       "role_slug": "staff",
       "roles": [
-        "Manager"
+        "Manager",
+        "Teamstaff"
       ],
       "teams": [
         "Avondale FC U18"
@@ -13116,7 +13185,7 @@
       },
       "team_stats": {
         "Avondale FC U18": {
-          "matches_played": 4,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -13125,7 +13194,7 @@
         }
       },
       "stats": {
-        "matches_attended": 4,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -13165,6 +13234,24 @@
           "role_in_match": "Manager",
           "opponent_team_name": "Green Gully SC U18",
           "events": []
+        },
+        {
+          "match_hash_id": "lNbJjQj2EN",
+          "date": "2026-03-01T03:15:00.000000Z",
+          "team_name": "Avondale FC U18",
+          "league_name": "U18 YPL1 Boys",
+          "role_in_match": "Manager",
+          "opponent_team_name": "Melbourne Victory FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "lNbJjQj2EN",
+          "date": "2026-03-01T03:15:00.000000Z",
+          "team_name": "Avondale FC U18",
+          "league_name": "U18 YPL1 Boys",
+          "role_in_match": "Teamstaff",
+          "opponent_team_name": "Melbourne Victory FC U18",
+          "events": []
         }
       ]
     },
@@ -13194,7 +13281,7 @@
       },
       "team_stats": {
         "Avondale FC U18": {
-          "matches_played": 4,
+          "matches_played": 5,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -13219,7 +13306,7 @@
         }
       },
       "stats": {
-        "matches_attended": 8,
+        "matches_attended": 9,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -13294,6 +13381,15 @@
           "league_name": "U15 YPL1 Boys",
           "role_in_match": "Coach",
           "opponent_team_name": "Melbourne Victory FC U15",
+          "events": []
+        },
+        {
+          "match_hash_id": "lNbJjQj2EN",
+          "date": "2026-03-01T03:15:00.000000Z",
+          "team_name": "Avondale FC U18",
+          "league_name": "U18 YPL1 Boys",
+          "role_in_match": "Head Coach",
+          "opponent_team_name": "Melbourne Victory FC U18",
           "events": []
         }
       ]
@@ -14498,7 +14594,7 @@
           "red_cards": 0
         },
         "Eltham Redbacks FC U16": {
-          "matches_played": 3,
+          "matches_played": 4,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -14531,7 +14627,7 @@
         }
       },
       "stats": {
-        "matches_attended": 18,
+        "matches_attended": 19,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -14696,6 +14792,15 @@
           "league_name": "U18 YPL2 Boys",
           "role_in_match": "Teamstaff",
           "opponent_team_name": "North Geelong Warriors FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw72nRm",
+          "date": "2026-03-01T02:25:00.000000Z",
+          "team_name": "Eltham Redbacks FC U16",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Teamstaff",
+          "opponent_team_name": "North Geelong Warriors FC U16",
           "events": []
         }
       ]
@@ -14740,7 +14845,7 @@
           "red_cards": 0
         },
         "Eltham Redbacks FC U16": {
-          "matches_played": 3,
+          "matches_played": 4,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -14773,7 +14878,7 @@
         }
       },
       "stats": {
-        "matches_attended": 18,
+        "matches_attended": 19,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -14938,6 +15043,15 @@
           "league_name": "U18 YPL2 Boys",
           "role_in_match": "Teamstaff",
           "opponent_team_name": "North Geelong Warriors FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw72nRm",
+          "date": "2026-03-01T02:25:00.000000Z",
+          "team_name": "Eltham Redbacks FC U16",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Physiotherapist",
+          "opponent_team_name": "North Geelong Warriors FC U16",
           "events": []
         }
       ]
@@ -17626,7 +17740,7 @@
       },
       "team_stats": {
         "North Geelong Warriors FC U16": {
-          "matches_played": 4,
+          "matches_played": 5,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -17635,7 +17749,7 @@
         }
       },
       "stats": {
-        "matches_attended": 4,
+        "matches_attended": 5,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -17674,6 +17788,15 @@
           "league_name": "U16 YPL2 Boys",
           "role_in_match": "Coach",
           "opponent_team_name": "Langwarrin SC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw72nRm",
+          "date": "2026-03-01T02:25:00.000000Z",
+          "team_name": "North Geelong Warriors FC U16",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Coach",
+          "opponent_team_name": "Eltham Redbacks FC U16",
           "events": []
         }
       ]
@@ -17697,7 +17820,7 @@
       },
       "team_stats": {
         "North Geelong Warriors FC U16": {
-          "matches_played": 4,
+          "matches_played": 5,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -17706,7 +17829,7 @@
         }
       },
       "stats": {
-        "matches_attended": 4,
+        "matches_attended": 5,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -17745,6 +17868,15 @@
           "league_name": "U16 YPL2 Boys",
           "role_in_match": "Manager",
           "opponent_team_name": "Langwarrin SC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw72nRm",
+          "date": "2026-03-01T02:25:00.000000Z",
+          "team_name": "North Geelong Warriors FC U16",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Manager",
+          "opponent_team_name": "Eltham Redbacks FC U16",
           "events": []
         }
       ]
@@ -17768,7 +17900,7 @@
       },
       "team_stats": {
         "North Geelong Warriors FC U16": {
-          "matches_played": 4,
+          "matches_played": 5,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -17777,7 +17909,7 @@
         }
       },
       "stats": {
-        "matches_attended": 4,
+        "matches_attended": 5,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -17816,6 +17948,15 @@
           "league_name": "U16 YPL2 Boys",
           "role_in_match": "Coach",
           "opponent_team_name": "Langwarrin SC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw72nRm",
+          "date": "2026-03-01T02:25:00.000000Z",
+          "team_name": "North Geelong Warriors FC U16",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Coach",
+          "opponent_team_name": "Eltham Redbacks FC U16",
           "events": []
         }
       ]
@@ -20981,7 +21122,7 @@
       },
       "team_stats": {
         "Eltham Redbacks FC U16": {
-          "matches_played": 4,
+          "matches_played": 5,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -20990,7 +21131,7 @@
         }
       },
       "stats": {
-        "matches_attended": 4,
+        "matches_attended": 5,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -21030,6 +21171,15 @@
           "role_in_match": "Team Manager",
           "opponent_team_name": "Melbourne Knights FC U16",
           "events": []
+        },
+        {
+          "match_hash_id": "pmvvw72nRm",
+          "date": "2026-03-01T02:25:00.000000Z",
+          "team_name": "Eltham Redbacks FC U16",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Team Manager",
+          "opponent_team_name": "North Geelong Warriors FC U16",
+          "events": []
         }
       ]
     },
@@ -21052,7 +21202,7 @@
       },
       "team_stats": {
         "Eltham Redbacks FC U16": {
-          "matches_played": 4,
+          "matches_played": 5,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -21061,7 +21211,7 @@
         }
       },
       "stats": {
-        "matches_attended": 4,
+        "matches_attended": 5,
         "yellow_cards": 0,
         "red_cards": 1
       },
@@ -21106,6 +21256,15 @@
           "role_in_match": "Head Coach",
           "opponent_team_name": "Melbourne Knights FC U16",
           "events": []
+        },
+        {
+          "match_hash_id": "pmvvw72nRm",
+          "date": "2026-03-01T02:25:00.000000Z",
+          "team_name": "Eltham Redbacks FC U16",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Head Coach",
+          "opponent_team_name": "North Geelong Warriors FC U16",
+          "events": []
         }
       ]
     },
@@ -21143,7 +21302,7 @@
       },
       "team_stats": {
         "Eltham Redbacks FC U16": {
-          "matches_played": 3,
+          "matches_played": 4,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -21184,7 +21343,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -21277,6 +21436,15 @@
           "league_name": "U18 YPL2 Boys",
           "role_in_match": "Teamstaff",
           "opponent_team_name": "North Geelong Warriors FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw72nRm",
+          "date": "2026-03-01T02:25:00.000000Z",
+          "team_name": "Eltham Redbacks FC U16",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Technical Director",
+          "opponent_team_name": "North Geelong Warriors FC U16",
           "events": []
         }
       ]
@@ -38614,7 +38782,7 @@
           "red_cards": 0
         },
         "Eltham Redbacks FC U16": {
-          "matches_played": 1,
+          "matches_played": 2,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -38623,7 +38791,7 @@
         }
       },
       "stats": {
-        "matches_attended": 6,
+        "matches_attended": 7,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -38680,6 +38848,15 @@
           "league_name": "U14 YPL2 Boys",
           "role_in_match": "Head Coach",
           "opponent_team_name": "North Geelong Warriors FC U14",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw72nRm",
+          "date": "2026-03-01T02:25:00.000000Z",
+          "team_name": "Eltham Redbacks FC U16",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Coach",
+          "opponent_team_name": "North Geelong Warriors FC U16",
           "events": []
         }
       ]
@@ -47520,7 +47697,7 @@
           "red_cards": 0
         },
         "St Albans Saints Dinamo SC U16": {
-          "matches_played": 2,
+          "matches_played": 3,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -47545,7 +47722,7 @@
         }
       },
       "stats": {
-        "matches_attended": 9,
+        "matches_attended": 10,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -47629,6 +47806,15 @@
           "league_name": "U15 YSL Boys - North-West",
           "role_in_match": "Manager",
           "opponent_team_name": "Doreen United SC U15",
+          "events": []
+        },
+        {
+          "match_hash_id": "lNbJjQ8YEN",
+          "date": "2026-03-01T02:45:00.000000Z",
+          "team_name": "St Albans Saints Dinamo SC U16",
+          "league_name": "U16 YSL Boys - North-West",
+          "role_in_match": "Manager",
+          "opponent_team_name": "Doreen United SC U16",
           "events": []
         }
       ]
@@ -48328,7 +48514,7 @@
           "red_cards": 0
         },
         "Eltham Redbacks FC U16": {
-          "matches_played": 2,
+          "matches_played": 3,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -48345,7 +48531,7 @@
         }
       },
       "stats": {
-        "matches_attended": 13,
+        "matches_attended": 14,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -48465,6 +48651,15 @@
           "league_name": "U18 YPL2 Boys",
           "role_in_match": "Manager",
           "opponent_team_name": "North Geelong Warriors FC U18",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw72nRm",
+          "date": "2026-03-01T02:25:00.000000Z",
+          "team_name": "Eltham Redbacks FC U16",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Manager",
+          "opponent_team_name": "North Geelong Warriors FC U16",
           "events": []
         }
       ]
@@ -48524,7 +48719,7 @@
           "red_cards": 0
         },
         "Eltham Redbacks FC U16": {
-          "matches_played": 2,
+          "matches_played": 3,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -48541,7 +48736,7 @@
         }
       },
       "stats": {
-        "matches_attended": 13,
+        "matches_attended": 14,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -48662,6 +48857,15 @@
           "role_in_match": "Teamstaff",
           "opponent_team_name": "North Geelong Warriors FC U18",
           "events": []
+        },
+        {
+          "match_hash_id": "pmvvw72nRm",
+          "date": "2026-03-01T02:25:00.000000Z",
+          "team_name": "Eltham Redbacks FC U16",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Teamstaff",
+          "opponent_team_name": "North Geelong Warriors FC U16",
+          "events": []
         }
       ]
     },
@@ -48693,7 +48897,7 @@
       },
       "team_stats": {
         "Langwarrin SC U18": {
-          "matches_played": 2,
+          "matches_played": 3,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -48726,7 +48930,7 @@
         }
       },
       "stats": {
-        "matches_attended": 8,
+        "matches_attended": 9,
         "yellow_cards": 1,
         "red_cards": 0
       },
@@ -48807,6 +49011,15 @@
               "minute": "87"
             }
           ]
+        },
+        {
+          "match_hash_id": "2Kp0pg239K",
+          "date": "2026-03-01T04:15:00.000000Z",
+          "team_name": "Langwarrin SC U18",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Coach",
+          "opponent_team_name": "Oakleigh Cannons FC U18",
+          "events": []
         }
       ]
     },
@@ -58846,7 +59059,7 @@
       },
       "team_stats": {
         "Doreen United SC U16": {
-          "matches_played": 2,
+          "matches_played": 3,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -58855,7 +59068,7 @@
         }
       },
       "stats": {
-        "matches_attended": 2,
+        "matches_attended": 3,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -58876,6 +59089,15 @@
           "league_name": "U16 YSL Boys - North-West",
           "role_in_match": "Coach",
           "opponent_team_name": "Brimbank Stallions FC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "lNbJjQ8YEN",
+          "date": "2026-03-01T02:45:00.000000Z",
+          "team_name": "Doreen United SC U16",
+          "league_name": "U16 YSL Boys - North-West",
+          "role_in_match": "Coach",
+          "opponent_team_name": "St Albans Saints Dinamo SC U16",
           "events": []
         }
       ]
@@ -58899,7 +59121,7 @@
       },
       "team_stats": {
         "Doreen United SC U16": {
-          "matches_played": 2,
+          "matches_played": 3,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -58908,7 +59130,7 @@
         }
       },
       "stats": {
-        "matches_attended": 2,
+        "matches_attended": 3,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -58929,6 +59151,15 @@
           "league_name": "U16 YSL Boys - North-West",
           "role_in_match": "Coach",
           "opponent_team_name": "Brimbank Stallions FC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "lNbJjQ8YEN",
+          "date": "2026-03-01T02:45:00.000000Z",
+          "team_name": "Doreen United SC U16",
+          "league_name": "U16 YSL Boys - North-West",
+          "role_in_match": "Coach",
+          "opponent_team_name": "St Albans Saints Dinamo SC U16",
           "events": []
         }
       ]
@@ -58952,7 +59183,7 @@
       },
       "team_stats": {
         "Doreen United SC U16": {
-          "matches_played": 2,
+          "matches_played": 3,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -58961,7 +59192,7 @@
         }
       },
       "stats": {
-        "matches_attended": 2,
+        "matches_attended": 3,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -58982,6 +59213,15 @@
           "league_name": "U16 YSL Boys - North-West",
           "role_in_match": "Manager",
           "opponent_team_name": "Brimbank Stallions FC U16",
+          "events": []
+        },
+        {
+          "match_hash_id": "lNbJjQ8YEN",
+          "date": "2026-03-01T02:45:00.000000Z",
+          "team_name": "Doreen United SC U16",
+          "league_name": "U16 YSL Boys - North-West",
+          "role_in_match": "Manager",
+          "opponent_team_name": "St Albans Saints Dinamo SC U16",
           "events": []
         }
       ]
@@ -68270,5 +68510,5 @@
       ]
     }
   ],
-  "_last_updated": "2026-03-01T19:00:45.427839"
+  "_last_updated": "2026-03-01T20:00:43.125443"
 }
