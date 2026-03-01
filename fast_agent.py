@@ -167,16 +167,12 @@ competition_overview = load_json("competition_overview.json")
 def _normalize_person(p: Dict, is_player: bool) -> Dict:
     """
     Normalize person record to common format for tools.
-
-    Handles two JSON formats:
-      NEW  dribl_player_details.py  — teams[], leagues[], jerseys{}, plain role string,
-                                      team_name on every match entry, event_type key
-      OLD  build_player_summary.py  — role_slug + roles[], no jerseys{},
-                                      opponent key (not opponent_team_name), no team_name on matches
+    Handles dribl_player_details.py output (teams[], leagues[], jerseys{}, plain role string)
+    and legacy build_player_summary.py format (role_slug, roles[]).
     """
     out = dict(p)
 
-    # ── Team / league ────────────────────────────────────────────────
+    # Team / league: prefer arrays, fall back to scalars
     if not out.get("team_name") and out.get("teams"):
         out["team_name"] = out["teams"][0] if out["teams"] else ""
     if not out.get("league_name") and out.get("leagues"):
@@ -184,68 +180,48 @@ def _normalize_person(p: Dict, is_player: bool) -> Dict:
     if not out.get("competition_name") and out.get("league_name"):
         out["competition_name"] = out["league_name"]
 
-    # ── Role ────────────────────────────────────────────────────────
+    # Role: dribl stores plain string; legacy used role_slug + roles[]
     if not out.get("role"):
         role_slug = out.get("role_slug", "player")
         roles     = out.get("roles", [])
-        if role_slug == "player" or (roles and roles[0].lower() == "player"):
+        if role_slug == "player":
             out["role"] = "player"
         elif roles:
             out["role"] = roles[0]
         else:
             out["role"] = role_slug or "staff"
 
-    # ── Staff jersey ─────────────────────────────────────────────────
+    # Staff don't have jersey
     if "jersey" not in out and not is_player:
         out["jersey"] = ""
 
-    # ── Stats ────────────────────────────────────────────────────────
+    # Stats
     stats = out.get("stats", {})
     if "matches_played" not in stats:
         stats["matches_played"] = stats.get("matches_attended", 0)
     out["stats"] = stats
 
-    # ── Build age-group → team lookup for inference ──────────────────
-    # Used when old JSON has no team_name on match entries
-    all_teams = out.get("teams", []) or ([out["team_name"]] if out.get("team_name") else [])
-    import re as _re
-    age_to_team: Dict[str, str] = {}
-    for t in all_teams:
-        ag = _re.search(r'U\d{2}', t, _re.IGNORECASE)
-        if ag:
-            age_to_team[ag.group(0).upper()] = t
-
-    # ── Deduplicate match entries by match_hash_id ───────────────────
+    # Deduplicate match entries by match_hash_id (player can appear in both
+    # home and away lineup for the same match in some data formats)
     raw_matches = out.get("matches", [])
-    seen_ids: set = set()
-    deduped: list = []
+    seen_match_ids = set()
+    deduped = []
     for m in raw_matches:
         mid = m.get("match_hash_id")
         if mid:
-            if mid not in seen_ids:
-                seen_ids.add(mid)
+            if mid not in seen_match_ids:
+                seen_match_ids.add(mid)
                 deduped.append(m)
         else:
             deduped.append(m)
     out["matches"] = deduped
 
-    # ── Normalise each match entry ───────────────────────────────────
+    # Flatten events into convenience fields on each match.
+    # Handles both "type" (matchcentre) and "event_type" (lineup) keys.
     for m in out["matches"]:
-        # Old format uses "opponent", new uses "opponent_team_name"
         if "opponent_team_name" not in m and m.get("opponent"):
             m["opponent_team_name"] = m["opponent"]
 
-        # Infer team_name from opponent age group when missing (old JSON)
-        if not m.get("team_name"):
-            opp = m.get("opponent_team_name", "")
-            ag  = _re.search(r'U\d{2}', opp, _re.IGNORECASE)
-            if ag:
-                inferred = age_to_team.get(ag.group(0).upper())
-                if inferred:
-                    m["team_name"] = inferred
-
-        # Flatten events into per-match convenience fields.
-        # Handles both "type" (matchcentre) and "event_type" (lineup) keys.
         events = m.get("events", [])
         if not events:
             continue
@@ -253,16 +229,16 @@ def _normalize_person(p: Dict, is_player: bool) -> Dict:
         def _etype(e):
             return (e.get("type") or e.get("event_type") or "").lower()
 
-        y_ev = [e for e in events if _etype(e) == "yellow_card"]
-        r_ev = [e for e in events if _etype(e) == "red_card"]
-        g_ev = [e for e in events if _etype(e) == "goal"]
+        y_events = [e for e in events if _etype(e) == "yellow_card"]
+        r_events = [e for e in events if _etype(e) == "red_card"]
+        g_events = [e for e in events if _etype(e) == "goal"]
 
-        if "yellow_cards"   not in m: m["yellow_cards"]   = len(y_ev)
-        if "yellow_minutes" not in m: m["yellow_minutes"]  = [e.get("minute") for e in y_ev if e.get("minute")]
-        if "red_cards"      not in m: m["red_cards"]       = len(r_ev)
-        if "red_minutes"    not in m: m["red_minutes"]     = [e.get("minute") for e in r_ev if e.get("minute")]
-        if "goals"          not in m: m["goals"]           = len(g_ev)
-        if "goal_minutes"   not in m: m["goal_minutes"]    = [e.get("minute") for e in g_ev if e.get("minute")]
+        if "yellow_cards"   not in m: m["yellow_cards"]   = len(y_events)
+        if "yellow_minutes" not in m: m["yellow_minutes"]  = [e.get("minute") for e in y_events if e.get("minute")]
+        if "red_cards"      not in m: m["red_cards"]       = len(r_events)
+        if "red_minutes"    not in m: m["red_minutes"]     = [e.get("minute") for e in r_events if e.get("minute")]
+        if "goals"          not in m: m["goals"]           = len(g_events)
+        if "goal_minutes"   not in m: m["goal_minutes"]    = [e.get("minute") for e in g_events if e.get("minute")]
 
     return out
 
@@ -1532,220 +1508,282 @@ def extract_league_from_league_name(league_name: str) -> str:
 # 7. ENHANCED CARD QUERIES WITH FILTERING AND TIME INFO
 # ---------------------------------------------------------
 
-def tool_yellow_cards(query: str = "", show_details: bool = False, include_non_players: bool = False) -> str:
-    """List all people with yellow cards - supports age group and team filtering.
-    Uses staff_summary for coach/staff queries, players_summary for players."""
-    
-    # Initialize variables to avoid UnboundLocalError
-    age_group = None
-    team_name = None
-    base_club = None
-    
-    # 1. Use staff_summary for coach/staff queries, players_summary otherwise
-    source = staff_summary if include_non_players else players_summary
-    players_with_yellows = [
-        p for p in source
-        if p.get("stats", {}).get("yellow_cards", 0) > 0
+def _card_minutes(m: dict, card_type: str) -> str:
+    """Return formatted minutes string like '45', 78'' for cards in a match."""
+    events = m.get("events", [])
+    mins = [
+        str(e.get("minute"))
+        for e in events
+        if (e.get("type") or e.get("event_type") or "").lower() == card_type
+        and e.get("minute") is not None
     ]
-    
-    # 2. Apply filters based on the query
-    if query:
-        # Extract filters from the query text
-        age_group = extract_age_group(query)
-        team_name = extract_team_name(query)
-        base_club = extract_base_club_name(query)
-        
-        # filter_players_by_criteria handles the logic for specific team/club/age group
-        players_with_yellows = filter_players_by_criteria(players_with_yellows, query, include_non_players=include_non_players)
-    elif include_non_players:
-        # If no query but non-players requested, filter to non-players only
-        players_with_yellows = [p for p in players_with_yellows if p.get("role") and p.get("role") != "player"]
-    
-    if not players_with_yellows:
-        filter_desc = f" matching '{query}'" if query else ""
-        person_type = "non-players" if include_non_players else "players"
-        return f"❌ No {person_type} with yellow cards found{filter_desc}"
-    
-    # Sort by yellow card count (descending)
-    players_with_yellows.sort(key=lambda x: x.get("stats", {}).get("yellow_cards", 0), reverse=True)
-    
-    # 3. Build filter description for the title/header
-    filter_parts = []
-    if include_non_players:
-        filter_parts.append("Non-Players")
-    if age_group and not team_name:
-        filter_parts.append(age_group)
-    elif base_club and not age_group and not team_name:
-        filter_parts.append(base_club)
-    elif team_name:
-        filter_parts.append(team_name)
-    
-    filter_desc = " - " + " ".join(filter_parts) if filter_parts else ""
-    
-    # 4. Return detailed text format or structured table data
-    if show_details:
-        lines = [f"🟨 **Yellow Cards{filter_desc}** ({len(players_with_yellows)} total)\n"]
-        
-        for p in players_with_yellows[:50]:
-            stats = p.get("stats", {})
-            yellows = stats.get("yellow_cards", 0)
-            role = p.get("role", "player")
-            role_display = f" ({role.title()})" if role != "player" else ""
-            
-            lines.append(
-                f"👤 **{p.get('first_name')} {p.get('last_name')}**{role_display} (#{p.get('jersey')})\n"
-                f"   {p.get('team_name')} | 🟨 {yellows} card(s)"
-            )
-            
-            matches = p.get("matches", [])
-            for m in matches:
-                if m.get("yellow_cards", 0) > 0:
-                    venue = "🏠" if m.get('home_or_away') == 'home' else "✈️"
-                    date_str = format_date(m.get('date', ''))
-                    # Ensure format_minutes helper is used for yellow card times
-                    yellow_mins = format_minutes(m.get('yellow_minutes', []))
-                    yellow_display = f"🟨 {m.get('yellow_cards')}" + (f" ({yellow_mins})" if yellow_mins else "")
-                    lines.append(
-                        f"   {venue} vs {m.get('opponent_team_name')} - {date_str} - {yellow_display}"
-                    )
-            lines.append("")
-        
-        return "\n".join(lines)
-    else:
-        # Return as table data (e.g. for top scorers style view)
-        data = []
-        for i, p in enumerate(players_with_yellows[:30], 1):
-            stats = p.get("stats", {})
-            yellows = stats.get("yellow_cards", 0)
-            role = p.get("role", "player")
-            name = f"{p.get('first_name')} {p.get('last_name')}"
-            if role != "player":
-                name += f" ({role.title()})"
-            team = p.get('team_name', '')
-            
-            row_data = {
-                "Rank": i,
-                "Name": name,
-                "Team": team,
-                "Yellow Cards": yellows,
-            }
-            
-            # Only add Matches and Goals for players
-            if role == "player" or not role:
-                row_data["Matches"] = stats.get("matches_played", 0)
-                row_data["Goals"] = stats.get("goals", 0)
-            
-            data.append(row_data)
-        
-        return {
-            "type": "table",
-            "data": data,
-            "title": f"🟨 Yellow Cards{filter_desc} ({len(players_with_yellows)} total, showing top 30)"
-        }
+    return ", ".join(f"{x}'" for x in mins) if mins else ""
 
-def tool_red_cards(query: str = "", show_details: bool = False, include_non_players: bool = False) -> str:
-    """List all people with red cards - supports age group and team filtering.
-    Uses staff_summary for coach/staff queries, players_summary for players."""
-    source = staff_summary if include_non_players else players_summary
-    players_with_reds = [
-        p for p in source
-        if p.get("stats", {}).get("red_cards", 0) > 0
-    ]
-    
-    # Apply filters
+
+def _card_date_range(date_mode: str):
+    """Return (start_date, end_date, label) or (None, None, '')."""
+    if not date_mode:
+        return None, None, ""
+    match_day = get_match_day_date()
+    if date_mode == "last_week":
+        day = match_day - timedelta(days=7)
+        return day, day, f" — Last Week ({day.strftime('%d %b')})"
+    return match_day, match_day, f" — This Week ({match_day.strftime('%d %b')})"
+
+
+def _match_in_date_range(m: dict, start_date, end_date) -> bool:
+    raw = m.get("date", "")
+    if not raw:
+        return False
+    try:
+        mdate = datetime.fromisoformat(raw.replace("Z", "+00:00")).date()
+        return start_date <= mdate <= end_date
+    except Exception:
+        return False
+
+
+def _build_card_source(card_type: str, query: str, include_non_players: bool):
+    """Return filtered + sorted list of people with the given card type."""
+    stat_key = "yellow_cards" if card_type == "yellow" else "red_cards"
+
+    if include_non_players:
+        # include both players AND staff
+        candidates = list(players_summary) + list(staff_summary)
+    else:
+        candidates = list(players_summary)
+
+    with_cards = [p for p in candidates if p.get("stats", {}).get(stat_key, 0) > 0]
+
     if query:
-        players_with_reds = filter_players_by_criteria(players_with_reds, query, include_non_players=include_non_players)
-    elif include_non_players:
-        # Filter for non-players even without query
-        players_with_reds = [p for p in players_with_reds if p.get("role") and p.get("role") != "player"]
-    
-    if not players_with_reds:
-        filter_desc = f" matching '{query}'" if query else ""
-        person_type = "non-players" if include_non_players else "players"
-        return f"❌ No {person_type} with red cards found{filter_desc}"
-    
-    players_with_reds.sort(key=lambda x: x.get("stats", {}).get("red_cards", 0), reverse=True)
-    
-    # Build filter description based on what was actually extracted
+        with_cards = filter_players_by_criteria(
+            with_cards, query, include_non_players=include_non_players
+        )
+
+    with_cards.sort(key=lambda x: x.get("stats", {}).get(stat_key, 0), reverse=True)
+    return with_cards
+
+
+def tool_yellow_cards(query: str = "", show_details: bool = False,
+                      include_non_players: bool = False,
+                      date_mode: str = "") -> Any:
+    """List people with yellow cards. Supports club/age/date filtering and non-players."""
+    stat_key = "yellow_cards"
+
     age_group = extract_age_group(query) if query else None
-    team_name = extract_team_name(query) if query else None
     base_club = extract_base_club_name(query) if query else None
-    
+    team_name = extract_team_name(query) if query else None
+
+    start_date, end_date, date_label = _card_date_range(date_mode)
+    people_list = _build_card_source("yellow", query, include_non_players)
+
+    # If date filter, keep only people who got a yellow IN that window
+    if start_date:
+        def _had_yellow(p):
+            for m in p.get("matches", []):
+                if not _match_in_date_range(m, start_date, end_date):
+                    continue
+                events = m.get("events", [])
+                yc = m.get("yellow_cards",
+                    sum(1 for e in events
+                        if (e.get("type") or e.get("event_type","")).lower() == "yellow_card"))
+                if yc > 0:
+                    return True
+            return False
+        people_list = [p for p in people_list if _had_yellow(p)]
+
+    if not people_list:
+        return (f"❌ No {'non-players' if include_non_players else 'players'} "
+                f"with yellow cards found"
+                + (f" matching '{query}'" if query else "") + date_label)
+
     filter_parts = []
-    if include_non_players:
-        filter_parts.append("Non-Players")
-    if age_group and not team_name:
-        filter_parts.append(age_group)
-    elif base_club and not age_group and not team_name:
-        filter_parts.append(base_club)
-    elif team_name:
-        filter_parts.append(team_name)
-    
-    filter_desc = " - " + " ".join(filter_parts) if filter_parts else ""
-    
+    if include_non_players: filter_parts.append("Non-Players")
+    if age_group and not team_name:  filter_parts.append(age_group)
+    elif base_club and not team_name: filter_parts.append(base_club)
+    elif team_name:                   filter_parts.append(team_name)
+    filter_desc = (" — " + " / ".join(filter_parts)) if filter_parts else ""
+    title = f"🟨 Yellow Cards{filter_desc}{date_label} ({len(people_list)} total)"
+
     if show_details:
-        lines = [f"🟥 **Red Cards{filter_desc}** ({len(players_with_reds)} total)\n"]
-        
-        for p in players_with_reds:
-            stats = p.get("stats", {})
-            reds = stats.get("red_cards", 0)
-            role = p.get("role", "player")
-            role_display = f" ({role.title()})" if role != "player" else ""
-            
+        lines = [f"**{title}**\n"]
+        for p in people_list[:50]:
+            stats  = p.get("stats", {})
+            role   = p.get("role") or (p.get("roles") or [""])[0] or "player"
+            role_d = f" ({role.title()})" if role.lower() not in ("player","") else ""
+            team   = (p.get("teams") or [p.get("team_name","")])[0]
             lines.append(
-                f"👤 **{p.get('first_name')} {p.get('last_name')}**{role_display} (#{p.get('jersey')})\n"
-                f"   {p.get('team_name')} | 🟥 {reds} card(s)"
+                f"👤 **{p.get('first_name')} {p.get('last_name')}**{role_d} — {team}"
+                f" | 🟨 {stats.get(stat_key, 0)}"
             )
-            
-            matches = p.get("matches", [])
-            for m in matches:
-                if m.get("red_cards", 0) > 0:
-                    venue = "🏠" if m.get('home_or_away') == 'home' else "✈️"
-                    date_str = format_date(m.get('date', ''))
-                    red_mins = format_minutes(m.get('red_minutes', []))
-                    red_display = "🟥 RED CARD" + (f" ({red_mins})" if red_mins else "")
+            for m in p.get("matches", []):
+                if start_date and not _match_in_date_range(m, start_date, end_date):
+                    continue
+                events = m.get("events", [])
+                yc = m.get("yellow_cards",
+                    sum(1 for e in events
+                        if (e.get("type") or e.get("event_type","")).lower() == "yellow_card"))
+                if yc > 0:
+                    venue = "🏠" if m.get("home_or_away") == "home" else "✈️"
+                    mins  = _card_minutes(m, "yellow_card")
                     lines.append(
-                        f"   {venue} vs {m.get('opponent_team_name')} - {date_str} - {red_display}"
+                        f"   {venue} vs {m.get('opponent_team_name','?')} "
+                        f"— {format_date(m.get('date',''))} "
+                        f"— 🟨 {yc}" + (f" ({mins})" if mins else "")
                     )
             lines.append("")
-        
         return "\n".join(lines)
-    else:
-        # Return as table data
-        data = []
-        for i, p in enumerate(players_with_reds, 1):
-            stats = p.get("stats", {})
-            reds = stats.get("red_cards", 0)
-            role = p.get("role", "player")
-            name = f"{p.get('first_name')} {p.get('last_name')}"
-            if role != "player":
-                name += f" ({role.title()})"
-            team = p.get('team_name', '')
-            
-            row_data = {
-                "Rank": i,
-                "Name": name,
-                "Team": team,
-                "Red Cards": reds,
-            }
-            
-            # Only add Matches and Goals for players
-            if role == "player" or not role:
-                row_data["Matches"] = stats.get("matches_played", 0)
-                row_data["Goals"] = stats.get("goals", 0)
-            
-            data.append(row_data)
-        
-        return {
-            "type": "table",
-            "data": data,
-            "title": f"🟥 Red Cards{filter_desc} ({len(players_with_reds)} total)"
+
+    # Table output — includes minute(s) column
+    data = []
+    for i, p in enumerate(people_list[:50], 1):
+        stats = p.get("stats", {})
+        role  = p.get("role") or (p.get("roles") or [""])[0] or "player"
+        name  = f"{p.get('first_name')} {p.get('last_name')}"
+        if role.lower() not in ("player",""):
+            name += f" ({role.title()})"
+        team = (p.get("teams") or [p.get("team_name","")])[0]
+
+        # Count and collect minutes — filter by date window if set
+        yc_total = 0
+        all_mins  = []
+        for m in p.get("matches", []):
+            if start_date and not _match_in_date_range(m, start_date, end_date):
+                continue
+            events = m.get("events", [])
+            yc = m.get("yellow_cards",
+                sum(1 for e in events
+                    if (e.get("type") or e.get("event_type","")).lower() == "yellow_card"))
+            yc_total += yc
+            mins = _card_minutes(m, "yellow_card")
+            if mins:
+                all_mins.append(mins)
+
+        if not start_date:
+            yc_total = stats.get(stat_key, 0)
+
+        row = {
+            "#":    i,
+            "Name": name,
+            "Team": team,
+            "🟨":   yc_total,
+            "Min":  ", ".join(all_mins) if all_mins else "—",
         }
+        if role.lower() in ("player",""):
+            row["M"]  = stats.get("matches_played", 0)
+            row["⚽"] = stats.get("goals", 0)
+        data.append(row)
+
+    return {"type": "table", "data": data, "title": title}
 
 
-# ---------------------------------------------------------
-# 8. ENHANCED TOP SCORERS WITH FILTERING
-# ---------------------------------------------------------
+def tool_red_cards(query: str = "", show_details: bool = False,
+                   include_non_players: bool = False,
+                   date_mode: str = "") -> Any:
+    """List people with red cards. Supports club/age/date filtering and non-players."""
+    stat_key = "red_cards"
+
+    age_group = extract_age_group(query) if query else None
+    base_club = extract_base_club_name(query) if query else None
+    team_name = extract_team_name(query) if query else None
+
+    start_date, end_date, date_label = _card_date_range(date_mode)
+    people_list = _build_card_source("red", query, include_non_players)
+
+    if start_date:
+        def _had_red(p):
+            for m in p.get("matches", []):
+                if not _match_in_date_range(m, start_date, end_date):
+                    continue
+                events = m.get("events", [])
+                rc = m.get("red_cards",
+                    sum(1 for e in events
+                        if (e.get("type") or e.get("event_type","")).lower() == "red_card"))
+                if rc > 0:
+                    return True
+            return False
+        people_list = [p for p in people_list if _had_red(p)]
+
+    if not people_list:
+        return (f"❌ No {'non-players' if include_non_players else 'players'} "
+                f"with red cards found"
+                + (f" matching '{query}'" if query else "") + date_label)
+
+    filter_parts = []
+    if include_non_players: filter_parts.append("Non-Players")
+    if age_group and not team_name:  filter_parts.append(age_group)
+    elif base_club and not team_name: filter_parts.append(base_club)
+    elif team_name:                   filter_parts.append(team_name)
+    filter_desc = (" — " + " / ".join(filter_parts)) if filter_parts else ""
+    title = f"🟥 Red Cards{filter_desc}{date_label} ({len(people_list)} total)"
+
+    if show_details:
+        lines = [f"**{title}**\n"]
+        for p in people_list:
+            stats  = p.get("stats", {})
+            role   = p.get("role") or (p.get("roles") or [""])[0] or "player"
+            role_d = f" ({role.title()})" if role.lower() not in ("player","") else ""
+            team   = (p.get("teams") or [p.get("team_name","")])[0]
+            lines.append(
+                f"👤 **{p.get('first_name')} {p.get('last_name')}**{role_d} — {team}"
+                f" | 🟥 {stats.get(stat_key, 0)}"
+            )
+            for m in p.get("matches", []):
+                if start_date and not _match_in_date_range(m, start_date, end_date):
+                    continue
+                events = m.get("events", [])
+                rc = m.get("red_cards",
+                    sum(1 for e in events
+                        if (e.get("type") or e.get("event_type","")).lower() == "red_card"))
+                if rc > 0:
+                    venue = "🏠" if m.get("home_or_away") == "home" else "✈️"
+                    mins  = _card_minutes(m, "red_card")
+                    lines.append(
+                        f"   {venue} vs {m.get('opponent_team_name','?')} "
+                        f"— {format_date(m.get('date',''))} "
+                        f"— 🟥 RED CARD" + (f" ({mins})" if mins else "")
+                    )
+            lines.append("")
+        return "\n".join(lines)
+
+    data = []
+    for i, p in enumerate(people_list, 1):
+        stats = p.get("stats", {})
+        role  = p.get("role") or (p.get("roles") or [""])[0] or "player"
+        name  = f"{p.get('first_name')} {p.get('last_name')}"
+        if role.lower() not in ("player",""):
+            name += f" ({role.title()})"
+        team = (p.get("teams") or [p.get("team_name","")])[0]
+
+        rc_total = 0
+        all_mins  = []
+        for m in p.get("matches", []):
+            if start_date and not _match_in_date_range(m, start_date, end_date):
+                continue
+            events = m.get("events", [])
+            rc = m.get("red_cards",
+                sum(1 for e in events
+                    if (e.get("type") or e.get("event_type","")).lower() == "red_card"))
+            rc_total += rc
+            mins = _card_minutes(m, "red_card")
+            if mins:
+                all_mins.append(mins)
+
+        if not start_date:
+            rc_total = stats.get(stat_key, 0)
+
+        row = {
+            "#":    i,
+            "Name": name,
+            "Team": team,
+            "🟥":   rc_total,
+            "Min":  ", ".join(all_mins) if all_mins else "—",
+        }
+        if role.lower() in ("player",""):
+            row["M"]  = stats.get("matches_played", 0)
+            row["⚽"] = stats.get("goals", 0)
+        data.append(row)
+
+    return {"type": "table", "data": data, "title": title}
 
 def tool_top_scorers(query: str = "", limit: int = 20):
     """List top goal scorers - supports age group and team filtering"""
@@ -2053,7 +2091,7 @@ def tool_players(query: str, detailed: bool = False) -> str:
         if len(exact_matches) == 1:
             p = exact_matches[0]
             stats   = p.get("stats", {})
-            matches = p.get("matches", [])   # deduped + team_name inferred by _normalize_person
+            matches = p.get("matches", [])   # already deduped by _normalize_person
 
             all_teams   = p.get("teams", []) or ([p.get("team_name")] if p.get("team_name") else [])
             all_leagues = p.get("leagues", []) or ([p.get("league_name")] if p.get("league_name") else [])
@@ -2061,19 +2099,30 @@ def tool_players(query: str, detailed: bool = False) -> str:
             is_dual_reg = len(all_teams) > 1
             pname       = f"{p.get('first_name')} {p.get('last_name')}"
 
+            # Does the JSON have team_name on match entries? (new dribl format)
+            has_team_in_matches = any(m.get("team_name") for m in matches)
+
             # ── Registration row per club ──────────────────────────────
             reg_rows = []
             for i, t in enumerate(all_teams):
                 jersey = jerseys_map.get(t) or p.get("jersey", "—")
                 league = all_leagues[i] if i < len(all_leagues) else p.get("league_name", "")
 
-                # team_name is set on all match entries (new JSON) or inferred
-                # from opponent age group (_normalize_person), so we can always split
-                tm  = [m for m in matches if m.get("team_name") == t]
-                mp  = len(tm)
-                g   = sum(m.get("goals", 0) for m in tm)
-                yc  = sum(m.get("yellow_cards", 0) for m in tm)
-                rc  = sum(m.get("red_cards", 0) for m in tm)
+                if has_team_in_matches:
+                    tm  = [m for m in matches if m.get("team_name") == t]
+                    mp  = len(tm)
+                    g   = sum(m.get("goals", 0) for m in tm)
+                    yc  = sum(m.get("yellow_cards", 0) for m in tm)
+                    rc  = sum(m.get("red_cards", 0) for m in tm)
+                else:
+                    # Old JSON without team_name on matches — show totals on first row
+                    if i == 0:
+                        mp = stats.get("matches_played", len(matches))
+                        g  = stats.get("goals", 0)
+                        yc = stats.get("yellow_cards", 0)
+                        rc = stats.get("red_cards", 0)
+                    else:
+                        mp, g, yc, rc = "—", "—", "—", "—"
 
                 reg_rows.append({
                     "Club":    t,
@@ -2103,9 +2152,14 @@ def tool_players(query: str, detailed: bool = False) -> str:
                     "🟨":       yellows,
                     "🟥":       reds,
                 }
+                # Show Club column for dual-reg players when data is available
                 if is_dual_reg and m.get("team_name"):
                     row["Club"] = m["team_name"]
                 match_rows.append(row)
+
+            note = ""
+            if is_dual_reg and not has_team_in_matches:
+                note = "Per-club split unavailable — re-run dribl_player_details.py to regenerate JSON"
 
             return {
                 "type":          "player_profile",
@@ -2122,7 +2176,7 @@ def tool_players(query: str, detailed: bool = False) -> str:
                 },
                 "matches":  match_rows,
                 "detailed": detailed,
-                "note":     "",
+                "note":     note,
             }
         else:
             # Multiple players found - return as table
@@ -2771,15 +2825,23 @@ class FastQueryRouter:
 
         # --- 5. YELLOW CARDS ---
         if "yellow card" in q or "yellows" in q:
-            show_details = "detail" in q
-            filter_query = re.sub(r'\b(yellow|card|cards|details?|show|list|with|for|me)\b', '', q).strip()
-            return tool_yellow_cards(filter_query, show_details, include_non_players=is_non_player_query)
+            show_details      = "detail" in q
+            _date_mode        = "last_week" if any(x in q for x in ["last week", "previous week", "last round"])                                 else ("this_week" if any(x in q for x in ["this week", "today", "this round"]) else "")
+            _non_player_cards = is_non_player_query or any(x in q for x in ["coach", "coaches", "staff", "non-player", "manager"])
+            filter_query = re.sub(r'\b(yellow|card|cards|details?|show|list|with|for|me|this|last|week|previous|round|coach|coaches|staff|non|player|players|manager)\b', '', q).strip()
+            return tool_yellow_cards(filter_query, show_details,
+                                     include_non_players=_non_player_cards,
+                                     date_mode=_date_mode)
 
         # --- 6. RED CARDS ---
         if "red card" in q or "reds" in q:
-            show_details = "detail" in q
-            filter_query = re.sub(r'\b(red|card|cards|details?|show|list|with|for|me)\b', '', q).strip()
-            return tool_red_cards(filter_query, show_details, include_non_players=is_non_player_query)
+            show_details      = "detail" in q
+            _date_mode        = "last_week" if any(x in q for x in ["last week", "previous week", "last round"])                                 else ("this_week" if any(x in q for x in ["this week", "today", "this round"]) else "")
+            _non_player_cards = is_non_player_query or any(x in q for x in ["coach", "coaches", "staff", "non-player", "manager"])
+            filter_query = re.sub(r'\b(red|card|cards|details?|show|list|with|for|me|this|last|week|previous|round|coach|coaches|staff|non|player|players|manager)\b', '', q).strip()
+            return tool_red_cards(filter_query, show_details,
+                                  include_non_players=_non_player_cards,
+                                  date_mode=_date_mode)
 
         # --- 7. STANDALONE NON-PLAYER LIST ---
         if is_non_player_query:
