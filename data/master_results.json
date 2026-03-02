@@ -24984,7 +24984,7 @@
             "home_score_penalty": null,
             "home_score_half": null,
             "home_score_extra_half": null,
-            "away_score": 3,
+            "away_score": 4,
             "away_score_extra": null,
             "away_score_penalty": null,
             "away_score_half": null,
@@ -25820,6 +25820,150 @@
         "links": {
             "self": {
                 "href": "https://mc-api.dribl.com/api/results/2Kp0pgWM9K"
+            }
+        }
+    },
+    {
+        "type": "results",
+        "hash_id": "pmvvwql80m",
+        "attributes": {
+            "name": "FV54531861 - Langwarrin SC v Oakleigh Cannons FC",
+            "date": "2026-03-01 01:00:00",
+            "round": "R5",
+            "full_round": "Round 5",
+            "ground_name": "Lawton Park Reserve",
+            "field_name": "Pitch 2",
+            "home_team_name": "Langwarrin SC U15",
+            "home_logo": "https://ocean.dribl.com/e895f078d0894566a9e7ded5fd256155",
+            "away_team_name": "Oakleigh Cannons FC U15",
+            "away_logo": "https://ocean.dribl.com/83022e3737d94f8d9724dba79fb76086",
+            "competition_name": "Boys Victorian Youth Premier League 2",
+            "league_name": "U15 YPL2 Boys",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 1,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 3,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": true,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 3,
+            "enable_referees_allocated": false,
+            "match_hash_id": "gdM6EJg9Om",
+            "home_team_hash_id": "lNb3Vn0EKx",
+            "away_team_hash_id": "8NOD8qpzKZ",
+            "forfeit_team_hash_id": null
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/pmvvwql80m"
+            }
+        }
+    },
+    {
+        "type": "results",
+        "hash_id": "MNGJxP9abm",
+        "attributes": {
+            "name": "FV54534815 - Port Melbourne SC v Monash City Villarreal FC",
+            "date": "2026-03-01 02:30:00",
+            "round": "R3",
+            "full_round": "Round 3",
+            "ground_name": "STRUC Steel Stadium",
+            "field_name": "Pitch 1",
+            "home_team_name": "Port Melbourne SC U16",
+            "home_logo": "https://ocean.dribl.com/ebff8b236f70438786f51a60733e7fab",
+            "away_team_name": "Monash City Villarreal FC U16",
+            "away_logo": "https://ocean.dribl.com/aeb19119de7f4abfa1c3a9316de1ca1a",
+            "competition_name": "Boys Youth State League South-East",
+            "league_name": "U16 YSL Boys - South-East",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 0,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 2,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": true,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 3,
+            "enable_referees_allocated": false,
+            "match_hash_id": "pmvvwqD3ym",
+            "home_team_hash_id": "jdye8b9Dd5",
+            "away_team_hash_id": "BdD1B2o4mb",
+            "forfeit_team_hash_id": null
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/MNGJxP9abm"
+            }
+        }
+    },
+    {
+        "type": "results",
+        "hash_id": "nmYnZBOXpN",
+        "attributes": {
+            "name": "FV54538538 - Dandenong City SC v Malvern City FC",
+            "date": "2026-02-28 22:00:00",
+            "round": "R5",
+            "full_round": "Round 5",
+            "ground_name": "Frank Holohan Soccer Complex",
+            "field_name": "Pitch 2 - Half Field",
+            "home_team_name": "Dandenong City SC U13",
+            "home_logo": "https://ocean.dribl.com/7b8f319694ff4296aa9877ba5ba825f6",
+            "away_team_name": "Malvern City FC U13",
+            "away_logo": "https://ocean.dribl.com/f577bb8cd99c494595cca7b6afb2d572",
+            "competition_name": "Boys Victorian Youth Premier League 1",
+            "league_name": "U13 YPL1 Boys",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 0,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 2,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": false,
+            "allocated_assistant_referee_1": false,
+            "allocated_assistant_referee_2": false,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 0,
+            "enable_referees_allocated": false,
+            "match_hash_id": "OmepXrqYGd",
+            "home_team_hash_id": "BdD1BeZJmb",
+            "away_team_hash_id": "pmvzPnjomv",
+            "forfeit_team_hash_id": null
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/nmYnZBOXpN"
             }
         }
     }
