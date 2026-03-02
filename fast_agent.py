@@ -277,6 +277,20 @@ def format_date_full(date_str: str) -> str:
     except (ValueError, AttributeError):
         return date_str[:10] if len(date_str) >= 10 else date_str
 
+def iso_date(date_str: str) -> str:
+    """Return YYYY-MM-DD (ISO) string for use in st.dataframe Date columns.
+    Streamlit DateColumn needs ISO format to sort correctly.
+    Returns empty string for missing/invalid dates."""
+    if not date_str:
+        return ""
+    try:
+        date_part = date_str.split('T')[0] if 'T' in date_str else date_str
+        dt = datetime.fromisoformat(date_part)
+        return dt.strftime("%Y-%m-%d")
+    except (ValueError, AttributeError):
+        return ""
+
+
 def parse_date(date_str: str) -> datetime.date:
     """Parse date string to date object"""
     if not date_str:
@@ -1024,7 +1038,7 @@ def tool_missing_scores(query: str = "", include_all_leagues: bool = False, toda
         
         # Only add date column if not today_only (since date is the same)
         if not today_only:
-            row["Date"] = match["date"]
+            row["Date"] = iso_date(match["date"])
             row["Time"] = match["time"]
         else:
             row["Time"] = match["time"]
@@ -2144,7 +2158,7 @@ def tool_players(query: str, detailed: bool = False) -> str:
                 yellows = m.get("yellow_cards", sum(1 for e in events if _etype(e) == "yellow_card"))
                 reds    = m.get("red_cards",    sum(1 for e in events if _etype(e) == "red_card"))
                 row = {
-                    "Date":     format_date(m.get("date", "")),
+                    "Date":     iso_date(m.get("date", "")),
                     "H/A":      "🏠" if m.get("home_or_away") == "home" else "✈️",
                     "Opponent": m.get("opponent_team_name", "—"),
                     "Started":  "✅" if m.get("started") else "🪑",
@@ -2475,7 +2489,7 @@ def tool_form(query: str) -> str:
             icon = "🟢" if result == "W" else ("🔴" if result == "L" else "🟡")
         
         form.append(result)
-        date_str = format_date(m.get('date', ''))
+        date_str = iso_date(m.get('date', ''))
         
         match_data.append({
             "Date": date_str,

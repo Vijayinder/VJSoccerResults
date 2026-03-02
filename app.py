@@ -1,5 +1,5 @@
 import streamlit as st
-from fast_agent import FastQueryRouter, format_date, format_date_full
+from fast_agent import FastQueryRouter, format_date, format_date_full, iso_date
 import time
 import pandas as pd
 import json
@@ -12,6 +12,8 @@ import uuid
 import plotly.graph_objects as go
 import io
 import random
+import sys
+import threading
 
 
 # Import authentication and tracking modules
@@ -25,6 +27,26 @@ from player_config import (
     get_player_selection_stats
 )
 # ADD after imports:
+# ---------------------------------------------------------
+# Reboot helpers — activity_logs.db is on disk, survives re-exec
+# ---------------------------------------------------------
+def _do_reboot():
+    """Re-exec the Streamlit process in place. SQLite activity DB persists on disk."""
+    os.execv(sys.executable, [sys.executable] + sys.argv)
+
+def _start_auto_reboot_timer():
+    """Background thread: reboot every 3 hours (waits for quiet period first)."""
+    import time as _t
+    _t.sleep(3 * 3600)          # wait 3 hours
+    # Give active sessions a short grace period
+    try:
+        from activity_tracker import get_active_users_today
+        if get_active_users_today():
+            _t.sleep(300)       # 5-minute grace if anyone active
+    except Exception:
+        pass
+    _do_reboot()
+
 SESSION_TIMEOUT_MINUTES = 240  # 4 hours
 
 def get_client_ip():
@@ -212,6 +234,12 @@ def init_session_state():
     
     if "last_search" not in st.session_state:
         st.session_state["last_search"] = ""
+
+    # Start 3-hour auto-reboot timer once per process lifetime
+    if not st.session_state.get("_reboot_timer_started"):
+        st.session_state["_reboot_timer_started"] = True
+        _t = threading.Thread(target=_start_auto_reboot_timer, daemon=True)
+        _t.start()
         
     if "expander_state" not in st.session_state:
         st.session_state["expander_state"] = False
@@ -1576,6 +1604,16 @@ def main_app():
             st.markdown("### Admin Controls")
             if st.button("📊 View Dashboard", use_container_width=True):
                 st.session_state["show_admin_dashboard"] = True
+            st.markdown("---")
+            # Reboot button — usage data (SQLite) is preserved on disk
+            if st.button("🔄 Reboot App", use_container_width=True, type="secondary",
+                         help="Restarts the server process. Activity data is preserved."):
+                st.session_state["_confirm_reboot"] = True
+                st.rerun()
+            if st.session_state.get("_confirm_reboot"):
+                st.sidebar.warning("⚠️ Rebooting…")
+                import time as _rt; _rt.sleep(0.8)
+                _do_reboot()
     
     # Show admin dashboard if requested
     if st.session_state.get("show_admin_dashboard", False) and st.session_state["role"] == "admin":
@@ -1590,21 +1628,31 @@ def main_app():
     # Search bar
     st.markdown("### 💬 Ask Me Anything")
     
-    # Initialize search input in session state if not present
-    if "search_query" not in st.session_state:
-        st.session_state["search_query"] = ""
-    
-    # Check if a button was clicked and update the query
-    if "clicked_query" in st.session_state and st.session_state["clicked_query"]:
-        st.session_state["search_query"] = st.session_state["clicked_query"]
-        st.session_state["clicked_query"] = None  # Clear after use
-    
+    # ── Search state init ──────────────────────────────────────────────────
+    for _k, _v in [("search_query",""), ("last_search",""), ("search_answer",None),
+                   ("search_answer_time",0.0), ("_search_run_flag",False)]:
+        if _k not in st.session_state:
+            st.session_state[_k] = _v
+
+    # A clicked example-query button sets clicked_query then reruns.
+    # We consume it here and raise a flag so the processing block fires even
+    # when the typed text hasn't changed (same query clicked twice, etc.)
+    if st.session_state.get("clicked_query"):
+        st.session_state["search_query"]   = st.session_state["clicked_query"]
+        st.session_state["clicked_query"]  = None
+        st.session_state["_search_run_flag"] = True   # force re-process
+
     search = st.text_input(
         "",
         value=st.session_state["search_query"],
         placeholder="Try: 'Stats for Shaurya','top scorers in U16', 'yellow cards Heidelberg', 'missing scores'...",
-        label_visibility="collapsed"
+        label_visibility="collapsed",
+        key="main_search_input"
     )
+    # Typed input: re-process whenever text changes
+    if search != st.session_state.get("last_search", ""):
+        st.session_state["_search_run_flag"] = True
+        st.session_state["search_query"] = search
     # 1. Define dynamic labels based on session state
     user_club = st.session_state.get("player_club") or "Heidelberg United"
     user_age = st.session_state.get("player_age_group") or "U16"
@@ -1725,92 +1773,95 @@ def main_app():
             st.session_state["clicked_query"] = q15
             st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
             st.rerun()
-    # Process search queries
-    if search and search != st.session_state["last_search"]:
-        st.session_state["last_search"] = search
-        st.session_state["expander_state"] = False
+    # ── Process search (only when flag is raised) ─────────────────────────
+    _query = st.session_state["search_query"].strip()
+    if _query and st.session_state.get("_search_run_flag"):
+        st.session_state["_search_run_flag"] = False
+        st.session_state["last_search"] = _query
         st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-        # Reset navigation back to leagues view when a search is run
+        # Reset navigation when a search is run
         st.session_state["level"] = "league"
         st.session_state["selected_league"] = None
         st.session_state["selected_competition"] = None
         st.session_state["selected_club"] = None
         st.session_state["selected_player"] = None
         st.session_state["selected_match_id"] = None
-        if is_natural_language_query(search):
-            # Log the search
+        if is_natural_language_query(_query):
             log_search(
                 username=st.session_state["username"],
                 full_name=st.session_state["full_name"],
-                query=search,
+                query=_query,
                 session_id=st.session_state["session_id"]
             )
-            
             with st.spinner("🧠 Analyzing..."):
-                start = time.time()
-                answer = router.process(search)
-                end = time.time()
+                _t0 = time.time()
+                _ans = router.process(_query)
+                _t1 = time.time()
+            st.session_state["search_answer"]      = _ans
+            st.session_state["search_answer_time"] = round(_t1 - _t0, 3)
 
-            st.markdown("---")
-            if isinstance(answer, dict):
-                if answer.get("type") == "player_profile":
-                    pname    = answer.get("name", "")
-                    is_dual  = answer.get("is_dual", False)
-                    reg_rows = answer.get("registrations", [])
-                    s_stats  = answer.get("season_stats", {})
-                    m_rows   = answer.get("matches", [])
-                    detailed = answer.get("detailed", False)
-                    note     = answer.get("note", "")
+    # ── Always render last answer (persists across button clicks / reruns) ──
+    def _render_answer_block(answer):
+        st.markdown("---")
+        if isinstance(answer, dict):
+            if answer.get("type") == "player_profile":
+                pname    = answer.get("name", "")
+                is_dual  = answer.get("is_dual", False)
+                reg_rows = answer.get("registrations", [])
+                s_stats  = answer.get("season_stats", {})
+                m_rows   = answer.get("matches", [])
+                detailed = answer.get("detailed", False)
+                note     = answer.get("note", "")
+                st.markdown(f"### 👤 {pname}")
+                if is_dual:
+                    st.caption("🔄 Dual Registration")
+                if reg_rows:
+                    df_reg = pd.DataFrame(reg_rows)
+                    st.dataframe(df_reg, hide_index=True, use_container_width=True,
+                                 height=(len(reg_rows) + 1) * 35 + 10)
+                st.markdown("**📊 Season Totals**")
+                df_stats = pd.DataFrame([s_stats])
+                st.dataframe(df_stats, hide_index=True, use_container_width=True, height=70)
+                if m_rows:
+                    label = "📅 Match-by-Match" if detailed else f"📅 Recent Matches (last {len(m_rows)})"
+                    st.markdown(f"**{label}**")
+                    df_m = pd.DataFrame(m_rows)
+                    _cfg = {}
+                    if "Date" in df_m.columns:
+                        df_m["Date"] = pd.to_datetime(df_m["Date"], errors="coerce").dt.date
+                        _cfg["Date"] = st.column_config.DateColumn("Date", format="DD-MMM")
+                    h = min(600, (len(m_rows) + 1) * 35 + 10)
+                    st.dataframe(df_m, hide_index=True, use_container_width=True,
+                                 height=h, column_config=_cfg)
+                    if not detailed:
+                        st.caption(f"💡 Say 'details for {pname}' for full match-by-match breakdown")
+                if note:
+                    st.caption(f"ℹ️ {note}")
 
-                    st.markdown(f"### 👤 {pname}")
-                    if is_dual:
-                        st.caption("🔄 Dual Registration")
+            elif answer.get("type") == "table":
+                st.info(answer.get("title", "Results"))
+                data = answer.get("data", [])
+                if data:
+                    df = pd.DataFrame(data)
+                    _cfg = {}
+                    if "Date" in df.columns:
+                        df["Date"] = pd.to_datetime(df["Date"], errors="coerce").dt.date
+                        _cfg["Date"] = st.column_config.DateColumn("Date", format="DD-MMM")
+                    num_rows     = len(df)
+                    final_height = 600 if num_rows > 16 else (num_rows + 1) * 35
+                    st.dataframe(df, hide_index=True, use_container_width=True,
+                                 height=final_height, column_config=_cfg)
 
-                    if reg_rows:
-                        df_reg = pd.DataFrame(reg_rows)
-                        st.dataframe(df_reg, hide_index=True, use_container_width=True,
-                                     height=(len(reg_rows) + 1) * 35 + 10)
+            elif answer.get("type") == "error":
+                st.error(answer.get("message", "An error occurred"))
+        else:
+            st.chat_message("assistant").write(answer)
 
-                    st.markdown("**📊 Season Totals**")
-                    df_stats = pd.DataFrame([s_stats])
-                    st.dataframe(df_stats, hide_index=True, use_container_width=True, height=70)
+        st.caption(f"⏱️ {st.session_state['search_answer_time']:.3f}s")
+        st.markdown("---")
 
-                    if m_rows:
-                        label = "📅 Match-by-Match" if detailed else f"📅 Recent Matches (last {len(m_rows)})"
-                        st.markdown(f"**{label}**")
-                        df_m = pd.DataFrame(m_rows)
-                        h = min(600, (len(m_rows) + 1) * 35 + 10)
-                        st.dataframe(df_m, hide_index=True, use_container_width=True, height=h)
-                        if not detailed:
-                            st.caption(f"💡 Say 'details for {pname}' for full match-by-match breakdown")
-
-                    if note:
-                        st.caption(f"ℹ️ {note}")
-
-                elif answer.get("type") == "table":
-                    title = answer.get('title', "Results")
-                    st.info(title) 
-                    
-                    data = answer.get('data', [])
-                    if data:
-                        df = pd.DataFrame(data)
-                        
-                        # --- Dynamic Height Logic ---
-                        num_rows = len(df)
-                        # (Rows + Header) * Row Height (35px). Cap at 600px if > 16 rows.
-                        final_height = 600 if num_rows > 16 else (num_rows + 1) * 35
-                        
-                        st.dataframe(df, hide_index=True, use_container_width=True, height=final_height)
-                        
-
-                elif answer.get("type") == "error":
-                    st.error(answer.get("message", "An error occurred"))
-
-            else:
-                st.chat_message("assistant").write(answer)
-
-            st.caption(f"⏱️ Response time: {end - start:.3f}s")
-            st.markdown("---")
+    if st.session_state.get("search_answer") is not None and _query:
+        _render_answer_block(st.session_state["search_answer"])
 
     # Navigation buttons
     if st.session_state["level"] != "league":
@@ -1848,6 +1899,7 @@ def main_app():
                     st.session_state["level"] = "competition"
                     st.session_state["search_query"] = ""
                     st.session_state["last_search"] = ""
+                    st.session_state["search_answer"] = None
                     
                     # Log the view
                     log_view(
@@ -2086,7 +2138,7 @@ def main_app():
 
                         match_rows.append({
                             "Select": False,
-                            "Date": format_date(attrs.get("date", "")),
+                            "Date": iso_date(attrs.get("date", "")),
                             "H/A": home_away,
                             "Opponent": base_club_name(opponent),
                             "Score": score,
@@ -2106,7 +2158,7 @@ def main_app():
                         hide_index=True,
                         column_config={
                             "Select": st.column_config.CheckboxColumn("", default=False, width="small"),
-                            "Date": st.column_config.TextColumn("Date", width="small"),
+                            "Date": st.column_config.DateColumn("Date", format="DD-MMM"),
                             "H/A": st.column_config.TextColumn("", width="small"),
                             "Opponent": st.column_config.TextColumn("Opponent", width="medium"),
                             "Score": st.column_config.TextColumn("Score", width="small")
@@ -2364,7 +2416,7 @@ def main_app():
                             age_grp = _ag_m.group(0).upper() if _ag_m else ""
 
                             row = {
-                                "Date":     format_date(m.get("date", "")),
+                                "Date":     iso_date(m.get("date", "")),
                                 "Age":      age_grp,
                                 "Started":  "✅" if m.get("started") else "🪑",
                                 "Opponent": opponent,
@@ -2376,7 +2428,7 @@ def main_app():
                             match_rows.append(row)
                         df_player = pd.DataFrame(match_rows)
                         col_cfg = {
-                            "Date":     st.column_config.TextColumn("Date", width="small"),
+                            "Date":     st.column_config.DateColumn("Date", format="DD-MMM"),
                             "Age":      st.column_config.TextColumn("Age", width="small"),
                             "Started":  st.column_config.TextColumn("", width="small"),
                             "Opponent": st.column_config.TextColumn("Opponent", width="medium"),
@@ -2410,7 +2462,7 @@ def main_app():
         rows = []
         for m in matches:
             rows.append({
-                "Date": format_date(m.get("date", "")),
+                "Date": iso_date(m.get("date", "")),
                 "Competition": m.get("competition_name"),
                 "Opponent": base_club_name(m.get("opponent_team_name", "")),
                 "H/A": "🏠" if m.get("home_or_away") == "home" else "✈️",
@@ -2425,6 +2477,7 @@ def main_app():
             hide_index=True, 
             use_container_width=False,
             column_config={
+                "Date": st.column_config.DateColumn("Date", format="DD-MMM"),
                 "H/A": st.column_config.TextColumn("", width="small"),
                 "Goals": st.column_config.NumberColumn("G", width="small"),
                 "🟨": st.column_config.NumberColumn("🟨", width="small"),
@@ -2491,33 +2544,5 @@ def main():
         
 if __name__ == "__main__":
     main()
-# Last auto-update: 2026-02-19 18:46:53 AEDT
-# Last auto-update: 2026-02-19 19:29:21 AEDT
-# Last auto-update: 2026-02-19 19:37:42 AEDT
-# Last auto-update: 2026-02-19 20:00:16 AEDT
-# Last auto-update: 2026-02-20 00:00:17 AEDT
-# Last auto-update: 2026-02-20 04:00:18 AEDT
-# Last auto-update: 2026-02-20 08:00:17 AEDT
-# Last auto-update: 2026-02-27 13:29:39 AEDT
-# Last auto-update: 2026-02-27 13:31:56 AEDT
-# Last auto-update: 2026-02-27 13:40:35 AEDT
-# Last auto-update: 2026-02-27 13:47:18 AEDT
-# Last auto-update: 2026-02-27 14:07:14 AEDT
-# Last auto-update: 2026-03-01 01:00:33 AEDT
-# Last auto-update: 2026-03-01 02:00:33 AEDT
-# Last auto-update: 2026-03-01 03:00:34 AEDT
-# Last auto-update: 2026-03-01 04:00:32 AEDT
-# Last auto-update: 2026-03-01 05:00:33 AEDT
-# Last auto-update: 2026-03-01 06:00:32 AEDT
-# Last auto-update: 2026-03-02 00:00:44 AEDT
-# Last auto-update: 2026-03-02 02:00:43 AEDT
-# Last auto-update: 2026-03-02 03:00:40 AEDT
-# Last auto-update: 2026-03-02 04:00:44 AEDT
-# Last auto-update: 2026-03-02 05:00:40 AEDT
-# Last auto-update: 2026-03-02 06:00:40 AEDT
-# Last auto-update: 2026-03-02 07:00:43 AEDT
-# Last auto-update: 2026-03-02 08:00:42 AEDT
-# Last auto-update: 2026-03-02 09:00:41 AEDT
 # Last auto-update: 2026-03-02 10:00:32 AEDT
 # Last auto-update: 2026-03-02 11:00:33 AEDT
-# Last auto-update: 2026-03-02 12:00:27 AEDT
