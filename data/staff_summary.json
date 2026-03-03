@@ -56198,7 +56198,7 @@
           "red_cards": 0
         },
         "Brimbank Stallions FC U15": {
-          "matches_played": 2,
+          "matches_played": 3,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -56215,7 +56215,7 @@
         }
       },
       "stats": {
-        "matches_attended": 14,
+        "matches_attended": 15,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -56387,6 +56387,18 @@
           "opponent_team_name": "Bendigo City FC U16",
           "opponent_team_id": "vmZwn2kLNq",
           "events": []
+        },
+        {
+          "match_hash_id": "am14QYBOkd",
+          "date": "2026-03-01T01:30:00.000000Z",
+          "team_name": "Brimbank Stallions FC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "away",
+          "opponent_team_name": "Bendigo City FC U15",
+          "opponent_team_id": "2KpvA9abmY",
+          "events": []
         }
       ]
     },
@@ -56400,15 +56412,18 @@
       ],
       "teams": [
         "Brimbank Stallions FC U13",
-        "Brimbank Stallions FC U16"
+        "Brimbank Stallions FC U16",
+        "Brimbank Stallions FC U15"
       ],
       "leagues": [
         "U13 YSL Boys - North-West",
-        "U16 YSL Boys - North-West"
+        "U16 YSL Boys - North-West",
+        "U15 YSL Boys - North-West"
       ],
       "jerseys": {
         "Brimbank Stallions FC U13": "",
-        "Brimbank Stallions FC U16": ""
+        "Brimbank Stallions FC U16": "",
+        "Brimbank Stallions FC U15": ""
       },
       "team_stats": {
         "Brimbank Stallions FC U13": {
@@ -56426,10 +56441,18 @@
           "goals": 0,
           "yellow_cards": 0,
           "red_cards": 0
+        },
+        "Brimbank Stallions FC U15": {
+          "matches_played": 1,
+          "matches_started": 0,
+          "bench_appearances": 0,
+          "goals": 0,
+          "yellow_cards": 0,
+          "red_cards": 0
         }
       },
       "stats": {
-        "matches_attended": 6,
+        "matches_attended": 7,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -56504,6 +56527,18 @@
           "home_or_away": "away",
           "opponent_team_name": "Bendigo City FC U16",
           "opponent_team_id": "vmZwn2kLNq",
+          "events": []
+        },
+        {
+          "match_hash_id": "am14QYBOkd",
+          "date": "2026-03-01T01:30:00.000000Z",
+          "team_name": "Brimbank Stallions FC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Bendigo City FC U15",
+          "opponent_team_id": "2KpvA9abmY",
           "events": []
         }
       ]
@@ -56634,7 +56669,7 @@
           "red_cards": 0
         },
         "Brimbank Stallions FC U15": {
-          "matches_played": 2,
+          "matches_played": 3,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -56651,7 +56686,7 @@
         }
       },
       "stats": {
-        "matches_attended": 14,
+        "matches_attended": 15,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -56822,6 +56857,18 @@
           "home_or_away": "away",
           "opponent_team_name": "Bendigo City FC U16",
           "opponent_team_id": "vmZwn2kLNq",
+          "events": []
+        },
+        {
+          "match_hash_id": "am14QYBOkd",
+          "date": "2026-03-01T01:30:00.000000Z",
+          "team_name": "Brimbank Stallions FC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "away",
+          "opponent_team_name": "Bendigo City FC U15",
+          "opponent_team_id": "2KpvA9abmY",
           "events": []
         }
       ]
@@ -65440,7 +65487,7 @@
           "red_cards": 0
         },
         "Brimbank Stallions FC U15": {
-          "matches_played": 2,
+          "matches_played": 3,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -65449,7 +65496,7 @@
         }
       },
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -65513,6 +65560,18 @@
           "opponent_team_name": "Bendigo City FC U16",
           "opponent_team_id": "vmZwn2kLNq",
           "events": []
+        },
+        {
+          "match_hash_id": "am14QYBOkd",
+          "date": "2026-03-01T01:30:00.000000Z",
+          "team_name": "Brimbank Stallions FC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Bendigo City FC U15",
+          "opponent_team_id": "2KpvA9abmY",
+          "events": []
         }
       ]
     },
@@ -65546,7 +65605,7 @@
           "red_cards": 0
         },
         "Brimbank Stallions FC U15": {
-          "matches_played": 2,
+          "matches_played": 3,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -65555,7 +65614,7 @@
         }
       },
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 1,
         "red_cards": 0
       },
@@ -65623,6 +65682,18 @@
           "home_or_away": "away",
           "opponent_team_name": "Bendigo City FC U16",
           "opponent_team_id": "vmZwn2kLNq",
+          "events": []
+        },
+        {
+          "match_hash_id": "am14QYBOkd",
+          "date": "2026-03-01T01:30:00.000000Z",
+          "team_name": "Brimbank Stallions FC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Bendigo City FC U15",
+          "opponent_team_id": "2KpvA9abmY",
           "events": []
         }
       ]
@@ -67510,17 +67581,17 @@
       },
       "team_stats": {
         "Brimbank Stallions FC U15": {
-          "matches_played": 2,
+          "matches_played": 3,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
-          "yellow_cards": 0,
+          "yellow_cards": 1,
           "red_cards": 0
         }
       },
       "stats": {
-        "matches_attended": 2,
-        "yellow_cards": 0,
+        "matches_attended": 3,
+        "yellow_cards": 1,
         "red_cards": 0
       },
       "matches": [
@@ -67547,6 +67618,23 @@
           "opponent_team_name": "Doreen United SC U15",
           "opponent_team_id": "1K3Ykw29mQ",
           "events": []
+        },
+        {
+          "match_hash_id": "am14QYBOkd",
+          "date": "2026-03-01T01:30:00.000000Z",
+          "team_name": "Brimbank Stallions FC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Bendigo City FC U15",
+          "opponent_team_id": "2KpvA9abmY",
+          "events": [
+            {
+              "type": "yellow_card",
+              "minute": "52"
+            }
+          ]
         }
       ]
     },
@@ -72491,7 +72579,7 @@
           "red_cards": 0
         },
         "Bendigo City FC U15": {
-          "matches_played": 4,
+          "matches_played": 5,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -72500,7 +72588,7 @@
         }
       },
       "stats": {
-        "matches_attended": 19,
+        "matches_attended": 20,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -72731,6 +72819,18 @@
           "home_or_away": "home",
           "opponent_team_name": "Brimbank Stallions FC U16",
           "opponent_team_id": "lNb3V2RAKx",
+          "events": []
+        },
+        {
+          "match_hash_id": "am14QYBOkd",
+          "date": "2026-03-01T01:30:00.000000Z",
+          "team_name": "Bendigo City FC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Brimbank Stallions FC U15",
+          "opponent_team_id": "BdD1B2AJmb",
           "events": []
         }
       ]
@@ -72799,7 +72899,7 @@
           "red_cards": 0
         },
         "Bendigo City FC U15": {
-          "matches_played": 2,
+          "matches_played": 3,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -72808,7 +72908,7 @@
         }
       },
       "stats": {
-        "matches_attended": 17,
+        "matches_attended": 18,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -73015,6 +73115,18 @@
           "home_or_away": "home",
           "opponent_team_name": "Brimbank Stallions FC U16",
           "opponent_team_id": "lNb3V2RAKx",
+          "events": []
+        },
+        {
+          "match_hash_id": "am14QYBOkd",
+          "date": "2026-03-01T01:30:00.000000Z",
+          "team_name": "Bendigo City FC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Brimbank Stallions FC U15",
+          "opponent_team_id": "BdD1B2AJmb",
           "events": []
         }
       ]
@@ -73082,7 +73194,7 @@
           "red_cards": 0
         },
         "Bendigo City FC U15": {
-          "matches_played": 2,
+          "matches_played": 3,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -73091,7 +73203,7 @@
         }
       },
       "stats": {
-        "matches_attended": 14,
+        "matches_attended": 15,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -73262,6 +73374,18 @@
           "home_or_away": "home",
           "opponent_team_name": "Brimbank Stallions FC U16",
           "opponent_team_id": "lNb3V2RAKx",
+          "events": []
+        },
+        {
+          "match_hash_id": "am14QYBOkd",
+          "date": "2026-03-01T01:30:00.000000Z",
+          "team_name": "Bendigo City FC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Brimbank Stallions FC U15",
+          "opponent_team_id": "BdD1B2AJmb",
           "events": []
         }
       ]
@@ -74691,7 +74815,7 @@
           "red_cards": 0
         },
         "Bendigo City FC U15": {
-          "matches_played": 2,
+          "matches_played": 3,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -74700,7 +74824,7 @@
         }
       },
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -74763,6 +74887,18 @@
           "home_or_away": "home",
           "opponent_team_name": "Brimbank Stallions FC U18",
           "opponent_team_id": "BdD1B2jgmb",
+          "events": []
+        },
+        {
+          "match_hash_id": "am14QYBOkd",
+          "date": "2026-03-01T01:30:00.000000Z",
+          "team_name": "Bendigo City FC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Brimbank Stallions FC U15",
+          "opponent_team_id": "BdD1B2AJmb",
           "events": []
         }
       ]
@@ -78329,7 +78465,7 @@
       },
       "team_stats": {
         "Bendigo City FC U15": {
-          "matches_played": 2,
+          "matches_played": 3,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -78338,7 +78474,7 @@
         }
       },
       "stats": {
-        "matches_attended": 2,
+        "matches_attended": 3,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -78365,6 +78501,18 @@
           "home_or_away": "home",
           "opponent_team_name": "Keilor Park SC U15",
           "opponent_team_id": "jdye8bMvd5",
+          "events": []
+        },
+        {
+          "match_hash_id": "am14QYBOkd",
+          "date": "2026-03-01T01:30:00.000000Z",
+          "team_name": "Bendigo City FC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Team Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Brimbank Stallions FC U15",
+          "opponent_team_id": "BdD1B2AJmb",
           "events": []
         }
       ]
@@ -78388,7 +78536,7 @@
       },
       "team_stats": {
         "Bendigo City FC U15": {
-          "matches_played": 2,
+          "matches_played": 3,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -78397,7 +78545,7 @@
         }
       },
       "stats": {
-        "matches_attended": 2,
+        "matches_attended": 3,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -78424,6 +78572,18 @@
           "home_or_away": "home",
           "opponent_team_name": "Keilor Park SC U15",
           "opponent_team_id": "jdye8bMvd5",
+          "events": []
+        },
+        {
+          "match_hash_id": "am14QYBOkd",
+          "date": "2026-03-01T01:30:00.000000Z",
+          "team_name": "Bendigo City FC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Brimbank Stallions FC U15",
+          "opponent_team_id": "BdD1B2AJmb",
           "events": []
         }
       ]
@@ -83085,5 +83245,5 @@
       ]
     }
   ],
-  "_last_updated": "2026-03-03T16:00:28.206648"
+  "_last_updated": "2026-03-03T20:00:28.782971"
 }

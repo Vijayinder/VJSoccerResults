@@ -2212,7 +2212,7 @@
             "points": 7
           },
           "U15": {
-            "position": 6,
+            "position": 7,
             "played": 3,
             "wins": 1,
             "draws": 0,
@@ -2234,7 +2234,7 @@
             "points": 6
           }
         },
-        "total_position_points": 19,
+        "total_position_points": 20,
         "total_gf": 54,
         "total_ga": 26,
         "age_group_count": 5,
@@ -2342,7 +2342,7 @@
             "points": 7
           },
           "U15": {
-            "position": 4,
+            "position": 5,
             "played": 3,
             "wins": 1,
             "draws": 1,
@@ -2364,7 +2364,7 @@
             "points": 9
           }
         },
-        "total_position_points": 22,
+        "total_position_points": 23,
         "total_gf": 37,
         "total_ga": 21,
         "age_group_count": 5,
@@ -2407,15 +2407,15 @@
             "points": 2
           },
           "U15": {
-            "position": 8,
-            "played": 2,
-            "wins": 0,
+            "position": 4,
+            "played": 3,
+            "wins": 1,
             "draws": 1,
             "losses": 1,
-            "gf": 2,
-            "ga": 3,
-            "gd": -1,
-            "points": 1
+            "gf": 9,
+            "ga": 4,
+            "gd": 5,
+            "points": 4
           },
           "U14": {
             "position": 7,
@@ -2429,9 +2429,9 @@
             "points": 2
           }
         },
-        "total_position_points": 28,
-        "total_gf": 20,
-        "total_ga": 15,
+        "total_position_points": 24,
+        "total_gf": 27,
+        "total_ga": 16,
         "age_group_count": 5,
         "overall_rank": 5
       },
@@ -2537,7 +2537,7 @@
             "points": 2
           },
           "U15": {
-            "position": 5,
+            "position": 6,
             "played": 3,
             "wins": 1,
             "draws": 1,
@@ -2559,76 +2559,11 @@
             "points": 4
           }
         },
-        "total_position_points": 33,
+        "total_position_points": 34,
         "total_gf": 18,
         "total_ga": 29,
         "age_group_count": 5,
         "overall_rank": 7
-      },
-      {
-        "club": "Whittlesea Ranges FC",
-        "age_groups": {
-          "U13": {
-            "position": 3,
-            "played": 3,
-            "wins": 2,
-            "draws": 0,
-            "losses": 1,
-            "gf": 10,
-            "ga": 5,
-            "gd": 5,
-            "points": 6
-          },
-          "U18": {
-            "position": 7,
-            "played": 3,
-            "wins": 1,
-            "draws": 0,
-            "losses": 2,
-            "gf": 6,
-            "ga": 6,
-            "gd": 0,
-            "points": 3
-          },
-          "U16": {
-            "position": 10,
-            "played": 3,
-            "wins": 0,
-            "draws": 0,
-            "losses": 3,
-            "gf": 3,
-            "ga": 15,
-            "gd": -12,
-            "points": 0
-          },
-          "U15": {
-            "position": 7,
-            "played": 3,
-            "wins": 1,
-            "draws": 0,
-            "losses": 2,
-            "gf": 4,
-            "ga": 10,
-            "gd": -6,
-            "points": 3
-          },
-          "U14": {
-            "position": 10,
-            "played": 3,
-            "wins": 0,
-            "draws": 0,
-            "losses": 3,
-            "gf": 4,
-            "ga": 12,
-            "gd": -8,
-            "points": 0
-          }
-        },
-        "total_position_points": 37,
-        "total_gf": 27,
-        "total_ga": 48,
-        "age_group_count": 5,
-        "overall_rank": 8
       },
       {
         "club": "Moreland City SC",
@@ -2693,6 +2628,71 @@
         "total_gf": 23,
         "total_ga": 64,
         "age_group_count": 5,
+        "overall_rank": 8
+      },
+      {
+        "club": "Whittlesea Ranges FC",
+        "age_groups": {
+          "U13": {
+            "position": 3,
+            "played": 3,
+            "wins": 2,
+            "draws": 0,
+            "losses": 1,
+            "gf": 10,
+            "ga": 5,
+            "gd": 5,
+            "points": 6
+          },
+          "U18": {
+            "position": 7,
+            "played": 3,
+            "wins": 1,
+            "draws": 0,
+            "losses": 2,
+            "gf": 6,
+            "ga": 6,
+            "gd": 0,
+            "points": 3
+          },
+          "U16": {
+            "position": 10,
+            "played": 3,
+            "wins": 0,
+            "draws": 0,
+            "losses": 3,
+            "gf": 3,
+            "ga": 15,
+            "gd": -12,
+            "points": 0
+          },
+          "U15": {
+            "position": 8,
+            "played": 3,
+            "wins": 1,
+            "draws": 0,
+            "losses": 2,
+            "gf": 4,
+            "ga": 10,
+            "gd": -6,
+            "points": 3
+          },
+          "U14": {
+            "position": 10,
+            "played": 3,
+            "wins": 0,
+            "draws": 0,
+            "losses": 3,
+            "gf": 4,
+            "ga": 12,
+            "gd": -8,
+            "points": 0
+          }
+        },
+        "total_position_points": 38,
+        "total_gf": 27,
+        "total_ga": 48,
+        "age_group_count": 5,
         "overall_rank": 9
       },
       {
@@ -2733,13 +2733,13 @@
           },
           "U15": {
             "position": 10,
-            "played": 2,
+            "played": 3,
             "wins": 0,
             "draws": 0,
-            "losses": 2,
-            "gf": 0,
-            "ga": 9,
-            "gd": -9,
+            "losses": 3,
+            "gf": 1,
+            "ga": 16,
+            "gd": -15,
             "points": 0
           },
           "U14": {
@@ -2755,8 +2755,8 @@
           }
         },
         "total_position_points": 39,
-        "total_gf": 19,
-        "total_ga": 47,
+        "total_gf": 20,
+        "total_ga": 54,
         "age_group_count": 5,
         "overall_rank": 10
       }
@@ -3412,5 +3412,5 @@
       }
     ]
   },
-  "_last_updated": "2026-03-03T16:00:24.692890"
+  "_last_updated": "2026-03-03T20:00:25.038363"
 }
