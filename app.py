@@ -1627,17 +1627,6 @@ def main_app():
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
-            q2 = f"yellow cards {user_club} {user_age}"
-            if st.button(q2, key="ex2", use_container_width=False):
-                st.session_state["clicked_query"] = q2
-                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-                st.rerun()
-
-            q2b = f"yellow cards {user_age} last week"
-            if st.button(q2b, key="ex2b", use_container_width=False):
-                st.session_state["clicked_query"] = q2b
-                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-                st.rerun()
 
             q3 = f"stats for {user_name}"
             if st.button(f"my stats ({user_name})", key="ex3", use_container_width=False):
@@ -1678,8 +1667,8 @@ def main_app():
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
-            q_dual = "players at 2 clubs"
-            if st.button("Players at 2 clubs", key="ex_dual", use_container_width=False):
+            q_dual = "2 clubs"
+            if st.button("2 clubs", key="ex_dual", use_container_width=False):
                 st.session_state["clicked_query"] = q_dual
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
@@ -1728,6 +1717,18 @@ def main_app():
             q10b = "red cards last week"
             if st.button(q10b, key="ex10b", use_container_width=False):
                 st.session_state["clicked_query"] = q10b
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
+
+            q2 = f"yellow cards {user_club} {user_age}"
+            if st.button(q2, key="ex2", use_container_width=False):
+                st.session_state["clicked_query"] = q2
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
+
+            q2b = f"yellow cards {user_age} last week"
+            if st.button(q2b, key="ex2b", use_container_width=False):
+                st.session_state["clicked_query"] = q2b
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
