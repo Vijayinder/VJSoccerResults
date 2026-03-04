@@ -1590,21 +1590,41 @@ def main_app():
     # Search bar
     st.markdown("### 💬 Ask Me Anything")
     
-    # Initialize search input in session state if not present
-    if "search_query" not in st.session_state:
-        st.session_state["search_query"] = ""
-    
-    # Check if a button was clicked and update the query
-    if "clicked_query" in st.session_state and st.session_state["clicked_query"]:
-        st.session_state["search_query"] = st.session_state["clicked_query"]
-        st.session_state["clicked_query"] = None  # Clear after use
-    
+    # ── Search state init ──────────────────────────────────────────────
+    for _k, _v in [
+        ("search_input",           ""),
+        ("search_version",         0),
+        ("last_processed_version", -1),
+        ("search_answer",          None),
+        ("search_answer_time",     0.0),
+    ]:
+        if _k not in st.session_state:
+            st.session_state[_k] = _v
+
+    # Consume a pending clear (set by league nav buttons AFTER widget renders)
+    if st.session_state.pop("_pending_search_clear", False):
+        st.session_state["search_input"]   = ""
+        st.session_state["search_answer"]  = None
+        st.session_state["search_version"] = 0
+        st.session_state["last_processed_version"] = -1
+
+    # Consume clicked_query BEFORE the widget renders so key= update is honoured
+    if st.session_state.get("clicked_query"):
+        st.session_state["search_input"]   = st.session_state.pop("clicked_query")
+        st.session_state["search_version"] += 1
+
+    # key= lets Streamlit use session_state["search_input"] as the live value.
+    # label must be non-empty; hidden with label_visibility.
     search = st.text_input(
-        "",
-        value=st.session_state["search_query"],
+        "Search",
+        key="search_input",
         placeholder="Try: 'Stats for Shaurya','top scorers in U16', 'yellow cards Heidelberg', 'missing scores'...",
         label_visibility="collapsed"
     )
+    # Bump version when user types a new query (Enter key)
+    if search and search != st.session_state.get("_last_typed", ""):
+        st.session_state["_last_typed"]    = search
+        st.session_state["search_version"] += 1
     # 1. Define dynamic labels based on session state
     user_club = st.session_state.get("player_club") or "Heidelberg United"
     user_age = st.session_state.get("player_age_group") or "U16"
@@ -1725,12 +1745,11 @@ def main_app():
             st.session_state["clicked_query"] = q15
             st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
             st.rerun()
-    # Process search queries
-    if search and search != st.session_state["last_search"]:
-        st.session_state["last_search"] = search
-        st.session_state["expander_state"] = False
+    # ── Process: fires when version advances (typed Enter or button click) ──
+    _cur_v = st.session_state["search_version"]
+    if search and _cur_v != st.session_state["last_processed_version"]:
+        st.session_state["last_processed_version"] = _cur_v
         st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-        # Reset navigation back to leagues view when a search is run
         st.session_state["level"] = "league"
         st.session_state["selected_league"] = None
         st.session_state["selected_competition"] = None
@@ -1738,79 +1757,78 @@ def main_app():
         st.session_state["selected_player"] = None
         st.session_state["selected_match_id"] = None
         if is_natural_language_query(search):
-            # Log the search
             log_search(
                 username=st.session_state["username"],
                 full_name=st.session_state["full_name"],
                 query=search,
                 session_id=st.session_state["session_id"]
             )
-            
             with st.spinner("🧠 Analyzing..."):
-                start = time.time()
-                answer = router.process(search)
-                end = time.time()
+                _t0 = time.time()
+                _ans = router.process(search)
+                _t1 = time.time()
+            st.session_state["search_answer"]      = _ans
+            st.session_state["search_answer_time"] = round(_t1 - _t0, 3)
 
-            st.markdown("---")
-            if isinstance(answer, dict):
-                if answer.get("type") == "player_profile":
-                    pname    = answer.get("name", "")
-                    is_dual  = answer.get("is_dual", False)
-                    reg_rows = answer.get("registrations", [])
-                    s_stats  = answer.get("season_stats", {})
-                    m_rows   = answer.get("matches", [])
-                    detailed = answer.get("detailed", False)
-                    note     = answer.get("note", "")
+    # ── Render: always show stored answer (persists across reruns) ──────────
+    def _render_answer(answer):
+        st.markdown("---")
+        if isinstance(answer, dict):
+            if answer.get("type") == "player_profile":
+                pname    = answer.get("name", "")
+                is_dual  = answer.get("is_dual", False)
+                reg_rows = answer.get("registrations", [])
+                s_stats  = answer.get("season_stats", {})
+                m_rows   = answer.get("matches", [])
+                detailed = answer.get("detailed", False)
+                note     = answer.get("note", "")
+                st.markdown(f"### 👤 {pname}")
+                if is_dual:
+                    st.caption("🔄 Dual Registration")
+                if reg_rows:
+                    df_reg = pd.DataFrame(reg_rows)
+                    st.dataframe(df_reg, hide_index=True, use_container_width=True,
+                                 height=(len(reg_rows) + 1) * 35 + 10)
+                st.markdown("**📊 Season Totals**")
+                df_stats = pd.DataFrame([s_stats])
+                st.dataframe(df_stats, hide_index=True, use_container_width=True, height=70)
+                if m_rows:
+                    label = "📅 Match-by-Match" if detailed else f"📅 Recent Matches (last {len(m_rows)})"
+                    st.markdown(f"**{label}**")
+                    df_m = pd.DataFrame(m_rows)
+                    _cfg = {}
+                    if "Date" in df_m.columns:
+                        df_m["Date"] = pd.to_datetime(df_m["Date"], errors="coerce").dt.date
+                        _cfg["Date"] = st.column_config.DateColumn("Date", format="DD-MMM")
+                    h = min(600, (len(m_rows) + 1) * 35 + 10)
+                    st.dataframe(df_m, hide_index=True, use_container_width=True,
+                                 height=h, column_config=_cfg)
+                    if not detailed:
+                        st.caption(f"💡 Say 'details for {pname}' for full match-by-match breakdown")
+                if note:
+                    st.caption(f"ℹ️ {note}")
+            elif answer.get("type") == "table":
+                st.info(answer.get("title", "Results"))
+                data = answer.get("data", [])
+                if data:
+                    df = pd.DataFrame(data)
+                    _cfg = {}
+                    if "Date" in df.columns:
+                        df["Date"] = pd.to_datetime(df["Date"], errors="coerce").dt.date
+                        _cfg["Date"] = st.column_config.DateColumn("Date", format="DD-MMM")
+                    num_rows = len(df)
+                    final_height = 600 if num_rows > 16 else (num_rows + 1) * 35
+                    st.dataframe(df, hide_index=True, use_container_width=True,
+                                 height=final_height, column_config=_cfg)
+            elif answer.get("type") == "error":
+                st.error(answer.get("message", "An error occurred"))
+        else:
+            st.chat_message("assistant").write(answer)
+        st.caption(f"⏱️ {st.session_state['search_answer_time']:.3f}s")
+        st.markdown("---")
 
-                    st.markdown(f"### 👤 {pname}")
-                    if is_dual:
-                        st.caption("🔄 Dual Registration")
-
-                    if reg_rows:
-                        df_reg = pd.DataFrame(reg_rows)
-                        st.dataframe(df_reg, hide_index=True, use_container_width=True,
-                                     height=(len(reg_rows) + 1) * 35 + 10)
-
-                    st.markdown("**📊 Season Totals**")
-                    df_stats = pd.DataFrame([s_stats])
-                    st.dataframe(df_stats, hide_index=True, use_container_width=True, height=70)
-
-                    if m_rows:
-                        label = "📅 Match-by-Match" if detailed else f"📅 Recent Matches (last {len(m_rows)})"
-                        st.markdown(f"**{label}**")
-                        df_m = pd.DataFrame(m_rows)
-                        h = min(600, (len(m_rows) + 1) * 35 + 10)
-                        st.dataframe(df_m, hide_index=True, use_container_width=True, height=h)
-                        if not detailed:
-                            st.caption(f"💡 Say 'details for {pname}' for full match-by-match breakdown")
-
-                    if note:
-                        st.caption(f"ℹ️ {note}")
-
-                elif answer.get("type") == "table":
-                    title = answer.get('title', "Results")
-                    st.info(title) 
-                    
-                    data = answer.get('data', [])
-                    if data:
-                        df = pd.DataFrame(data)
-                        
-                        # --- Dynamic Height Logic ---
-                        num_rows = len(df)
-                        # (Rows + Header) * Row Height (35px). Cap at 600px if > 16 rows.
-                        final_height = 600 if num_rows > 16 else (num_rows + 1) * 35
-                        
-                        st.dataframe(df, hide_index=True, use_container_width=True, height=final_height)
-                        
-
-                elif answer.get("type") == "error":
-                    st.error(answer.get("message", "An error occurred"))
-
-            else:
-                st.chat_message("assistant").write(answer)
-
-            st.caption(f"⏱️ Response time: {end - start:.3f}s")
-            st.markdown("---")
+    if st.session_state.get("search_answer") is not None and search:
+        _render_answer(st.session_state["search_answer"])
 
     # Navigation buttons
     if st.session_state["level"] != "league":
@@ -1846,8 +1864,7 @@ def main_app():
                 if st.button(league_name, key=f"league_btn_{idx}", use_container_width=True):
                     st.session_state["selected_league"] = league_name
                     st.session_state["level"] = "competition"
-                    st.session_state["search_query"] = ""
-                    st.session_state["last_search"] = ""
+                    st.session_state["_pending_search_clear"] = True   # cleared before widget next run
                     
                     # Log the view
                     log_view(
@@ -2491,33 +2508,20 @@ def main():
         
 if __name__ == "__main__":
     main()
-# Last auto-update: 2026-02-19 18:46:53 AEDT
-# Last auto-update: 2026-02-19 19:29:21 AEDT
-# Last auto-update: 2026-02-19 19:37:42 AEDT
-# Last auto-update: 2026-02-19 20:00:16 AEDT
-# Last auto-update: 2026-02-20 00:00:17 AEDT
-# Last auto-update: 2026-02-20 04:00:18 AEDT
-# Last auto-update: 2026-02-20 08:00:17 AEDT
-# Last auto-update: 2026-02-27 13:29:39 AEDT
-# Last auto-update: 2026-02-27 13:31:56 AEDT
-# Last auto-update: 2026-02-27 13:40:35 AEDT
-# Last auto-update: 2026-02-27 13:47:18 AEDT
-# Last auto-update: 2026-02-27 14:07:14 AEDT
-# Last auto-update: 2026-03-01 01:00:33 AEDT
-# Last auto-update: 2026-03-01 02:00:33 AEDT
-# Last auto-update: 2026-03-01 03:00:34 AEDT
-# Last auto-update: 2026-03-01 04:00:32 AEDT
-# Last auto-update: 2026-03-01 05:00:33 AEDT
-# Last auto-update: 2026-03-01 06:00:32 AEDT
-# Last auto-update: 2026-03-02 00:00:44 AEDT
-# Last auto-update: 2026-03-02 02:00:43 AEDT
-# Last auto-update: 2026-03-02 03:00:40 AEDT
-# Last auto-update: 2026-03-02 04:00:44 AEDT
-# Last auto-update: 2026-03-02 05:00:40 AEDT
-# Last auto-update: 2026-03-02 06:00:40 AEDT
-# Last auto-update: 2026-03-02 07:00:43 AEDT
-# Last auto-update: 2026-03-02 08:00:42 AEDT
-# Last auto-update: 2026-03-02 09:00:41 AEDT
 # Last auto-update: 2026-03-02 10:00:32 AEDT
 # Last auto-update: 2026-03-02 11:00:33 AEDT
-# Last auto-update: 2026-03-02 12:00:27 AEDT
+# Last auto-update: 2026-03-02 14:00:28 AEDT
+# Last auto-update: 2026-03-02 15:00:28 AEDT
+# Last auto-update: 2026-03-02 16:00:31 AEDT
+# Last auto-update: 2026-03-02 17:00:28 AEDT
+# Last auto-update: 2026-03-02 18:00:28 AEDT
+# Last auto-update: 2026-03-02 19:00:28 AEDT
+# Last auto-update: 2026-03-02 20:00:28 AEDT
+# Last auto-update: 2026-03-02 21:00:27 AEDT
+# Last auto-update: 2026-03-02 22:00:28 AEDT
+# Last auto-update: 2026-03-02 23:00:30 AEDT
+# Last auto-update: 2026-03-03 00:00:28 AEDT
+# Last auto-update: 2026-03-03 04:00:28 AEDT
+# Last auto-update: 2026-03-03 08:00:29 AEDT
+# Last auto-update: 2026-03-03 12:00:28 AEDT
+# Last auto-update: 2026-03-03 16:00:30 AEDT
