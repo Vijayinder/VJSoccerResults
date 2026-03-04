@@ -1647,8 +1647,13 @@ def tool_yellow_cards(query: str = "", show_details: bool = False,
             lines.append("")
         return "\n".join(lines)
 
-    # Table output — includes minute(s) column
+    # Table output — always includes This Week, Last Week, Total columns
     data = []
+
+    # Pre-compute date ranges for the two weekly windows
+    this_week_day = get_match_day_date()
+    last_week_day = this_week_day - timedelta(days=7)
+
     for i, p in enumerate(people_list[:50], 1):
         stats = p.get("stats", {})
         role  = p.get("role") or (p.get("roles") or [""])[0] or "player"
@@ -1657,30 +1662,43 @@ def tool_yellow_cards(query: str = "", show_details: bool = False,
             name += f" ({role.title()})"
         team = (p.get("teams") or [p.get("team_name","")])[0]
 
-        # Count and collect minutes — filter by date window if set
-        yc_total = 0
-        all_mins  = []
+        # Count cards per window
+        this_week_count = 0
+        last_week_count = 0
+        all_mins = []
+
         for m in p.get("matches", []):
-            if start_date and not _match_in_date_range(m, start_date, end_date):
-                continue
             events = m.get("events", [])
             yc = m.get("yellow_cards",
                 sum(1 for e in events
                     if (e.get("type") or e.get("event_type","")).lower() == "yellow_card"))
-            yc_total += yc
-            mins = _card_minutes(m, "yellow_card")
-            if mins:
-                all_mins.append(mins)
 
-        if not start_date:
-            yc_total = stats.get(stat_key, 0)
+            if _match_in_date_range(m, this_week_day, this_week_day):
+                this_week_count += yc
+            if _match_in_date_range(m, last_week_day, last_week_day):
+                last_week_count += yc
+
+            # Collect minutes for date-filtered or unfiltered display
+            if start_date:
+                if _match_in_date_range(m, start_date, end_date):
+                    mins = _card_minutes(m, "yellow_card")
+                    if mins:
+                        all_mins.append(mins)
+            else:
+                mins = _card_minutes(m, "yellow_card")
+                if mins:
+                    all_mins.append(mins)
+
+        total_count = stats.get(stat_key, 0)
 
         row = {
-            "#":    i,
-            "Name": name,
-            "Team": team,
-            "🟨":   yc_total,
-            "Min":  ", ".join(all_mins) if all_mins else "—",
+            "#":         i,
+            "Name":      name,
+            "Team":      team,
+            "This Week": this_week_count,
+            "Last Week": last_week_count,
+            "Total 🟨":  total_count,
+            "Min":       ", ".join(all_mins) if all_mins else "—",
         }
         if role.lower() in ("player",""):
             row["M"]  = stats.get("matches_played", 0)
@@ -1760,6 +1778,11 @@ def tool_red_cards(query: str = "", show_details: bool = False,
         return "\n".join(lines)
 
     data = []
+
+    # Pre-compute date ranges for the two weekly windows
+    this_week_day = get_match_day_date()
+    last_week_day = this_week_day - timedelta(days=7)
+
     for i, p in enumerate(people_list, 1):
         stats = p.get("stats", {})
         role  = p.get("role") or (p.get("roles") or [""])[0] or "player"
@@ -1768,29 +1791,41 @@ def tool_red_cards(query: str = "", show_details: bool = False,
             name += f" ({role.title()})"
         team = (p.get("teams") or [p.get("team_name","")])[0]
 
-        rc_total = 0
-        all_mins  = []
+        this_week_count = 0
+        last_week_count = 0
+        all_mins = []
+
         for m in p.get("matches", []):
-            if start_date and not _match_in_date_range(m, start_date, end_date):
-                continue
             events = m.get("events", [])
             rc = m.get("red_cards",
                 sum(1 for e in events
                     if (e.get("type") or e.get("event_type","")).lower() == "red_card"))
-            rc_total += rc
-            mins = _card_minutes(m, "red_card")
-            if mins:
-                all_mins.append(mins)
 
-        if not start_date:
-            rc_total = stats.get(stat_key, 0)
+            if _match_in_date_range(m, this_week_day, this_week_day):
+                this_week_count += rc
+            if _match_in_date_range(m, last_week_day, last_week_day):
+                last_week_count += rc
+
+            if start_date:
+                if _match_in_date_range(m, start_date, end_date):
+                    mins = _card_minutes(m, "red_card")
+                    if mins:
+                        all_mins.append(mins)
+            else:
+                mins = _card_minutes(m, "red_card")
+                if mins:
+                    all_mins.append(mins)
+
+        total_count = stats.get(stat_key, 0)
 
         row = {
-            "#":    i,
-            "Name": name,
-            "Team": team,
-            "🟥":   rc_total,
-            "Min":  ", ".join(all_mins) if all_mins else "—",
+            "#":         i,
+            "Name":      name,
+            "Team":      team,
+            "This Week": this_week_count,
+            "Last Week": last_week_count,
+            "Total 🟥":  total_count,
+            "Min":       ", ".join(all_mins) if all_mins else "—",
         }
         if role.lower() in ("player",""):
             row["M"]  = stats.get("matches_played", 0)
