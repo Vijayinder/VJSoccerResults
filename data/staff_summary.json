@@ -6473,7 +6473,7 @@
       },
       "team_stats": {
         "Essendon Royals SC U18": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -6482,7 +6482,7 @@
         }
       },
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -6545,6 +6545,18 @@
           "home_or_away": "home",
           "opponent_team_name": "FC Bulleen Lions U18",
           "opponent_team_id": "jdye8k2Dd5",
+          "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3VR8K",
+          "date": "2026-03-06T09:00:00.000000Z",
+          "team_name": "Essendon Royals SC U18",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U18 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Caroline Springs George Cross FC U18",
+          "opponent_team_id": "2KpvA7OPmY",
           "events": []
         }
       ]
@@ -6568,7 +6580,7 @@
       },
       "team_stats": {
         "Essendon Royals SC U18": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -6577,7 +6589,7 @@
         }
       },
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -6640,6 +6652,18 @@
           "home_or_away": "home",
           "opponent_team_name": "FC Bulleen Lions U18",
           "opponent_team_id": "jdye8k2Dd5",
+          "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3VR8K",
+          "date": "2026-03-06T09:00:00.000000Z",
+          "team_name": "Essendon Royals SC U18",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U18 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Caroline Springs George Cross FC U18",
+          "opponent_team_id": "2KpvA7OPmY",
           "events": []
         }
       ]
@@ -6666,7 +6690,7 @@
       },
       "team_stats": {
         "Essendon Royals SC U18": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -6683,7 +6707,7 @@
         }
       },
       "stats": {
-        "matches_attended": 6,
+        "matches_attended": 7,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -6759,6 +6783,18 @@
           "opponent_team_name": "FC Bulleen Lions U18",
           "opponent_team_id": "jdye8k2Dd5",
           "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3VR8K",
+          "date": "2026-03-06T09:00:00.000000Z",
+          "team_name": "Essendon Royals SC U18",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U18 YPL1 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Caroline Springs George Cross FC U18",
+          "opponent_team_id": "2KpvA7OPmY",
+          "events": []
         }
       ]
     },
@@ -6784,7 +6820,7 @@
       },
       "team_stats": {
         "Essendon Royals SC U18": {
-          "matches_played": 2,
+          "matches_played": 3,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -6792,7 +6828,7 @@
           "red_cards": 0
         },
         "Essendon Royals SC U16": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -6801,7 +6837,7 @@
         }
       },
       "stats": {
-        "matches_attended": 7,
+        "matches_attended": 9,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -6888,6 +6924,30 @@
           "home_or_away": "home",
           "opponent_team_name": "FC Bulleen Lions U16",
           "opponent_team_id": "pmvzPn80mv",
+          "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMX6kd",
+          "date": "2026-03-06T08:45:00.000000Z",
+          "team_name": "Essendon Royals SC U16",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U16 YPL1 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Caroline Springs George Cross FC U16",
+          "opponent_team_id": "vmZwn4eBNq",
+          "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3VR8K",
+          "date": "2026-03-06T09:00:00.000000Z",
+          "team_name": "Essendon Royals SC U18",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U18 YPL1 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Caroline Springs George Cross FC U18",
+          "opponent_team_id": "2KpvA7OPmY",
           "events": []
         }
       ]
@@ -15289,7 +15349,7 @@
       },
       "team_stats": {
         "Caroline Springs George Cross FC U16": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -15298,7 +15358,7 @@
         }
       },
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -15361,6 +15421,18 @@
           "home_or_away": "home",
           "opponent_team_name": "Melbourne City - NPL U16",
           "opponent_team_id": "pN6OW5jOK0",
+          "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMX6kd",
+          "date": "2026-03-06T08:45:00.000000Z",
+          "team_name": "Caroline Springs George Cross FC U16",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U16 YPL1 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Essendon Royals SC U16",
+          "opponent_team_id": "jmaVX9j7NR",
           "events": []
         }
       ]
@@ -15396,7 +15468,7 @@
       },
       "team_stats": {
         "Caroline Springs George Cross FC U16": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -15404,7 +15476,7 @@
           "red_cards": 0
         },
         "Caroline Springs George Cross FC U18": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -15428,7 +15500,7 @@
           "red_cards": 0
         },
         "Caroline Springs George Cross FC U13": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -15437,7 +15509,7 @@
         }
       },
       "stats": {
-        "matches_attended": 26,
+        "matches_attended": 29,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -15753,6 +15825,42 @@
           "opponent_team_name": "Essendon Royals SC U14",
           "opponent_team_id": "EN2O48D3Kq",
           "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMX6kd",
+          "date": "2026-03-06T08:45:00.000000Z",
+          "team_name": "Caroline Springs George Cross FC U16",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U16 YPL1 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Essendon Royals SC U16",
+          "opponent_team_id": "jmaVX9j7NR",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlJE3zN",
+          "date": "2026-03-06T07:00:00.000000Z",
+          "team_name": "Caroline Springs George Cross FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U13 YPL1 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Essendon Royals SC U13",
+          "opponent_team_id": "1K3Yk8r9mQ",
+          "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3VR8K",
+          "date": "2026-03-06T09:00:00.000000Z",
+          "team_name": "Caroline Springs George Cross FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U18 YPL1 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Essendon Royals SC U18",
+          "opponent_team_id": "1K3Yk8nLmQ",
+          "events": []
         }
       ]
     },
@@ -15775,7 +15883,7 @@
       },
       "team_stats": {
         "Caroline Springs George Cross FC U16": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -15784,7 +15892,7 @@
         }
       },
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -15847,6 +15955,18 @@
           "home_or_away": "home",
           "opponent_team_name": "Melbourne City - NPL U16",
           "opponent_team_id": "pN6OW5jOK0",
+          "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMX6kd",
+          "date": "2026-03-06T08:45:00.000000Z",
+          "team_name": "Caroline Springs George Cross FC U16",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U16 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Essendon Royals SC U16",
+          "opponent_team_id": "jmaVX9j7NR",
           "events": []
         }
       ]
@@ -15882,7 +16002,7 @@
       },
       "team_stats": {
         "Caroline Springs George Cross FC U16": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -15890,7 +16010,7 @@
           "red_cards": 0
         },
         "Caroline Springs George Cross FC U18": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -15914,7 +16034,7 @@
           "red_cards": 0
         },
         "Caroline Springs George Cross FC U13": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -15923,7 +16043,7 @@
         }
       },
       "stats": {
-        "matches_attended": 26,
+        "matches_attended": 29,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -16239,6 +16359,42 @@
           "opponent_team_name": "Essendon Royals SC U14",
           "opponent_team_id": "EN2O48D3Kq",
           "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMX6kd",
+          "date": "2026-03-06T08:45:00.000000Z",
+          "team_name": "Caroline Springs George Cross FC U16",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U16 YPL1 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Essendon Royals SC U16",
+          "opponent_team_id": "jmaVX9j7NR",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlJE3zN",
+          "date": "2026-03-06T07:00:00.000000Z",
+          "team_name": "Caroline Springs George Cross FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U13 YPL1 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Essendon Royals SC U13",
+          "opponent_team_id": "1K3Yk8r9mQ",
+          "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3VR8K",
+          "date": "2026-03-06T09:00:00.000000Z",
+          "team_name": "Caroline Springs George Cross FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U18 YPL1 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Essendon Royals SC U18",
+          "opponent_team_id": "1K3Yk8nLmQ",
+          "events": []
         }
       ]
     },
@@ -16261,7 +16417,7 @@
       },
       "team_stats": {
         "Caroline Springs George Cross FC U16": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -16270,7 +16426,7 @@
         }
       },
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -16333,6 +16489,18 @@
           "home_or_away": "home",
           "opponent_team_name": "Melbourne City - NPL U16",
           "opponent_team_id": "pN6OW5jOK0",
+          "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMX6kd",
+          "date": "2026-03-06T08:45:00.000000Z",
+          "team_name": "Caroline Springs George Cross FC U16",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U16 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Essendon Royals SC U16",
+          "opponent_team_id": "jmaVX9j7NR",
           "events": []
         }
       ]
@@ -16369,7 +16537,7 @@
       },
       "team_stats": {
         "Caroline Springs George Cross FC U16": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -16377,7 +16545,7 @@
           "red_cards": 0
         },
         "Caroline Springs George Cross FC U18": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -16401,7 +16569,7 @@
           "red_cards": 0
         },
         "Caroline Springs George Cross FC U13": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -16410,7 +16578,7 @@
         }
       },
       "stats": {
-        "matches_attended": 26,
+        "matches_attended": 29,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -16725,6 +16893,42 @@
           "home_or_away": "home",
           "opponent_team_name": "Essendon Royals SC U14",
           "opponent_team_id": "EN2O48D3Kq",
+          "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMX6kd",
+          "date": "2026-03-06T08:45:00.000000Z",
+          "team_name": "Caroline Springs George Cross FC U16",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U16 YPL1 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Essendon Royals SC U16",
+          "opponent_team_id": "jmaVX9j7NR",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlJE3zN",
+          "date": "2026-03-06T07:00:00.000000Z",
+          "team_name": "Caroline Springs George Cross FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U13 YPL1 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Essendon Royals SC U13",
+          "opponent_team_id": "1K3Yk8r9mQ",
+          "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3VR8K",
+          "date": "2026-03-06T09:00:00.000000Z",
+          "team_name": "Caroline Springs George Cross FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U18 YPL1 Boys",
+          "role_in_match": "Technical Director",
+          "home_or_away": "home",
+          "opponent_team_name": "Essendon Royals SC U18",
+          "opponent_team_id": "1K3Yk8nLmQ",
           "events": []
         }
       ]
@@ -20541,7 +20745,7 @@
       },
       "team_stats": {
         "Essendon Royals SC U16": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -20550,7 +20754,7 @@
         }
       },
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -20613,6 +20817,18 @@
           "home_or_away": "home",
           "opponent_team_name": "FC Bulleen Lions U16",
           "opponent_team_id": "pmvzPn80mv",
+          "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMX6kd",
+          "date": "2026-03-06T08:45:00.000000Z",
+          "team_name": "Essendon Royals SC U16",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U16 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Caroline Springs George Cross FC U16",
+          "opponent_team_id": "vmZwn4eBNq",
           "events": []
         }
       ]
@@ -25956,7 +26172,7 @@
       },
       "team_stats": {
         "Caroline Springs George Cross FC U18": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -25965,7 +26181,7 @@
         }
       },
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -26029,6 +26245,18 @@
           "opponent_team_name": "Melbourne City - NPL U18",
           "opponent_team_id": "2KpvYDy6mY",
           "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3VR8K",
+          "date": "2026-03-06T09:00:00.000000Z",
+          "team_name": "Caroline Springs George Cross FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U18 YPL1 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Essendon Royals SC U18",
+          "opponent_team_id": "1K3Yk8nLmQ",
+          "events": []
         }
       ]
     },
@@ -26055,7 +26283,7 @@
       },
       "team_stats": {
         "Caroline Springs George Cross FC U18": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -26072,7 +26300,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -26196,6 +26424,18 @@
           "opponent_team_name": "Melbourne City - NPL U18",
           "opponent_team_id": "2KpvYDy6mY",
           "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3VR8K",
+          "date": "2026-03-06T09:00:00.000000Z",
+          "team_name": "Caroline Springs George Cross FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U18 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Essendon Royals SC U18",
+          "opponent_team_id": "1K3Yk8nLmQ",
+          "events": []
         }
       ]
     },
@@ -26218,7 +26458,7 @@
       },
       "team_stats": {
         "Caroline Springs George Cross FC U18": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -26227,7 +26467,7 @@
         }
       },
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -26290,6 +26530,18 @@
           "home_or_away": "home",
           "opponent_team_name": "Melbourne City - NPL U18",
           "opponent_team_id": "2KpvYDy6mY",
+          "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3VR8K",
+          "date": "2026-03-06T09:00:00.000000Z",
+          "team_name": "Caroline Springs George Cross FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U18 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Essendon Royals SC U18",
+          "opponent_team_id": "1K3Yk8nLmQ",
           "events": []
         }
       ]
@@ -53391,7 +53643,7 @@
       },
       "team_stats": {
         "Caroline Springs George Cross FC U13": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -53400,7 +53652,7 @@
         }
       },
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -53464,6 +53716,18 @@
           "opponent_team_name": "Melbourne City - NPL U13",
           "opponent_team_id": "8NOD6gEnKZ",
           "events": []
+        },
+        {
+          "match_hash_id": "jdywlJE3zN",
+          "date": "2026-03-06T07:00:00.000000Z",
+          "team_name": "Caroline Springs George Cross FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U13 YPL1 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Essendon Royals SC U13",
+          "opponent_team_id": "1K3Yk8r9mQ",
+          "events": []
         }
       ]
     },
@@ -53489,7 +53753,7 @@
       },
       "team_stats": {
         "Caroline Springs George Cross FC U13": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -53506,7 +53770,7 @@
         }
       },
       "stats": {
-        "matches_attended": 6,
+        "matches_attended": 7,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -53581,6 +53845,18 @@
           "home_or_away": "home",
           "opponent_team_name": "Melbourne City - NPL U13",
           "opponent_team_id": "8NOD6gEnKZ",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlJE3zN",
+          "date": "2026-03-06T07:00:00.000000Z",
+          "team_name": "Caroline Springs George Cross FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U13 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Essendon Royals SC U13",
+          "opponent_team_id": "1K3Yk8r9mQ",
           "events": []
         }
       ]
@@ -54174,7 +54450,7 @@
       },
       "team_stats": {
         "Essendon Royals SC U13": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -54183,7 +54459,7 @@
         }
       },
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -54246,6 +54522,18 @@
           "home_or_away": "home",
           "opponent_team_name": "FC Bulleen Lions U13",
           "opponent_team_id": "jdye8kBvd5",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlJE3zN",
+          "date": "2026-03-06T07:00:00.000000Z",
+          "team_name": "Essendon Royals SC U13",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U13 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Caroline Springs George Cross FC U13",
+          "opponent_team_id": "2KpvA7rbmY",
           "events": []
         }
       ]
@@ -54269,7 +54557,7 @@
       },
       "team_stats": {
         "Essendon Royals SC U13": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -54278,7 +54566,7 @@
         }
       },
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -54341,6 +54629,18 @@
           "home_or_away": "home",
           "opponent_team_name": "FC Bulleen Lions U13",
           "opponent_team_id": "jdye8kBvd5",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlJE3zN",
+          "date": "2026-03-06T07:00:00.000000Z",
+          "team_name": "Essendon Royals SC U13",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U13 YPL1 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Caroline Springs George Cross FC U13",
+          "opponent_team_id": "2KpvA7rbmY",
           "events": []
         }
       ]
@@ -54364,7 +54664,7 @@
       },
       "team_stats": {
         "Essendon Royals SC U13": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -54373,7 +54673,7 @@
         }
       },
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -54436,6 +54736,18 @@
           "home_or_away": "home",
           "opponent_team_name": "FC Bulleen Lions U13",
           "opponent_team_id": "jdye8kBvd5",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlJE3zN",
+          "date": "2026-03-06T07:00:00.000000Z",
+          "team_name": "Essendon Royals SC U13",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U13 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Caroline Springs George Cross FC U13",
+          "opponent_team_id": "2KpvA7rbmY",
           "events": []
         }
       ]
@@ -83401,5 +83713,5 @@
       ]
     }
   ],
-  "_last_updated": "2026-03-06T20:00:28.598839"
+  "_last_updated": "2026-03-07T00:00:29.747558"
 }
