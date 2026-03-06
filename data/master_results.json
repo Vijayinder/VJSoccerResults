@@ -26254,5 +26254,53 @@
                 "href": "https://mc-api.dribl.com/api/results/vmZp9B15LK"
             }
         }
+    },
+    {
+        "type": "results",
+        "hash_id": "PmrGqgLDLN",
+        "attributes": {
+            "name": "Caroline Springs George Cross FC U14  vs Essendon Royals SC U14 ",
+            "date": "2026-03-06 07:00:00",
+            "round": "R6",
+            "full_round": "Round 6",
+            "ground_name": "City Vista Pavilion & Sports Field",
+            "field_name": "Pitch 3 (S)",
+            "home_team_name": "Caroline Springs George Cross FC U14",
+            "home_logo": "https://ocean.dribl.com/3532cecf8a87412ea102902cfce8a70d",
+            "away_team_name": "Essendon Royals SC U14",
+            "away_logo": "https://ocean.dribl.com/aeae5452dfeb45aaa2eca9cc9f4a3755",
+            "competition_name": "Boys Victorian Youth Premier League 1",
+            "league_name": "U14 YPL1 Boys",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 4,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 3,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": false,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 2,
+            "enable_referees_allocated": true,
+            "match_hash_id": "2Kp0pgp4WK",
+            "home_team_hash_id": "PmjnxbaAmZ",
+            "away_team_hash_id": "EN2O48D3Kq",
+            "forfeit_team_hash_id": null
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/PmrGqgLDLN"
+            }
+        }
     }
 ]
