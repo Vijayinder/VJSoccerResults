@@ -342,31 +342,37 @@ def parse_date(date_str: str) -> datetime.date:
         return datetime.min.date()
 
 def parse_date_utc_to_aest(date_str: str) -> Optional[datetime]:
-    """Parse UTC date string and convert to Melbourne Local Time (AEST/AEDT)"""
+    """Parse date string and return as Melbourne local time (AEST/AEDT).
+
+    Timezone handling rules:
+    - Ends with 'Z'           → explicit UTC, convert to Melbourne
+    - Has offset (+HH:MM)     → parse as-is, convert to Melbourne
+    - Has 'T' but no tz info  → treat as ALREADY local Melbourne time (no conversion)
+    - Date only               → treat as Melbourne midnight (no conversion)
+    """
     if not date_str:
         return None
     try:
         melbourne_tz = pytz.timezone('Australia/Melbourne')
 
         if 'Z' in date_str:
-            # Explicit UTC marker
+            # Explicit UTC — convert to Melbourne
             utc_dt = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
+            return utc_dt.astimezone(melbourne_tz)
 
         elif 'T' in date_str and ('+' in date_str[10:] or '-' in date_str[10:]):
-            # Has timezone offset already (e.g. +10:00) — parse as-is
-            utc_dt = datetime.fromisoformat(date_str)
+            # Has timezone offset — parse and convert to Melbourne
+            return datetime.fromisoformat(date_str).astimezone(melbourne_tz)
 
         elif 'T' in date_str:
-            # Has time but no timezone — assume UTC
-            utc_dt = datetime.fromisoformat(date_str).replace(tzinfo=pytz.UTC)
+            # Has time but NO timezone marker — treat as local Melbourne time already
+            naive_dt = datetime.fromisoformat(date_str)
+            return melbourne_tz.localize(naive_dt)
 
         else:
-            # Date only (e.g. "2026-02-22") — assume midnight UTC
-            utc_dt = datetime.fromisoformat(date_str).replace(
-                hour=0, minute=0, second=0, tzinfo=pytz.UTC
-            )
-
-        return utc_dt.astimezone(melbourne_tz)
+            # Date only — treat as local Melbourne midnight
+            naive_dt = datetime.fromisoformat(date_str).replace(hour=0, minute=0, second=0)
+            return melbourne_tz.localize(naive_dt)
 
     except (ValueError, AttributeError, Exception):
         return None
@@ -715,12 +721,11 @@ def filter_players_by_criteria(players: List[Dict], query: str, include_non_play
 
 def tool_fixtures(query: str = "", limit: int = 10, use_user_team: bool = False) -> str:
     """Show upcoming fixtures with full DST-aware time support"""
-    
-    # Get the precise 'now' in Melbourne
+
     melbourne_tz = pytz.timezone('Australia/Melbourne')
     now_melbourne = datetime.now(melbourne_tz)
-    
-    # Logic for determining the search term and limit
+
+    # Determine base search term and limit
     if not query and not use_user_team:
         search_term = USER_CONFIG["club"]
         limit = 10
@@ -732,49 +737,77 @@ def tool_fixtures(query: str = "", limit: int = 10, use_user_team: bool = False)
         has_specific_age = any(age in query.upper() for age in ["U13", "U14", "U15", "U16", "U18", "U21"])
         limit = 5 if has_specific_age else 10
 
+    # Pre-extract structured filters from the search term so we can match
+    # age group and club independently (handles "U16 Heidelberg", "Heidelberg U16", etc.)
+    q_lower       = search_term.lower().strip()
+    age_group_f   = extract_age_group(q_lower)          # e.g. "U16"
+    league_code_f = None
+    for possible_league in ['ypl1', 'ypl2', 'ysl nw', 'ysl se', 'vpl men', 'vpl women']:
+        if possible_league in q_lower:
+            league_code_f = extract_league_from_league_name(possible_league)
+            break
+
+    # For club matching use the raw alias (short word like "heidelberg") — more robust
+    # than the full canonical name which may differ slightly in fixture data
+    club_token = None
+    for alias in CLUB_ALIASES:
+        if alias in q_lower:
+            club_token = alias  # e.g. "heidelberg"
+            break
+
+    def _match_passes_filter(home: str, away: str, league: str) -> bool:
+        search_blob = f"{home} {away} {league}".lower()
+        match_league_code = extract_league_from_league_name(league)
+
+        if league_code_f and match_league_code.lower() != league_code_f.lower():
+            return False
+        if age_group_f and age_group_f.lower() not in search_blob:
+            return False
+        if club_token and club_token not in search_blob:
+            return False
+        # If no structured filter found at all, fall back to plain substring
+        if not age_group_f and not club_token and not league_code_f:
+            return q_lower in search_blob
+        return True
+
     upcoming = []
     for f in fixtures:
         attrs = f.get("attributes", {})
         date_str = attrs.get("date", "")
-        
-        # Convert UTC -> Melbourne (AEDT/AEST)
+
         match_dt = parse_date_utc_to_aest(date_str)
         if not match_dt:
             continue
-            
-        # Only show matches that haven't started yet
-        if match_dt >= now_melbourne:
-            # Handle None values - use 'or ""' to ensure string
-            home = (attrs.get("home_team_name") or "").lower()
-            away = (attrs.get("away_team_name") or "").lower()
-            league = (attrs.get("league_name") or "").lower()
-            
-            if search_term.lower() in home or search_term.lower() in away or search_term.lower() in league:
-                upcoming.append((match_dt, attrs))
-    
-    # Sort strictly by the full datetime (Day + Time)
+
+        if match_dt < now_melbourne:
+            continue
+
+        home   = (attrs.get("home_team_name") or "")
+        away   = (attrs.get("away_team_name") or "")
+        league = (attrs.get("league_name") or "")
+
+        if _match_passes_filter(home, away, league):
+            upcoming.append((match_dt, attrs))
+
     upcoming.sort(key=lambda x: x[0])
     upcoming = upcoming[:limit]
-    
+
     if not upcoming:
         return f"❌ No upcoming fixtures found for '{search_term}'."
 
-    title_text = f"All {USER_CONFIG['club']} Age Groups" if not query and not use_user_team else search_term.title()
+    title_text = (f"All {USER_CONFIG['club']} Age Groups"
+                  if not query and not use_user_team else search_term.title())
     lines = [f"📅 **Upcoming Fixtures: {title_text}**\n"]
-    
+
     for i, (m_dt, attrs) in enumerate(upcoming, 1):
-        # Calculate days until using midnight boundaries for natural language
-        days_until = (m_dt.date() - now_melbourne.date()).days
-        
-        # Format: 15-Feb (Sun) 10:30 AM
+        days_until  = (m_dt.date() - now_melbourne.date()).days
         date_display = m_dt.strftime("%d-%b (%a) %I:%M %p")
-        
-        # Handle None values properly
-        home = attrs.get("home_team_name") or "Unknown"
-        away = attrs.get("away_team_name") or "Unknown"
-        league = attrs.get("league_name") or ""
+
+        home  = attrs.get("home_team_name") or "Unknown"
+        away  = attrs.get("away_team_name") or "Unknown"
+        lg    = attrs.get("league_name") or ""
         venue = attrs.get("ground_name") or "TBD"
-        
+
         if days_until == 0:
             status = "🔴 TODAY!"
         elif days_until == 1:
@@ -783,10 +816,10 @@ def tool_fixtures(query: str = "", limit: int = 10, use_user_team: bool = False)
             status = f"🗓️ In {days_until} days"
 
         lines.append(f"**{i}. {date_display}** — {status}")
-        lines.append(f"    🏆 {league}")
+        lines.append(f"    🏆 {lg}")
         lines.append(f"    ⚽ {home} vs {away}")
         lines.append(f"    🏟️ {venue}\n")
-        
+
     return "\n".join(lines)
 # ---------------------------------------------------------
 # 6B. MISSING SCORES TOOL
@@ -1095,180 +1128,298 @@ def tool_missing_scores(query: str = "", include_all_leagues: bool = False, toda
     }
     
 
-def tool_todays_results(query: str = "") -> Any:
+def tool_todays_results(query: str = "", round_filter: int = None) -> Any:
     """
     Show results from today (if Sunday) or last Sunday.
-    Optionally filter by team/club.
+    Supports filtering by league, age group, club, or round number.
+    Properly deduplicates by match_hash_id (result takes priority over fixture).
     """
-    
-    # ========== TESTING OVERRIDE - UNCOMMENT TO FORCE LAST SUNDAY ==========
-    #FORCE_LAST_SUNDAY = True  # Uncomment this line to test with last Sunday's data
-    # ========================================================================
-    
-    # Check if testing override is active
+    melbourne_tz = pytz.timezone('Australia/Melbourne')
+    today = datetime.now(melbourne_tz).date()
+
+    # Determine match day
     try:
         force_last_sunday = FORCE_LAST_SUNDAY
     except NameError:
         force_last_sunday = False
-    
-    melbourne_tz = pytz.timezone('Australia/Melbourne')
-    today = datetime.now(melbourne_tz).date()
-    
+
     if force_last_sunday:
-        # TESTING MODE: Force last Sunday
         match_day = get_last_sunday()
-        print(f"⚠️  TESTING MODE (todays_results): Forcing last Sunday ({match_day})")
     else:
-        # NORMAL MODE: Use today if Sunday, else last Sunday
         match_day = get_match_day_date()
-    
-    # Determine the label and prominent date display
+
     if match_day == today:
-        day_label = "Today"
         date_display = f"📅 **TODAY ({today.strftime('%A, %d %B %Y')})**"
     else:
-        day_label = f"Last Sunday ({match_day.strftime('%d-%b')})"
         date_display = f"📅 **LAST SUNDAY ({match_day.strftime('%A, %d %B %Y')})**"
-    
-    # ADD DEBUG
-    print(f"DEBUG tool_todays_results - Looking for matches on: {match_day}")
-    print(f"DEBUG tool_todays_results - Day label: {day_label}")
-    
-    # ✅ NEW: Check BOTH fixtures and results data sources
-    all_matches = []
-    
-    # Add fixtures
-    for fixture in fixtures:
-        attrs = fixture.get("attributes", {})
-        attrs['source'] = 'fixtures'
-        all_matches.append(attrs)
-    
-    # Add results
+
+    # ── Build a deduplicated match map keyed on match_hash_id ──────────────
+    # Results take priority; fixtures fill in matches not yet in results.
+    match_map: dict = {}
+
     for result in results:
-        attrs = result.get("attributes", {})
-        attrs['source'] = 'results'
-        all_matches.append(attrs)
-    
-    print(f"DEBUG tool_todays_results - Checking {len(all_matches)} total matches ({len(fixtures)} fixtures + {len(results)} results)")
-    
-    # Filter results for this date
-    todays_results = []
-    
-    for attrs in all_matches:
+        attrs = dict(result.get("attributes", {}))
+        mid = attrs.get("match_hash_id")
+        attrs["_source"] = "result"
+        if mid:
+            match_map[mid] = attrs
+        else:
+            match_map[id(attrs)] = attrs
+
+    for fixture in fixtures:
+        attrs = dict(fixture.get("attributes", {}))
+        mid = attrs.get("match_hash_id")
+        attrs["_source"] = "fixture"
+        if mid and mid not in match_map:
+            match_map[mid] = attrs
+        elif not mid:
+            match_map[id(attrs)] = attrs
+
+    # ── Parse query filters ────────────────────────────────────────────────
+    q_lower = query.lower().strip() if query else ""
+    age_group_filter   = extract_age_group(q_lower) if q_lower else None
+    canonical_club     = get_canonical_club_name(q_lower) if q_lower else None
+    query_league_code  = None
+    if q_lower:
+        for possible_league in ['ypl1', 'ypl2', 'ysl nw', 'ysl se', 'vpl men', 'vpl women', 'ypl 1', 'ypl 2']:
+            if possible_league in q_lower:
+                query_league_code = extract_league_from_league_name(possible_league)
+                break
+
+    # Extract round from query if not passed directly  e.g. "results round 5"
+    if round_filter is None and q_lower:
+        rm = re.search(r'\bround\s*(\d+)\b', q_lower)
+        if rm:
+            round_filter = int(rm.group(1))
+
+    # ── Filter and collect ────────────────────────────────────────────────
+    matched = []
+    for attrs in match_map.values():
         date_str = attrs.get("date", "")
         if not date_str:
             continue
-        
-        # Parse to Melbourne date
+
         match_dt = parse_date_utc_to_aest(date_str)
         if not match_dt:
             continue
-        
+
         match_date = match_dt.date()
-        
-        # ADD DEBUG - show first few matches
-        if len(todays_results) < 3:
-            print(f"  Checking match: {attrs.get('home_team_name')} vs {attrs.get('away_team_name')} on {match_date} (from {attrs.get('source')})")
-        
-        # Check if match is on our target date
-        if match_date != match_day:
-            continue
+
+        # Date filter: must be on the match day (unless filtering by round only)
+        if round_filter is None:
+            if match_date != match_day:
+                continue
+        else:
+            # Round mode: ignore date, filter by round number below
+            pass
 
         home_team = attrs.get("home_team_name", "Unknown")
         away_team = attrs.get("away_team_name", "Unknown")
-        league = attrs.get("league_name", "")
+        league    = attrs.get("league_name", "")
 
-        # Skip bye matches — identified by missing team hash IDs
+        # Skip bye matches
         if not attrs.get("home_team_hash_id") or not attrs.get("away_team_hash_id"):
             continue
-        # Enhanced query filter - supports league, team, club, age group
-        if query:
-            q_lower = query.lower().strip()
-            
-            # Extract filters from query
-            age_group = extract_age_group(q_lower)
-            canonical_club = get_canonical_club_name(q_lower)
-            
-            # Extract league code from the match
-            match_league_code = extract_league_from_league_name(league)
-            
-            # Build comprehensive search blob
-            search_blob = f"{home_team} {away_team} {league} {match_league_code}".lower()
-            
-            # Check if query specifies a league code (YPL1, YPL2, YSL NW, etc.)
-            query_league_code = None
-            for possible_league in ['ypl1', 'ypl2', 'ysl nw', 'ysl se', 'vpl men', 'vpl women', 'ypl 1', 'ypl 2']:
-                if possible_league in q_lower:
-                    query_league_code = extract_league_from_league_name(possible_league)
-                    break
-            
-            # If user specified a league code, match must have it
-            if query_league_code and match_league_code.lower() != query_league_code.lower():
+
+        match_league_code = extract_league_from_league_name(league)
+        search_blob = f"{home_team} {away_team} {league} {match_league_code}".lower()
+
+        # Round filter
+        if round_filter is not None:
+            match_round_str = str(attrs.get("round", "") or attrs.get("full_round", "") or "")
+            round_num_match = re.search(r'(\d+)', match_round_str)
+            if not round_num_match or int(round_num_match.group(1)) != round_filter:
                 continue
-            
-            # If user specified age group, match must have it
-            if age_group and age_group.lower() not in search_blob:
+
+        # League filter
+        if query_league_code and match_league_code.lower() != query_league_code.lower():
+            continue
+
+        # Age group filter
+        if age_group_filter and age_group_filter.lower() not in search_blob:
+            continue
+
+        # Club filter
+        if canonical_club and canonical_club.lower() not in search_blob:
+            continue
+
+        # Fallback substring match (only when no structured filter found)
+        if q_lower and not age_group_filter and not canonical_club and not query_league_code and not round_filter:
+            # Strip round words before fallback check
+            clean_q = re.sub(r'\b(round|r)\s*\d+\b', '', q_lower).strip()
+            if clean_q and clean_q not in search_blob:
                 continue
-            
-            # If user specified club name, match must have it
-            if canonical_club and canonical_club.lower() not in search_blob:
-                continue
-            
-            # Fallback: if no specific filters, do basic substring match
-            if not age_group and not canonical_club and not query_league_code:
-                if q_lower not in search_blob:
-                    continue
-        
-        # Check if scores are entered
+
+        # Must have scores entered
         home_score = attrs.get("home_score")
         away_score = attrs.get("away_score")
-        status = (attrs.get("status") or "").lower()
-        
+        status     = (attrs.get("status") or "").lower()
+
         if status == "complete" and home_score is not None and away_score is not None:
-            todays_results.append({
-                "time": match_dt.strftime("%I:%M %p"),
-                "datetime_sort": match_dt,  # For proper time sorting
-                "league": extract_league_from_league_name(attrs.get("league_name", "")),
-                "home_team": home_team,
-                "away_team": away_team,
-                "home_score": home_score,
-                "away_score": away_score,
-                "round": attrs.get("full_round", attrs.get("round", "")),
-                "source": attrs.get("source", "unknown")
+            match_round = attrs.get("full_round") or attrs.get("round") or ""
+            matched.append({
+                "datetime_sort": match_dt,
+                "time":          match_dt.strftime("%I:%M %p"),
+                "league":        match_league_code,
+                "home_team":     home_team,
+                "away_team":     away_team,
+                "home_score":    home_score,
+                "away_score":    away_score,
+                "round":         match_round,
             })
-    
-    # ADD DEBUG
-    print(f"DEBUG tool_todays_results - Found {len(todays_results)} completed results")
-    if todays_results:
-        print(f"DEBUG tool_todays_results - First result: {todays_results[0]['home_team']} {todays_results[0]['home_score']}-{todays_results[0]['away_score']} {todays_results[0]['away_team']} (from {todays_results[0]['source']})")
-    
-    if not todays_results:
+
+    if not matched:
         filter_text = f" matching '{query}'" if query else ""
-        return f"{date_display}\n❌ No results found{filter_text}"
-    
-    # Sort by actual datetime object, not string
-    todays_results.sort(key=lambda x: x["datetime_sort"])
-    
-    # Format as table with separate columns for better visibility
+        round_text  = f" Round {round_filter}" if round_filter else ""
+        return f"{date_display}\n❌ No results found{round_text}{filter_text}"
+
+    matched.sort(key=lambda x: x["datetime_sort"])
+
     data = []
-    for i, match in enumerate(todays_results, 1):
+    for i, m in enumerate(matched, 1):
         data.append({
-            "#": i,
-            "Time": match["time"],
-            "League": match["league"],
-            "Home": match["home_team"],
-            "Score": f"{match['home_score']}-{match['away_score']}",
-            "Away": match["away_team"],
-            "Round": match["round"]
+            "#":      i,
+            "Time":   m["time"],
+            "League": m["league"],
+            "Round":  m["round"],
+            "Home":   m["home_team"],
+            "Score":  f"{m['home_score']}-{m['away_score']}",
+            "Away":   m["away_team"],
         })
-    filter_suffix = f" - {query}" if query else ""
+
+    filter_parts = []
+    if round_filter:    filter_parts.append(f"Round {round_filter}")
+    if query_league_code: filter_parts.append(query_league_code)
+    if age_group_filter:  filter_parts.append(age_group_filter)
+    if canonical_club:    filter_parts.append(canonical_club)
+    filter_suffix = " — " + " / ".join(filter_parts) if filter_parts else ""
+
     return {
-        "type": "table",
-        "data": data,
-        "title": f"{date_display}\n⚽ Results{filter_suffix} ({len(todays_results)} matches)"
+        "type":  "table",
+        "data":  data,
+        "title": f"{date_display}\n⚽ Results{filter_suffix} ({len(matched)} matches)",
     }
 
-def tool_top_scorers_today(query: str = "") -> Any:
+
+def tool_all_results(query: str = "", round_filter: int = None, limit: int = 60) -> Any:
+    """
+    Show all completed results (across all dates) filtered by league, age group, club, or round.
+    Results sorted most recent first.
+    """
+    q_lower = query.lower().strip() if query else ""
+
+    # Parse filters
+    age_group_filter  = extract_age_group(q_lower) if q_lower else None
+    canonical_club    = get_canonical_club_name(q_lower) if q_lower else None
+    query_league_code = None
+    if q_lower:
+        for possible_league in ['ypl1', 'ypl2', 'ysl nw', 'ysl se', 'vpl men', 'vpl women', 'ypl 1', 'ypl 2']:
+            if possible_league in q_lower:
+                query_league_code = extract_league_from_league_name(possible_league)
+                break
+
+    # Extract round from query if not passed directly
+    if round_filter is None and q_lower:
+        rm = re.search(r'\bround\s*(\d+)\b', q_lower)
+        if rm:
+            round_filter = int(rm.group(1))
+
+    # Club token for flexible matching
+    club_token = None
+    for alias in CLUB_ALIASES:
+        if alias in q_lower:
+            club_token = alias
+            break
+
+    matched = []
+    seen_ids = set()
+
+    for r in results:
+        attrs = r.get("attributes", {})
+        mid = attrs.get("match_hash_id")
+        if mid and mid in seen_ids:
+            continue
+        if mid:
+            seen_ids.add(mid)
+
+        status = (attrs.get("status") or "").lower()
+        if status != "complete":
+            continue
+
+        home_score = attrs.get("home_score")
+        away_score = attrs.get("away_score")
+        if home_score is None or away_score is None:
+            continue
+
+        # Skip byes
+        if not attrs.get("home_team_hash_id") or not attrs.get("away_team_hash_id"):
+            continue
+
+        home   = attrs.get("home_team_name", "") or ""
+        away   = attrs.get("away_team_name", "") or ""
+        league = attrs.get("league_name", "") or ""
+        match_league_code = extract_league_from_league_name(league)
+        search_blob = f"{home} {away} {league}".lower()
+
+        # Apply filters
+        if query_league_code and match_league_code.lower() != query_league_code.lower():
+            continue
+        if age_group_filter and age_group_filter.lower() not in search_blob:
+            continue
+        if club_token and club_token not in search_blob:
+            continue
+        if q_lower and not age_group_filter and not club_token and not query_league_code and not round_filter:
+            if q_lower not in search_blob:
+                continue
+
+        # Round filter
+        if round_filter is not None:
+            match_round_str = str(attrs.get("round", "") or attrs.get("full_round", "") or "")
+            rn = re.search(r'(\d+)', match_round_str)
+            if not rn or int(rn.group(1)) != round_filter:
+                continue
+
+        date_str = attrs.get("date", "")
+        match_dt = parse_date_utc_to_aest(date_str)
+        date_display = iso_date_aest(date_str) if date_str else ""
+        match_round = attrs.get("full_round") or attrs.get("round") or ""
+
+        matched.append({
+            "sort_key": date_str,
+            "Date":     date_display,
+            "League":   match_league_code,
+            "Round":    match_round,
+            "Home":     home,
+            "Score":    f"{home_score}-{away_score}",
+            "Away":     away,
+        })
+
+    if not matched:
+        filter_text = f" for '{query}'" if query else ""
+        return {"type": "error", "message": f"❌ No completed results found{filter_text}"}
+
+    matched.sort(key=lambda x: x["sort_key"], reverse=True)
+    matched = matched[:limit]
+
+    # Strip internal sort key before sending to table
+    data = [{k: v for k, v in row.items() if k != "sort_key"} for row in matched]
+
+    filter_parts = []
+    if round_filter:          filter_parts.append(f"Round {round_filter}")
+    if query_league_code:     filter_parts.append(query_league_code)
+    if age_group_filter:      filter_parts.append(age_group_filter)
+    if canonical_club:        filter_parts.append(canonical_club)
+    elif club_token:          filter_parts.append(club_token.title())
+    filter_suffix = " — " + " / ".join(filter_parts) if filter_parts else ""
+
+    return {
+        "type":  "table",
+        "data":  data,
+        "title": f"⚽ Results{filter_suffix} ({len(data)} matches)",
+    }
+
+
+
     """
     Show players who scored goals today (if Sunday) or last Sunday.
     Filter by league, team, club, or age group.
@@ -3151,19 +3302,35 @@ class FastQueryRouter:
 
         # --- 2B. TODAY'S RESULTS ---
         todays_results_keywords = [
-            'today results', 
-            'todays results', 
-            'results today', 
-            'todays results',
-            'results for today',
-            'today s results'   # No apostrophe (space)
+            'today results', 'todays results', 'results today',
+            'results for today', "today's results", 'today s results',
         ]
-        print(f"🔍 Checking todays_results keywords: {any(keyword in q for keyword in todays_results_keywords)}")  # ADD THIS
-        if any(keyword in q for keyword in todays_results_keywords):
-            print(f"✅ MATCHED todays_results!")  # ADD THIS
-            filter_query = re.sub(r'\b(today|todays|today\'s|results?|for|show|list|me)\b', '', q).strip()
-            print(f"✅ Calling tool_todays_results with filter: '{filter_query}'")  # ADD THIS
-            return tool_todays_results(filter_query)
+        is_today_results = any(keyword in q for keyword in todays_results_keywords)
+
+        # Broad results query (no "today" — show all completed results for the filter)
+        is_broad_results = (
+            not is_today_results and
+            q.startswith('results') and len(q) > 7
+        )
+
+        if is_today_results:
+            filter_query = re.sub(
+                r'\b(today|todays|today\'s|results?|for|show|list|me|this|last|week)\b',
+                '', q
+            ).strip()
+            round_m = re.search(r'\bround\s*(\d+)\b', q)
+            r_num = int(round_m.group(1)) if round_m else None
+            filter_query = re.sub(r'\bround\s*\d+\b', '', filter_query).strip()
+            return tool_todays_results(filter_query, round_filter=r_num)
+
+        if is_broad_results:
+            filter_query = re.sub(
+                r'\b(results?|for|show|list|me)\b', '', q
+            ).strip()
+            round_m = re.search(r'\bround\s*(\d+)\b', q)
+            r_num = int(round_m.group(1)) if round_m else None
+            filter_query = re.sub(r'\bround\s*\d+\b', '', filter_query).strip()
+            return tool_all_results(filter_query, round_filter=r_num)
         # --- 2C. TOP SCORERS TODAY ---
         top_scorers_today_keywords = ['top scorers today', 'goals today', 'who scored today', 'scorers today', "today's scorers", "today's goals"]
         if any(keyword in q for keyword in top_scorers_today_keywords):
