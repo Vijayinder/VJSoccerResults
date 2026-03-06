@@ -37982,7 +37982,7 @@
           "red_cards": 0
         },
         "Altona Magic SC U13": {
-          "matches_played": 4,
+          "matches_played": 5,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -37991,7 +37991,7 @@
         }
       },
       "stats": {
-        "matches_attended": 6,
+        "matches_attended": 7,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -38066,6 +38066,18 @@
           "home_or_away": "away",
           "opponent_team_name": "Murray United FC U13",
           "opponent_team_id": "am1qv8eqmw",
+          "events": []
+        },
+        {
+          "match_hash_id": "Pmj27aMe6m",
+          "date": "2026-02-28T22:00:00.000000Z",
+          "team_name": "Altona Magic SC U13",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U13 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Geelong SC U13",
+          "opponent_team_id": "BdD1BeYJmb",
           "events": []
         }
       ]
@@ -46750,7 +46762,7 @@
       },
       "team_stats": {
         "Geelong SC U13": {
-          "matches_played": 4,
+          "matches_played": 5,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -46767,7 +46779,7 @@
         }
       },
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 1,
         "red_cards": 0
       },
@@ -46835,6 +46847,18 @@
           "home_or_away": "away",
           "opponent_team_name": "Dandenong Thunder FC U13",
           "opponent_team_id": "EN2O48AZKq",
+          "events": []
+        },
+        {
+          "match_hash_id": "Pmj27aMe6m",
+          "date": "2026-02-28T22:00:00.000000Z",
+          "team_name": "Geelong SC U13",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U13 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Altona Magic SC U13",
+          "opponent_team_id": "pmvzPne5mv",
           "events": []
         }
       ]
@@ -49054,7 +49078,7 @@
       },
       "team_stats": {
         "Altona Magic SC U13": {
-          "matches_played": 4,
+          "matches_played": 5,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -49063,7 +49087,7 @@
         }
       },
       "stats": {
-        "matches_attended": 4,
+        "matches_attended": 5,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -49114,6 +49138,18 @@
           "home_or_away": "away",
           "opponent_team_name": "Murray United FC U13",
           "opponent_team_id": "am1qv8eqmw",
+          "events": []
+        },
+        {
+          "match_hash_id": "Pmj27aMe6m",
+          "date": "2026-02-28T22:00:00.000000Z",
+          "team_name": "Altona Magic SC U13",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U13 YPL2 Boys",
+          "role_in_match": "Team Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Geelong SC U13",
+          "opponent_team_id": "BdD1BeYJmb",
           "events": []
         }
       ]
@@ -55512,7 +55548,7 @@
       },
       "team_stats": {
         "Geelong SC U13": {
-          "matches_played": 2,
+          "matches_played": 3,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -55521,7 +55557,7 @@
         }
       },
       "stats": {
-        "matches_attended": 2,
+        "matches_attended": 3,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -55548,6 +55584,18 @@
           "home_or_away": "away",
           "opponent_team_name": "Dandenong Thunder FC U13",
           "opponent_team_id": "EN2O48AZKq",
+          "events": []
+        },
+        {
+          "match_hash_id": "Pmj27aMe6m",
+          "date": "2026-02-28T22:00:00.000000Z",
+          "team_name": "Geelong SC U13",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U13 YPL2 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Altona Magic SC U13",
+          "opponent_team_id": "pmvzPne5mv",
           "events": []
         }
       ]
@@ -83245,5 +83293,5 @@
       ]
     }
   ],
-  "_last_updated": "2026-03-06T08:00:30.028431"
+  "_last_updated": "2026-03-06T12:00:29.284034"
 }
