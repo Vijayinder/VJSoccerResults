@@ -291,6 +291,46 @@ def iso_date(date_str: str) -> str:
         return ""
 
 
+def format_date_aest(date_str: str) -> str:
+    """Convert UTC date string to dd-mmm format using AEST/AEDT local time."""
+    if not date_str:
+        return "TBD"
+    try:
+        dt = parse_date_utc_to_aest(date_str)
+        if dt:
+            return dt.strftime("%d-%b")
+        # Fallback: no time component — treat as local date already
+        date_part = date_str.split('T')[0] if 'T' in date_str else date_str
+        return datetime.fromisoformat(date_part).strftime("%d-%b")
+    except (ValueError, AttributeError):
+        return date_str[:10] if len(date_str) >= 10 else date_str
+
+def format_date_full_aest(date_str: str) -> str:
+    """Convert UTC date string to dd-mmm-yyyy format using AEST/AEDT local time."""
+    if not date_str:
+        return "TBD"
+    try:
+        dt = parse_date_utc_to_aest(date_str)
+        if dt:
+            return dt.strftime("%d-%b-%Y")
+        date_part = date_str.split('T')[0] if 'T' in date_str else date_str
+        return datetime.fromisoformat(date_part).strftime("%d-%b-%Y")
+    except (ValueError, AttributeError):
+        return date_str[:10] if len(date_str) >= 10 else date_str
+
+def iso_date_aest(date_str: str) -> str:
+    """Return YYYY-MM-DD in AEST/AEDT local time (for sortable Streamlit DateColumn)."""
+    if not date_str:
+        return ""
+    try:
+        dt = parse_date_utc_to_aest(date_str)
+        if dt:
+            return dt.strftime("%Y-%m-%d")
+        date_part = date_str.split('T')[0] if 'T' in date_str else date_str
+        return datetime.fromisoformat(date_part).strftime("%Y-%m-%d")
+    except (ValueError, AttributeError):
+        return ""
+
 def parse_date(date_str: str) -> datetime.date:
     """Parse date string to date object"""
     if not date_str:
@@ -1854,68 +1894,86 @@ def tool_red_cards(query: str = "", show_details: bool = False,
 
     return {"type": "table", "data": data, "title": title}
 
-def tool_top_scorers(query: str = "", limit: int = 20):
-    """List top goal scorers - supports age group and team filtering"""
+def tool_top_scorers(query: str = "", limit: int = 50):
+    """List top goal scorers across all leagues/divisions, with optional filtering."""
     scorers = [
-        p for p in players_summary 
+        p for p in players_summary
         if p.get("stats", {}).get("goals", 0) > 0
-        and (not p.get("role") or p.get("role") == "player")  # Only players
+        and (not p.get("role") or p.get("role") == "player")
     ]
-    
-    # Apply filters
+
+    # Apply team/club/age-group filter only if a specific query was given
     if query:
         scorers = filter_players_by_criteria(scorers, query, include_non_players=False)
-    
+
     if not scorers:
         filter_desc = f" matching '{query}'" if query else ""
         return {"type": "error", "message": f"❌ No goal scorers found{filter_desc}"}
-    
+
+    # Sort by goals descending
     scorers.sort(key=lambda x: x.get("stats", {}).get("goals", 0), reverse=True)
-    
-    # Build filter description based on what was actually extracted
+
+    # Build filter description
     age_group = extract_age_group(query) if query else None
     team_name = extract_team_name(query) if query else None
     base_club = extract_base_club_name(query) if query else None
-    
     filter_parts = []
-    if age_group and not team_name:
-        # Only age group specified
-        filter_parts.append(age_group)
-    elif base_club and not age_group and not team_name:
-        # Only base club specified
-        filter_parts.append(base_club)
-    elif team_name:
-        # Specific team specified
+    if team_name:
         filter_parts.append(team_name)
-    
-    filter_desc = " - " + " ".join(filter_parts) if filter_parts else ""
-    
-    # Return as structured data for table display
+    elif base_club and age_group:
+        filter_parts.append(f"{base_club} {age_group}")
+    elif base_club:
+        filter_parts.append(base_club)
+    elif age_group:
+        filter_parts.append(age_group)
+    filter_desc = " — " + " ".join(filter_parts) if filter_parts else ""
+
     data = []
     for i, p in enumerate(scorers[:limit], 1):
-        stats = p.get("stats", {})
-        goals = stats.get("goals", 0)
-        matches = stats.get("matches_played", 0)
+        stats   = p.get("stats", {})
+        goals   = stats.get("goals", 0)
         yellows = stats.get("yellow_cards", 0)
-        reds = stats.get("red_cards", 0)
-        name = f"{p.get('first_name')} {p.get('last_name')}"
-        team = p.get('team_name', '')
-        
+        reds    = stats.get("red_cards", 0)
+        name    = f"{p.get('first_name', '')} {p.get('last_name', '')}".strip()
+
+        # Recalculate matches from match-level data (available or started = counts)
+        all_matches   = p.get("matches", [])
+        played_matches = [m for m in all_matches
+                          if m.get("available", False) or m.get("started", False)]
+        matches_played = len(played_matches)
+
+        # Team: prefer first entry in teams array
+        teams  = p.get("teams", []) or ([p.get("team_name")] if p.get("team_name") else [])
+        team   = teams[0] if teams else ""
+
+        # League: extract short code from player's leagues list
+        leagues     = p.get("leagues", []) or ([p.get("league_name")] if p.get("league_name") else [])
+        league_code = extract_league_from_league_name(leagues[0]) if leagues else "—"
+
+        # Age group from team name
+        ag_m    = re.search(r'U\d{2}', team, re.IGNORECASE)
+        age_grp = ag_m.group(0).upper() if ag_m else "—"
+
+        # Base club name (strip age group suffix)
+        club = re.sub(r'\s+U\d{2}$', '', team, flags=re.IGNORECASE).strip() or team
+
         data.append({
-            "Rank": i,
-            "Player": name,
-            "Team": team,
-            "Goals": goals,
-            "Matches": matches,
-            "Goals/Match": round(goals / matches, 2) if matches > 0 else 0,
-            "Yellow": yellows,
-            "Red": reds
+            "#":       i,
+            "Player":  name,
+            "Club":    club,
+            "Div":     age_grp,
+            "League":  league_code,
+            "M":       matches_played,
+            "⚽":      goals,
+            "G/M":     round(goals / matches_played, 2) if matches_played > 0 else 0,
+            "🟨":      yellows,
+            "🟥":      reds,
         })
-    
+
     return {
-        "type": "table",
-        "data": data,
-        "title": f"⚽ Top Scorers{filter_desc} ({len(scorers)} players with goals, showing top {min(limit, len(scorers))})"
+        "type":  "table",
+        "data":  data,
+        "title": f"⚽ Top Scorers{filter_desc} — {len(scorers)} players with goals, showing top {min(limit, len(scorers))}"
     }
 
 
@@ -2005,7 +2063,7 @@ def tool_team_stats(query: str = "") -> str:
     
     # Recent team results
     team_results = []
-    team_name_to_match = players[0].get('team_name', '') if players else team_filter
+    team_name_to_match = _person_teams(players[0])[0] if _person_teams(players[0]) else team_filter
     for r in results:
         a = r.get("attributes", {})
         home = a.get("home_team_name", "")
@@ -2014,26 +2072,39 @@ def tool_team_stats(query: str = "") -> str:
             team_results.append(a)
 
     team_results.sort(key=lambda x: x.get("date", ""), reverse=True)
-    if team_results:
-        lines.append(f"\n**📅 Recent Results:**")
-        for a in team_results[:5]:
-            date_str = format_date(a.get('date', ''))
-            hs = a.get('home_score')
-            as_ = a.get('away_score')
-            
-            # Handle None values properly
-            home_team = a.get('home_team_name') or ''
-            away_team = a.get('away_team_name') or ''
-            
-            is_home = team_name_to_match.lower() in home_team.lower()
-            if is_home:
-                result = "🟢 W" if int(hs) > int(as_) else ("🔴 L" if int(hs) < int(as_) else "🟡 D")
-            else:
-                result = "🟢 W" if int(as_) > int(hs) else ("🔴 L" if int(as_) < int(hs) else "🟡 D")
-            
-            lines.append(f"\n  {result} {date_str}: {home_team} {hs}-{as_} {away_team}")
 
-    return "\n".join(lines)
+    results_table = []
+    for a in team_results[:8]:
+        hs = a.get("home_score")
+        as_ = a.get("away_score")
+        home_team = a.get("home_team_name") or ""
+        away_team = a.get("away_team_name") or ""
+        is_home = team_name_to_match.lower() in home_team.lower()
+        opponent = _strip_age_group(away_team) if is_home else _strip_age_group(home_team)
+        ha = "🏠" if is_home else "✈️"
+        try:
+            our = int(hs) if is_home else int(as_)
+            opp = int(as_) if is_home else int(hs)
+            icon = "🟢" if our > opp else ("🔴" if our < opp else "🟡")
+            score = f"{our}-{opp}"
+            result_str = f"{icon} {'W' if our > opp else ('L' if our < opp else 'D')}"
+        except (TypeError, ValueError):
+            score = "—"
+            result_str = "—"
+        results_table.append({
+            "Date":     format_date_aest(a.get("date", "")),
+            "H/A":      ha,
+            "Opponent": opponent,
+            "Score":    score,
+            "Result":   result_str,
+        })
+
+    return {
+        "type":    "team_stats",
+        "summary": "\n".join(lines),
+        "results": results_table,
+        "team":    display_team,
+    }
 
 
 def tool_competition_overview(query: str = ""):
@@ -2140,7 +2211,7 @@ def tool_players(query: str, detailed: bool = False) -> str:
             if detailed and matches:
                 lines.append(f"\n📅 **Match-by-Match:** ({len(matches)} matches)\n")
                 for m in matches:
-                    date_str = format_date(m.get('date', ''))
+                    date_str = format_date_aest(m.get('date', ''))
                     opp = m.get('opponent_team_name') or m.get('opponent', '')
                     role_match = m.get('role_in_match', '')
                     perf = []
@@ -2241,7 +2312,7 @@ def tool_players(query: str, detailed: bool = False) -> str:
                     started_icon += " 🧤"
 
                 row = {
-                    "Date":     iso_date(m.get("date", "")),
+                    "Date":     iso_date_aest(m.get("date", "")),
                     "H/A":      "🏠" if m.get("home_or_away") == "home" else "✈️",
                     "Opponent": m.get("opponent_team_name", "—"),
                     "Started":  started_icon,
@@ -2421,56 +2492,20 @@ def tool_team_overview(query: str) -> str:
 
     return "\n".join(lines)
 
-def tool_ladder(query: str) -> str:
-    q = query.lower()
-
-    print(f"DEBUG tool_ladder - Query: '{query}'")
-
-    # Step 1: Try to extract competition code directly from the query
-    # This is the most reliable method — handles "YPL2", "YPL 2", "ypl2" etc
-    competition_to_use = extract_league_from_league_name(q)
-
-    # Step 2: Only fall back to fuzzy matching if direct extraction failed
-    if not competition_to_use or competition_to_use == "Other":
-        league = fuzzy_find(q, [l.lower() for l in league_names], threshold=60)
-        comp = fuzzy_find(q, [c.lower() for c in competition_names], threshold=60)
-        print(f"DEBUG tool_ladder - Fuzzy matched league: {league}, comp: {comp}")
-
-        if league:
-            competition_to_use = extract_league_from_league_name(league)
-        elif comp:
-            competition_to_use = extract_league_from_league_name(comp)
-
-    if not competition_to_use or competition_to_use == "Other":
-        return f"❌ No ladder found for: {query}\n\nTry: 'YPL1 ladder', 'YPL2 ladder', 'YSL NW ladder'"
-
-    # Extract age group separately — never concatenate with competition
-    # Data stores them in different orders e.g. "U16 Boys Victorian Youth Premier League 2"
-    age_group = extract_age_group(query)
-    age_group_lower = age_group.lower() if age_group else None
-
-    competition_to_use = competition_to_use.lower()
-    print(f"DEBUG tool_ladder - Using competition: {competition_to_use}, age_group: {age_group_lower}")
-
+def _build_ladder_table(results_list, competition_code_lower, age_group_lower=None):
+    """
+    Build a ladder dict for a given competition code and optional age group filter.
+    Returns sorted list of row dicts, or empty list if no data.
+    """
     table = defaultdict(lambda: {"P": 0, "W": 0, "D": 0, "L": 0, "GF": 0, "GA": 0, "PTS": 0})
-
-    matches_found = 0
-    for r in results:
+    for r in results_list:
         a = r.get("attributes", {})
         league_name = (a.get("league_name") or "").lower()
-        comp_name = (a.get("competition_name") or "").lower()
-
-        # Check competition code appears in league or comp name
-        comp_match = competition_to_use in league_name or competition_to_use in comp_name
-        if not comp_match:
+        comp_name   = (a.get("competition_name") or "").lower()
+        if competition_code_lower not in league_name and competition_code_lower not in comp_name:
             continue
-
-        # If age group was specified, ALSO check it appears in the league name separately
         if age_group_lower and age_group_lower not in league_name and age_group_lower not in comp_name:
             continue
-        
-        matches_found += 1
-
         home = a.get("home_team_name") or ""
         away = a.get("away_team_name") or ""
         try:
@@ -2478,60 +2513,103 @@ def tool_ladder(query: str) -> str:
             as_ = int(a.get("away_score", 0))
         except (ValueError, TypeError):
             continue
-
-        table[home]["P"] += 1
-        table[away]["P"] += 1
-        table[home]["GF"] += hs
-        table[home]["GA"] += as_
-        table[away]["GF"] += as_
-        table[away]["GA"] += hs
-
+        for t in (home, away):
+            table[t]  # ensure key exists
+        table[home]["P"] += 1; table[away]["P"] += 1
+        table[home]["GF"] += hs; table[home]["GA"] += as_
+        table[away]["GF"] += as_; table[away]["GA"] += hs
         if hs > as_:
-            table[home]["W"] += 1
-            table[away]["L"] += 1
-            table[home]["PTS"] += 3
+            table[home]["W"] += 1; table[away]["L"] += 1; table[home]["PTS"] += 3
         elif hs < as_:
-            table[away]["W"] += 1
-            table[home]["L"] += 1
-            table[away]["PTS"] += 3
+            table[away]["W"] += 1; table[home]["L"] += 1; table[away]["PTS"] += 3
         else:
-            table[home]["D"] += 1
-            table[away]["D"] += 1
-            table[home]["PTS"] += 1
-            table[away]["PTS"] += 1
-    
-    print(f"DEBUG tool_ladder - Matches found: {matches_found}")
-    print(f"DEBUG tool_ladder - Teams in table: {len(table)}")
-
+            table[home]["D"] += 1; table[away]["D"] += 1
+            table[home]["PTS"] += 1; table[away]["PTS"] += 1
     if not table:
-        return f"❌ No ladder for: {query}\n\nFound competition '{competition_to_use.upper()}' but no completed matches.\n\nTry: 'YPL1 ladder', 'YPL2 ladder', 'YSL NW ladder'"
+        return []
+    ladder = sorted(table.items(),
+                    key=lambda kv: (kv[1]["PTS"], kv[1]["GF"] - kv[1]["GA"], kv[1]["GF"]),
+                    reverse=True)
+    return [{"Pos": pos, "Team": team, "P": r["P"], "W": r["W"], "D": r["D"],
+             "L": r["L"], "GF": r["GF"], "GA": r["GA"], "GD": r["GF"] - r["GA"], "PTS": r["PTS"]}
+            for pos, (team, r) in enumerate(ladder, 1)]
 
-    ladder = sorted(
-        table.items(),
-        key=lambda kv: (kv[1]["PTS"], kv[1]["GF"] - kv[1]["GA"], kv[1]["GF"]),
-        reverse=True,
-    )
 
-    data = []
-    for pos, (team, row) in enumerate(ladder, 1):
-        gd = row["GF"] - row["GA"]
-        data.append({
-            "Pos": pos,
-            "Team": team,
-            "P": row["P"],
-            "W": row["W"],
-            "D": row["D"],
-            "L": row["L"],
-            "GF": row["GF"],
-            "GA": row["GA"],
-            "GD": gd,
-            "PTS": row["PTS"]
-        })
-    
+def tool_ladder(query: str) -> str:
+    q = query.lower()
+
+    # Step 1: Extract competition code from query
+    competition_to_use = extract_league_from_league_name(q)
+
+    # Step 2: Fuzzy fallback if not found directly
+    if not competition_to_use or competition_to_use == "Other":
+        league_match = fuzzy_find(q, [l.lower() for l in league_names], threshold=60)
+        comp_match   = fuzzy_find(q, [c.lower() for c in competition_names], threshold=60)
+        if league_match:
+            competition_to_use = extract_league_from_league_name(league_match)
+        elif comp_match:
+            competition_to_use = extract_league_from_league_name(comp_match)
+
+    if not competition_to_use or competition_to_use == "Other":
+        return f"❌ No ladder found for: {query}\n\nTry: 'YPL1 ladder', 'YPL2 ladder', 'YSL NW ladder'"
+
+    age_group       = extract_age_group(query)
+    age_group_lower = age_group.lower() if age_group else None
+    comp_lower      = competition_to_use.lower()
+
+    # ── If a specific age group was requested → single table (original behaviour) ──
+    if age_group_lower:
+        data = _build_ladder_table(results, comp_lower, age_group_lower)
+        if not data:
+            return f"❌ No ladder for {competition_to_use.upper()} {age_group} — no completed matches found."
+        return {
+            "type":  "table",
+            "data":  data,
+            "title": f"📊 {competition_to_use.upper()} {age_group} Ladder ({len(data)} teams)"
+        }
+
+    # ── No age group → discover every age group in this competition and return all ──
+    age_groups_found = set()
+    for r in results:
+        a = r.get("attributes", {})
+        ln = (a.get("league_name") or "").lower()
+        cn = (a.get("competition_name") or "").lower()
+        if comp_lower not in ln and comp_lower not in cn:
+            continue
+        # Extract U-code from the league name
+        ag_m = re.search(r'\bu(\d{2})\b', ln or cn)
+        if ag_m:
+            age_groups_found.add(f"u{ag_m.group(1)}")
+
+    if not age_groups_found:
+        # No age groups found — fall back to single combined table
+        data = _build_ladder_table(results, comp_lower)
+        if not data:
+            return f"❌ No ladder for {competition_to_use.upper()} — no completed matches found."
+        return {
+            "type":  "table",
+            "data":  data,
+            "title": f"📊 {competition_to_use.upper()} Ladder ({len(data)} teams)"
+        }
+
+    # Build one table per age group, sorted by age group number
+    sorted_age_groups = sorted(age_groups_found, key=lambda x: int(x[1:]))
+    tables = []
+    for ag in sorted_age_groups:
+        data = _build_ladder_table(results, comp_lower, ag)
+        if data:
+            tables.append({
+                "title": f"{ag.upper()} — {competition_to_use.upper()}",
+                "data":  data,
+            })
+
+    if not tables:
+        return f"❌ No completed matches found for {competition_to_use.upper()}."
+
     return {
-        "type": "table",
-        "data": data,
-        "title": f"📊 {competition_to_use.upper()} Ladder ({len(ladder)} teams)"
+        "type":   "multi_table",
+        "title":  f"📊 {competition_to_use.upper()} — All Age Groups ({len(tables)} divisions)",
+        "tables": tables,
     }
     
 def tool_form(query: str) -> str:
@@ -2804,45 +2882,65 @@ def tool_dual_registration(query: str = "", different_clubs_only: bool = False) 
         teams   = p.get("teams", [])
         leagues = p.get("leagues", [])
 
-        # Determine current club (To) vs previous club (From) based on most recent match per team
+        # Find most recent match date per TEAM (full name incl age group)
         team_last_date: dict = {}
         for m in p.get("matches", []):
-            tn = m.get("team_name", "")
-            if tn:
-                mdate = m.get("date", "")
-                if mdate > team_last_date.get(tn, ""):
-                    team_last_date[tn] = mdate
+            tn    = m.get("team_name", "")
+            mdate = m.get("date", "")
+            if tn and mdate > team_last_date.get(tn, ""):
+                team_last_date[tn] = mdate
 
-        # Sort teams: most recently played = current (To) club comes first
+        # Sort all teams by most recent match date (most recent first)
         sorted_teams = sorted(teams, key=lambda t: team_last_date.get(t, ""), reverse=True)
 
-        # Build base club names for display using sorted order
-        base_clubs    = [_strip_age_group(t) for t in sorted_teams]
-        age_groups    = [re.search(r'U\d{2}', t, re.IGNORECASE).group(0).upper()
-                         if re.search(r'U\d{2}', t, re.IGNORECASE) else "—"
-                         for t in sorted_teams]
+        # Build per-team metadata in sorted order
+        all_base_clubs = [_strip_age_group(t) for t in sorted_teams]
+        all_age_groups = [
+            re.search(r'U\d{2}', t, re.IGNORECASE).group(0).upper()
+            if re.search(r'U\d{2}', t, re.IGNORECASE) else "—"
+            for t in sorted_teams
+        ]
         short_leagues = [extract_league_from_league_name(lg) for lg in leagues] if leagues else []
         stats         = p.get("stats", {})
 
+        # Determine From / To using DISTINCT base clubs:
+        # Walk sorted_teams and pick the two most recently active distinct base clubs.
+        # "To Club"   = most recently active distinct club
+        # "From Club" = second most recently active distinct club
+        seen_clubs: list = []  # ordered list of distinct base clubs (most recent first)
+        for bc in all_base_clubs:
+            if bc and bc not in seen_clubs:
+                seen_clubs.append(bc)
+
+        to_club   = seen_clubs[0] if len(seen_clubs) > 0 else "—"
+        from_club = seen_clubs[1] if len(seen_clubs) > 1 else "—"
+
+        # For age groups: collect all unique age groups across all teams
+        unique_age_groups = []
+        for ag in all_age_groups:
+            if ag not in unique_age_groups:
+                unique_age_groups.append(ag)
+
         # Determine if cross-club or same-club-different-age
-        unique_base_clubs = {c for c in base_clubs if c}
-        is_cross_club     = len(unique_base_clubs) > 1
-        reg_type          = "⚡ Cross-Club" if is_cross_club else "🔁 Same Club"
+        unique_base_clubs_set = {c for c in all_base_clubs if c}
+        is_cross_club = len(unique_base_clubs_set) > 1
+        reg_type      = "⚡ Cross-Club" if is_cross_club else "🔁 Same Club"
 
         row = {
             "#":          i,
             "Player":     name,
             "Type":       reg_type,
-            "From Club":  base_clubs[1] if len(base_clubs) > 1 else "—",
-            "To Club":    base_clubs[0] if len(base_clubs) > 0 else "—",
-            "Age Groups": " / ".join(age_groups),
+            "From Club":  from_club,
+            "To Club":    to_club,
+            "Age Groups": " / ".join(unique_age_groups),
             "Leagues":    " / ".join(short_leagues) if short_leagues else "—",
             "Goals":      stats.get("goals", 0),
             "🟨":         stats.get("yellow_cards", 0),
             "🟥":         stats.get("red_cards", 0),
         }
-        if len(base_clubs) > 2:
-            row["Club 3"] = base_clubs[2]
+        # If 3+ distinct clubs exist, show the third
+        if len(seen_clubs) > 2:
+            row["Club 3"] = seen_clubs[2]
         data.append(row)
 
     cross_count   = sum(1 for row in data if row["Type"] == "⚡ Cross-Club")
@@ -3134,11 +3232,14 @@ class FastQueryRouter:
 
         # --- 8. TOP SCORERS ---
         if any(word in q for word in ["top scorer","leading scorer", "top scorers", "golden boot"]):
-            clean = re.sub(r'\b(top|scorer|scorers?|golden|boot|in|for|show|me|list)\b', '', q).strip()
-            team_context = clean if clean else USER_CONFIG["team"]
-            result = tool_top_scorers(team_context)
+            clean = re.sub(r'\b(top|scorer|scorers?|golden|boot|in|for|show|me|list|all|leagues?|divisions?)\b', '', q).strip()
+            # If no specific team/club filter remains, show ALL leagues (pass empty string)
+            result = tool_top_scorers(clean, limit=50)
             if isinstance(result, dict) and result.get("type") == "table":
-                result["title"] = f"🏆 Here are the top performers for {result.get('title', team_context)}:"
+                if clean:
+                    result["title"] = f"🏆 Top scorers — {clean.title()}"
+                else:
+                    result["title"] = f"🏆 Top Scorers — All Leagues & Divisions"
             return result
             
         # --- 9. SQUAD LIST / TEAM PLAYER TABLE ---

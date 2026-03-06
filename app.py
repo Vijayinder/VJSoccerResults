@@ -1,5 +1,5 @@
 import streamlit as st
-from fast_agent import FastQueryRouter, format_date, format_date_full
+from fast_agent import FastQueryRouter, format_date, format_date_full, format_date_aest, format_date_full_aest, iso_date_aest
 import time
 import pandas as pd
 import json
@@ -1798,9 +1798,6 @@ def main_app():
                     df_reg = pd.DataFrame(reg_rows)
                     st.dataframe(df_reg, hide_index=True, use_container_width=True,
                                  height=(len(reg_rows) + 1) * 35 + 10)
-                st.markdown("**📊 Season Totals**")
-                df_stats = pd.DataFrame([s_stats])
-                st.dataframe(df_stats, hide_index=True, use_container_width=True, height=70)
                 if m_rows:
                     label = "📅 Match-by-Match" if detailed else f"📅 Recent Matches (last {len(m_rows)})"
                     st.markdown(f"**{label}**")
@@ -1816,6 +1813,38 @@ def main_app():
                         st.caption(f"💡 Say 'details for {pname}' for full match-by-match breakdown")
                 if note:
                     st.caption(f"ℹ️ {note}")
+            elif answer.get("type") == "team_stats":
+                st.markdown(answer.get("summary", ""))
+                results_data = answer.get("results", [])
+                if results_data:
+                    st.markdown("**📅 Recent Results**")
+                    df_res = pd.DataFrame(results_data)
+                    h = min(400, (len(df_res) + 1) * 35 + 10)
+                    st.dataframe(df_res, hide_index=True, use_container_width=True,
+                                 height=h,
+                                 column_config={
+                                     "Date":     st.column_config.TextColumn("Date",     width="small"),
+                                     "H/A":      st.column_config.TextColumn("",         width="small"),
+                                     "Opponent": st.column_config.TextColumn("Opponent", width="medium"),
+                                     "Score":    st.column_config.TextColumn("Score",    width="small"),
+                                     "Result":   st.column_config.TextColumn("Result",   width="small"),
+                                 })
+            elif answer.get("type") == "multi_table":
+                st.info(answer.get("title", "Results"))
+                tables = answer.get("tables", [])
+                if tables:
+                    tab_labels = [t["title"] for t in tables]
+                    tabs = st.tabs(tab_labels)
+                    for tab, tbl in zip(tabs, tables):
+                        with tab:
+                            data = tbl.get("data", [])
+                            if data:
+                                df = pd.DataFrame(data)
+                                num_rows = len(df)
+                                h = 600 if num_rows > 16 else (num_rows + 1) * 35 + 10
+                                st.dataframe(df, hide_index=True, use_container_width=True, height=h)
+                            else:
+                                st.info("No data available.")
             elif answer.get("type") == "table":
                 st.info(answer.get("title", "Results"))
                 data = answer.get("data", [])
@@ -1956,9 +1985,8 @@ def main_app():
                 overall_ladder_df.insert(0, "Rank", range(1, len(overall_ladder_df) + 1))
                 overall_display_df = overall_ladder_df[["Rank", "club", "played", "wins", "draws", "losses", "gf", "ga", "gd", "points"]].copy()
                 overall_display_df.columns = ["Rank", "Club", "P", "W", "D", "L", "GF", "GA", "GD", "Pts"]
-                styled_overall = overall_display_df.style.apply(style_ladder, comp=league, axis=None)
                 st.dataframe(
-                    styled_overall,
+                    overall_display_df,
                     hide_index=True,
                     use_container_width=False,
                     height=598,
@@ -2188,7 +2216,7 @@ def main_app():
                         opp_score = as_ if is_home else hs
                         
                         # Match summary box
-                        st.info(f"**{format_date_full(attrs.get('date', ''))}** vs {base_club_name(opponent)} - **{our_score}-{opp_score}**")
+                        st.info(f"**{format_date_full_aest(attrs.get('date', ''))}** vs {base_club_name(opponent)} - **{our_score}-{opp_score}**")
                     # Filter players who played in this match
                     all_people = [p for p in all_people if player_played_in_match(p, selected_match_id)]
 
@@ -2409,7 +2437,7 @@ def main_app():
                                 started_icon += " 🧤"
 
                             row = {
-                                "Date":     format_date(m.get("date", "")),
+                                "Date":     format_date_aest(m.get("date", "")),
                                 "Age":      age_grp,
                                 "Started":  started_icon,
                                 "Opponent": opponent,
@@ -2455,7 +2483,7 @@ def main_app():
         rows = []
         for m in matches:
             rows.append({
-                "Date": format_date(m.get("date", "")),
+                "Date": format_date_aest(m.get("date", "")),
                 "Competition": m.get("competition_name"),
                 "Opponent": base_club_name(m.get("opponent_team_name", "")),
                 "H/A": "🏠" if m.get("home_or_away") == "home" else "✈️",
