@@ -2250,7 +2250,8 @@ def main_app():
                             rows.append({
                                 "Select": False, "Age": player_age,
                                 "Player": f"{full_name}{dual_badge}", "#": jersey,
-                                "M": p.get("stats", {}).get("matches_played", 0),
+                                "M": len([m for m in p.get("matches", [])
+                                          if m.get("available", False) or m.get("started", False)]),
                                 "G": p.get("stats", {}).get("goals", 0),
                                 "🟨": p.get("stats", {}).get("yellow_cards", 0),
                                 "🟥": p.get("stats", {}).get("red_cards", 0),
@@ -2351,10 +2352,14 @@ def main_app():
                             selected_player.get("jersey", "—")
                         )
                         st.markdown(f"### 👤 {pname}")
+                        # Recalculate matches from match-level data (available or started = counts)
+                        _all_pm = selected_player.get("matches", [])
+                        _matches_played_calc = len([m for m in _all_pm
+                                                    if m.get("available", False) or m.get("started", False)])
                         st.caption(
                             f"Jersey #{jersey}{age_label}  |  "
                             f"⚽ {stats.get('goals', 0)} goals  |  "
-                            f"🎮 {stats.get('matches_played', 0)} matches  |  "
+                            f"🎮 {_matches_played_calc} matches  |  "
                             f"🟨 {stats.get('yellow_cards', 0)}  🟥 {stats.get('red_cards', 0)}"
                             f"{dual_label}"
                         )
@@ -2372,6 +2377,9 @@ def main_app():
                         is_dual = len(selected_player.get("teams", [])) > 1
                         match_rows = []
                         for m in player_matches:
+                            # Only show matches where player was actually available or started
+                            if not (m.get("available", False) or m.get("started", False)):
+                                continue
                             opponent = base_club_name(m.get("opponent_team_name") or m.get("opponent") or "—")
                             events   = m.get("events", [])
                             def _etype(e): return (e.get("type") or e.get("event_type") or "").lower()
@@ -2393,10 +2401,17 @@ def main_app():
                             _ag_m = re.search(r'U\d{2}', _ag_src, re.IGNORECASE)
                             age_grp = _ag_m.group(0).upper() if _ag_m else ""
 
+                            # Started/bench + captain/goalie indicators
+                            started_icon = "✅" if m.get("started") else "🪑"
+                            if m.get("captain"):
+                                started_icon += " ©"
+                            if m.get("goalie"):
+                                started_icon += " 🧤"
+
                             row = {
                                 "Date":     format_date(m.get("date", "")),
                                 "Age":      age_grp,
-                                "Started":  "✅" if m.get("started") else "🪑",
+                                "Started":  started_icon,
                                 "Opponent": opponent,
                                 "G": goals,
                                 "Cards":    cards_str,

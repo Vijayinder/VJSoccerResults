@@ -2171,6 +2171,17 @@ def tool_players(query: str, detailed: bool = False) -> str:
             # Does the JSON have team_name on match entries? (new dribl format)
             has_team_in_matches = any(m.get("team_name") for m in matches)
 
+            # Recalculate played/started/bench from match-level flags:
+            # A match only counts if available=True OR started=True
+            def _counts_as_played(m):
+                return m.get("available", False) or m.get("started", False)
+
+            played_matches = [m for m in matches if _counts_as_played(m)]
+            recalc_played  = len(played_matches)
+            recalc_started = sum(1 for m in played_matches if m.get("started", False))
+            recalc_bench   = sum(1 for m in played_matches
+                                 if m.get("available", False) and not m.get("started", False))
+
             # ── Registration row per club ──────────────────────────────
             reg_rows = []
             for i, t in enumerate(all_teams):
@@ -2179,10 +2190,12 @@ def tool_players(query: str, detailed: bool = False) -> str:
 
                 if has_team_in_matches:
                     tm  = [m for m in matches if m.get("team_name") == t]
-                    mp  = len(tm)
-                    g   = sum(m.get("goals", 0) for m in tm)
-                    yc  = sum(m.get("yellow_cards", 0) for m in tm)
-                    rc  = sum(m.get("red_cards", 0) for m in tm)
+                    # Only count matches where player was actually available/started
+                    tm_played = [m for m in tm if _counts_as_played(m)]
+                    mp  = len(tm_played)
+                    g   = sum(m.get("goals", 0) for m in tm_played)
+                    yc  = sum(m.get("yellow_cards", 0) for m in tm_played)
+                    rc  = sum(m.get("red_cards", 0) for m in tm_played)
                 else:
                     # Old JSON without team_name on matches — show totals on first row
                     if i == 0:
@@ -2204,8 +2217,14 @@ def tool_players(query: str, detailed: bool = False) -> str:
                 })
 
             # ── Match history rows ─────────────────────────────────────
-            sorted_matches = sorted(matches, key=lambda m: m.get("date", ""), reverse=True)
-            display_matches = sorted_matches if detailed else sorted_matches[:5]
+            # Only show matches where the player was actually available or started
+            sorted_matches = sorted(
+                [m for m in matches if m.get("available", False) or m.get("started", False)],
+                key=lambda m: m.get("date", ""),
+                reverse=True
+            )
+            # Always show all recent matches (most recent first); no arbitrary top-5 limit
+            display_matches = sorted_matches
             match_rows = []
             for m in display_matches:
                 events  = m.get("events", [])
@@ -2213,11 +2232,19 @@ def tool_players(query: str, detailed: bool = False) -> str:
                 goals   = m.get("goals",       sum(1 for e in events if _etype(e) == "goal"))
                 yellows = m.get("yellow_cards", sum(1 for e in events if _etype(e) == "yellow_card"))
                 reds    = m.get("red_cards",    sum(1 for e in events if _etype(e) == "red_card"))
+
+                # Build started/role indicator: ✅ started, 🪑 bench, + captain © and goalie 🧤
+                started_icon = "✅" if m.get("started") else "🪑"
+                if m.get("captain"):
+                    started_icon += " ©"
+                if m.get("goalie"):
+                    started_icon += " 🧤"
+
                 row = {
                     "Date":     iso_date(m.get("date", "")),
                     "H/A":      "🏠" if m.get("home_or_away") == "home" else "✈️",
                     "Opponent": m.get("opponent_team_name", "—"),
-                    "Started":  "✅" if m.get("started") else "🪑",
+                    "Started":  started_icon,
                     "⚽":       goals,
                     "🟨":       yellows,
                     "🟥":       reds,
@@ -2237,9 +2264,9 @@ def tool_players(query: str, detailed: bool = False) -> str:
                 "is_dual":       is_dual_reg,
                 "registrations": reg_rows,
                 "season_stats": {
-                    "Played":   stats.get("matches_played", 0),
-                    "Started":  stats.get("matches_started", 0),
-                    "Bench":    stats.get("bench_appearances", 0),
+                    "Played":   recalc_played,
+                    "Started":  recalc_started,
+                    "Bench":    recalc_bench,
                     "⚽ Goals": stats.get("goals", 0),
                     "🟨":       stats.get("yellow_cards", 0),
                     "🟥":       stats.get("red_cards", 0),
@@ -2777,11 +2804,23 @@ def tool_dual_registration(query: str = "", different_clubs_only: bool = False) 
         teams   = p.get("teams", [])
         leagues = p.get("leagues", [])
 
-        # Build base club names for display
-        base_clubs    = [_strip_age_group(t) for t in teams]
+        # Determine current club (To) vs previous club (From) based on most recent match per team
+        team_last_date: dict = {}
+        for m in p.get("matches", []):
+            tn = m.get("team_name", "")
+            if tn:
+                mdate = m.get("date", "")
+                if mdate > team_last_date.get(tn, ""):
+                    team_last_date[tn] = mdate
+
+        # Sort teams: most recently played = current (To) club comes first
+        sorted_teams = sorted(teams, key=lambda t: team_last_date.get(t, ""), reverse=True)
+
+        # Build base club names for display using sorted order
+        base_clubs    = [_strip_age_group(t) for t in sorted_teams]
         age_groups    = [re.search(r'U\d{2}', t, re.IGNORECASE).group(0).upper()
                          if re.search(r'U\d{2}', t, re.IGNORECASE) else "—"
-                         for t in teams]
+                         for t in sorted_teams]
         short_leagues = [extract_league_from_league_name(lg) for lg in leagues] if leagues else []
         stats         = p.get("stats", {})
 
@@ -2794,8 +2833,8 @@ def tool_dual_registration(query: str = "", different_clubs_only: bool = False) 
             "#":          i,
             "Player":     name,
             "Type":       reg_type,
-            "Club 1":     base_clubs[0] if len(base_clubs) > 0 else "—",
-            "Club 2":     base_clubs[1] if len(base_clubs) > 1 else "—",
+            "From Club":  base_clubs[1] if len(base_clubs) > 1 else "—",
+            "To Club":    base_clubs[0] if len(base_clubs) > 0 else "—",
             "Age Groups": " / ".join(age_groups),
             "Leagues":    " / ".join(short_leagues) if short_leagues else "—",
             "Goals":      stats.get("goals", 0),
