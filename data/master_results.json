@@ -26494,5 +26494,53 @@
                 "href": "https://mc-api.dribl.com/api/results/BdDb9ao33N"
             }
         }
+    },
+    {
+        "type": "results",
+        "hash_id": "8NO5XG4vad",
+        "attributes": {
+            "name": "Ballarat City FC U18  vs Melbourne Knights FC U18 ",
+            "date": "2026-03-07 02:00:00",
+            "round": "R6",
+            "full_round": "Round 6",
+            "ground_name": "Ballarat Regional Soccer Facility - Morshead Park",
+            "field_name": "Pitch 2",
+            "home_team_name": "Ballarat City FC U18",
+            "home_logo": "https://ocean.dribl.com/e7ecf595ac8a4a9ca65340fa3664d974",
+            "away_team_name": "Melbourne Knights FC U18",
+            "away_logo": "https://ocean.dribl.com/3036ac26577e4a46a4f35197841b7baf",
+            "competition_name": "Boys Victorian Youth Premier League 2",
+            "league_name": "U18 YPL2 Boys",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 0,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 3,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": true,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 3,
+            "enable_referees_allocated": true,
+            "match_hash_id": "bd9pW3k58K",
+            "home_team_hash_id": "nmYyQqgpmz",
+            "away_team_hash_id": "jdye8g5Dd5",
+            "forfeit_team_hash_id": null
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/8NO5XG4vad"
+            }
+        }
     }
 ]

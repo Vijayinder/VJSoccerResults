@@ -12453,7 +12453,7 @@
       },
       "team_stats": {
         "Melbourne Knights FC U18": {
-          "matches_played": 10,
+          "matches_played": 12,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -12494,7 +12494,7 @@
         }
       },
       "stats": {
-        "matches_attended": 50,
+        "matches_attended": 52,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -13098,6 +13098,30 @@
           "opponent_team_name": "Eltham Redbacks FC U15",
           "opponent_team_id": "MNGogqQENA",
           "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3k58K",
+          "date": "2026-03-07T02:00:00.000000Z",
+          "team_name": "Melbourne Knights FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "away",
+          "opponent_team_name": "Ballarat City FC U18",
+          "opponent_team_id": "nmYyQqgpmz",
+          "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3k58K",
+          "date": "2026-03-07T02:00:00.000000Z",
+          "team_name": "Melbourne Knights FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Ballarat City FC U18",
+          "opponent_team_id": "nmYyQqgpmz",
+          "events": []
         }
       ]
     },
@@ -13120,7 +13144,7 @@
       },
       "team_stats": {
         "Melbourne Knights FC U18": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -13129,7 +13153,7 @@
         }
       },
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 1,
         "red_cards": 0
       },
@@ -13197,6 +13221,18 @@
           "home_or_away": "away",
           "opponent_team_name": "Pascoe Vale FC U18",
           "opponent_team_id": "1K3YkaWOmQ",
+          "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3k58K",
+          "date": "2026-03-07T02:00:00.000000Z",
+          "team_name": "Melbourne Knights FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Ballarat City FC U18",
+          "opponent_team_id": "nmYyQqgpmz",
           "events": []
         }
       ]
@@ -33689,7 +33725,7 @@
           "red_cards": 0
         },
         "Ballarat City FC U18": {
-          "matches_played": 2,
+          "matches_played": 3,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -33698,7 +33734,7 @@
         }
       },
       "stats": {
-        "matches_attended": 12,
+        "matches_attended": 13,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -33845,6 +33881,18 @@
           "home_or_away": "home",
           "opponent_team_name": "Northcote City FC U16",
           "opponent_team_id": "lNb3VnjgKx",
+          "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3k58K",
+          "date": "2026-03-07T02:00:00.000000Z",
+          "team_name": "Ballarat City FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Melbourne Knights FC U18",
+          "opponent_team_id": "jdye8g5Dd5",
           "events": []
         }
       ]
@@ -37370,7 +37418,7 @@
       },
       "team_stats": {
         "Ballarat City FC U18": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -37379,7 +37427,7 @@
         }
       },
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -37443,6 +37491,18 @@
           "opponent_team_name": "Northcote City FC U18",
           "opponent_team_id": "ld4OlaGDKW",
           "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3k58K",
+          "date": "2026-03-07T02:00:00.000000Z",
+          "team_name": "Ballarat City FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Melbourne Knights FC U18",
+          "opponent_team_id": "jdye8g5Dd5",
+          "events": []
         }
       ]
     },
@@ -37465,7 +37525,7 @@
       },
       "team_stats": {
         "Ballarat City FC U18": {
-          "matches_played": 4,
+          "matches_played": 5,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -37474,7 +37534,7 @@
         }
       },
       "stats": {
-        "matches_attended": 4,
+        "matches_attended": 5,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -37525,6 +37585,18 @@
           "home_or_away": "home",
           "opponent_team_name": "Northcote City FC U18",
           "opponent_team_id": "ld4OlaGDKW",
+          "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3k58K",
+          "date": "2026-03-07T02:00:00.000000Z",
+          "team_name": "Ballarat City FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Melbourne Knights FC U18",
+          "opponent_team_id": "jdye8g5Dd5",
           "events": []
         }
       ]
@@ -79642,7 +79714,7 @@
           "red_cards": 0
         },
         "Ballarat City FC U18": {
-          "matches_played": 2,
+          "matches_played": 3,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -79651,7 +79723,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -79774,6 +79846,18 @@
           "home_or_away": "home",
           "opponent_team_name": "Northcote City FC U16",
           "opponent_team_id": "lNb3VnjgKx",
+          "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3k58K",
+          "date": "2026-03-07T02:00:00.000000Z",
+          "team_name": "Ballarat City FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Melbourne Knights FC U18",
+          "opponent_team_id": "jdye8g5Dd5",
           "events": []
         }
       ]
@@ -83369,7 +83453,7 @@
       },
       "team_stats": {
         "Ballarat City FC U18": {
-          "matches_played": 1,
+          "matches_played": 2,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -83378,7 +83462,7 @@
         }
       },
       "stats": {
-        "matches_attended": 1,
+        "matches_attended": 2,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -83393,6 +83477,18 @@
           "home_or_away": "home",
           "opponent_team_name": "Northcote City FC U18",
           "opponent_team_id": "ld4OlaGDKW",
+          "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3k58K",
+          "date": "2026-03-07T02:00:00.000000Z",
+          "team_name": "Ballarat City FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Melbourne Knights FC U18",
+          "opponent_team_id": "jdye8g5Dd5",
           "events": []
         }
       ]
@@ -83821,5 +83917,5 @@
       ]
     }
   ],
-  "_last_updated": "2026-03-07T12:00:27.139261"
+  "_last_updated": "2026-03-07T16:00:28.721583"
 }
