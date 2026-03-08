@@ -2125,15 +2125,15 @@
             "points": 9
           },
           "U18": {
-            "position": 5,
-            "played": 3,
-            "wins": 1,
+            "position": 3,
+            "played": 4,
+            "wins": 2,
             "draws": 1,
             "losses": 1,
-            "gf": 8,
+            "gf": 12,
             "ga": 8,
-            "gd": 0,
-            "points": 4
+            "gd": 4,
+            "points": 7
           },
           "U16": {
             "position": 2,
@@ -2169,8 +2169,8 @@
             "points": 12
           }
         },
-        "total_position_points": 11,
-        "total_gf": 82,
+        "total_position_points": 9,
+        "total_gf": 86,
         "total_ga": 20,
         "age_group_count": 5,
         "overall_rank": 1
@@ -2320,14 +2320,14 @@
             "points": 4
           },
           "U18": {
-            "position": 3,
-            "played": 3,
+            "position": 5,
+            "played": 4,
             "wins": 2,
             "draws": 0,
-            "losses": 1,
-            "gf": 4,
-            "ga": 6,
-            "gd": -2,
+            "losses": 2,
+            "gf": 6,
+            "ga": 9,
+            "gd": -3,
             "points": 6
           },
           "U16": {
@@ -2364,9 +2364,9 @@
             "points": 9
           }
         },
-        "total_position_points": 19,
-        "total_gf": 34,
-        "total_ga": 24,
+        "total_position_points": 21,
+        "total_gf": 36,
+        "total_ga": 27,
         "age_group_count": 5,
         "overall_rank": 4
       },
@@ -2501,6 +2501,71 @@
         "overall_rank": 6
       },
       {
+        "club": "Whittlesea Ranges FC",
+        "age_groups": {
+          "U13": {
+            "position": 5,
+            "played": 4,
+            "wins": 2,
+            "draws": 0,
+            "losses": 2,
+            "gf": 10,
+            "ga": 7,
+            "gd": 3,
+            "points": 6
+          },
+          "U18": {
+            "position": 4,
+            "played": 4,
+            "wins": 2,
+            "draws": 0,
+            "losses": 2,
+            "gf": 9,
+            "ga": 8,
+            "gd": 1,
+            "points": 6
+          },
+          "U16": {
+            "position": 10,
+            "played": 4,
+            "wins": 0,
+            "draws": 1,
+            "losses": 3,
+            "gf": 4,
+            "ga": 16,
+            "gd": -12,
+            "points": 1
+          },
+          "U15": {
+            "position": 8,
+            "played": 4,
+            "wins": 1,
+            "draws": 0,
+            "losses": 3,
+            "gf": 6,
+            "ga": 15,
+            "gd": -9,
+            "points": 3
+          },
+          "U14": {
+            "position": 10,
+            "played": 4,
+            "wins": 0,
+            "draws": 0,
+            "losses": 4,
+            "gf": 6,
+            "ga": 15,
+            "gd": -9,
+            "points": 0
+          }
+        },
+        "total_position_points": 37,
+        "total_gf": 35,
+        "total_ga": 61,
+        "age_group_count": 5,
+        "overall_rank": 7
+      },
+      {
         "club": "Keilor Park SC",
         "age_groups": {
           "U13": {
@@ -2563,7 +2628,7 @@
         "total_gf": 20,
         "total_ga": 42,
         "age_group_count": 5,
-        "overall_rank": 7
+        "overall_rank": 8
       },
       {
         "club": "Bendigo City FC",
@@ -2580,7 +2645,7 @@
             "points": 0
           },
           "U18": {
-            "position": 4,
+            "position": 6,
             "played": 4,
             "wins": 2,
             "draws": 0,
@@ -2624,74 +2689,9 @@
             "points": 1
           }
         },
-        "total_position_points": 38,
+        "total_position_points": 40,
         "total_gf": 24,
         "total_ga": 61,
-        "age_group_count": 5,
-        "overall_rank": 8
-      },
-      {
-        "club": "Whittlesea Ranges FC",
-        "age_groups": {
-          "U13": {
-            "position": 5,
-            "played": 4,
-            "wins": 2,
-            "draws": 0,
-            "losses": 2,
-            "gf": 10,
-            "ga": 7,
-            "gd": 3,
-            "points": 6
-          },
-          "U18": {
-            "position": 7,
-            "played": 3,
-            "wins": 1,
-            "draws": 0,
-            "losses": 2,
-            "gf": 6,
-            "ga": 6,
-            "gd": 0,
-            "points": 3
-          },
-          "U16": {
-            "position": 10,
-            "played": 4,
-            "wins": 0,
-            "draws": 1,
-            "losses": 3,
-            "gf": 4,
-            "ga": 16,
-            "gd": -12,
-            "points": 1
-          },
-          "U15": {
-            "position": 8,
-            "played": 4,
-            "wins": 1,
-            "draws": 0,
-            "losses": 3,
-            "gf": 6,
-            "ga": 15,
-            "gd": -9,
-            "points": 3
-          },
-          "U14": {
-            "position": 10,
-            "played": 4,
-            "wins": 0,
-            "draws": 0,
-            "losses": 4,
-            "gf": 6,
-            "ga": 15,
-            "gd": -9,
-            "points": 0
-          }
-        },
-        "total_position_points": 40,
-        "total_gf": 32,
-        "total_ga": 59,
         "age_group_count": 5,
         "overall_rank": 9
       },
@@ -2710,14 +2710,14 @@
             "points": 0
           },
           "U18": {
-            "position": 6,
-            "played": 3,
+            "position": 7,
+            "played": 4,
             "wins": 1,
             "draws": 1,
-            "losses": 1,
+            "losses": 2,
             "gf": 4,
-            "ga": 5,
-            "gd": -1,
+            "ga": 9,
+            "gd": -5,
             "points": 4
           },
           "U16": {
@@ -2754,9 +2754,9 @@
             "points": 3
           }
         },
-        "total_position_points": 40,
+        "total_position_points": 41,
         "total_gf": 27,
-        "total_ga": 80,
+        "total_ga": 84,
         "age_group_count": 5,
         "overall_rank": 10
       }
@@ -3412,5 +3412,5 @@
       }
     ]
   },
-  "_last_updated": "2026-03-08T19:00:32.764196"
+  "_last_updated": "2026-03-08T20:00:27.147595"
 }

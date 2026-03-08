@@ -62207,7 +62207,7 @@
           "red_cards": 0
         },
         "Brunswick City SC U18": {
-          "matches_played": 3,
+          "matches_played": 4,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -62240,7 +62240,7 @@
         }
       },
       "stats": {
-        "matches_attended": 19,
+        "matches_attended": 20,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -62471,6 +62471,18 @@
           "home_or_away": "away",
           "opponent_team_name": "Whittlesea Ranges FC U16",
           "opponent_team_id": "EN2O4w93Kq",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw7ZB6m",
+          "date": "2026-03-08T06:00:00.000000Z",
+          "team_name": "Brunswick City SC U18",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U18 YSL Boys - North-West",
+          "role_in_match": "Technical Director",
+          "home_or_away": "away",
+          "opponent_team_name": "Whittlesea Ranges FC U18",
+          "opponent_team_id": "lNb3V2ooKx",
           "events": []
         }
       ]
@@ -63795,7 +63807,7 @@
           "red_cards": 0
         },
         "Whittlesea Ranges FC U18": {
-          "matches_played": 3,
+          "matches_played": 4,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -63836,7 +63848,7 @@
         }
       },
       "stats": {
-        "matches_attended": 21,
+        "matches_attended": 22,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -64091,6 +64103,18 @@
           "home_or_away": "away",
           "opponent_team_name": "Glen Eira FC U18",
           "opponent_team_id": "am1qv8rjmw",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw7ZB6m",
+          "date": "2026-03-08T06:00:00.000000Z",
+          "team_name": "Whittlesea Ranges FC U18",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U18 YSL Boys - North-West",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Brunswick City SC U18",
+          "opponent_team_id": "bd9X95Y2K4",
           "events": []
         }
       ]
@@ -64652,17 +64676,17 @@
       },
       "team_stats": {
         "Whittlesea Ranges FC U18": {
-          "matches_played": 3,
+          "matches_played": 4,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
-          "yellow_cards": 1,
+          "yellow_cards": 2,
           "red_cards": 0
         }
       },
       "stats": {
-        "matches_attended": 3,
-        "yellow_cards": 1,
+        "matches_attended": 4,
+        "yellow_cards": 2,
         "red_cards": 0
       },
       "matches": [
@@ -64706,6 +64730,23 @@
               "minute": "68"
             }
           ]
+        },
+        {
+          "match_hash_id": "pmvvw7ZB6m",
+          "date": "2026-03-08T06:00:00.000000Z",
+          "team_name": "Whittlesea Ranges FC U18",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U18 YSL Boys - North-West",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Brunswick City SC U18",
+          "opponent_team_id": "bd9X95Y2K4",
+          "events": [
+            {
+              "type": "yellow_card",
+              "minute": "55"
+            }
+          ]
         }
       ]
     },
@@ -64728,7 +64769,7 @@
       },
       "team_stats": {
         "Whittlesea Ranges FC U18": {
-          "matches_played": 3,
+          "matches_played": 4,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -64737,7 +64778,7 @@
         }
       },
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -64776,6 +64817,18 @@
           "home_or_away": "away",
           "opponent_team_name": "Moreland City SC U18",
           "opponent_team_id": "am1qvwDWmw",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw7ZB6m",
+          "date": "2026-03-08T06:00:00.000000Z",
+          "team_name": "Whittlesea Ranges FC U18",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U18 YSL Boys - North-West",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Brunswick City SC U18",
+          "opponent_team_id": "bd9X95Y2K4",
           "events": []
         }
       ]
@@ -64942,7 +64995,7 @@
       },
       "team_stats": {
         "Moreland City SC U18": {
-          "matches_played": 2,
+          "matches_played": 3,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -64951,7 +65004,7 @@
         }
       },
       "stats": {
-        "matches_attended": 2,
+        "matches_attended": 3,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -64979,6 +65032,18 @@
           "opponent_team_name": "Preston Lions FC U18",
           "opponent_team_id": "MNGog2j0NA",
           "events": []
+        },
+        {
+          "match_hash_id": "jdywlpxQ6N",
+          "date": "2026-03-08T02:15:00.000000Z",
+          "team_name": "Moreland City SC U18",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U18 YSL Boys - North-West",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Werribee City FC U18",
+          "opponent_team_id": "vmZwn2XDNq",
+          "events": []
         }
       ]
     },
@@ -65002,7 +65067,7 @@
       },
       "team_stats": {
         "Moreland City SC U18": {
-          "matches_played": 3,
+          "matches_played": 4,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -65011,7 +65076,7 @@
         }
       },
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -65050,6 +65115,18 @@
           "home_or_away": "home",
           "opponent_team_name": "Whittlesea Ranges FC U18",
           "opponent_team_id": "lNb3V2ooKx",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlpxQ6N",
+          "date": "2026-03-08T02:15:00.000000Z",
+          "team_name": "Moreland City SC U18",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U18 YSL Boys - North-West",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Werribee City FC U18",
+          "opponent_team_id": "vmZwn2XDNq",
           "events": []
         }
       ]
@@ -67512,7 +67589,7 @@
       },
       "team_stats": {
         "Brunswick City SC U18": {
-          "matches_played": 3,
+          "matches_played": 4,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -67521,7 +67598,7 @@
         }
       },
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -67560,6 +67637,18 @@
           "home_or_away": "home",
           "opponent_team_name": "Preston Lions FC U18",
           "opponent_team_id": "MNGog2j0NA",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw7ZB6m",
+          "date": "2026-03-08T06:00:00.000000Z",
+          "team_name": "Brunswick City SC U18",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U18 YSL Boys - North-West",
+          "role_in_match": "Team Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Whittlesea Ranges FC U18",
+          "opponent_team_id": "lNb3V2ooKx",
           "events": []
         }
       ]
@@ -67584,7 +67673,7 @@
       },
       "team_stats": {
         "Brunswick City SC U18": {
-          "matches_played": 3,
+          "matches_played": 4,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -67593,7 +67682,7 @@
         }
       },
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -67632,6 +67721,18 @@
           "home_or_away": "home",
           "opponent_team_name": "Preston Lions FC U18",
           "opponent_team_id": "MNGog2j0NA",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw7ZB6m",
+          "date": "2026-03-08T06:00:00.000000Z",
+          "team_name": "Brunswick City SC U18",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U18 YSL Boys - North-West",
+          "role_in_match": "Head Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Whittlesea Ranges FC U18",
+          "opponent_team_id": "lNb3V2ooKx",
           "events": []
         }
       ]
@@ -67656,7 +67757,7 @@
       },
       "team_stats": {
         "Brunswick City SC U18": {
-          "matches_played": 3,
+          "matches_played": 4,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -67665,7 +67766,7 @@
         }
       },
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -67704,6 +67805,18 @@
           "home_or_away": "home",
           "opponent_team_name": "Preston Lions FC U18",
           "opponent_team_id": "MNGog2j0NA",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw7ZB6m",
+          "date": "2026-03-08T06:00:00.000000Z",
+          "team_name": "Brunswick City SC U18",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U18 YSL Boys - North-West",
+          "role_in_match": "Assistant Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Whittlesea Ranges FC U18",
+          "opponent_team_id": "lNb3V2ooKx",
           "events": []
         }
       ]
@@ -82846,7 +82959,7 @@
           "red_cards": 0
         },
         "Werribee City FC U18": {
-          "matches_played": 3,
+          "matches_played": 4,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -82871,7 +82984,7 @@
         }
       },
       "stats": {
-        "matches_attended": 18,
+        "matches_attended": 19,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -83090,6 +83203,18 @@
           "home_or_away": "away",
           "opponent_team_name": "Moreland City SC U16",
           "opponent_team_id": "nmYyQ2Lymz",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlpxQ6N",
+          "date": "2026-03-08T02:15:00.000000Z",
+          "team_name": "Werribee City FC U18",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U18 YSL Boys - North-West",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Moreland City SC U18",
+          "opponent_team_id": "am1qvwDWmw",
           "events": []
         }
       ]
@@ -83142,7 +83267,7 @@
           "red_cards": 0
         },
         "Werribee City FC U18": {
-          "matches_played": 3,
+          "matches_played": 4,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -83167,7 +83292,7 @@
         }
       },
       "stats": {
-        "matches_attended": 18,
+        "matches_attended": 19,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -83386,6 +83511,18 @@
           "home_or_away": "away",
           "opponent_team_name": "Moreland City SC U16",
           "opponent_team_id": "nmYyQ2Lymz",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlpxQ6N",
+          "date": "2026-03-08T02:15:00.000000Z",
+          "team_name": "Werribee City FC U18",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U18 YSL Boys - North-West",
+          "role_in_match": "Physiotherapist",
+          "home_or_away": "away",
+          "opponent_team_name": "Moreland City SC U18",
+          "opponent_team_id": "am1qvwDWmw",
           "events": []
         }
       ]
@@ -84197,7 +84334,7 @@
       },
       "team_stats": {
         "Werribee City FC U18": {
-          "matches_played": 3,
+          "matches_played": 4,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -84206,7 +84343,7 @@
         }
       },
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -84245,6 +84382,18 @@
           "home_or_away": "home",
           "opponent_team_name": "Keilor Park SC U18",
           "opponent_team_id": "jdye8b3zd5",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlpxQ6N",
+          "date": "2026-03-08T02:15:00.000000Z",
+          "team_name": "Werribee City FC U18",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U18 YSL Boys - North-West",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Moreland City SC U18",
+          "opponent_team_id": "am1qvwDWmw",
           "events": []
         }
       ]
@@ -84268,7 +84417,7 @@
       },
       "team_stats": {
         "Werribee City FC U18": {
-          "matches_played": 3,
+          "matches_played": 4,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -84277,7 +84426,7 @@
         }
       },
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -84316,6 +84465,18 @@
           "home_or_away": "home",
           "opponent_team_name": "Keilor Park SC U18",
           "opponent_team_id": "jdye8b3zd5",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlpxQ6N",
+          "date": "2026-03-08T02:15:00.000000Z",
+          "team_name": "Werribee City FC U18",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U18 YSL Boys - North-West",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Moreland City SC U18",
+          "opponent_team_id": "am1qvwDWmw",
           "events": []
         }
       ]
@@ -94353,5 +94514,5 @@
       ]
     }
   ],
-  "_last_updated": "2026-03-08T19:00:36.439080"
+  "_last_updated": "2026-03-08T20:00:30.996298"
 }
