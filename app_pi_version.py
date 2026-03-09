@@ -1,5 +1,5 @@
 import streamlit as st
-from fast_agent import FastQueryRouter, format_date, format_date_full
+from fast_agent import FastQueryRouter, format_date, format_date_full, format_date_aest, format_date_full_aest, iso_date_aest
 import time
 import pandas as pd
 import json
@@ -1244,8 +1244,15 @@ def is_natural_language_query(query):
         "team", "overview", "competition", "standings", "rankings",
         "ypl1", "ypl2", "ysl", "missing score", "no score", "overdue",
         "coach", "coaches", "staff", "manager", "managers",
-        # ✅ NEW: Today's matches keywords
-        "today", "todays", "result"  # Catches "todays results", "results today", "today's results"
+        "today", "todays", "result",
+        # Squad / player list queries
+        "show me", "players for", "players in", "list players",
+        "squad", "who plays", "players at",
+        # Dual registration — all variants
+        "dual", "cross club", "different club", "multiple club",
+        "2 clubs", "2 teams", "two clubs", "two teams",
+        "playing for 2", "playing for two", "2 or more",
+        "registered in 2", "registered at 2",
     ]
     return any(keyword in query.lower() for keyword in keywords)
 
@@ -1259,7 +1266,7 @@ def show_admin_dashboard():
     
     # Tabs for different views
 
-    ab1, tab2, tab3, tab4 = st.tabs(["📈 Analytics", "👥 Users", "📋 Recent Activity", "🌐 IP Tracking"])
+    tab1, tab2, tab3, tab4 = st.tabs(["📈 Analytics", "👥 Users", "📋 Recent Activity", "🌐 IP Tracking"])
     with tab1:
         # Get overall stats
         stats = get_user_stats()
@@ -1327,69 +1334,70 @@ def show_admin_dashboard():
             st.dataframe(df_active, hide_index=True, use_container_width=True)
         else:
             st.info("No active users today")
-    
-        with tab3:
-            # Recent activity
-            st.markdown("### Recent Activity (Last 50)")
-            recent = get_recent_activity(limit=50)
-            if recent:
-                df_recent = pd.DataFrame(recent)
-                
-                # Select relevant columns INCLUDING IP address
-                display_cols = ['timestamp', 'username', 'full_name', 'ip_address', 'action_type', 'league', 'competition', 'club', 'search_query']
-                available_cols = [col for col in display_cols if col in df_recent.columns]
-                
-                st.dataframe(
-                    df_recent[available_cols], 
-                    hide_index=True, 
-                    use_container_width=True,
-                    column_config={
-                        "timestamp": st.column_config.TextColumn("Time", width="medium"),
-                        "username": st.column_config.TextColumn("User", width="small"),
-                        "ip_address": st.column_config.TextColumn("IP Address", width="medium"),
-                        "action_type": st.column_config.TextColumn("Action", width="small")
-                    }
-                )
-            else:
-                st.info("No recent activity")
-        with tab4:
-            st.markdown("### 🌐 IP Address Analytics")
+
+    with tab3:
+        # Recent activity
+        st.markdown("### Recent Activity (Last 50)")
+        recent = get_recent_activity(limit=50)
+        if recent:
+            df_recent = pd.DataFrame(recent)
             
-            recent = get_recent_activity(limit=1000)
-            if recent:
-                df = pd.DataFrame(recent)
+            # Select relevant columns INCLUDING IP address
+            display_cols = ['timestamp', 'username', 'full_name', 'ip_address', 'action_type', 'league', 'competition', 'club', 'search_query']
+            available_cols = [col for col in display_cols if col in df_recent.columns]
+            
+            st.dataframe(
+                df_recent[available_cols], 
+                hide_index=True, 
+                use_container_width=True,
+                column_config={
+                    "timestamp": st.column_config.TextColumn("Time", width="medium"),
+                    "username": st.column_config.TextColumn("User", width="small"),
+                    "ip_address": st.column_config.TextColumn("IP Address", width="medium"),
+                    "action_type": st.column_config.TextColumn("Action", width="small")
+                }
+            )
+        else:
+            st.info("No recent activity")
+
+    with tab4:
+        st.markdown("### 🌐 IP Address Analytics")
+        
+        recent = get_recent_activity(limit=1000)
+        if recent:
+            df = pd.DataFrame(recent)
+            
+            if 'ip_address' in df.columns and not df['ip_address'].isna().all():
+                # Filter out Unknown/None IPs
+                df_valid_ip = df[df['ip_address'].notna() & (df['ip_address'] != 'Unknown')]
                 
-                if 'ip_address' in df.columns and not df['ip_address'].isna().all():
-                    # Filter out Unknown/None IPs
-                    df_valid_ip = df[df['ip_address'].notna() & (df['ip_address'] != 'Unknown')]
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    st.markdown("#### 📊 IP Statistics")
+                    unique_ips = df_valid_ip['ip_address'].nunique()
+                    st.metric("Unique IP Addresses", unique_ips)
                     
-                    col1, col2 = st.columns(2)
+                    # Top IPs by activity
+                    st.markdown("**Most Active IPs**")
+                    ip_counts = df_valid_ip['ip_address'].value_counts().head(10).reset_index()
+                    ip_counts.columns = ['IP Address', 'Activities']
+                    st.dataframe(ip_counts, hide_index=True, use_container_width=True)
+                
+                with col2:
+                    st.markdown("#### 🔐 Recent Logins by IP")
+                    logins = df[df['action_type'] == 'login'][['timestamp', 'username', 'full_name', 'ip_address']].head(20)
+                    st.dataframe(logins, hide_index=True, use_container_width=True)
                     
-                    with col1:
-                        st.markdown("#### 📊 IP Statistics")
-                        unique_ips = df_valid_ip['ip_address'].nunique()
-                        st.metric("Unique IP Addresses", unique_ips)
-                        
-                        # Top IPs by activity
-                        st.markdown("**Most Active IPs**")
-                        ip_counts = df_valid_ip['ip_address'].value_counts().head(10).reset_index()
-                        ip_counts.columns = ['IP Address', 'Activities']
-                        st.dataframe(ip_counts, hide_index=True, use_container_width=True)
-                    
-                    with col2:
-                        st.markdown("#### 🔐 Recent Logins by IP")
-                        logins = df[df['action_type'] == 'login'][['timestamp', 'username', 'full_name', 'ip_address']].head(20)
-                        st.dataframe(logins, hide_index=True, use_container_width=True)
-                        
-                        st.markdown("#### 🔍 IP to User Mapping")
-                        # Show which users use which IPs
-                        user_ip_map = df_valid_ip.groupby(['username', 'ip_address']).size().reset_index(name='count')
-                        user_ip_map = user_ip_map.sort_values('count', ascending=False).head(20)
-                        st.dataframe(user_ip_map, hide_index=True, use_container_width=True)
-                else:
-                    st.info("No IP address data available yet. IP tracking will start with the next login.")
+                    st.markdown("#### 🔍 IP to User Mapping")
+                    # Show which users use which IPs
+                    user_ip_map = df_valid_ip.groupby(['username', 'ip_address']).size().reset_index(name='count')
+                    user_ip_map = user_ip_map.sort_values('count', ascending=False).head(20)
+                    st.dataframe(user_ip_map, hide_index=True, use_container_width=True)
             else:
-                st.info("No activity data")
+                st.info("No IP address data available yet. IP tracking will start with the next login.")
+        else:
+            st.info("No activity data")
             
 def update_user_config(club_name: str, age_group: str):
     """Update USER_CONFIG in fast_agent module with player's club and age group"""
@@ -1539,36 +1547,7 @@ def main_app():
             
             st.markdown("---")
         
-        # Contact form (available to everyone)
-        with st.expander("📧 Contact Us"):
-            with st.form("contact_form", clear_on_submit=True):
-                st.markdown("**Get in touch with us**")
-                
-                name = st.text_input("Name*", key="contact_name")
-                email = st.text_input("Email*", key="contact_email")
-                subject = st.selectbox("Subject*", [
-                    "General Inquiry",
-                    "Technical Support",
-                    "Feature Request",
-                    "Report an Issue",
-                    "Data Question",
-                    "Other"
-                ])
-                message = st.text_area("Message*", height=100, key="contact_message")
-                
-                submitted = st.form_submit_button("Send Message", use_container_width=True)
-                
-                if submitted:
-                    if name and email and message:
-                        # Create mailto link
-                        import urllib.parse
-                        email_body = f"From: {name} ({email})\n\nSubject: {subject}\n\nMessage:\n{message}"
-                        mailto = f"mailto:juniorprofootball@gmail.com?subject={urllib.parse.quote(subject)}&body={urllib.parse.quote(email_body)}"
-                        
-                        st.markdown(f"[📧 Click here to send email]({mailto})")
-                        st.info("Your email client should open. If not, click the link above!")
-                    else:
-                        st.error("Please fill in all fields")
+
     # Check for admin dashboard
     if st.session_state["role"] == "admin":
         # Add admin dashboard option in sidebar
@@ -1638,113 +1617,140 @@ def main_app():
     with st.expander(_expander_label, expanded=False):
         st.markdown("*Click any example to try it:*")
         col1, col2, col3 = st.columns(3)
-        
-    with col1:
-        st.markdown("**📊 Player Stats**")
-        
-        # Dynamic top scorers
-        q1 = f"top scorers in {user_club}"
-        if st.button(q1, key="ex1", use_container_width=False):
-            st.session_state["clicked_query"] = q1
-            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-            st.rerun()
-        
-        # Dynamic yellow cards
-        q2 = f"yellow cards {user_club} {user_age}"
-        if st.button(q2, key="ex2", use_container_width=False):
-            st.session_state["clicked_query"] = q2
-            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-            st.rerun()
 
-        q2b = f"yellow cards {user_age} last week"
-        if st.button(q2b, key="ex2b", use_container_width=False):
-            st.session_state["clicked_query"] = q2b
-            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-            st.rerun()
-        
-        # Dynamic personal stats
-        q3 = f"stats for {user_name}"
-        if st.button(f"my stats ({user_name})", key="ex3", use_container_width=False):
-            st.session_state["clicked_query"] = q3
-            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-            st.rerun()
+        with col1:
+            st.markdown("**📊 Player Stats**")
 
-        # Dynamic team stats
-        q4 = f"team stats for {user_club} {user_age}"
-        if st.button(q4, key="ex4", use_container_width=False):
-            st.session_state["clicked_query"] = q4
-            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-            st.rerun()
-        
-        st.markdown("**📅 Fixtures**")
-        if st.button("my next match", key="ex5", use_container_width=False):
-            # The agent logic should handle "my next match" based on session user info
-            st.session_state["clicked_query"] = "my next match"
-            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-            st.rerun()
-        
-        q6 = f"upcoming fixtures {user_club}"
-        if st.button(q6, key="ex6", use_container_width=False):
-            st.session_state["clicked_query"] = q6
-            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-            st.rerun()
+            q1 = f"top scorers in {user_club}"
+            if st.button(q1, key="ex1", use_container_width=False):
+                st.session_state["clicked_query"] = q1
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
 
-    with col2:
-        st.markdown("**🏆 Competitions**")
-        # You can keep these generic or tie them to the competition the age group plays in
-        q7 = f"{user_age} {user_league} ladder"  # Instead of f"{user_age} YPL2 ladder"
-        if st.button(q7, key="ex7", use_container_width=False):
-            st.session_state["clicked_query"] = q7
-            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-            st.rerun()
-        
-        q8 = f"{user_competition} ladder"  # Instead of f"{user_age} YPL2 ladder"
-        if st.button(q8, key="ex8", use_container_width=False):
-            st.session_state["clicked_query"] = q8
-            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-            st.rerun()
-        
-        st.markdown("**👔 Coaches & Staff**")
-        q16 = f"coaches for {user_club}"
-        if st.button(q16, key="ex16", use_container_width=False):
-            st.session_state["clicked_query"] = q16
-            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-            st.rerun()
 
-    with col3:
-        st.markdown("**🟨🟥 Discipline**")
-        # ... previous red cards logic ...
-        q10 = f"red cards in {user_age}"
-        if st.button(q10, key="ex10", use_container_width=False):
-            st.session_state["clicked_query"] = q10
-            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-            st.rerun()
+            q3 = f"stats for {user_name}"
+            if st.button(f"my stats ({user_name})", key="ex3", use_container_width=False):
+                st.session_state["clicked_query"] = q3
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
 
-        q10b = f"red cards last week"
-        if st.button(q10b, key="ex10b", use_container_width=False):
-            st.session_state["clicked_query"] = q10b
-            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-            st.rerun()
-            
-        st.markdown("**⚠️ Missing Scores**")
-        q13 = f"missing scores {user_club}"
-        if st.button(q13, key="ex13", use_container_width=False):
-            st.session_state["clicked_query"] = q13
-            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-            st.rerun()
-        st.markdown("**📊 Today's Games**")
-        
-        q14 = "todays results"
-        if st.button("Today's Results", key="q14", use_container_width=False):  # ← Nice label
-            st.session_state["clicked_query"] = q14
-            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-            st.rerun()
-            
-        q15 = "missing scores today"
-        if st.button(q15, key="q15", use_container_width=False):
-            st.session_state["clicked_query"] = q15
-            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-            st.rerun()
+            q4 = f"team stats for {user_club} {user_age}"
+            if st.button(q4, key="ex4", use_container_width=False):
+                st.session_state["clicked_query"] = q4
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
+
+            st.markdown("**📅 Fixtures**")
+            if st.button("my next match", key="ex5", use_container_width=False):
+                st.session_state["clicked_query"] = "my next match"
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
+
+            q6 = f"upcoming fixtures {user_club}"
+            if st.button(q6, key="ex6", use_container_width=False):
+                st.session_state["clicked_query"] = q6
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
+
+        with col2:
+            st.markdown("**👥 Squad Lists**")
+
+            q_show = f"show me {user_club} {user_age}"
+            if st.button(q_show, key="ex_show", use_container_width=False):
+                st.session_state["clicked_query"] = q_show
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
+
+            q_squad = f"squad for {user_club} {user_age}"
+            if st.button(q_squad, key="ex_squad", use_container_width=False):
+                st.session_state["clicked_query"] = q_squad
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
+
+            q_dual = "2 clubs"
+            if st.button("2 clubs", key="ex_dual", use_container_width=False):
+                st.session_state["clicked_query"] = q_dual
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
+
+            q_dual2 = f"dual registration {user_club}"
+            if st.button(q_dual2, key="ex_dual2", use_container_width=False):
+                st.session_state["clicked_query"] = q_dual2
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
+
+            st.markdown("**🏆 Competitions**")
+            q7 = f"{user_age} {user_league} ladder"
+            if st.button(q7, key="ex7", use_container_width=False):
+                st.session_state["clicked_query"] = q7
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
+
+            q8 = f"{user_competition} ladder"
+            if st.button(q8, key="ex8", use_container_width=False):
+                st.session_state["clicked_query"] = q8
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
+
+            st.markdown("**👔 Coaches & Staff**")
+            q16 = f"coaches for {user_club}"
+            if st.button(q16, key="ex16", use_container_width=False):
+                st.session_state["clicked_query"] = q16
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
+
+            q_staff_cards = f"red card staff {user_club}"
+            if st.button(q_staff_cards, key="ex_staff_rc", use_container_width=False):
+                st.session_state["clicked_query"] = q_staff_cards
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
+
+        with col3:
+            st.markdown("**🟨🟥 Discipline**")
+
+            q10 = f"red cards in {user_age}"
+            if st.button(q10, key="ex10", use_container_width=False):
+                st.session_state["clicked_query"] = q10
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
+
+            q10b = "red cards last week"
+            if st.button(q10b, key="ex10b", use_container_width=False):
+                st.session_state["clicked_query"] = q10b
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
+
+            q2 = f"yellow cards {user_club} {user_age}"
+            if st.button(q2, key="ex2", use_container_width=False):
+                st.session_state["clicked_query"] = q2
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
+
+            q2b = f"yellow cards {user_age} last week"
+            if st.button(q2b, key="ex2b", use_container_width=False):
+                st.session_state["clicked_query"] = q2b
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
+
+            st.markdown("**⚠️ Missing Scores**")
+            q13 = f"missing scores {user_club}"
+            if st.button(q13, key="ex13", use_container_width=False):
+                st.session_state["clicked_query"] = q13
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
+
+            st.markdown("**📊 Today's Games**")
+            q14 = "todays results"
+            if st.button("Today's Results", key="q14", use_container_width=False):
+                st.session_state["clicked_query"] = q14
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
+
+            q15 = "missing scores today"
+            if st.button(q15, key="q15", use_container_width=False):
+                st.session_state["clicked_query"] = q15
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
     # ── Process: fires when version advances (typed Enter or button click) ──
     _cur_v = st.session_state["search_version"]
     if search and _cur_v != st.session_state["last_processed_version"]:
@@ -1756,6 +1762,9 @@ def main_app():
         st.session_state["selected_club"] = None
         st.session_state["selected_player"] = None
         st.session_state["selected_match_id"] = None
+        # Always clear the previous answer first so stale results never show
+        st.session_state["search_answer"]      = None
+        st.session_state["search_answer_time"] = 0.0
         if is_natural_language_query(search):
             log_search(
                 username=st.session_state["username"],
@@ -1789,9 +1798,6 @@ def main_app():
                     df_reg = pd.DataFrame(reg_rows)
                     st.dataframe(df_reg, hide_index=True, use_container_width=True,
                                  height=(len(reg_rows) + 1) * 35 + 10)
-                st.markdown("**📊 Season Totals**")
-                df_stats = pd.DataFrame([s_stats])
-                st.dataframe(df_stats, hide_index=True, use_container_width=True, height=70)
                 if m_rows:
                     label = "📅 Match-by-Match" if detailed else f"📅 Recent Matches (last {len(m_rows)})"
                     st.markdown(f"**{label}**")
@@ -1807,6 +1813,38 @@ def main_app():
                         st.caption(f"💡 Say 'details for {pname}' for full match-by-match breakdown")
                 if note:
                     st.caption(f"ℹ️ {note}")
+            elif answer.get("type") == "team_stats":
+                st.markdown(answer.get("summary", ""))
+                results_data = answer.get("results", [])
+                if results_data:
+                    st.markdown("**📅 Recent Results**")
+                    df_res = pd.DataFrame(results_data)
+                    h = min(400, (len(df_res) + 1) * 35 + 10)
+                    st.dataframe(df_res, hide_index=True, use_container_width=True,
+                                 height=h,
+                                 column_config={
+                                     "Date":     st.column_config.TextColumn("Date",     width="small"),
+                                     "H/A":      st.column_config.TextColumn("",         width="small"),
+                                     "Opponent": st.column_config.TextColumn("Opponent", width="medium"),
+                                     "Score":    st.column_config.TextColumn("Score",    width="small"),
+                                     "Result":   st.column_config.TextColumn("Result",   width="small"),
+                                 })
+            elif answer.get("type") == "multi_table":
+                st.info(answer.get("title", "Results"))
+                tables = answer.get("tables", [])
+                if tables:
+                    tab_labels = [t["title"] for t in tables]
+                    tabs = st.tabs(tab_labels)
+                    for tab, tbl in zip(tabs, tables):
+                        with tab:
+                            data = tbl.get("data", [])
+                            if data:
+                                df = pd.DataFrame(data)
+                                num_rows = len(df)
+                                h = 600 if num_rows > 16 else (num_rows + 1) * 35 + 10
+                                st.dataframe(df, hide_index=True, use_container_width=True, height=h)
+                            else:
+                                st.info("No data available.")
             elif answer.get("type") == "table":
                 st.info(answer.get("title", "Results"))
                 data = answer.get("data", [])
@@ -1947,9 +1985,8 @@ def main_app():
                 overall_ladder_df.insert(0, "Rank", range(1, len(overall_ladder_df) + 1))
                 overall_display_df = overall_ladder_df[["Rank", "club", "played", "wins", "draws", "losses", "gf", "ga", "gd", "points"]].copy()
                 overall_display_df.columns = ["Rank", "Club", "P", "W", "D", "L", "GF", "GA", "GD", "Pts"]
-                styled_overall = overall_display_df.style.apply(style_ladder, comp=league, axis=None)
                 st.dataframe(
-                    styled_overall,
+                    overall_display_df,
                     hide_index=True,
                     use_container_width=False,
                     height=598,
@@ -2179,7 +2216,7 @@ def main_app():
                         opp_score = as_ if is_home else hs
                         
                         # Match summary box
-                        st.info(f"**{format_date_full(attrs.get('date', ''))}** vs {base_club_name(opponent)} - **{our_score}-{opp_score}**")
+                        st.info(f"**{format_date_full_aest(attrs.get('date', ''))}** vs {base_club_name(opponent)} - **{our_score}-{opp_score}**")
                     # Filter players who played in this match
                     all_people = [p for p in all_people if player_played_in_match(p, selected_match_id)]
 
@@ -2241,7 +2278,8 @@ def main_app():
                             rows.append({
                                 "Select": False, "Age": player_age,
                                 "Player": f"{full_name}{dual_badge}", "#": jersey,
-                                "M": p.get("stats", {}).get("matches_played", 0),
+                                "M": len([m for m in p.get("matches", [])
+                                          if m.get("available", False) or m.get("started", False)]),
                                 "G": p.get("stats", {}).get("goals", 0),
                                 "🟨": p.get("stats", {}).get("yellow_cards", 0),
                                 "🟥": p.get("stats", {}).get("red_cards", 0),
@@ -2342,10 +2380,14 @@ def main_app():
                             selected_player.get("jersey", "—")
                         )
                         st.markdown(f"### 👤 {pname}")
+                        # Recalculate matches from match-level data (available or started = counts)
+                        _all_pm = selected_player.get("matches", [])
+                        _matches_played_calc = len([m for m in _all_pm
+                                                    if m.get("available", False) or m.get("started", False)])
                         st.caption(
                             f"Jersey #{jersey}{age_label}  |  "
                             f"⚽ {stats.get('goals', 0)} goals  |  "
-                            f"🎮 {stats.get('matches_played', 0)} matches  |  "
+                            f"🎮 {_matches_played_calc} matches  |  "
                             f"🟨 {stats.get('yellow_cards', 0)}  🟥 {stats.get('red_cards', 0)}"
                             f"{dual_label}"
                         )
@@ -2354,11 +2396,18 @@ def main_app():
                             st.session_state["selected_player"] = None
                             st.rerun()
 
-                    player_matches = selected_player.get("matches", [])
+                    player_matches = sorted(
+                        selected_player.get("matches", []),
+                        key=lambda m: m.get("date", ""),
+                        reverse=True
+                    )
                     if player_matches:
                         is_dual = len(selected_player.get("teams", [])) > 1
                         match_rows = []
                         for m in player_matches:
+                            # Only show matches where player was actually available or started
+                            if not (m.get("available", False) or m.get("started", False)):
+                                continue
                             opponent = base_club_name(m.get("opponent_team_name") or m.get("opponent") or "—")
                             events   = m.get("events", [])
                             def _etype(e): return (e.get("type") or e.get("event_type") or "").lower()
@@ -2380,10 +2429,17 @@ def main_app():
                             _ag_m = re.search(r'U\d{2}', _ag_src, re.IGNORECASE)
                             age_grp = _ag_m.group(0).upper() if _ag_m else ""
 
+                            # Started/bench + captain/goalie indicators
+                            started_icon = "✅" if m.get("started") else "🪑"
+                            if m.get("captain"):
+                                started_icon += " ©"
+                            if m.get("goalie"):
+                                started_icon += " 🧤"
+
                             row = {
-                                "Date":     format_date(m.get("date", "")),
+                                "Date":     format_date_aest(m.get("date", "")),
                                 "Age":      age_grp,
-                                "Started":  "✅" if m.get("started") else "🪑",
+                                "Started":  started_icon,
                                 "Opponent": opponent,
                                 "G": goals,
                                 "Cards":    cards_str,
@@ -2427,7 +2483,7 @@ def main_app():
         rows = []
         for m in matches:
             rows.append({
-                "Date": format_date(m.get("date", "")),
+                "Date": format_date_aest(m.get("date", "")),
                 "Competition": m.get("competition_name"),
                 "Opponent": base_club_name(m.get("opponent_team_name", "")),
                 "H/A": "🏠" if m.get("home_or_away") == "home" else "✈️",
@@ -2524,4 +2580,67 @@ if __name__ == "__main__":
 # Last auto-update: 2026-03-03 04:00:28 AEDT
 # Last auto-update: 2026-03-03 08:00:29 AEDT
 # Last auto-update: 2026-03-03 12:00:28 AEDT
-# Last auto-update: 2026-03-03 16:00:30 AEDT
+# Last auto-update: 2026-03-05 00:00:29 AEDT
+# Last auto-update: 2026-03-05 04:00:28 AEDT
+# Last auto-update: 2026-03-05 08:00:28 AEDT
+# Last auto-update: 2026-03-05 12:00:28 AEDT
+# Last auto-update: 2026-03-05 16:00:30 AEDT
+# Last auto-update: 2026-03-05 20:00:29 AEDT
+# Last auto-update: 2026-03-06 00:00:28 AEDT
+# Last auto-update: 2026-03-06 04:00:29 AEDT
+# Last auto-update: 2026-03-06 08:00:31 AEDT
+# Last auto-update: 2026-03-06 12:00:31 AEDT
+# Last auto-update: 2026-03-06 16:00:27 AEDT
+# Last auto-update: 2026-03-06 20:00:30 AEDT
+# Last auto-update: 2026-03-07 00:00:31 AEDT
+# Last auto-update: 2026-03-07 04:00:29 AEDT
+# Last auto-update: 2026-03-07 08:00:28 AEDT
+# Last auto-update: 2026-03-07 12:00:29 AEDT
+# Last auto-update: 2026-03-07 16:00:30 AEDT
+# Last auto-update: 2026-03-07 20:00:27 AEDT
+# Last auto-update: 2026-03-08 00:00:29 AEDT
+# Last auto-update: 2026-03-08 01:00:28 AEDT
+# Last auto-update: 2026-03-08 02:00:29 AEDT
+# Last auto-update: 2026-03-08 03:00:28 AEDT
+# Last auto-update: 2026-03-08 04:00:29 AEDT
+# Last auto-update: 2026-03-08 05:00:29 AEDT
+# Last auto-update: 2026-03-08 06:00:29 AEDT
+# Last auto-update: 2026-03-08 07:00:31 AEDT
+# Last auto-update: 2026-03-08 08:00:28 AEDT
+# Last auto-update: 2026-03-08 09:00:30 AEDT
+# Last auto-update: 2026-03-08 10:00:29 AEDT
+# Last auto-update: 2026-03-08 11:00:36 AEDT
+# Last auto-update: 2026-03-08 12:00:41 AEDT
+# Last auto-update: 2026-03-08 13:00:43 AEDT
+# Last auto-update: 2026-03-08 14:00:37 AEDT
+# Last auto-update: 2026-03-08 15:00:43 AEDT
+# Last auto-update: 2026-03-08 16:00:43 AEDT
+# Last auto-update: 2026-03-08 17:00:37 AEDT
+# Last auto-update: 2026-03-08 18:00:41 AEDT
+# Last auto-update: 2026-03-08 19:00:38 AEDT
+# Last auto-update: 2026-03-08 20:00:33 AEDT
+# Last auto-update: 2026-03-08 21:00:38 AEDT
+# Last auto-update: 2026-03-08 22:00:31 AEDT
+# Last auto-update: 2026-03-08 23:00:33 AEDT
+# Last auto-update: 2026-03-09 00:00:31 AEDT
+# Last auto-update: 2026-03-09 01:00:31 AEDT
+# Last auto-update: 2026-03-09 02:00:33 AEDT
+# Last auto-update: 2026-03-09 03:00:32 AEDT
+# Last auto-update: 2026-03-09 04:00:32 AEDT
+# Last auto-update: 2026-03-09 05:00:32 AEDT
+# Last auto-update: 2026-03-09 06:00:33 AEDT
+# Last auto-update: 2026-03-09 07:00:31 AEDT
+# Last auto-update: 2026-03-09 08:00:31 AEDT
+# Last auto-update: 2026-03-09 09:00:38 AEDT
+# Last auto-update: 2026-03-09 10:00:33 AEDT
+# Last auto-update: 2026-03-09 11:00:33 AEDT
+# Last auto-update: 2026-03-09 12:00:32 AEDT
+# Last auto-update: 2026-03-09 13:00:31 AEDT
+# Last auto-update: 2026-03-09 14:00:31 AEDT
+# Last auto-update: 2026-03-09 15:00:33 AEDT
+# Last auto-update: 2026-03-09 16:00:32 AEDT
+# Last auto-update: 2026-03-09 17:00:33 AEDT
+# Last auto-update: 2026-03-09 18:00:31 AEDT
+# Last auto-update: 2026-03-09 19:00:35 AEDT
+# Last auto-update: 2026-03-09 20:00:32 AEDT
+# Last auto-update: 2026-03-09 21:00:32 AEDT
