@@ -101,27 +101,26 @@ CLUB_ALIASES = {
     "hume city fc": "Hume City FC",
 
     #Northcote City FC
-    "Northcote":"Northcote City FC"
-    "North":"Northcote City FC"
-    
+    "Northcote": "Northcote City FC",
+   
     #    Ballarat City FC
-    "Ballarat":"Ballarat City FC"
+    "Ballarat": "Ballarat City FC",
     
     #Dandenong Thunder FC
-    "Dandenong":"Dandenong Thunder FC"
-    "Thunder":"Dandenong Thunder FC"
+    "Dandenong": "Dandenong Thunder FC",
+    "Thunder": "Dandenong Thunder FC",
 
     # Add more as needed...
-    "Geelong":"Geelong SC"
-    "Murray":"Murray United FC"
-    "Pascoevale":"Pascoe Vale FC"
-    "Paco":"Pascoe Vale FC"
-    "Pascoe Vale":"Pascoe Vale FC"
-    "Pascovale":"Pascoe Vale FC"
-    "North Geelong":"North Geelong Warriors FC"
-    "Warriors":"North Geelong Warriors FC"
-    "Knights":"Melbourne Knights FC"
-    "Melbourne Knights":"Melbourne Knights FC"
+    "Geelong": "Geelong SC",
+    "Murray": "Murray United FC",
+    "Pascoevale": "Pascoe Vale FC",
+    "Paco": "Pascoe Vale FC",
+    "Pascoe Vale": "Pascoe Vale FC",
+    "Pascovale": "Pascoe Vale FC",
+    "North Geelong": "North Geelong Warriors FC",
+    "Warriors": "North Geelong Warriors FC",
+    "Knights": "Melbourne Knights FC",
+    "Melbourne Knights": "Melbourne Knights FC"
 
     
 }
