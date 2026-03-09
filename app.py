@@ -1253,6 +1253,8 @@ def is_natural_language_query(query):
         "2 clubs", "2 teams", "two clubs", "two teams",
         "playing for 2", "playing for two", "2 or more",
         "registered in 2", "registered at 2",
+        "dual matches", "matches both teams", "matches each team",
+        "breakdown", " vs ", " v ",
     ]
     return any(keyword in query.lower() for keyword in keywords)
 
@@ -1608,8 +1610,44 @@ def main_app():
     user_club = st.session_state.get("player_club") or "Heidelberg United"
     user_age = st.session_state.get("player_age_group") or "U16"
     user_name = st.session_state.get("full_name") or "Guest"
-    user_league = st.session_state.get("player_league") or "YPL2"  # ADD THIS
-    user_competition = st.session_state.get("player_competition") or "YPL2"  
+    user_league = st.session_state.get("player_league") or "YPL2"
+    user_competition = st.session_state.get("player_competition") or "YPL2"
+
+    # ── Find next opponent for the user's team from fixtures ──
+    def _get_next_opponent():
+        """Return (opponent_base_name, is_home) for user's next upcoming fixture."""
+        import pytz as _pytz
+        from fast_agent import fixtures as _fixtures, USER_CONFIG as _UC, \
+            parse_date_utc_to_aest as _parse, _strip_age_group as _strip
+        melbourne_tz = _pytz.timezone('Australia/Melbourne')
+        now = datetime.now(melbourne_tz)
+        user_team = _UC["team"].lower()
+        upcoming = []
+        for f in _fixtures:
+            a = f.get("attributes", {})
+            home = (a.get("home_team_name") or "").lower()
+            away = (a.get("away_team_name") or "").lower()
+            if user_team not in home and user_team not in away:
+                continue
+            dt = _parse(a.get("date",""))
+            if dt and dt > now:
+                is_home = user_team in home
+                opp_raw = a.get("away_team_name") if is_home else a.get("home_team_name")
+                upcoming.append((dt, _strip(opp_raw or ""), is_home))
+        if not upcoming:
+            return None, None
+        upcoming.sort(key=lambda x: x[0])
+        _, opp, is_home = upcoming[0]
+        return opp, is_home
+
+    _next_opp, _next_is_home = _get_next_opponent()
+    # Build the vs example: always "Heidelberg vs Opponent"
+    if _next_opp:
+        _vs_query = f"{user_club} vs {_next_opp}"
+        _vs_label = f"{'🏠' if _next_is_home else '✈️'} {_vs_query}"
+    else:
+        _vs_query = f"{user_club} vs Altona Magic"
+        _vs_label = f"⚔️ {_vs_query}"
 
     # Example queries - collapse after click/search by changing label so Streamlit treats it as new widget
     _collapse = st.session_state.get("expander_collapse_counter", 0)
@@ -1653,13 +1691,7 @@ def main_app():
                 st.rerun()
 
         with col2:
-            st.markdown("**👥 Squad Lists**")
-
-            q_show = f"show me {user_club} {user_age}"
-            if st.button(q_show, key="ex_show", use_container_width=False):
-                st.session_state["clicked_query"] = q_show
-                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-                st.rerun()
+            st.markdown("**👥 Squad & Dual Reg**")
 
             q_squad = f"squad for {user_club} {user_age}"
             if st.button(q_squad, key="ex_squad", use_container_width=False):
@@ -1676,6 +1708,12 @@ def main_app():
             q_dual2 = f"dual registration {user_club}"
             if st.button(q_dual2, key="ex_dual2", use_container_width=False):
                 st.session_state["clicked_query"] = q_dual2
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
+
+            st.markdown("**⚔️ Club Comparison**")
+            if st.button(_vs_label, key="ex_vs", use_container_width=False):
+                st.session_state["clicked_query"] = _vs_query
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
@@ -1854,6 +1892,9 @@ def main_app():
                     if "Date" in df.columns:
                         df["Date"] = pd.to_datetime(df["Date"], errors="coerce").dt.date
                         _cfg["Date"] = st.column_config.DateColumn("Date", format="DD-MMM")
+                    if "First @ To" in df.columns:
+                        df["First @ To"] = pd.to_datetime(df["First @ To"], errors="coerce").dt.date
+                        _cfg["First @ To"] = st.column_config.DateColumn("First @ To", format="DD-MMM")
                     num_rows = len(df)
                     final_height = 600 if num_rows > 16 else (num_rows + 1) * 35
                     st.dataframe(df, hide_index=True, use_container_width=True,
@@ -2643,5 +2684,3 @@ if __name__ == "__main__":
 # Last auto-update: 2026-03-09 18:00:31 AEDT
 # Last auto-update: 2026-03-09 19:00:35 AEDT
 # Last auto-update: 2026-03-09 20:00:32 AEDT
-# Last auto-update: 2026-03-09 21:00:32 AEDT
-# Last auto-update: 2026-03-09 22:00:33 AEDT

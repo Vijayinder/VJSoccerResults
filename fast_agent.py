@@ -100,7 +100,29 @@ CLUB_ALIASES = {
     "hume city": "Hume City FC",
     "hume city fc": "Hume City FC",
 
+    #Northcote City FC
+    "Northcote": "Northcote City FC",
+   
+    #    Ballarat City FC
+    "Ballarat": "Ballarat City FC",
+    
+    #Dandenong Thunder FC
+    "Dandenong": "Dandenong Thunder FC",
+    "Thunder": "Dandenong Thunder FC",
+
     # Add more as needed...
+    "Geelong": "Geelong SC",
+    "Murray": "Murray United FC",
+    "Pascoevale": "Pascoe Vale FC",
+    "Paco": "Pascoe Vale FC",
+    "Pascoe Vale": "Pascoe Vale FC",
+    "Pascovale": "Pascoe Vale FC",
+    "North Geelong": "North Geelong Warriors FC",
+    "Warriors": "North Geelong Warriors FC",
+    "Knights": "Melbourne Knights FC",
+    "Melbourne Knights": "Melbourne Knights FC"
+
+    
 }
 
 def get_canonical_club_name(query: str) -> Optional[str]:
@@ -966,9 +988,9 @@ def tool_missing_scores(query: str = "", include_all_leagues: bool = False, toda
                 continue
 
         else:
-            # Default: show past 14 days only (no future matches — they can't be "missing" yet)
+            # Default: show past full season (180 days), exclude future matches
             days_diff = (match_date - today).days
-            if days_diff > 0 or days_diff < -14:
+            if days_diff > 0 or days_diff < -180:
                 continue
         
         home_team = attrs.get("home_team_name", "Unknown")
@@ -1051,19 +1073,20 @@ def tool_missing_scores(query: str = "", include_all_leagues: bool = False, toda
         
         if needs_score:
             missing_scores.append({
-                "date": match_dt.strftime("%d-%b"),
-                "time": match_dt.strftime("%I:%M %p"),
-                "time_sort": match_dt.time(),  # Add sortable time object
-                "datetime_sort": match_dt,  # Keep full datetime for sorting
-                "league": extract_league_from_league_name(league),
-                "home_team": home_team,
-                "away_team": away_team,
-                "round": attrs.get("full_round", attrs.get("round", "")),
-                "venue": attrs.get("ground_name", "TBD"),
-                "status": status,
-                "source": attrs.get('source', 'unknown'),
-                "home_score": home_score,
-                "away_score": away_score
+                "date":          match_dt.strftime("%d-%b"),
+                "date_raw":      date_str,                    # raw for iso_date_aest
+                "time":          match_dt.strftime("%I:%M %p"),
+                "time_sort":     match_dt.time(),
+                "datetime_sort": match_dt,
+                "league":        extract_league_from_league_name(league),
+                "home_team":     home_team,
+                "away_team":     away_team,
+                "round":         attrs.get("full_round", attrs.get("round", "")),
+                "venue":         attrs.get("ground_name", "TBD"),
+                "status":        status,
+                "source":        attrs.get('source', 'unknown'),
+                "home_score":    home_score,
+                "away_score":    away_score
             })
     
     print(f"\n  FILTERING SUMMARY:")
@@ -1111,7 +1134,7 @@ def tool_missing_scores(query: str = "", include_all_leagues: bool = False, toda
         
         # Only add date column if not today_only (since date is the same)
         if not today_only:
-            row["Date"] = iso_date(match["date"])
+            row["Date"] = iso_date_aest(match["date_raw"])
             row["Time"] = match["time"]
         else:
             row["Time"] = match["time"]
@@ -3033,18 +3056,27 @@ def tool_dual_registration(query: str = "", different_clubs_only: bool = False) 
         teams   = p.get("teams", [])
         leagues = p.get("leagues", [])
 
-        # Find most recent match date per TEAM (full name incl age group)
-        team_last_date: dict = {}
+        # Count played matches per team + find first/last date per team
+        team_match_count: dict = {}
+        team_first_date:  dict = {}
+        team_last_date:   dict = {}
         for m in p.get("matches", []):
+            if not (m.get("available", False) or m.get("started", False)):
+                continue
             tn    = m.get("team_name", "")
             mdate = m.get("date", "")
-            if tn and mdate > team_last_date.get(tn, ""):
+            if not tn or not mdate:
+                continue
+            team_match_count[tn] = team_match_count.get(tn, 0) + 1
+            if mdate < team_first_date.get(tn, "9999"):
+                team_first_date[tn] = mdate
+            if mdate > team_last_date.get(tn, ""):
                 team_last_date[tn] = mdate
 
-        # Sort all teams by most recent match date (most recent first)
+        # Sort all teams by most recent match date (most recent first = To Club)
         sorted_teams = sorted(teams, key=lambda t: team_last_date.get(t, ""), reverse=True)
 
-        # Build per-team metadata in sorted order
+        # Build per-team metadata
         all_base_clubs = [_strip_age_group(t) for t in sorted_teams]
         all_age_groups = [
             re.search(r'U\d{2}', t, re.IGNORECASE).group(0).upper()
@@ -3054,11 +3086,8 @@ def tool_dual_registration(query: str = "", different_clubs_only: bool = False) 
         short_leagues = [extract_league_from_league_name(lg) for lg in leagues] if leagues else []
         stats         = p.get("stats", {})
 
-        # Determine From / To using DISTINCT base clubs:
-        # Walk sorted_teams and pick the two most recently active distinct base clubs.
-        # "To Club"   = most recently active distinct club
-        # "From Club" = second most recently active distinct club
-        seen_clubs: list = []  # ordered list of distinct base clubs (most recent first)
+        # Distinct base clubs (most recent first → To Club, second → From Club)
+        seen_clubs: list = []
         for bc in all_base_clubs:
             if bc and bc not in seen_clubs:
                 seen_clubs.append(bc)
@@ -3066,30 +3095,45 @@ def tool_dual_registration(query: str = "", different_clubs_only: bool = False) 
         to_club   = seen_clubs[0] if len(seen_clubs) > 0 else "—"
         from_club = seen_clubs[1] if len(seen_clubs) > 1 else "—"
 
-        # For age groups: collect all unique age groups across all teams
+        # Match counts per club (sum across all teams at that club)
+        def _club_match_count(club_name):
+            return sum(cnt for tn, cnt in team_match_count.items()
+                       if _strip_age_group(tn).lower() == club_name.lower())
+
+        to_m   = _club_match_count(to_club)
+        from_m = _club_match_count(from_club)
+
+        # First ISO date the player appeared for the To Club (for sortable DateColumn)
+        to_club_teams  = [t for t in sorted_teams if _strip_age_group(t).lower() == to_club.lower()]
+        first_to_dates = [team_first_date[t] for t in to_club_teams if t in team_first_date]
+        first_to_iso   = iso_date_aest(min(first_to_dates)) if first_to_dates else ""
+
+        # Unique age groups
         unique_age_groups = []
         for ag in all_age_groups:
             if ag not in unique_age_groups:
                 unique_age_groups.append(ag)
 
-        # Determine if cross-club or same-club-different-age
+        # Cross-club or same-club
         unique_base_clubs_set = {c for c in all_base_clubs if c}
         is_cross_club = len(unique_base_clubs_set) > 1
         reg_type      = "⚡ Cross-Club" if is_cross_club else "🔁 Same Club"
 
         row = {
-            "#":          i,
-            "Player":     name,
-            "Type":       reg_type,
-            "From Club":  from_club,
-            "To Club":    to_club,
-            "Age Groups": " / ".join(unique_age_groups),
-            "Leagues":    " / ".join(short_leagues) if short_leagues else "—",
-            "Goals":      stats.get("goals", 0),
-            "🟨":         stats.get("yellow_cards", 0),
-            "🟥":         stats.get("red_cards", 0),
+            "#":           i,
+            "Player":      name,
+            "Type":        reg_type,
+            "From Club":   from_club,
+            "From M":      from_m,
+            "To Club":     to_club,
+            "To M":        to_m,
+            "First @ To":  first_to_iso,
+            "Age Groups":  " / ".join(unique_age_groups),
+            "Leagues":     " / ".join(short_leagues) if short_leagues else "—",
+            "Goals":       stats.get("goals", 0),
+            "🟨":          stats.get("yellow_cards", 0),
+            "🟥":          stats.get("red_cards", 0),
         }
-        # If 3+ distinct clubs exist, show the third
         if len(seen_clubs) > 2:
             row["Club 3"] = seen_clubs[2]
         data.append(row)
@@ -3106,9 +3150,206 @@ def tool_dual_registration(query: str = "", different_clubs_only: bool = False) 
     }
 
 
-# ---------------------------------------------------------
-# 11C. SQUAD LIST — rich player table for "show me X" queries
-# ---------------------------------------------------------
+def tool_dual_player_detail(player_name: str) -> Any:
+    """
+    For a dual-registered player, show matches played broken down by team/club.
+    Returns a multi_table result — one tab per team.
+    Query examples: 'dual matches for John Smith', 'show matches John Smith both teams'
+    """
+    q = player_name.lower().strip()
+
+    # Find the player
+    matched = []
+    for p in players_summary:
+        full = f"{p.get('first_name','')} {p.get('last_name','')}".lower()
+        if q in full or full in q:
+            matched.append(p)
+
+    if not matched:
+        return {"type": "error", "message": f"❌ No player found matching '{player_name}'"}
+
+    p = matched[0]
+    name = f"{p.get('first_name','')} {p.get('last_name','')}".strip()
+    teams = p.get("teams", [])
+
+    if len(teams) < 2:
+        return {"type": "error", "message": f"ℹ️ {name} is only registered with one team."}
+
+    # Group matches by team_name
+    matches_by_team: dict = {}
+    for m in p.get("matches", []):
+        tn = m.get("team_name", "Unknown")
+        if tn not in matches_by_team:
+            matches_by_team[tn] = []
+        matches_by_team[tn].append(m)
+
+    # Sort teams: most recent match first
+    def _latest(tn):
+        ms = matches_by_team.get(tn, [])
+        return max((m.get("date","") for m in ms), default="")
+
+    sorted_teams = sorted(matches_by_team.keys(), key=_latest, reverse=True)
+
+    tables = []
+    for team in sorted_teams:
+        team_matches = sorted(matches_by_team[team],
+                              key=lambda m: m.get("date",""), reverse=True)
+        # Only count matches where player was available/started
+        played = [m for m in team_matches
+                  if m.get("available", False) or m.get("started", False)]
+        rows = []
+        for m in played:
+            events = m.get("events", [])
+            goals = sum(1 for e in events
+                        if (e.get("type") or e.get("event_type","")).lower() in ("goal","goal_scored"))
+            goals = goals or m.get("goals", 0)
+            yellows = m.get("yellow_cards", sum(1 for e in events
+                        if (e.get("type") or e.get("event_type","")).lower() == "yellow_card"))
+            reds = m.get("red_cards", sum(1 for e in events
+                        if (e.get("type") or e.get("event_type","")).lower() == "red_card"))
+            started_icon = "✅" if m.get("started") else "🪑"
+            if m.get("captain"):   started_icon += " ©"
+            if m.get("goalie"):    started_icon += " 🧤"
+            rows.append({
+                "Date":     iso_date_aest(m.get("date","")),
+                "H/A":      "🏠" if m.get("home_or_away") == "home" else "✈️",
+                "Opponent": _strip_age_group(m.get("opponent_team_name","") or ""),
+                "Started":  started_icon,
+                "⚽":       goals if goals else "",
+                "🟨":       yellows if yellows else "",
+                "🟥":       reds if reds else "",
+            })
+
+        ag_m = re.search(r'U\d{2}', team, re.IGNORECASE)
+        ag   = ag_m.group(0).upper() if ag_m else ""
+        club = _strip_age_group(team)
+        tab_label = f"{club} {ag}".strip() if ag else club
+        tables.append({
+            "title": f"{tab_label} ({len(played)} matches)",
+            "data":  rows,
+        })
+
+    return {
+        "type":   "multi_table",
+        "title":  f"🔄 {name} — Matches by Team",
+        "tables": tables,
+    }
+
+
+def tool_club_vs_club(query: str) -> Any:
+    """
+    Compare two clubs' ladder positions across all shared age groups / competitions.
+    Scans both fixtures and results to discover shared competitions.
+    Query examples: 'altona vs heidelberg', 'heidelberg v brunswick'
+    """
+    vs_parts = re.split(r'\s+v(?:s|ersus)?\s+', query.lower())
+    if len(vs_parts) < 2:
+        return {"type": "error", "message": "\u274c Please use 'Club A vs Club B' format."}
+
+    noise = r'\b(match|matches|games?|compare|head|to|h2h|record|ladder|position|ranking)\b'
+    token_a = re.sub(noise, '', vs_parts[0].strip()).strip()
+    token_b = re.sub(noise, '', vs_parts[1].strip()).strip()
+
+    def _resolve(token):
+        for alias in sorted(CLUB_ALIASES.keys(), key=len, reverse=True):
+            if alias in token:
+                return alias, CLUB_ALIASES[alias]
+        return token, token
+
+    alias_a, canon_a = _resolve(token_a)
+    alias_b, canon_b = _resolve(token_b)
+    short_a = canon_a.split()[0] if canon_a else alias_a.title()
+    short_b = canon_b.split()[0] if canon_b else alias_b.title()
+
+    # Discover shared (comp, age_group) by scanning BOTH fixtures AND results
+    comp_ag_clubs: dict = {}
+    for r in list(fixtures) + list(results):
+        a = r.get("attributes", {})
+        league = (a.get("league_name") or "").strip()
+        comp   = extract_league_from_league_name(league)
+        if comp in ("Other", ""):
+            continue
+        home = (a.get("home_team_name") or "")
+        away = (a.get("away_team_name") or "")
+        for team_name in (home, away):
+            ag_m = re.search(r'U\d{2}', team_name, re.IGNORECASE)
+            ag   = ag_m.group(0).upper() if ag_m else None
+            if not ag:
+                continue
+            key = (comp, ag)
+            comp_ag_clubs.setdefault(key, set())
+            comp_ag_clubs[key].add(_strip_age_group(team_name).lower())
+
+    # Keep only combos where BOTH clubs appear (substring check)
+    shared_keys = [
+        key for key, clubs in comp_ag_clubs.items()
+        if any(alias_a in club for club in clubs)
+        and any(alias_b in club for club in clubs)
+    ]
+
+    if not shared_keys:
+        return {"type": "error",
+                "message": f"\u274c No shared competitions found between **{short_a}** and **{short_b}**. They may be in different leagues."}
+
+    rows = []
+    for (comp, ag) in sorted(shared_keys,
+                              key=lambda k: (k[0], int(k[1][1:]) if k[1][1:].isdigit() else 999)):
+        ladder = _build_ladder_table(results, comp.lower(), ag.lower())
+        if not ladder:
+            continue
+
+        pos_a = pts_a = gd_a = None
+        pos_b = pts_b = gd_b = None
+        for entry in ladder:
+            team_base = _strip_age_group(entry["Team"]).lower()
+            if alias_a in team_base and pos_a is None:
+                pos_a = entry["Pos"]
+                pts_a = entry["PTS"]
+                gd_a  = entry["GD"]
+            if alias_b in team_base and pos_b is None:
+                pos_b = entry["Pos"]
+                pts_b = entry["PTS"]
+                gd_b  = entry["GD"]
+
+        if pos_a is None and pos_b is None:
+            continue
+
+        total_teams = len(ladder)
+
+        if pos_a is not None and pos_b is not None:
+            if pos_a < pos_b:
+                edge = f"\u2191 {short_a} ahead by {pos_b - pos_a}"
+            elif pos_b < pos_a:
+                edge = f"\u2191 {short_b} ahead by {pos_a - pos_b}"
+            else:
+                edge = "= Level"
+        elif pos_a is not None:
+            edge = f"{short_b} no results yet"
+        else:
+            edge = f"{short_a} no results yet"
+
+        rows.append({
+            "League":           comp,
+            "Age":              ag,
+            "Gap":              edge,
+            f"{short_a} Pos":  f"{pos_a}/{total_teams}" if pos_a is not None else "\u2014",
+            f"{short_a} Pts":  pts_a if pts_a is not None else "\u2014",
+            f"{short_a} GD":   gd_a  if gd_a  is not None else "\u2014",
+            f"{short_b} Pos":  f"{pos_b}/{total_teams}" if pos_b is not None else "\u2014",
+            f"{short_b} Pts":  pts_b if pts_b is not None else "\u2014",
+            f"{short_b} GD":   gd_b  if gd_b  is not None else "\u2014",
+            
+        })
+
+    if not rows:
+        return {"type": "error",
+                "message": f"\u274c Shared competitions found but no ladder data yet for {short_a} vs {short_b}"}
+
+    return {
+        "type":  "table",
+        "data":  rows,
+        "title": f"\u2694\ufe0f {short_a} vs {short_b} \u2014 Ladder Positions by Age Group ({len(rows)} divisions)",
+    }
 
 def tool_squad_list(query: str = "") -> Any:
     """
@@ -3168,7 +3409,7 @@ def tool_squad_list(query: str = "") -> Any:
         ag_m = re.search(r'U\d{2}', matched_team, re.IGNORECASE)
         age_grp = ag_m.group(0).upper() if ag_m else ""
 
-        # Dual-reg indicator
+        # Dual-reg indicator — show badge + match count at other team
         dual_label = ""
         if len(teams) > 1:
             other_teams = [t for t in teams if t != matched_team]
@@ -3177,10 +3418,19 @@ def tool_squad_list(query: str = "") -> Any:
                 ot_base = re.sub(r'\s+U\d{2}$', '', ot, flags=re.IGNORECASE).strip()
                 mt_base = re.sub(r'\s+U\d{2}$', '', matched_team, flags=re.IGNORECASE).strip()
                 ag_ot   = re.search(r'U\d{2}', ot, re.IGNORECASE)
+                # Count matches played at this other team
+                other_m = sum(
+                    1 for m in p.get("matches", [])
+                    if m.get("team_name") == ot
+                    and (m.get("available", False) or m.get("started", False))
+                )
+                m_str = f"({other_m}M)" if other_m else ""
                 if ot_base.lower() == mt_base.lower():
-                    same_club.append(ag_ot.group(0).upper() if ag_ot else ot)
+                    ag_str = ag_ot.group(0).upper() if ag_ot else ot
+                    same_club.append(f"{ag_str} {m_str}".strip())
                 else:
-                    diff_club.append(ot_base.split()[0])   # first word of club name
+                    club_short = ot_base.split()[0]
+                    diff_club.append(f"{club_short} {m_str}".strip())
             parts = []
             if same_club:
                 parts.append("🔁 " + "/".join(same_club))
@@ -3241,6 +3491,19 @@ class FastQueryRouter:
         show_details = False
         is_non_player_query = any(keyword in q for keyword in ['non player', 'non-player', 'coach', 'coaches', 'staff', 'manager'])
         is_personal_query = any(keyword in q for keyword in ['my next', 'when do i play', 'where do i play', 'my schedule', 'when is my', 'where is my', 'our next'])
+
+        # --- 1A. DUAL PLAYER MATCH DETAIL ---
+        dual_detail_keywords = [
+            'dual matches', 'matches both teams', 'matches each team',
+            'matches for both', 'matches per team', 'matches per club',
+            'breakdown', 'both clubs matches', 'each club matches',
+        ]
+        if any(kw in q for kw in dual_detail_keywords):
+            clean = re.sub(
+                r'\b(dual|matches?|both|each|teams?|clubs?|for|per|breakdown|show|me|detail)\b',
+                '', q
+            ).strip()
+            return tool_dual_player_detail(clean)
 
         # --- 1B. DUAL REGISTRATION / MULTI-TEAM PLAYERS ---
 
@@ -3443,8 +3706,19 @@ class FastQueryRouter:
             return tool_ladder(query)
         if "lineup" in q or "starting" in q:
             return tool_lineups(query)
+
+        # Club vs Club comparison (two recognised clubs on either side of vs/v)
         if " vs " in q or " v " in q:
+            vs_parts = re.split(r'\s+v(?:s)?\s+', q)
+            club_a_token = vs_parts[0].strip() if len(vs_parts) > 0 else ""
+            club_b_token = vs_parts[1].strip() if len(vs_parts) > 1 else ""
+            has_club_a = any(alias in club_a_token for alias in CLUB_ALIASES)
+            has_club_b = any(alias in club_b_token for alias in CLUB_ALIASES)
+            if has_club_a and has_club_b:
+                return tool_club_vs_club(query)
+            # Fall through to match centre for single match lookups
             return tool_match_centre(query)
+
         if "form" in q:
             team = normalize_team(query)
             return tool_form(team if team else query)
