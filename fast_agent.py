@@ -3376,10 +3376,66 @@ def tool_club_vs_club(query: str) -> Any:
         return {"type": "error",
                 "message": f"\u274c Shared competitions found but no ladder data yet for {short_a} vs {short_b}"}
 
+    # ── Build match results table — every direct match between the two clubs ──
+    match_rows = []
+    for r in sorted(results, key=lambda x: x.get("attributes", {}).get("date", "")):
+        a     = r.get("attributes", {})
+        home  = a.get("home_team_name", "")
+        away  = a.get("away_team_name", "")
+        hb    = _strip_age_group(home).lower()
+        ab    = _strip_age_group(away).lower()
+        is_h2h = (
+            (alias_a in hb and alias_b in ab) or
+            (alias_b in hb and alias_a in ab)
+        )
+        if not is_h2h:
+            continue
+        hs = a.get("home_score")
+        as_ = a.get("away_score")
+        score = f"{hs}–{as_}" if hs is not None and as_ is not None else "—"
+        ag_m  = re.search(r"U\d{2}", home, re.IGNORECASE)
+        ag    = ag_m.group(0).upper() if ag_m else "—"
+        lg    = extract_league_from_league_name(a.get("league_name", ""))
+        date  = format_date_aest(a.get("date", "")) or a.get("date", "—")
+
+        # Result label from club_a perspective
+        if hs is not None and as_ is not None:
+            try:
+                hs_i, as_i = int(hs), int(as_)
+                a_is_home = alias_a in hb
+                a_goals   = hs_i if a_is_home else as_i
+                b_goals   = as_i if a_is_home else hs_i
+                if a_goals > b_goals:   result = f"{short_a} Win"
+                elif b_goals > a_goals: result = f"{short_b} Win"
+                else:                   result = "Draw"
+            except Exception:
+                result = "—"
+        else:
+            result = "—"
+
+        match_rows.append({
+            "Date":   date,
+            "Age":    ag,
+            "League": lg,
+            "Home":   home,
+            "Score":  score,
+            "Away":   away,
+            "Result": result,
+        })
+
     return {
-        "type":  "table",
-        "data":  rows,
-        "title": f"\u2694\ufe0f {short_a} vs {short_b} \u2014 Ladder Positions & Head-to-Head by Age Group ({len(rows)} divisions)",
+        "type":   "multi_table",
+        "title":  f"\u2694\ufe0f {short_a} vs {short_b}",
+        "tables": [
+            {
+                "title": f"\U0001f4ca Ladder Positions ({len(rows)} divisions)",
+                "data":  rows,
+            },
+            {
+                "title": f"\u26bd Matches ({len(match_rows)} played)" if match_rows else "\u26bd Matches (none yet)",
+                "data":  match_rows,
+            },
+        ],
     }
 
 def tool_squad_list(query: str = "") -> Any:
