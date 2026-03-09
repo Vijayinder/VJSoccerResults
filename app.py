@@ -59,8 +59,7 @@ def get_client_ip():
         
 from activity_tracker import (
     log_login, log_logout, log_search, log_view,
-    get_recent_activity, get_user_stats, get_active_users_today,
-    check_connection
+    get_recent_activity, get_user_stats, get_active_users_today
 )
 
 # ---------------------------------------------------------
@@ -189,6 +188,10 @@ def init_session_state():
     
     if "session_id" not in st.session_state:
         st.session_state["session_id"] = str(uuid.uuid4())
+
+    if "device_id" not in st.session_state:
+        # Try to read device_id injected by the JS snippet below
+        st.session_state["device_id"] = st.query_params.get("_did", "")
     
     if "last_activity" not in st.session_state:
         st.session_state["last_activity"] = datetime.now()
@@ -360,9 +363,14 @@ def show_login_page():
             st.session_state["player_league"] = league
             st.session_state["player_competition"] = competition
             update_user_config("Heidelberg United", "U16")
+            _did = st.session_state.get("device_id", "")
+            _guest_id = f"guest_{_did[:8]}" if _did else "guest_unknown"
+            st.session_state["username"]  = _guest_id
+            st.session_state["full_name"] = f"Guest ({_did[:8]})" if _did else "Guest Player"
             log_login(
-                username="shaurya_default",
-                full_name="Shaurya",
+                username=_guest_id,
+                full_name=st.session_state["full_name"],
+                ip_address=get_client_ip(),
                 session_id=st.session_state["session_id"]
             )
             st.rerun()
@@ -1266,14 +1274,7 @@ def is_natural_language_query(query):
 def show_admin_dashboard():
     """Display admin dashboard with activity analytics"""
     st.markdown("## 📊 Admin Dashboard")
-
-    # ── Google Sheets connection status dot ──────────────────────────────
-    _conn_status = check_connection()
-    if _conn_status["ok"]:
-        st.caption(f"🟢 Google Sheets connected · {_conn_status['message']}")
-    else:
-        st.caption(f"🔴 Google Sheets disconnected · {_conn_status['message']}")
-
+    
     # Tabs for different views
 
     tab1, tab2, tab3, tab4 = st.tabs(["📈 Analytics", "👥 Users", "📋 Recent Activity", "🌐 IP Tracking"])
@@ -1493,6 +1494,37 @@ def get_player_league_info(player_name: str, club: str, age_group: str):
 # ---------------------------------------------------------
 # Main Application
 # ---------------------------------------------------------
+
+def _inject_device_id_script():
+    """
+    Inject a tiny JS snippet that:
+      1. Reads (or creates) a UUID stored in localStorage under key 'dribl_did'
+      2. Writes it into the URL as ?_did=xxxx so Streamlit can read it via st.query_params
+    Runs once per page load; harmless on subsequent reruns.
+    """
+    st.components.v1.html("""
+    <script>
+    (function() {
+        function uuidv4() {
+            return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+                (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16));
+        }
+        var key = 'dribl_did';
+        var did = localStorage.getItem(key);
+        if (!did) {
+            did = uuidv4();
+            localStorage.setItem(key, did);
+        }
+        // Write into URL query param so Streamlit can read it
+        var url = new URL(window.parent.location.href);
+        if (url.searchParams.get('_did') !== did) {
+            url.searchParams.set('_did', did);
+            window.parent.history.replaceState({}, '', url.toString());
+        }
+    })();
+    </script>
+    """, height=0)
+
 
 def main_app():
     """Main application logic"""
@@ -2561,6 +2593,11 @@ def main_app():
 def main():
     """Main entry point"""
     init_session_state()
+    _inject_device_id_script()
+    # Refresh device_id from query_params on every run (JS may have just set it)
+    _did = st.query_params.get("_did", "")
+    if _did:
+        st.session_state["device_id"] = _did
 
     params = st.query_params
 
@@ -2614,4 +2651,5 @@ def main():
 if __name__ == "__main__":
     main()
 # Last auto-update: 2026-03-02 10:00:32 AEDT
+
 # Last auto-update: 2026-03-09 20:00:32 AEDT
