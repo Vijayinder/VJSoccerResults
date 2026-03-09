@@ -205,21 +205,60 @@ def log_view(username="", full_name="", view_type="", league="",
 
 def check_connection() -> dict:
     """
-    Test the Google Sheets connection.
+    Test the Google Sheets connection step by step so errors are specific.
     Returns {"ok": True/False, "message": "..."}.
-    Called by the admin dashboard to show the status dot.
     """
     if not _HAS_GSPREAD:
         return {"ok": False, "message": f"gspread import failed — {_GSPREAD_ERROR or 'unknown error'}"}
     if not _HAS_ST:
         return {"ok": False, "message": "streamlit not available"}
+
+    # Step 1: check secrets exist
     try:
-        ws = _get_sheet()
-        if ws is None:
-            return {"ok": False, "message": "Could not open sheet — check ACTIVITY_SHEET_ID and gcp_service_account in Streamlit Secrets"}
-        return {"ok": True, "message": f"Connected to sheet: {ws.spreadsheet.title} → {ws.title}"}
+        sheet_id = st.secrets.get("ACTIVITY_SHEET_ID", "")
     except Exception as e:
-        return {"ok": False, "message": str(e)}
+        return {"ok": False, "message": f"Cannot read Streamlit Secrets — {e}"}
+
+    if not sheet_id:
+        return {"ok": False, "message": "ACTIVITY_SHEET_ID missing from Streamlit Secrets"}
+
+    if "gcp_service_account" not in st.secrets:
+        return {"ok": False, "message": "gcp_service_account block missing from Streamlit Secrets"}
+
+    # Step 2: build credentials
+    try:
+        creds_dict = dict(st.secrets["gcp_service_account"])
+        if "\n" in creds_dict.get("private_key", ""):
+            creds_dict["private_key"] = creds_dict["private_key"].replace("\\n", "\n")
+        creds = Credentials.from_service_account_info(creds_dict, scopes=_SCOPES)
+    except Exception as e:
+        return {"ok": False, "message": f"Bad service account credentials — {e}"}
+
+    # Step 3: authorise gspread
+    try:
+        client = gspread.authorize(creds)
+    except Exception as e:
+        return {"ok": False, "message": f"gspread authorisation failed — {e}"}
+
+    # Step 4: open the spreadsheet by ID
+    try:
+        spreadsheet = client.open_by_key(sheet_id)
+    except gspread.exceptions.SpreadsheetNotFound:
+        return {"ok": False, "message": f"Spreadsheet not found — check ACTIVITY_SHEET_ID is correct AND the sheet is shared with {creds_dict.get('client_email', 'service account')}"}
+    except Exception as e:
+        return {"ok": False, "message": f"Could not open spreadsheet — {e}"}
+
+    # Step 5: open/create the worksheet tab
+    try:
+        try:
+            ws = spreadsheet.worksheet(_SHEET_NAME)
+        except gspread.WorksheetNotFound:
+            ws = spreadsheet.add_worksheet(title=_SHEET_NAME, rows=1, cols=len(_COLUMNS))
+            ws.append_row(_COLUMNS, value_input_option="RAW")
+    except Exception as e:
+        return {"ok": False, "message": f"Could not open worksheet tab '{_SHEET_NAME}' — {e}"}
+
+    return {"ok": True, "message": f"Connected · {spreadsheet.title} → {ws.title}"}
 
 # ── Public read API ───────────────────────────────────────────────────────────
 
