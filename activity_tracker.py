@@ -36,12 +36,14 @@ try:
 except ImportError:
     _HAS_ST = False
 
+_GSPREAD_ERROR = ""
 try:
     import gspread
     from google.oauth2.service_account import Credentials
     _HAS_GSPREAD = True
-except ImportError:
+except Exception as _e:
     _HAS_GSPREAD = False
+    _GSPREAD_ERROR = str(_e)
 
 # ── Sheet configuration ───────────────────────────────────────────────────────
 _SHEET_NAME   = "activity_log"    # tab name inside your Google Sheet
@@ -208,7 +210,7 @@ def check_connection() -> dict:
     Called by the admin dashboard to show the status dot.
     """
     if not _HAS_GSPREAD:
-        return {"ok": False, "message": "gspread not installed — add gspread and google-auth to requirements.txt"}
+        return {"ok": False, "message": f"gspread import failed — {_GSPREAD_ERROR or 'unknown error'}"}
     if not _HAS_ST:
         return {"ok": False, "message": "streamlit not available"}
     try:
