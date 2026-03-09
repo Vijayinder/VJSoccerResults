@@ -26853,17 +26853,17 @@
           "red_cards": 0
         },
         "Dandenong Thunder FC U18": {
-          "matches_played": 1,
+          "matches_played": 2,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
-          "yellow_cards": 0,
+          "yellow_cards": 1,
           "red_cards": 0
         }
       },
       "stats": {
-        "matches_attended": 7,
-        "yellow_cards": 0,
+        "matches_attended": 8,
+        "yellow_cards": 1,
         "red_cards": 0
       },
       "matches": [
@@ -26950,6 +26950,23 @@
           "opponent_team_name": "Heidelberg United FC U14",
           "opponent_team_id": "Pmrk760RNo",
           "events": []
+        },
+        {
+          "match_hash_id": "ld4549Dlpm",
+          "date": "2026-03-08T04:30:00.000000Z",
+          "team_name": "Dandenong Thunder FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Heidelberg United FC U18",
+          "opponent_team_id": "bd9X9aDwK4",
+          "events": [
+            {
+              "type": "yellow_card",
+              "minute": "82"
+            }
+          ]
         }
       ]
     },
@@ -42191,7 +42208,7 @@
       },
       "team_stats": {
         "Dandenong Thunder FC U18": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -42200,7 +42217,7 @@
         }
       },
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -42263,6 +42280,18 @@
           "home_or_away": "away",
           "opponent_team_name": "Brunswick Juventus FC U18",
           "opponent_team_id": "Pmrk7xrVNo",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld4549Dlpm",
+          "date": "2026-03-08T04:30:00.000000Z",
+          "team_name": "Dandenong Thunder FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Heidelberg United FC U18",
+          "opponent_team_id": "bd9X9aDwK4",
           "events": []
         }
       ]
@@ -44087,7 +44116,7 @@
       },
       "team_stats": {
         "Heidelberg United FC U18": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -44096,7 +44125,7 @@
         }
       },
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -44159,6 +44188,18 @@
           "home_or_away": "away",
           "opponent_team_name": "Bentleigh Greens SC U18",
           "opponent_team_id": "PmjnxVzkmZ",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld4549Dlpm",
+          "date": "2026-03-08T04:30:00.000000Z",
+          "team_name": "Heidelberg United FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Dandenong Thunder FC U18",
+          "opponent_team_id": "EN2O4a5lKq",
           "events": []
         }
       ]
@@ -44182,7 +44223,7 @@
       },
       "team_stats": {
         "Heidelberg United FC U18": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -44191,7 +44232,7 @@
         }
       },
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -44254,6 +44295,18 @@
           "home_or_away": "away",
           "opponent_team_name": "Bentleigh Greens SC U18",
           "opponent_team_id": "PmjnxVzkmZ",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld4549Dlpm",
+          "date": "2026-03-08T04:30:00.000000Z",
+          "team_name": "Heidelberg United FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Dandenong Thunder FC U18",
+          "opponent_team_id": "EN2O4a5lKq",
           "events": []
         }
       ]
@@ -44277,7 +44330,7 @@
       },
       "team_stats": {
         "Heidelberg United FC U18": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -44286,7 +44339,7 @@
         }
       },
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -44349,6 +44402,18 @@
           "home_or_away": "away",
           "opponent_team_name": "Bentleigh Greens SC U18",
           "opponent_team_id": "PmjnxVzkmZ",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld4549Dlpm",
+          "date": "2026-03-08T04:30:00.000000Z",
+          "team_name": "Heidelberg United FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Dandenong Thunder FC U18",
+          "opponent_team_id": "EN2O4a5lKq",
           "events": []
         }
       ]
@@ -88908,7 +88973,7 @@
       },
       "team_stats": {
         "Dandenong Thunder FC U18": {
-          "matches_played": 2,
+          "matches_played": 3,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -88917,7 +88982,7 @@
         }
       },
       "stats": {
-        "matches_attended": 2,
+        "matches_attended": 3,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -88944,6 +89009,18 @@
           "home_or_away": "away",
           "opponent_team_name": "Brunswick Juventus FC U18",
           "opponent_team_id": "Pmrk7xrVNo",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld4549Dlpm",
+          "date": "2026-03-08T04:30:00.000000Z",
+          "team_name": "Dandenong Thunder FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Heidelberg United FC U18",
+          "opponent_team_id": "bd9X9aDwK4",
           "events": []
         }
       ]
@@ -96558,7 +96635,54 @@
           "events": []
         }
       ]
+    },
+    {
+      "person_id": "nmYnBbPrDN",
+      "first_name": "George",
+      "last_name": "Karkaletsis",
+      "role_slug": "staff",
+      "roles": [
+        "Coach"
+      ],
+      "teams": [
+        "Heidelberg United FC U18"
+      ],
+      "leagues": [
+        "U18 YPL2 Boys"
+      ],
+      "jerseys": {
+        "Heidelberg United FC U18": ""
+      },
+      "team_stats": {
+        "Heidelberg United FC U18": {
+          "matches_played": 1,
+          "matches_started": 0,
+          "bench_appearances": 0,
+          "goals": 0,
+          "yellow_cards": 0,
+          "red_cards": 0
+        }
+      },
+      "stats": {
+        "matches_attended": 1,
+        "yellow_cards": 0,
+        "red_cards": 0
+      },
+      "matches": [
+        {
+          "match_hash_id": "ld4549Dlpm",
+          "date": "2026-03-08T04:30:00.000000Z",
+          "team_name": "Heidelberg United FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Dandenong Thunder FC U18",
+          "opponent_team_id": "EN2O4a5lKq",
+          "events": []
+        }
+      ]
     }
   ],
-  "_last_updated": "2026-03-09T18:00:29.481907"
+  "_last_updated": "2026-03-09T19:00:32.914057"
 }
