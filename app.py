@@ -188,6 +188,10 @@ def init_session_state():
     
     if "session_id" not in st.session_state:
         st.session_state["session_id"] = str(uuid.uuid4())
+
+    if "device_id" not in st.session_state:
+        # Try to read device_id injected by the JS snippet below
+        st.session_state["device_id"] = st.query_params.get("_did", "")
     
     if "last_activity" not in st.session_state:
         st.session_state["last_activity"] = datetime.now()
@@ -359,9 +363,14 @@ def show_login_page():
             st.session_state["player_league"] = league
             st.session_state["player_competition"] = competition
             update_user_config("Heidelberg United", "U16")
+            _did = st.session_state.get("device_id", "")
+            _guest_id = f"guest_{_did[:8]}" if _did else "guest_unknown"
+            st.session_state["username"]  = _guest_id
+            st.session_state["full_name"] = f"Guest ({_did[:8]})" if _did else "Guest Player"
             log_login(
-                username="shaurya_default",
-                full_name="Shaurya",
+                username=_guest_id,
+                full_name=st.session_state["full_name"],
+                ip_address=get_client_ip(),
                 session_id=st.session_state["session_id"]
             )
             st.rerun()
@@ -1486,6 +1495,37 @@ def get_player_league_info(player_name: str, club: str, age_group: str):
 # Main Application
 # ---------------------------------------------------------
 
+def _inject_device_id_script():
+    """
+    Inject a tiny JS snippet that:
+      1. Reads (or creates) a UUID stored in localStorage under key 'dribl_did'
+      2. Writes it into the URL as ?_did=xxxx so Streamlit can read it via st.query_params
+    Runs once per page load; harmless on subsequent reruns.
+    """
+    st.components.v1.html("""
+    <script>
+    (function() {
+        function uuidv4() {
+            return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+                (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16));
+        }
+        var key = 'dribl_did';
+        var did = localStorage.getItem(key);
+        if (!did) {
+            did = uuidv4();
+            localStorage.setItem(key, did);
+        }
+        // Write into URL query param so Streamlit can read it
+        var url = new URL(window.parent.location.href);
+        if (url.searchParams.get('_did') !== did) {
+            url.searchParams.set('_did', did);
+            window.parent.history.replaceState({}, '', url.toString());
+        }
+    })();
+    </script>
+    """, height=0)
+
+
 def main_app():
     """Main application logic"""
     header()
@@ -1589,29 +1629,8 @@ def main_app():
         st.session_state["search_version"] = 0
         st.session_state["last_processed_version"] = -1
 
-    # Initialise history stack if missing
-    if "search_history" not in st.session_state:
-        st.session_state["search_history"] = []
-
-    # Consume _restore_search BEFORE the widget renders (back-button restore)
-    if "_restore_search" in st.session_state:
-        _rs = st.session_state.pop("_restore_search")
-        st.session_state["search_input"]       = _rs["query"]
-        st.session_state["search_answer"]      = _rs["answer"]
-        st.session_state["search_answer_time"] = _rs["answer_time"]
-        st.session_state["search_version"]    += 1
-        st.session_state["last_processed_version"] = st.session_state["search_version"]
-
     # Consume clicked_query BEFORE the widget renders so key= update is honoured
     if st.session_state.get("clicked_query"):
-        # Push current answer to history before navigating forward
-        _cq_prev_q   = st.session_state.get("search_input", "")
-        _cq_prev_ans = st.session_state.get("search_answer")
-        _cq_prev_t   = st.session_state.get("search_answer_time", 0.0)
-        if _cq_prev_ans is not None and _cq_prev_q:
-            _hist = st.session_state.get("search_history", [])
-            _hist.append({"query": _cq_prev_q, "answer": _cq_prev_ans, "answer_time": _cq_prev_t})
-            st.session_state["search_history"] = _hist[-20:]
         st.session_state["search_input"]   = st.session_state.pop("clicked_query")
         st.session_state["search_version"] += 1
 
@@ -1839,12 +1858,6 @@ def main_app():
             st.session_state["search_answer_time"] = round(_t1 - _t0, 3)
 
     # ── Render: always show stored answer (persists across reruns) ──────────
-    def _fire_query(q):
-        """Set clicked_query — patch 1 above will push history before consuming it."""
-        st.session_state["clicked_query"] = q
-        st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-        st.rerun()
-
     def _render_answer(answer):
         st.markdown("---")
         if isinstance(answer, dict):
@@ -1859,63 +1872,25 @@ def main_app():
                 st.markdown(f"### 👤 {pname}")
                 if is_dual:
                     st.caption("🔄 Dual Registration")
-                # Registration table — click a club to see their squad
                 if reg_rows:
                     df_reg = pd.DataFrame(reg_rows)
-                    st.caption("👇 Click a club row to view their squad")
-                    sel_reg = st.dataframe(
-                        df_reg, hide_index=True, use_container_width=True,
-                        height=(len(reg_rows) + 1) * 35 + 10,
-                        selection_mode="single-row", on_select="rerun",
-                        key="prof_reg_sel",
-                    )
-                    reg_sel = sel_reg.selection.get("rows", [])
-                    if reg_sel:
-                        _fire_query(f"squad for {df_reg.iloc[reg_sel[0]]['Club']}")
-                # Match history — click opponent to see their squad
+                    st.dataframe(df_reg, hide_index=True, use_container_width=True,
+                                 height=(len(reg_rows) + 1) * 35 + 10)
                 if m_rows:
                     label = "📅 Match-by-Match" if detailed else f"📅 Recent Matches (last {len(m_rows)})"
                     st.markdown(f"**{label}**")
-                    st.caption("👇 Click a match row to view that opponent's squad")
                     df_m = pd.DataFrame(m_rows)
                     _cfg = {}
                     if "Date" in df_m.columns:
                         df_m["Date"] = pd.to_datetime(df_m["Date"], errors="coerce").dt.date
                         _cfg["Date"] = st.column_config.DateColumn("Date", format="DD-MMM")
                     h = min(600, (len(m_rows) + 1) * 35 + 10)
-                    sel_match = st.dataframe(
-                        df_m, hide_index=True, use_container_width=True,
-                        height=h, column_config=_cfg,
-                        selection_mode="single-row", on_select="rerun",
-                        key="prof_match_sel",
-                    )
-                    match_sel = sel_match.selection.get("rows", [])
-                    if match_sel:
-                        opp = str(df_m.iloc[match_sel[0]].get("Opponent", "") or "")
-                        if opp and opp != "—":
-                            _fire_query(f"squad for {opp}")
+                    st.dataframe(df_m, hide_index=True, use_container_width=True,
+                                 height=h, column_config=_cfg)
                     if not detailed:
                         st.caption(f"💡 Say 'details for {pname}' for full match-by-match breakdown")
                 if note:
                     st.caption(f"ℹ️ {note}")
-
-            elif answer.get("type") == "squad_table":
-                st.info(answer.get("title", "Squad"))
-                data = answer.get("data", [])
-                if data:
-                    df = pd.DataFrame(data)
-                    num_rows = len(df)
-                    h = 600 if num_rows > 16 else (num_rows + 1) * 35 + 10
-                    st.caption("👇 Click a player row to view their stats")
-                    sel = st.dataframe(
-                        df, hide_index=True, use_container_width=True, height=h,
-                        selection_mode="single-row", on_select="rerun",
-                        key="squad_row_sel",
-                    )
-                    sel_rows = sel.selection.get("rows", [])
-                    if sel_rows:
-                        _fire_query(f"stats for {df.iloc[sel_rows[0]]['Player']}")
-
             elif answer.get("type") == "team_stats":
                 st.markdown(answer.get("summary", ""))
                 results_data = answer.get("results", [])
@@ -1962,21 +1937,8 @@ def main_app():
                         _cfg["First @ To"] = st.column_config.DateColumn("First @ To", format="DD-MMM")
                     num_rows = len(df)
                     final_height = 600 if num_rows > 16 else (num_rows + 1) * 35
-                    # Top Scorers — click player row to view stats
-                    if "Player" in df.columns and "⚽" in df.columns:
-                        st.caption("👇 Click a player row to view their stats")
-                        sel = st.dataframe(
-                            df, hide_index=True, use_container_width=True,
-                            height=final_height, column_config=_cfg,
-                            selection_mode="single-row", on_select="rerun",
-                            key="top_scorers_sel",
-                        )
-                        sel_rows = sel.selection.get("rows", [])
-                        if sel_rows:
-                            _fire_query(f"stats for {df.iloc[sel_rows[0]]['Player']}")
-                    else:
-                        st.dataframe(df, hide_index=True, use_container_width=True,
-                                     height=final_height, column_config=_cfg)
+                    st.dataframe(df, hide_index=True, use_container_width=True,
+                                 height=final_height, column_config=_cfg)
             elif answer.get("type") == "error":
                 st.error(answer.get("message", "An error occurred"))
         else:
@@ -1986,16 +1948,6 @@ def main_app():
 
     if st.session_state.get("search_answer") is not None and search:
         _render_answer(st.session_state["search_answer"])
-
-    # ── Back button: restores previous search without touching widget key directly ──
-    _hist = st.session_state.get("search_history", [])
-    if _hist:
-        if st.button(f"⬅️ Back  ({_hist[-1]['query']})", key="search_back_btn"):
-            _entry = _hist.pop()
-            st.session_state["search_history"] = _hist
-            # Stage the restore — consumed BEFORE the widget on next rerun
-            st.session_state["_restore_search"] = _entry
-            st.rerun()
 
     # Navigation buttons
     if st.session_state["level"] != "league":
@@ -2641,6 +2593,11 @@ def main_app():
 def main():
     """Main entry point"""
     init_session_state()
+    _inject_device_id_script()
+    # Refresh device_id from query_params on every run (JS may have just set it)
+    _did = st.query_params.get("_did", "")
+    if _did:
+        st.session_state["device_id"] = _did
 
     params = st.query_params
 
@@ -2694,83 +2651,7 @@ def main():
 if __name__ == "__main__":
     main()
 # Last auto-update: 2026-03-02 10:00:32 AEDT
-# Last auto-update: 2026-03-02 11:00:33 AEDT
-# Last auto-update: 2026-03-02 14:00:28 AEDT
-# Last auto-update: 2026-03-02 15:00:28 AEDT
-# Last auto-update: 2026-03-02 16:00:31 AEDT
-# Last auto-update: 2026-03-02 17:00:28 AEDT
-# Last auto-update: 2026-03-02 18:00:28 AEDT
-# Last auto-update: 2026-03-02 19:00:28 AEDT
-# Last auto-update: 2026-03-02 20:00:28 AEDT
-# Last auto-update: 2026-03-02 21:00:27 AEDT
-# Last auto-update: 2026-03-02 22:00:28 AEDT
-# Last auto-update: 2026-03-02 23:00:30 AEDT
-# Last auto-update: 2026-03-03 00:00:28 AEDT
-# Last auto-update: 2026-03-03 04:00:28 AEDT
-# Last auto-update: 2026-03-03 08:00:29 AEDT
-# Last auto-update: 2026-03-03 12:00:28 AEDT
-# Last auto-update: 2026-03-05 00:00:29 AEDT
-# Last auto-update: 2026-03-05 04:00:28 AEDT
-# Last auto-update: 2026-03-05 08:00:28 AEDT
-# Last auto-update: 2026-03-05 12:00:28 AEDT
-# Last auto-update: 2026-03-05 16:00:30 AEDT
-# Last auto-update: 2026-03-05 20:00:29 AEDT
-# Last auto-update: 2026-03-06 00:00:28 AEDT
-# Last auto-update: 2026-03-06 04:00:29 AEDT
-# Last auto-update: 2026-03-06 08:00:31 AEDT
-# Last auto-update: 2026-03-06 12:00:31 AEDT
-# Last auto-update: 2026-03-06 16:00:27 AEDT
-# Last auto-update: 2026-03-06 20:00:30 AEDT
-# Last auto-update: 2026-03-07 00:00:31 AEDT
-# Last auto-update: 2026-03-07 04:00:29 AEDT
-# Last auto-update: 2026-03-07 08:00:28 AEDT
-# Last auto-update: 2026-03-07 12:00:29 AEDT
-# Last auto-update: 2026-03-07 16:00:30 AEDT
-# Last auto-update: 2026-03-07 20:00:27 AEDT
-# Last auto-update: 2026-03-08 00:00:29 AEDT
-# Last auto-update: 2026-03-08 01:00:28 AEDT
-# Last auto-update: 2026-03-08 02:00:29 AEDT
-# Last auto-update: 2026-03-08 03:00:28 AEDT
-# Last auto-update: 2026-03-08 04:00:29 AEDT
-# Last auto-update: 2026-03-08 05:00:29 AEDT
-# Last auto-update: 2026-03-08 06:00:29 AEDT
-# Last auto-update: 2026-03-08 07:00:31 AEDT
-# Last auto-update: 2026-03-08 08:00:28 AEDT
-# Last auto-update: 2026-03-08 09:00:30 AEDT
-# Last auto-update: 2026-03-08 10:00:29 AEDT
-# Last auto-update: 2026-03-08 11:00:36 AEDT
-# Last auto-update: 2026-03-08 12:00:41 AEDT
-# Last auto-update: 2026-03-08 13:00:43 AEDT
-# Last auto-update: 2026-03-08 14:00:37 AEDT
-# Last auto-update: 2026-03-08 15:00:43 AEDT
-# Last auto-update: 2026-03-08 16:00:43 AEDT
-# Last auto-update: 2026-03-08 17:00:37 AEDT
-# Last auto-update: 2026-03-08 18:00:41 AEDT
-# Last auto-update: 2026-03-08 19:00:38 AEDT
-# Last auto-update: 2026-03-08 20:00:33 AEDT
-# Last auto-update: 2026-03-08 21:00:38 AEDT
-# Last auto-update: 2026-03-08 22:00:31 AEDT
-# Last auto-update: 2026-03-08 23:00:33 AEDT
-# Last auto-update: 2026-03-09 00:00:31 AEDT
-# Last auto-update: 2026-03-09 01:00:31 AEDT
-# Last auto-update: 2026-03-09 02:00:33 AEDT
-# Last auto-update: 2026-03-09 03:00:32 AEDT
-# Last auto-update: 2026-03-09 04:00:32 AEDT
-# Last auto-update: 2026-03-09 05:00:32 AEDT
-# Last auto-update: 2026-03-09 06:00:33 AEDT
-# Last auto-update: 2026-03-09 07:00:31 AEDT
-# Last auto-update: 2026-03-09 08:00:31 AEDT
-# Last auto-update: 2026-03-09 09:00:38 AEDT
-# Last auto-update: 2026-03-09 10:00:33 AEDT
-# Last auto-update: 2026-03-09 11:00:33 AEDT
-# Last auto-update: 2026-03-09 12:00:32 AEDT
-# Last auto-update: 2026-03-09 13:00:31 AEDT
-# Last auto-update: 2026-03-09 14:00:31 AEDT
-# Last auto-update: 2026-03-09 15:00:33 AEDT
-# Last auto-update: 2026-03-09 16:00:32 AEDT
-# Last auto-update: 2026-03-09 17:00:33 AEDT
-# Last auto-update: 2026-03-09 18:00:31 AEDT
-# Last auto-update: 2026-03-09 19:00:35 AEDT
+
 # Last auto-update: 2026-03-09 20:00:32 AEDT
 # Last auto-update: 2026-03-09 23:00:32 AEDT
 # Last auto-update: 2026-03-10 00:00:33 AEDT

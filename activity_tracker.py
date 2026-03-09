@@ -1,184 +1,361 @@
 """
-activity_tracker.py
-====================
-Persistent activity logging for the Dribl Stats app.
+activity_tracker.py  —  Google Sheets backend
+================================================
+All credentials come from Streamlit secrets — nothing sensitive in code.
 
-Storage: SQLite at <app_dir>/data/activity_log.db  (same folder as your JSON data files).
-Fallback: JSON flat-file at <app_dir>/data/activity_log.json if SQLite unavailable.
+Secrets format (paste into Streamlit Cloud → Settings → Secrets):
+──────────────────────────────────────────────────────────────────
+ACTIVITY_SHEET_ID = "your_google_sheet_id_here"
 
-Place this file next to app.py. The data/ folder must persist on your host
-for logs to survive reboots (same requirement as your match JSON files).
+[gcp_service_account]
+type                        = "service_account"
+project_id                  = "your-project-id"
+private_key_id              = "abc123..."
+private_key                 = "-----BEGIN RSA PRIVATE KEY-----\n...\n-----END RSA PRIVATE KEY-----\n"
+client_email                = "dribl-stats@your-project.iam.gserviceaccount.com"
+client_id                   = "123456789"
+auth_uri                    = "https://accounts.google.com/o/oauth2/auth"
+token_uri                   = "https://oauth2.googleapis.com/token"
+auth_provider_x509_cert_url = "https://www.googleapis.com/oauth2/v1/certs"
+client_x509_cert_url        = "https://www.googleapis.com/robot/v1/metadata/x509/..."
+──────────────────────────────────────────────────────────────────
+
+Local dev (.streamlit/secrets.toml — git-ignored):
+Same format as above, stored in your local .streamlit/secrets.toml file.
 """
 
-import os, json, sqlite3, threading
+import threading
+import queue
 from datetime import datetime, timezone
-from contextlib import contextmanager
+from typing import Optional
 
-_BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-_DATA_DIR = os.path.join(_BASE_DIR, "data")
-os.makedirs(_DATA_DIR, exist_ok=True)
+# ── Optional imports (graceful fallback if libraries missing) ─────────────────
+try:
+    import streamlit as st
+    _HAS_ST = True
+except ImportError:
+    _HAS_ST = False
 
-DB_PATH   = os.path.join(_DATA_DIR, "activity_log.db")
-JSON_PATH = os.path.join(_DATA_DIR, "activity_log.json")   # fallback
+_GSPREAD_ERROR = ""
+try:
+    import gspread
+    from google.oauth2.service_account import Credentials
+    _HAS_GSPREAD = True
+except Exception as _e:
+    _HAS_GSPREAD = False
+    _GSPREAD_ERROR = str(_e)
 
-_lock = threading.Lock()
+# ── Sheet configuration ───────────────────────────────────────────────────────
+_SHEET_NAME   = "activity_log"    # tab name inside your Google Sheet
+_SCOPES       = [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive",
+]
+_COLUMNS = [
+    "timestamp", "username", "full_name", "ip_address",
+    "action_type", "league", "competition", "club",
+    "search_query", "session_id",
+]
 
-_DDL = """
-CREATE TABLE IF NOT EXISTS activity_log (
-    id            INTEGER PRIMARY KEY AUTOINCREMENT,
-    timestamp     TEXT NOT NULL,
-    username      TEXT DEFAULT '',
-    full_name     TEXT DEFAULT '',
-    ip_address    TEXT DEFAULT '',
-    action_type   TEXT DEFAULT '',
-    league        TEXT DEFAULT '',
-    competition   TEXT DEFAULT '',
-    club          TEXT DEFAULT '',
-    search_query  TEXT DEFAULT '',
-    session_id    TEXT DEFAULT ''
-);
-"""
+# ── Write queue — all writes happen in a background thread ────────────────────
+# This means UI is never blocked waiting for the Sheets API.
+_write_queue: queue.Queue = queue.Queue()
+_worker_started = False
+_worker_lock    = threading.Lock()
 
-@contextmanager
-def _conn():
-    with _lock:
-        c = sqlite3.connect(DB_PATH, timeout=10, check_same_thread=False)
-        c.row_factory = sqlite3.Row
-        try:
-            c.execute(_DDL)
-            c.commit()
-            yield c
-        finally:
-            c.close()
+# ── Internal cache for reads (avoids hammering Sheets API) ───────────────────
+_read_cache: dict = {}          # key → (data, expires_at_timestamp)
+_CACHE_TTL = 30                 # seconds
 
-def _now():
+
+def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
-def _json_load():
-    try:
-        with open(JSON_PATH, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except Exception:
-        return []
 
-def _json_append(row):
-    rows = _json_load()
-    rows.append(row)
-    rows = rows[-10_000:]
-    with open(JSON_PATH, "w", encoding="utf-8") as f:
-        json.dump(rows, f, ensure_ascii=False)
+def _cache_get(key: str):
+    entry = _read_cache.get(key)
+    if entry and datetime.now(timezone.utc).timestamp() < entry[1]:
+        return entry[0]
+    return None
 
-def _insert(action_type="", username="", full_name="", ip_address="",
-            league="", competition="", club="", search_query="", session_id=""):
-    row = dict(timestamp=_now(), username=username, full_name=full_name,
-               ip_address=ip_address, action_type=action_type, league=league,
-               competition=competition, club=club, search_query=search_query,
-               session_id=session_id)
+
+def _cache_set(key: str, value):
+    _read_cache[key] = (value, datetime.now(timezone.utc).timestamp() + _CACHE_TTL)
+
+
+# ── Google Sheets client ──────────────────────────────────────────────────────
+def _get_client() -> Optional["gspread.Client"]:
+    """Build an authorised gspread client from Streamlit secrets."""
+    if not _HAS_GSPREAD or not _HAS_ST:
+        return None
     try:
-        with _conn() as c:
-            c.execute(
-                """INSERT INTO activity_log
-                   (timestamp,username,full_name,ip_address,action_type,
-                    league,competition,club,search_query,session_id)
-                   VALUES (:timestamp,:username,:full_name,:ip_address,:action_type,
-                           :league,:competition,:club,:search_query,:session_id)""", row)
-            c.commit()
+        creds_dict = dict(st.secrets["gcp_service_account"])
+        # gspread wants the private_key newlines unescaped
+        if "\\n" in creds_dict.get("private_key", ""):
+            creds_dict["private_key"] = creds_dict["private_key"].replace("\\n", "\n")
+        creds = Credentials.from_service_account_info(creds_dict, scopes=_SCOPES)
+        return gspread.authorize(creds)
     except Exception:
+        return None
+
+
+def _get_sheet() -> Optional["gspread.Worksheet"]:
+    """Open the activity worksheet, creating the header row if needed."""
+    client = _get_client()
+    if not client:
+        return None
+    try:
+        sheet_id = st.secrets.get("ACTIVITY_SHEET_ID", "")
+        if not sheet_id:
+            return None
+        spreadsheet = client.open_by_key(sheet_id)
         try:
-            _json_append(row)
-        except Exception:
+            ws = spreadsheet.worksheet(_SHEET_NAME)
+        except gspread.WorksheetNotFound:
+            ws = spreadsheet.add_worksheet(title=_SHEET_NAME, rows=1, cols=len(_COLUMNS))
+            ws.append_row(_COLUMNS, value_input_option="RAW")
+        # Add header row if sheet is completely empty
+        if ws.row_count == 0 or not ws.row_values(1):
+            ws.append_row(_COLUMNS, value_input_option="RAW")
+        return ws
+    except Exception:
+        return None
+
+
+# ── Background writer thread ──────────────────────────────────────────────────
+def _writer_loop():
+    """Consume rows from _write_queue and append them to Google Sheets."""
+    while True:
+        try:
+            row = _write_queue.get(timeout=5)
+        except queue.Empty:
+            continue
+        # Drain up to 20 rows and batch-append
+        batch = [row]
+        try:
+            while len(batch) < 20:
+                batch.append(_write_queue.get_nowait())
+        except queue.Empty:
             pass
 
-# ── Public API ─────────────────────────────────────────────────────────────────
+        try:
+            ws = _get_sheet()
+            if ws:
+                values = [[r.get(c, "") for c in _COLUMNS] for r in batch]
+                ws.append_rows(values, value_input_option="RAW")
+        except Exception:
+            pass   # silently drop — never crash the app
+
+        for _ in batch:
+            _write_queue.task_done()
+
+
+def _ensure_worker():
+    global _worker_started
+    with _worker_lock:
+        if not _worker_started:
+            t = threading.Thread(target=_writer_loop, daemon=True)
+            t.start()
+            _worker_started = True
+
+
+def _enqueue(action_type="", username="", full_name="", ip_address="",
+             league="", competition="", club="", search_query="", session_id=""):
+    _ensure_worker()
+    _write_queue.put({
+        "timestamp":    _now(),
+        "username":     username,
+        "full_name":    full_name,
+        "ip_address":   ip_address,
+        "action_type":  action_type,
+        "league":       league,
+        "competition":  competition,
+        "club":         club,
+        "search_query": search_query,
+        "session_id":   session_id,
+    })
+    # Invalidate read cache on every write
+    _read_cache.clear()
+
+
+# ── Public write API (identical signatures to old activity_tracker.py) ────────
 
 def log_login(username="", full_name="", ip_address="", session_id=""):
-    _insert("login", username=username, full_name=full_name,
-            ip_address=ip_address, session_id=session_id)
+    _enqueue("login", username=username, full_name=full_name,
+             ip_address=ip_address, session_id=session_id)
+
 
 def log_logout(username="", full_name="", session_id=""):
-    _insert("logout", username=username, full_name=full_name, session_id=session_id)
+    _enqueue("logout", username=username, full_name=full_name,
+             session_id=session_id)
+
 
 def log_search(username="", full_name="", query="", session_id=""):
-    _insert("search_query", username=username, full_name=full_name,
-            search_query=query, session_id=session_id)
+    _enqueue("search_query", username=username, full_name=full_name,
+             search_query=query, session_id=session_id)
+
 
 def log_view(username="", full_name="", view_type="", league="",
              competition="", club="", session_id=""):
-    _insert(f"view_{view_type}", username=username, full_name=full_name,
-            league=league, competition=competition, club=club, session_id=session_id)
+    _enqueue(f"view_{view_type}", username=username, full_name=full_name,
+             league=league, competition=competition, club=club,
+             session_id=session_id)
 
-def get_recent_activity(limit=50):
-    try:
-        with _conn() as c:
-            rows = c.execute(
-                "SELECT * FROM activity_log ORDER BY id DESC LIMIT ?", (limit,)
-            ).fetchall()
-        return [dict(r) for r in rows]
-    except Exception:
-        rows = _json_load()
-        return list(reversed(rows[-limit:]))
 
-def get_user_stats():
+
+def check_connection() -> dict:
+    """
+    Test the Google Sheets connection step by step so errors are specific.
+    Returns {"ok": True/False, "message": "..."}.
+    """
+    if not _HAS_GSPREAD:
+        return {"ok": False, "message": f"gspread import failed — {_GSPREAD_ERROR or 'unknown error'}"}
+    if not _HAS_ST:
+        return {"ok": False, "message": "streamlit not available"}
+
+    # Step 1: check secrets exist
     try:
-        with _conn() as c:
-            total        = c.execute("SELECT COUNT(*) FROM activity_log").fetchone()[0]
-            unique_users = c.execute(
-                "SELECT COUNT(DISTINCT username) FROM activity_log WHERE username!=''").fetchone()[0]
-            by_type      = c.execute(
-                "SELECT action_type, COUNT(*) cnt FROM activity_log GROUP BY action_type").fetchall()
-            top_users    = c.execute(
-                """SELECT username, full_name, COUNT(*) activity_count
-                   FROM activity_log WHERE username!=''
-                   GROUP BY username ORDER BY activity_count DESC LIMIT 10""").fetchall()
-            top_clubs    = c.execute(
-                """SELECT club, COUNT(*) cnt FROM activity_log
-                   WHERE club!='' GROUP BY club ORDER BY cnt DESC LIMIT 10""").fetchall()
-            top_searches = c.execute(
-                """SELECT search_query, COUNT(*) cnt FROM activity_log
-                   WHERE search_query!='' GROUP BY search_query
-                   ORDER BY cnt DESC LIMIT 20""").fetchall()
-        return {
-            "total_activities":   total,
-            "unique_users":       unique_users,
-            "activities_by_type": {r["action_type"]: r["cnt"] for r in by_type},
-            "most_active_users":  [dict(r) for r in top_users],
-            "top_clubs":          {r["club"]: r["cnt"] for r in top_clubs},
-            "top_searches":       [dict(r) for r in top_searches],
-        }
+        sheet_id = st.secrets.get("ACTIVITY_SHEET_ID", "")
+    except Exception as e:
+        return {"ok": False, "message": f"Cannot read Streamlit Secrets — {e}"}
+
+    if not sheet_id:
+        return {"ok": False, "message": "ACTIVITY_SHEET_ID missing from Streamlit Secrets"}
+
+    if "gcp_service_account" not in st.secrets:
+        return {"ok": False, "message": "gcp_service_account block missing from Streamlit Secrets"}
+
+    # Step 2: build credentials
+    try:
+        creds_dict = dict(st.secrets["gcp_service_account"])
+        if "\n" in creds_dict.get("private_key", ""):
+            creds_dict["private_key"] = creds_dict["private_key"].replace("\\n", "\n")
+        creds = Credentials.from_service_account_info(creds_dict, scopes=_SCOPES)
+    except Exception as e:
+        return {"ok": False, "message": f"Bad service account credentials — {e}"}
+
+    # Step 3: authorise gspread
+    try:
+        client = gspread.authorize(creds)
+    except Exception as e:
+        return {"ok": False, "message": f"gspread authorisation failed — {e}"}
+
+    # Step 4: open the spreadsheet by ID
+    try:
+        spreadsheet = client.open_by_key(sheet_id)
+    except gspread.exceptions.SpreadsheetNotFound:
+        return {"ok": False, "message": f"Spreadsheet not found — check ACTIVITY_SHEET_ID is correct AND the sheet is shared with {creds_dict.get('client_email', 'service account')}"}
+    except Exception as e:
+        return {"ok": False, "message": f"Could not open spreadsheet — {e}"}
+
+    # Step 5: open/create the worksheet tab
+    try:
+        try:
+            ws = spreadsheet.worksheet(_SHEET_NAME)
+        except gspread.WorksheetNotFound:
+            ws = spreadsheet.add_worksheet(title=_SHEET_NAME, rows=1, cols=len(_COLUMNS))
+            ws.append_row(_COLUMNS, value_input_option="RAW")
+    except Exception as e:
+        return {"ok": False, "message": f"Could not open worksheet tab '{_SHEET_NAME}' — {e}"}
+
+    return {"ok": True, "message": f"Connected · {spreadsheet.title} → {ws.title}"}
+
+# ── Public read API ───────────────────────────────────────────────────────────
+
+def _all_rows() -> list[dict]:
+    """Fetch all rows from the sheet, with caching."""
+    cached = _cache_get("all_rows")
+    if cached is not None:
+        return cached
+    try:
+        ws = _get_sheet()
+        if not ws:
+            return []
+        records = ws.get_all_records(expected_headers=_COLUMNS)
+        _cache_set("all_rows", records)
+        return records
     except Exception:
-        rows = _json_load()
-        by_type: dict = {}
-        for r in rows:
-            k = r.get("action_type", "")
-            by_type[k] = by_type.get(k, 0) + 1
-        users = {r.get("username") for r in rows if r.get("username")}
-        return {"total_activities": len(rows), "unique_users": len(users),
-                "activities_by_type": by_type, "most_active_users": [],
+        return []
+
+
+def get_recent_activity(limit: int = 50) -> list:
+    rows = _all_rows()
+    return list(reversed(rows[-limit:])) if rows else []
+
+
+def get_user_stats() -> dict:
+    cached = _cache_get("user_stats")
+    if cached:
+        return cached
+
+    rows = _all_rows()
+    if not rows:
+        return {"total_activities": 0, "unique_users": 0,
+                "activities_by_type": {}, "most_active_users": [],
                 "top_clubs": {}, "top_searches": []}
 
-def get_active_users_today():
+    total = len(rows)
+    user_counts: dict = {}
+    type_counts: dict = {}
+    club_counts:  dict = {}
+    query_counts: dict = {}
+
+    for r in rows:
+        u = r.get("username", "")
+        if u:
+            user_counts[u] = user_counts.get(u, {"count": 0,
+                                                  "full_name": r.get("full_name", "")})
+            user_counts[u]["count"] += 1
+
+        t = r.get("action_type", "")
+        type_counts[t] = type_counts.get(t, 0) + 1
+
+        c = r.get("club", "")
+        if c:
+            club_counts[c] = club_counts.get(c, 0) + 1
+
+        q = r.get("search_query", "")
+        if q:
+            query_counts[q] = query_counts.get(q, 0) + 1
+
+    top_users = sorted(
+        [{"username": u, "full_name": v["full_name"], "activity_count": v["count"]}
+         for u, v in user_counts.items()],
+        key=lambda x: x["activity_count"], reverse=True
+    )[:10]
+
+    top_searches = sorted(
+        [{"search_query": q, "cnt": n} for q, n in query_counts.items()],
+        key=lambda x: x["cnt"], reverse=True
+    )[:20]
+
+    result = {
+        "total_activities":   total,
+        "unique_users":       len(user_counts),
+        "activities_by_type": type_counts,
+        "most_active_users":  top_users,
+        "top_clubs":          dict(sorted(club_counts.items(),
+                                          key=lambda x: x[1], reverse=True)[:10]),
+        "top_searches":       top_searches,
+    }
+    _cache_set("user_stats", result)
+    return result
+
+
+def get_active_users_today() -> list:
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    try:
-        with _conn() as c:
-            rows = c.execute(
-                """SELECT username, full_name, MAX(timestamp) last_activity,
-                          COUNT(*) activity_count
-                   FROM activity_log
-                   WHERE timestamp LIKE ? AND username!=''
-                   GROUP BY username ORDER BY last_activity DESC""",
-                (f"{today}%",)).fetchall()
-        return [dict(r) for r in rows]
-    except Exception:
-        rows = _json_load()
-        seen: dict = {}
-        for r in rows:
-            if not r.get("timestamp","").startswith(today) or not r.get("username"):
-                continue
-            u = r["username"]
-            if u not in seen:
-                seen[u] = {"username": u, "full_name": r.get("full_name",""),
-                           "last_activity": r["timestamp"], "activity_count": 0}
-            seen[u]["activity_count"] += 1
-            if r["timestamp"] > seen[u]["last_activity"]:
-                seen[u]["last_activity"] = r["timestamp"]
-        return sorted(seen.values(), key=lambda x: x["last_activity"], reverse=True)
+    rows  = _all_rows()
+    seen: dict = {}
+    for r in rows:
+        if not r.get("timestamp", "").startswith(today):
+            continue
+        u = r.get("username", "")
+        if not u:
+            continue
+        if u not in seen:
+            seen[u] = {"username": u, "full_name": r.get("full_name", ""),
+                       "last_activity": r["timestamp"], "activity_count": 0}
+        seen[u]["activity_count"] += 1
+        if r["timestamp"] > seen[u]["last_activity"]:
+            seen[u]["last_activity"] = r["timestamp"]
+    return sorted(seen.values(), key=lambda x: x["last_activity"], reverse=True)
