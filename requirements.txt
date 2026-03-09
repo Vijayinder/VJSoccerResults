@@ -11,3 +11,5 @@ plotly>=5.18.0
 kaleido==0.2.1
 # Optional: For environment variables
 python-dotenv>=1.0.0
+gspread>=6.0.0
+google-auth>=2.0.0
