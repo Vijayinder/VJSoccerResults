@@ -1589,8 +1589,29 @@ def main_app():
         st.session_state["search_version"] = 0
         st.session_state["last_processed_version"] = -1
 
+    # Initialise history stack if missing
+    if "search_history" not in st.session_state:
+        st.session_state["search_history"] = []
+
+    # Consume _restore_search BEFORE the widget renders (back-button restore)
+    if "_restore_search" in st.session_state:
+        _rs = st.session_state.pop("_restore_search")
+        st.session_state["search_input"]       = _rs["query"]
+        st.session_state["search_answer"]      = _rs["answer"]
+        st.session_state["search_answer_time"] = _rs["answer_time"]
+        st.session_state["search_version"]    += 1
+        st.session_state["last_processed_version"] = st.session_state["search_version"]
+
     # Consume clicked_query BEFORE the widget renders so key= update is honoured
     if st.session_state.get("clicked_query"):
+        # Push current answer to history before navigating forward
+        _cq_prev_q   = st.session_state.get("search_input", "")
+        _cq_prev_ans = st.session_state.get("search_answer")
+        _cq_prev_t   = st.session_state.get("search_answer_time", 0.0)
+        if _cq_prev_ans is not None and _cq_prev_q:
+            _hist = st.session_state.get("search_history", [])
+            _hist.append({"query": _cq_prev_q, "answer": _cq_prev_ans, "answer_time": _cq_prev_t})
+            st.session_state["search_history"] = _hist[-20:]
         st.session_state["search_input"]   = st.session_state.pop("clicked_query")
         st.session_state["search_version"] += 1
 
@@ -1818,6 +1839,12 @@ def main_app():
             st.session_state["search_answer_time"] = round(_t1 - _t0, 3)
 
     # ── Render: always show stored answer (persists across reruns) ──────────
+    def _fire_query(q):
+        """Set clicked_query — patch 1 above will push history before consuming it."""
+        st.session_state["clicked_query"] = q
+        st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+        st.rerun()
+
     def _render_answer(answer):
         st.markdown("---")
         if isinstance(answer, dict):
@@ -1832,25 +1859,63 @@ def main_app():
                 st.markdown(f"### 👤 {pname}")
                 if is_dual:
                     st.caption("🔄 Dual Registration")
+                # Registration table — click a club to see their squad
                 if reg_rows:
                     df_reg = pd.DataFrame(reg_rows)
-                    st.dataframe(df_reg, hide_index=True, use_container_width=True,
-                                 height=(len(reg_rows) + 1) * 35 + 10)
+                    st.caption("👇 Click a club row to view their squad")
+                    sel_reg = st.dataframe(
+                        df_reg, hide_index=True, use_container_width=True,
+                        height=(len(reg_rows) + 1) * 35 + 10,
+                        selection_mode="single-row", on_select="rerun",
+                        key="prof_reg_sel",
+                    )
+                    reg_sel = sel_reg.selection.get("rows", [])
+                    if reg_sel:
+                        _fire_query(f"squad for {df_reg.iloc[reg_sel[0]]['Club']}")
+                # Match history — click opponent to see their squad
                 if m_rows:
                     label = "📅 Match-by-Match" if detailed else f"📅 Recent Matches (last {len(m_rows)})"
                     st.markdown(f"**{label}**")
+                    st.caption("👇 Click a match row to view that opponent's squad")
                     df_m = pd.DataFrame(m_rows)
                     _cfg = {}
                     if "Date" in df_m.columns:
                         df_m["Date"] = pd.to_datetime(df_m["Date"], errors="coerce").dt.date
                         _cfg["Date"] = st.column_config.DateColumn("Date", format="DD-MMM")
                     h = min(600, (len(m_rows) + 1) * 35 + 10)
-                    st.dataframe(df_m, hide_index=True, use_container_width=True,
-                                 height=h, column_config=_cfg)
+                    sel_match = st.dataframe(
+                        df_m, hide_index=True, use_container_width=True,
+                        height=h, column_config=_cfg,
+                        selection_mode="single-row", on_select="rerun",
+                        key="prof_match_sel",
+                    )
+                    match_sel = sel_match.selection.get("rows", [])
+                    if match_sel:
+                        opp = str(df_m.iloc[match_sel[0]].get("Opponent", "") or "")
+                        if opp and opp != "—":
+                            _fire_query(f"squad for {opp}")
                     if not detailed:
                         st.caption(f"💡 Say 'details for {pname}' for full match-by-match breakdown")
                 if note:
                     st.caption(f"ℹ️ {note}")
+
+            elif answer.get("type") == "squad_table":
+                st.info(answer.get("title", "Squad"))
+                data = answer.get("data", [])
+                if data:
+                    df = pd.DataFrame(data)
+                    num_rows = len(df)
+                    h = 600 if num_rows > 16 else (num_rows + 1) * 35 + 10
+                    st.caption("👇 Click a player row to view their stats")
+                    sel = st.dataframe(
+                        df, hide_index=True, use_container_width=True, height=h,
+                        selection_mode="single-row", on_select="rerun",
+                        key="squad_row_sel",
+                    )
+                    sel_rows = sel.selection.get("rows", [])
+                    if sel_rows:
+                        _fire_query(f"stats for {df.iloc[sel_rows[0]]['Player']}")
+
             elif answer.get("type") == "team_stats":
                 st.markdown(answer.get("summary", ""))
                 results_data = answer.get("results", [])
@@ -1897,8 +1962,21 @@ def main_app():
                         _cfg["First @ To"] = st.column_config.DateColumn("First @ To", format="DD-MMM")
                     num_rows = len(df)
                     final_height = 600 if num_rows > 16 else (num_rows + 1) * 35
-                    st.dataframe(df, hide_index=True, use_container_width=True,
-                                 height=final_height, column_config=_cfg)
+                    # Top Scorers — click player row to view stats
+                    if "Player" in df.columns and "⚽" in df.columns:
+                        st.caption("👇 Click a player row to view their stats")
+                        sel = st.dataframe(
+                            df, hide_index=True, use_container_width=True,
+                            height=final_height, column_config=_cfg,
+                            selection_mode="single-row", on_select="rerun",
+                            key="top_scorers_sel",
+                        )
+                        sel_rows = sel.selection.get("rows", [])
+                        if sel_rows:
+                            _fire_query(f"stats for {df.iloc[sel_rows[0]]['Player']}")
+                    else:
+                        st.dataframe(df, hide_index=True, use_container_width=True,
+                                     height=final_height, column_config=_cfg)
             elif answer.get("type") == "error":
                 st.error(answer.get("message", "An error occurred"))
         else:
@@ -1908,6 +1986,16 @@ def main_app():
 
     if st.session_state.get("search_answer") is not None and search:
         _render_answer(st.session_state["search_answer"])
+
+    # ── Back button: restores previous search without touching widget key directly ──
+    _hist = st.session_state.get("search_history", [])
+    if _hist:
+        if st.button(f"⬅️ Back  ({_hist[-1]['query']})", key="search_back_btn"):
+            _entry = _hist.pop()
+            st.session_state["search_history"] = _hist
+            # Stage the restore — consumed BEFORE the widget on next rerun
+            st.session_state["_restore_search"] = _entry
+            st.rerun()
 
     # Navigation buttons
     if st.session_state["level"] != "league":

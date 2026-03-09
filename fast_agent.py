@@ -3462,7 +3462,7 @@ def tool_squad_list(query: str = "") -> Any:
     subtitle   = f"  ({dual_count} dual-registered)" if dual_count else ""
 
     return {
-        "type":  "table",
+        "type":  "squad_table",
         "data":  data,
         "title": f"👥 Squad — {title_team}  ·  {len(players)} players{subtitle}"
     }
