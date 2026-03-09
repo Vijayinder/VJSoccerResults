@@ -59,7 +59,8 @@ def get_client_ip():
         
 from activity_tracker import (
     log_login, log_logout, log_search, log_view,
-    get_recent_activity, get_user_stats, get_active_users_today
+    get_recent_activity, get_user_stats, get_active_users_today,
+    check_connection
 )
 
 # ---------------------------------------------------------
@@ -1265,7 +1266,14 @@ def is_natural_language_query(query):
 def show_admin_dashboard():
     """Display admin dashboard with activity analytics"""
     st.markdown("## 📊 Admin Dashboard")
-    
+
+    # ── Google Sheets connection status dot ──────────────────────────────
+    _conn_status = check_connection()
+    if _conn_status["ok"]:
+        st.caption(f"🟢 Google Sheets connected · {_conn_status['message']}")
+    else:
+        st.caption(f"🔴 Google Sheets disconnected · {_conn_status['message']}")
+
     # Tabs for different views
 
     tab1, tab2, tab3, tab4 = st.tabs(["📈 Analytics", "👥 Users", "📋 Recent Activity", "🌐 IP Tracking"])
@@ -1589,29 +1597,8 @@ def main_app():
         st.session_state["search_version"] = 0
         st.session_state["last_processed_version"] = -1
 
-    # Initialise history stack if missing
-    if "search_history" not in st.session_state:
-        st.session_state["search_history"] = []
-
-    # Consume _restore_search BEFORE the widget renders (back-button restore)
-    if "_restore_search" in st.session_state:
-        _rs = st.session_state.pop("_restore_search")
-        st.session_state["search_input"]       = _rs["query"]
-        st.session_state["search_answer"]      = _rs["answer"]
-        st.session_state["search_answer_time"] = _rs["answer_time"]
-        st.session_state["search_version"]    += 1
-        st.session_state["last_processed_version"] = st.session_state["search_version"]
-
     # Consume clicked_query BEFORE the widget renders so key= update is honoured
     if st.session_state.get("clicked_query"):
-        # Push current answer to history before navigating forward
-        _cq_prev_q   = st.session_state.get("search_input", "")
-        _cq_prev_ans = st.session_state.get("search_answer")
-        _cq_prev_t   = st.session_state.get("search_answer_time", 0.0)
-        if _cq_prev_ans is not None and _cq_prev_q:
-            _hist = st.session_state.get("search_history", [])
-            _hist.append({"query": _cq_prev_q, "answer": _cq_prev_ans, "answer_time": _cq_prev_t})
-            st.session_state["search_history"] = _hist[-20:]
         st.session_state["search_input"]   = st.session_state.pop("clicked_query")
         st.session_state["search_version"] += 1
 
@@ -1839,12 +1826,6 @@ def main_app():
             st.session_state["search_answer_time"] = round(_t1 - _t0, 3)
 
     # ── Render: always show stored answer (persists across reruns) ──────────
-    def _fire_query(q):
-        """Set clicked_query — patch 1 above will push history before consuming it."""
-        st.session_state["clicked_query"] = q
-        st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-        st.rerun()
-
     def _render_answer(answer):
         st.markdown("---")
         if isinstance(answer, dict):
@@ -1859,63 +1840,25 @@ def main_app():
                 st.markdown(f"### 👤 {pname}")
                 if is_dual:
                     st.caption("🔄 Dual Registration")
-                # Registration table — click a club to see their squad
                 if reg_rows:
                     df_reg = pd.DataFrame(reg_rows)
-                    st.caption("👇 Click a club row to view their squad")
-                    sel_reg = st.dataframe(
-                        df_reg, hide_index=True, use_container_width=True,
-                        height=(len(reg_rows) + 1) * 35 + 10,
-                        selection_mode="single-row", on_select="rerun",
-                        key="prof_reg_sel",
-                    )
-                    reg_sel = sel_reg.selection.get("rows", [])
-                    if reg_sel:
-                        _fire_query(f"squad for {df_reg.iloc[reg_sel[0]]['Club']}")
-                # Match history — click opponent to see their squad
+                    st.dataframe(df_reg, hide_index=True, use_container_width=True,
+                                 height=(len(reg_rows) + 1) * 35 + 10)
                 if m_rows:
                     label = "📅 Match-by-Match" if detailed else f"📅 Recent Matches (last {len(m_rows)})"
                     st.markdown(f"**{label}**")
-                    st.caption("👇 Click a match row to view that opponent's squad")
                     df_m = pd.DataFrame(m_rows)
                     _cfg = {}
                     if "Date" in df_m.columns:
                         df_m["Date"] = pd.to_datetime(df_m["Date"], errors="coerce").dt.date
                         _cfg["Date"] = st.column_config.DateColumn("Date", format="DD-MMM")
                     h = min(600, (len(m_rows) + 1) * 35 + 10)
-                    sel_match = st.dataframe(
-                        df_m, hide_index=True, use_container_width=True,
-                        height=h, column_config=_cfg,
-                        selection_mode="single-row", on_select="rerun",
-                        key="prof_match_sel",
-                    )
-                    match_sel = sel_match.selection.get("rows", [])
-                    if match_sel:
-                        opp = str(df_m.iloc[match_sel[0]].get("Opponent", "") or "")
-                        if opp and opp != "—":
-                            _fire_query(f"squad for {opp}")
+                    st.dataframe(df_m, hide_index=True, use_container_width=True,
+                                 height=h, column_config=_cfg)
                     if not detailed:
                         st.caption(f"💡 Say 'details for {pname}' for full match-by-match breakdown")
                 if note:
                     st.caption(f"ℹ️ {note}")
-
-            elif answer.get("type") == "squad_table":
-                st.info(answer.get("title", "Squad"))
-                data = answer.get("data", [])
-                if data:
-                    df = pd.DataFrame(data)
-                    num_rows = len(df)
-                    h = 600 if num_rows > 16 else (num_rows + 1) * 35 + 10
-                    st.caption("👇 Click a player row to view their stats")
-                    sel = st.dataframe(
-                        df, hide_index=True, use_container_width=True, height=h,
-                        selection_mode="single-row", on_select="rerun",
-                        key="squad_row_sel",
-                    )
-                    sel_rows = sel.selection.get("rows", [])
-                    if sel_rows:
-                        _fire_query(f"stats for {df.iloc[sel_rows[0]]['Player']}")
-
             elif answer.get("type") == "team_stats":
                 st.markdown(answer.get("summary", ""))
                 results_data = answer.get("results", [])
@@ -1962,21 +1905,8 @@ def main_app():
                         _cfg["First @ To"] = st.column_config.DateColumn("First @ To", format="DD-MMM")
                     num_rows = len(df)
                     final_height = 600 if num_rows > 16 else (num_rows + 1) * 35
-                    # Top Scorers — click player row to view stats
-                    if "Player" in df.columns and "⚽" in df.columns:
-                        st.caption("👇 Click a player row to view their stats")
-                        sel = st.dataframe(
-                            df, hide_index=True, use_container_width=True,
-                            height=final_height, column_config=_cfg,
-                            selection_mode="single-row", on_select="rerun",
-                            key="top_scorers_sel",
-                        )
-                        sel_rows = sel.selection.get("rows", [])
-                        if sel_rows:
-                            _fire_query(f"stats for {df.iloc[sel_rows[0]]['Player']}")
-                    else:
-                        st.dataframe(df, hide_index=True, use_container_width=True,
-                                     height=final_height, column_config=_cfg)
+                    st.dataframe(df, hide_index=True, use_container_width=True,
+                                 height=final_height, column_config=_cfg)
             elif answer.get("type") == "error":
                 st.error(answer.get("message", "An error occurred"))
         else:
@@ -1986,16 +1916,6 @@ def main_app():
 
     if st.session_state.get("search_answer") is not None and search:
         _render_answer(st.session_state["search_answer"])
-
-    # ── Back button: restores previous search without touching widget key directly ──
-    _hist = st.session_state.get("search_history", [])
-    if _hist:
-        if st.button(f"⬅️ Back  ({_hist[-1]['query']})", key="search_back_btn"):
-            _entry = _hist.pop()
-            st.session_state["search_history"] = _hist
-            # Stage the restore — consumed BEFORE the widget on next rerun
-            st.session_state["_restore_search"] = _entry
-            st.rerun()
 
     # Navigation buttons
     if st.session_state["level"] != "league":
@@ -2694,81 +2614,4 @@ def main():
 if __name__ == "__main__":
     main()
 # Last auto-update: 2026-03-02 10:00:32 AEDT
-# Last auto-update: 2026-03-02 11:00:33 AEDT
-# Last auto-update: 2026-03-02 14:00:28 AEDT
-# Last auto-update: 2026-03-02 15:00:28 AEDT
-# Last auto-update: 2026-03-02 16:00:31 AEDT
-# Last auto-update: 2026-03-02 17:00:28 AEDT
-# Last auto-update: 2026-03-02 18:00:28 AEDT
-# Last auto-update: 2026-03-02 19:00:28 AEDT
-# Last auto-update: 2026-03-02 20:00:28 AEDT
-# Last auto-update: 2026-03-02 21:00:27 AEDT
-# Last auto-update: 2026-03-02 22:00:28 AEDT
-# Last auto-update: 2026-03-02 23:00:30 AEDT
-# Last auto-update: 2026-03-03 00:00:28 AEDT
-# Last auto-update: 2026-03-03 04:00:28 AEDT
-# Last auto-update: 2026-03-03 08:00:29 AEDT
-# Last auto-update: 2026-03-03 12:00:28 AEDT
-# Last auto-update: 2026-03-05 00:00:29 AEDT
-# Last auto-update: 2026-03-05 04:00:28 AEDT
-# Last auto-update: 2026-03-05 08:00:28 AEDT
-# Last auto-update: 2026-03-05 12:00:28 AEDT
-# Last auto-update: 2026-03-05 16:00:30 AEDT
-# Last auto-update: 2026-03-05 20:00:29 AEDT
-# Last auto-update: 2026-03-06 00:00:28 AEDT
-# Last auto-update: 2026-03-06 04:00:29 AEDT
-# Last auto-update: 2026-03-06 08:00:31 AEDT
-# Last auto-update: 2026-03-06 12:00:31 AEDT
-# Last auto-update: 2026-03-06 16:00:27 AEDT
-# Last auto-update: 2026-03-06 20:00:30 AEDT
-# Last auto-update: 2026-03-07 00:00:31 AEDT
-# Last auto-update: 2026-03-07 04:00:29 AEDT
-# Last auto-update: 2026-03-07 08:00:28 AEDT
-# Last auto-update: 2026-03-07 12:00:29 AEDT
-# Last auto-update: 2026-03-07 16:00:30 AEDT
-# Last auto-update: 2026-03-07 20:00:27 AEDT
-# Last auto-update: 2026-03-08 00:00:29 AEDT
-# Last auto-update: 2026-03-08 01:00:28 AEDT
-# Last auto-update: 2026-03-08 02:00:29 AEDT
-# Last auto-update: 2026-03-08 03:00:28 AEDT
-# Last auto-update: 2026-03-08 04:00:29 AEDT
-# Last auto-update: 2026-03-08 05:00:29 AEDT
-# Last auto-update: 2026-03-08 06:00:29 AEDT
-# Last auto-update: 2026-03-08 07:00:31 AEDT
-# Last auto-update: 2026-03-08 08:00:28 AEDT
-# Last auto-update: 2026-03-08 09:00:30 AEDT
-# Last auto-update: 2026-03-08 10:00:29 AEDT
-# Last auto-update: 2026-03-08 11:00:36 AEDT
-# Last auto-update: 2026-03-08 12:00:41 AEDT
-# Last auto-update: 2026-03-08 13:00:43 AEDT
-# Last auto-update: 2026-03-08 14:00:37 AEDT
-# Last auto-update: 2026-03-08 15:00:43 AEDT
-# Last auto-update: 2026-03-08 16:00:43 AEDT
-# Last auto-update: 2026-03-08 17:00:37 AEDT
-# Last auto-update: 2026-03-08 18:00:41 AEDT
-# Last auto-update: 2026-03-08 19:00:38 AEDT
-# Last auto-update: 2026-03-08 20:00:33 AEDT
-# Last auto-update: 2026-03-08 21:00:38 AEDT
-# Last auto-update: 2026-03-08 22:00:31 AEDT
-# Last auto-update: 2026-03-08 23:00:33 AEDT
-# Last auto-update: 2026-03-09 00:00:31 AEDT
-# Last auto-update: 2026-03-09 01:00:31 AEDT
-# Last auto-update: 2026-03-09 02:00:33 AEDT
-# Last auto-update: 2026-03-09 03:00:32 AEDT
-# Last auto-update: 2026-03-09 04:00:32 AEDT
-# Last auto-update: 2026-03-09 05:00:32 AEDT
-# Last auto-update: 2026-03-09 06:00:33 AEDT
-# Last auto-update: 2026-03-09 07:00:31 AEDT
-# Last auto-update: 2026-03-09 08:00:31 AEDT
-# Last auto-update: 2026-03-09 09:00:38 AEDT
-# Last auto-update: 2026-03-09 10:00:33 AEDT
-# Last auto-update: 2026-03-09 11:00:33 AEDT
-# Last auto-update: 2026-03-09 12:00:32 AEDT
-# Last auto-update: 2026-03-09 13:00:31 AEDT
-# Last auto-update: 2026-03-09 14:00:31 AEDT
-# Last auto-update: 2026-03-09 15:00:33 AEDT
-# Last auto-update: 2026-03-09 16:00:32 AEDT
-# Last auto-update: 2026-03-09 17:00:33 AEDT
-# Last auto-update: 2026-03-09 18:00:31 AEDT
-# Last auto-update: 2026-03-09 19:00:35 AEDT
 # Last auto-update: 2026-03-09 20:00:32 AEDT

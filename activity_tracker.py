@@ -200,6 +200,25 @@ def log_view(username="", full_name="", view_type="", league="",
              session_id=session_id)
 
 
+
+def check_connection() -> dict:
+    """
+    Test the Google Sheets connection.
+    Returns {"ok": True/False, "message": "..."}.
+    Called by the admin dashboard to show the status dot.
+    """
+    if not _HAS_GSPREAD:
+        return {"ok": False, "message": "gspread not installed — add gspread and google-auth to requirements.txt"}
+    if not _HAS_ST:
+        return {"ok": False, "message": "streamlit not available"}
+    try:
+        ws = _get_sheet()
+        if ws is None:
+            return {"ok": False, "message": "Could not open sheet — check ACTIVITY_SHEET_ID and gcp_service_account in Streamlit Secrets"}
+        return {"ok": True, "message": f"Connected to sheet: {ws.spreadsheet.title} → {ws.title}"}
+    except Exception as e:
+        return {"ok": False, "message": str(e)}
+
 # ── Public read API ───────────────────────────────────────────────────────────
 
 def _all_rows() -> list[dict]:
