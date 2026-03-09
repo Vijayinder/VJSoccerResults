@@ -3328,17 +3328,48 @@ def tool_club_vs_club(query: str) -> Any:
         else:
             edge = f"{short_a} no results yet"
 
+            # Head-to-head: direct results between the two clubs in this comp/ag
+        h2h_a_wins = h2h_b_wins = h2h_draws = 0
+        for _r in results:
+            _a    = _r.get("attributes", {})
+            _lg   = extract_league_from_league_name(_a.get("league_name", ""))
+            _home = _a.get("home_team_name", "")
+            _away = _a.get("away_team_name", "")
+            import re as _re2
+            _hag  = _re2.search(r"U\d{2}", _home, _re2.IGNORECASE)
+            _aag  = _re2.search(r"U\d{2}", _away, _re2.IGNORECASE)
+            if _lg.lower() != comp.lower(): continue
+            if not (_hag and _aag): continue
+            if _hag.group(0).upper() != ag or _aag.group(0).upper() != ag: continue
+            _hb = _strip_age_group(_home).lower()
+            _ab = _strip_age_group(_away).lower()
+            if not ((alias_a in _hb and alias_b in _ab) or (alias_b in _hb and alias_a in _ab)): continue
+            _hs = _a.get("home_score"); _as2 = _a.get("away_score")
+            if _hs is None or _as2 is None: continue
+            try: _hs, _as2 = int(_hs), int(_as2)
+            except: continue
+            _a_is_home = alias_a in _hb
+            if _hs > _as2:
+                if _a_is_home: h2h_a_wins += 1
+                else:          h2h_b_wins += 1
+            elif _as2 > _hs:
+                if _a_is_home: h2h_b_wins += 1
+                else:          h2h_a_wins += 1
+            else: h2h_draws += 1
+        _h2h_total = h2h_a_wins + h2h_b_wins + h2h_draws
+        h2h_str = f"{short_a} {h2h_a_wins}W-{h2h_draws}D-{h2h_b_wins}W" if _h2h_total else "\u2014"
+
         rows.append({
             "League":           comp,
             "Age":              ag,
-            "Gap":              edge,
+            "Positions":        edge,
+            "H2H":              h2h_str,
             f"{short_a} Pos":  f"{pos_a}/{total_teams}" if pos_a is not None else "\u2014",
             f"{short_a} Pts":  pts_a if pts_a is not None else "\u2014",
             f"{short_a} GD":   gd_a  if gd_a  is not None else "\u2014",
             f"{short_b} Pos":  f"{pos_b}/{total_teams}" if pos_b is not None else "\u2014",
             f"{short_b} Pts":  pts_b if pts_b is not None else "\u2014",
             f"{short_b} GD":   gd_b  if gd_b  is not None else "\u2014",
-            
         })
 
     if not rows:
@@ -3348,7 +3379,7 @@ def tool_club_vs_club(query: str) -> Any:
     return {
         "type":  "table",
         "data":  rows,
-        "title": f"\u2694\ufe0f {short_a} vs {short_b} \u2014 Ladder Positions by Age Group ({len(rows)} divisions)",
+        "title": f"\u2694\ufe0f {short_a} vs {short_b} \u2014 Ladder Positions & Head-to-Head by Age Group ({len(rows)} divisions)",
     }
 
 def tool_squad_list(query: str = "") -> Any:
