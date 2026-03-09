@@ -100,7 +100,30 @@ CLUB_ALIASES = {
     "hume city": "Hume City FC",
     "hume city fc": "Hume City FC",
 
+    #Northcote City FC
+    "Northcote":"Northcote City FC"
+    "North":"Northcote City FC"
+    
+    #    Ballarat City FC
+    "Ballarat":"Ballarat City FC"
+    
+    #Dandenong Thunder FC
+    "Dandenong":"Dandenong Thunder FC"
+    "Thunder":"Dandenong Thunder FC"
+
     # Add more as needed...
+    "Geelong":"Geelong SC"
+    "Murray":"Murray United FC"
+    "Pascoevale":"Pascoe Vale FC"
+    "Paco":"Pascoe Vale FC"
+    "Pascoe Vale":"Pascoe Vale FC"
+    "Pascovale":"Pascoe Vale FC"
+    "North Geelong":"North Geelong Warriors FC"
+    "Warriors":"North Geelong Warriors FC"
+    "Knights":"Melbourne Knights FC"
+    "Melbourne Knights":"Melbourne Knights FC"
+
+    
 }
 
 def get_canonical_club_name(query: str) -> Optional[str]:
@@ -3307,15 +3330,16 @@ def tool_club_vs_club(query: str) -> Any:
             edge = f"{short_a} no results yet"
 
         rows.append({
-            "Age":              ag,
             "League":           comp,
+            "Age":              ag,
+            "Gap":              edge,
             f"{short_a} Pos":  f"{pos_a}/{total_teams}" if pos_a is not None else "\u2014",
             f"{short_a} Pts":  pts_a if pts_a is not None else "\u2014",
             f"{short_a} GD":   gd_a  if gd_a  is not None else "\u2014",
             f"{short_b} Pos":  f"{pos_b}/{total_teams}" if pos_b is not None else "\u2014",
             f"{short_b} Pts":  pts_b if pts_b is not None else "\u2014",
             f"{short_b} GD":   gd_b  if gd_b  is not None else "\u2014",
-            "Gap":              edge,
+            
         })
 
     if not rows:
