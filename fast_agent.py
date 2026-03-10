@@ -2232,6 +2232,78 @@ def tool_top_scorers(query: str = "", limit: int = 50):
     }
 
 
+def tool_most_appearances(query: str = "", limit: int = 50):
+    """List players with most matches played, optionally filtered by age group, club or league."""
+    players = [
+        p for p in players_summary
+        if (not p.get("role") or p.get("role") == "player")
+    ]
+
+    if query:
+        players = filter_players_by_criteria(players, query, include_non_players=False)
+
+    if not players:
+        filter_desc = f" matching '{query}'" if query else ""
+        return {"type": "error", "message": f"❌ No players found{filter_desc}"}
+
+    # Build filter description
+    age_group   = extract_age_group(query) if query else None
+    base_club   = extract_base_club_name(query) if query else None
+    filter_parts = []
+    if base_club and age_group:
+        filter_parts.append(f"{base_club} {age_group}")
+    elif base_club:
+        filter_parts.append(base_club)
+    elif age_group:
+        filter_parts.append(age_group)
+    filter_desc = " — " + " ".join(filter_parts) if filter_parts else ""
+
+    data = []
+    for p in players:
+        stats  = p.get("stats", {})
+        all_m  = p.get("matches", [])
+        played = [m for m in all_m if m.get("available", False) or m.get("started", False)]
+        mp     = len(played)
+        if mp == 0:
+            continue
+        name   = f"{p.get('first_name', '')} {p.get('last_name', '')}".strip()
+        teams  = p.get("teams", []) or ([p.get("team_name")] if p.get("team_name") else [])
+        team   = teams[0] if teams else ""
+        leagues = p.get("leagues", []) or ([p.get("league_name")] if p.get("league_name") else [])
+        league_code = extract_league_from_league_name(leagues[0]) if leagues else "—"
+        ag_m   = re.search(r'U\d{2}', team, re.IGNORECASE)
+        age_grp = ag_m.group(0).upper() if ag_m else "—"
+        club   = re.sub(r'\s+U\d{2}$', '', team, flags=re.IGNORECASE).strip() or team
+        goals  = stats.get("goals", 0)
+        data.append({
+            "Player":  name,
+            "Club":    club,
+            "Div":     age_grp,
+            "League":  league_code,
+            "M":       mp,
+            "⚽":      goals,
+            "🟨":      stats.get("yellow_cards", 0),
+            "🟥":      stats.get("red_cards", 0),
+        })
+
+    # Sort by matches played descending
+    data.sort(key=lambda x: x["M"], reverse=True)
+
+    # Add rank after sort
+    for i, row in enumerate(data[:limit], 1):
+        row["#"] = i
+    # Reorder columns
+    cols = ["#", "Player", "Club", "Div", "League", "M", "⚽", "🟨", "🟥"]
+    data = [{c: row[c] for c in cols} for row in data[:limit]]
+
+    total = len(data)
+    return {
+        "type":  "table",
+        "data":  data,
+        "title": f"👟 Most Appearances{filter_desc} — showing top {min(limit, total)}",
+    }
+
+
 # ---------------------------------------------------------
 # 9. TEAM STATS
 # ---------------------------------------------------------
@@ -3775,13 +3847,23 @@ class FastQueryRouter:
         # --- 8. TOP SCORERS ---
         if any(word in q for word in ["top scorer","leading scorer", "top scorers", "golden boot"]):
             clean = re.sub(r'\b(top|scorer|scorers?|golden|boot|in|for|show|me|list|all|leagues?|divisions?)\b', '', q).strip()
-            # If no specific team/club filter remains, show ALL leagues (pass empty string)
             result = tool_top_scorers(clean, limit=50)
             if isinstance(result, dict) and result.get("type") == "table":
                 if clean:
                     result["title"] = f"🏆 Top scorers — {clean.title()}"
                 else:
                     result["title"] = f"🏆 Top Scorers — All Leagues & Divisions"
+            return result
+
+        # --- 8B. MOST APPEARANCES ---
+        if any(word in q for word in ["most appearances", "most matches", "most games", "appearances", "games played", "matches played"]):
+            clean = re.sub(r'\b(most|appearances?|matches?|games?|played|in|for|show|me|list|all|leagues?|divisions?)\b', '', q).strip()
+            result = tool_most_appearances(clean, limit=50)
+            if isinstance(result, dict) and result.get("type") == "table":
+                if clean:
+                    result["title"] = f"👟 Most Appearances — {clean.title()}"
+                else:
+                    result["title"] = f"👟 Most Appearances — All Leagues & Divisions"
             return result
             
         # --- 9. SQUAD LIST / TEAM PLAYER TABLE ---
