@@ -100,20 +100,13 @@ CLUB_ALIASES = {
     "hume city": "Hume City FC",
     "hume city fc": "Hume City FC",
 
-    # Northcote City FC
     "northcote": "Northcote City FC",
     "northcote city": "Northcote City FC",
-
-    # Ballarat City FC
     "ballarat": "Ballarat City FC",
     "ballarat city": "Ballarat City FC",
-
-    # Dandenong Thunder FC
     "dandenong": "Dandenong Thunder FC",
     "thunder": "Dandenong Thunder FC",
     "dandenong thunder": "Dandenong Thunder FC",
-
-    # Add more as needed...
     "geelong": "Geelong SC",
     "murray": "Murray United FC",
     "murray united": "Murray United FC",
@@ -135,18 +128,11 @@ CLUB_ALIASES = {
     "port melbourne": "Port Melbourne SC",
     "port melb": "Port Melbourne SC",
     "werribee": "Werribee City FC",
-    "werribee city": "Werribee City FC",
-    "st albans": "St Albans Saints FC",
-    "saints": "St Albans Saints FC",
     "fitzroy": "Fitzroy City SC",
     "fitzroy city": "Fitzroy City SC",
-    "springvale": "Springvale White Eagles FC",
-    "white eagles": "Springvale White Eagles FC",
-    "eagles": "Springvale White Eagles FC",
     "narre warren": "Narre Warren FC",
     "narre": "Narre Warren FC",
-    "casey": "Casey Comets FC",
-    "comets": "Casey Comets FC"
+    "casey": "Casey Comets FC"
 
     
 }
@@ -202,14 +188,75 @@ def load_json(name: str):
     else:
         return {}
 
-# Load data
-results = load_json("master_results.json")
-fixtures = load_json("fixtures.json")
-players_data = load_json("players_summary.json")
-staff_data = load_json("staff_summary.json")
-match_centre_data = load_json("master_match_centre.json")
-lineups_data = load_json("master_lineups.json")
-competition_overview = load_json("competition_overview.json")
+# ── Cached data loader — reloads every 30 minutes ───────────────────────
+try:
+    import streamlit as _st
+    @_st.cache_data(ttl=1800, show_spinner=False)
+    def _load_all_data():
+        _results             = load_json("master_results.json")
+        _fixtures            = load_json("fixtures.json")
+        _players_data        = load_json("players_summary.json")
+        _staff_data          = load_json("staff_summary.json")
+        _match_centre_data   = load_json("master_match_centre.json")
+        _lineups_data        = load_json("master_lineups.json")
+        _competition_overview = load_json("competition_overview.json")
+        _raw_players = _players_data.get("players", [])
+        _raw_staff   = _staff_data.get("staff", [])
+        return (
+            _results, _fixtures, _players_data, _staff_data,
+            _match_centre_data, _lineups_data, _competition_overview,
+            _raw_players, _raw_staff
+        )
+except ImportError:
+    def _load_all_data():
+        _results             = load_json("master_results.json")
+        _fixtures            = load_json("fixtures.json")
+        _players_data        = load_json("players_summary.json")
+        _staff_data          = load_json("staff_summary.json")
+        _match_centre_data   = load_json("master_match_centre.json")
+        _lineups_data        = load_json("master_lineups.json")
+        _competition_overview = load_json("competition_overview.json")
+        _raw_players = _players_data.get("players", [])
+        _raw_staff   = _staff_data.get("staff", [])
+        return (
+            _results, _fixtures, _players_data, _staff_data,
+            _match_centre_data, _lineups_data, _competition_overview,
+            _raw_players, _raw_staff
+        )
+
+def _refresh_data():
+    global results, fixtures, players_data, staff_data
+    global match_centre_data, lineups_data, competition_overview
+    global players_summary, staff_summary
+    global player_names, player_lookup, staff_names, staff_lookup
+    global _all_people, team_names
+    (
+        results, fixtures, players_data, staff_data,
+        match_centre_data, lineups_data, competition_overview,
+        _raw_players, _raw_staff
+    ) = _load_all_data()
+    players_summary = [_normalize_person(p, is_player=True)  for p in _raw_players]
+    staff_summary   = [_normalize_person(p, is_player=False) for p in _raw_staff]
+    player_names[:] = []; player_lookup.clear()
+    for p in players_summary:
+        fn = f"{p.get('first_name','')} {p.get('last_name','')}".strip()
+        if fn: player_names.append(fn); player_lookup[fn.lower()] = p
+    staff_names[:] = []; staff_lookup.clear()
+    for p in staff_summary:
+        fn = f"{p.get('first_name','')} {p.get('last_name','')}".strip()
+        if fn: staff_names.append(fn); staff_lookup[fn.lower()] = p
+    _all_people[:] = players_summary + staff_summary
+    team_names[:] = sorted({
+        p.get("team_name","") or (p.get("teams",[None])[0] or "")
+        for p in _all_people if p.get("team_name") or p.get("teams")
+    })
+
+# Initial load at import time
+(
+    results, fixtures, players_data, staff_data,
+    match_centre_data, lineups_data, competition_overview,
+    _raw_p, _raw_s
+) = _load_all_data()
 
 
 def _normalize_person(p: Dict, is_player: bool) -> Dict:
@@ -291,13 +338,8 @@ def _normalize_person(p: Dict, is_player: bool) -> Dict:
     return out
 
 
-# Players only - for player queries (top scorers, stats for player, yellow cards for players)
-_raw_players = players_data.get("players", [])
-players_summary = [_normalize_person(p, is_player=True) for p in _raw_players]
-
-# Staff only - for coach/staff queries (coaches yellow cards, staff list, etc.)
-_raw_staff = staff_data.get("staff", [])
-staff_summary = [_normalize_person(p, is_player=False) for p in _raw_staff]
+players_summary = [_normalize_person(p, is_player=True)  for p in _raw_p]
+staff_summary   = [_normalize_person(p, is_player=False) for p in _raw_s]
 
 # ---------------------------------------------------------
 # 2. Date formatting helper
@@ -393,37 +435,57 @@ def parse_date_utc_to_aest(date_str: str) -> Optional[datetime]:
     """Parse date string and return as Melbourne local time (AEST/AEDT).
 
     Timezone handling rules:
-    - Ends with 'Z'           → explicit UTC, convert to Melbourne
-    - Has offset (+HH:MM)     → parse as-is, convert to Melbourne
-    - Has 'T' but no tz info  → treat as ALREADY local Melbourne time (no conversion)
-    - Date only               → treat as Melbourne midnight (no conversion)
+    - Ends with 'Z'              → explicit UTC, convert to Melbourne
+    - Has offset (+HH:MM)        → parse as-is, convert to Melbourne
+    - Space-separated datetime   → results format (e.g. "2026-02-08 06:30:00"), treat as UTC
+    - Has 'T' but no tz info     → fixtures without Z, treat as UTC
+    - Date only (10 chars)       → Melbourne midnight, no time available
     """
     if not date_str:
         return None
     try:
         melbourne_tz = pytz.timezone('Australia/Melbourne')
+        utc_tz = pytz.utc
 
         if 'Z' in date_str:
-            # Explicit UTC — convert to Melbourne
+            # e.g. "2026-01-31T21:30:00.000000Z" — explicit UTC
             utc_dt = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
             return utc_dt.astimezone(melbourne_tz)
 
-        elif 'T' in date_str and ('+' in date_str[10:] or '-' in date_str[10:]):
-            # Has timezone offset — parse and convert to Melbourne
+        elif 'T' in date_str and ('+' in date_str[10:] or date_str.count('-') > 2):
+            # Has explicit timezone offset — parse and convert
             return datetime.fromisoformat(date_str).astimezone(melbourne_tz)
 
+        elif ' ' in date_str and len(date_str) > 10:
+            # e.g. "2026-02-08 06:30:00" — results format, stored as UTC
+            naive_dt = datetime.strptime(date_str[:19], "%Y-%m-%d %H:%M:%S")
+            utc_dt = utc_tz.localize(naive_dt)
+            return utc_dt.astimezone(melbourne_tz)
+
         elif 'T' in date_str:
-            # Has time but NO timezone marker — treat as local Melbourne time already
+            # e.g. "2026-01-31T21:30:00" — no tz marker, treat as UTC
             naive_dt = datetime.fromisoformat(date_str)
-            return melbourne_tz.localize(naive_dt)
+            utc_dt = utc_tz.localize(naive_dt)
+            return utc_dt.astimezone(melbourne_tz)
 
         else:
-            # Date only — treat as local Melbourne midnight
-            naive_dt = datetime.fromisoformat(date_str).replace(hour=0, minute=0, second=0)
+            # Date only e.g. "2026-02-08" — no time available, use midnight
+            naive_dt = datetime.fromisoformat(date_str[:10]).replace(hour=0, minute=0, second=0)
             return melbourne_tz.localize(naive_dt)
 
     except (ValueError, AttributeError, Exception):
         return None
+
+
+def _format_time_aest(match_dt, date_str: str = "") -> str:
+    """Format match time. Returns '—' if original date_str had no time component."""
+    if match_dt is None:
+        return "—"
+    # Has time if: contains T (fixtures) or space with time part (results)
+    has_time = 'T' in date_str or (' ' in date_str and len(date_str) > 10)
+    if not date_str or not has_time:
+        return "—"
+    return match_dt.strftime("%I:%M %p").lstrip("0")
 
 def get_last_sunday() -> datetime.date:
     """Get the date of last Sunday"""
@@ -483,36 +545,29 @@ def fuzzy_find(query: str, choices: List[str], threshold: int = 60) -> Optional[
     match, score, _ = res
     return match if score >= threshold else None
 
-# Build player index (players only - for "stats for X", top scorers, etc.)
-player_names = []
+player_names  = []
 player_lookup = {}
+staff_names   = []
+staff_lookup  = {}
+_all_people   = []
+team_names    = []
 
-for p in players_summary:
-    first = p.get("first_name", "")
-    last = p.get("last_name", "")
-    full_name = f"{first} {last}".strip()
-    if full_name:
-        player_names.append(full_name)
-        player_lookup[full_name.lower()] = p
+def _build_indices():
+    player_names[:] = []; player_lookup.clear()
+    for p in players_summary:
+        fn = f"{p.get('first_name','')} {p.get('last_name','')}".strip()
+        if fn: player_names.append(fn); player_lookup[fn.lower()] = p
+    staff_names[:] = []; staff_lookup.clear()
+    for p in staff_summary:
+        fn = f"{p.get('first_name','')} {p.get('last_name','')}".strip()
+        if fn: staff_names.append(fn); staff_lookup[fn.lower()] = p
+    _all_people[:] = players_summary + staff_summary
+    team_names[:] = sorted({
+        p.get("team_name","") or (p.get("teams",[None])[0] or "")
+        for p in _all_people if p.get("team_name") or p.get("teams")
+    })
 
-# Build staff index (for coach/staff queries - "coaches yellow cards", etc.)
-staff_names = []
-staff_lookup = {}
-for p in staff_summary:
-    first = p.get("first_name", "")
-    last = p.get("last_name", "")
-    full_name = f"{first} {last}".strip()
-    if full_name:
-        staff_names.append(full_name)
-        staff_lookup[full_name.lower()] = p
-
-# Build team/league/competition indices from BOTH players and staff
-_all_people = players_summary + staff_summary
-team_names = sorted({
-    p.get("team_name", "") or (p.get("teams", [None])[0] or "")
-    for p in _all_people
-    if p.get("team_name") or p.get("teams")
-})
+_build_indices()
 
 league_names = sorted({
     p.get("league_name", "") or (p.get("leagues", [None])[0] or "")
@@ -1101,7 +1156,7 @@ def tool_missing_scores(query: str = "", include_all_leagues: bool = False, toda
             missing_scores.append({
                 "date":          match_dt.strftime("%d-%b"),
                 "date_raw":      date_str,                    # raw for iso_date_aest
-                "time":          match_dt.strftime("%I:%M %p"),
+                "time":          _format_time_aest(match_dt, date_str),
                 "time_sort":     match_dt.time(),
                 "datetime_sort": match_dt,
                 "league":        extract_league_from_league_name(league),
@@ -1308,7 +1363,7 @@ def tool_todays_results(query: str = "", round_filter: int = None) -> Any:
             match_round = attrs.get("full_round") or attrs.get("round") or ""
             matched.append({
                 "datetime_sort": match_dt,
-                "time":          match_dt.strftime("%I:%M %p"),
+                "time":          _format_time_aest(match_dt, date_str),
                 "league":        match_league_code,
                 "home_team":     home_team,
                 "away_team":     away_team,
@@ -3354,113 +3409,56 @@ def tool_club_vs_club(query: str) -> Any:
         else:
             edge = f"{short_a} no results yet"
 
-            # Head-to-head: direct results between the two clubs in this comp/ag
-        h2h_a_wins = h2h_b_wins = h2h_draws = 0
-        for _r in results:
-            _a    = _r.get("attributes", {})
-            _lg   = extract_league_from_league_name(_a.get("league_name", ""))
-            _home = _a.get("home_team_name", "")
-            _away = _a.get("away_team_name", "")
-            import re as _re2
-            _hag  = _re2.search(r"U\d{2}", _home, _re2.IGNORECASE)
-            _aag  = _re2.search(r"U\d{2}", _away, _re2.IGNORECASE)
-            if _lg.lower() != comp.lower(): continue
-            if not (_hag and _aag): continue
-            if _hag.group(0).upper() != ag or _aag.group(0).upper() != ag: continue
-            _hb = _strip_age_group(_home).lower()
-            _ab = _strip_age_group(_away).lower()
-            if not ((alias_a in _hb and alias_b in _ab) or (alias_b in _hb and alias_a in _ab)): continue
-            _hs = _a.get("home_score"); _as2 = _a.get("away_score")
-            if _hs is None or _as2 is None: continue
-            try: _hs, _as2 = int(_hs), int(_as2)
-            except: continue
-            _a_is_home = alias_a in _hb
-            if _hs > _as2:
-                if _a_is_home: h2h_a_wins += 1
-                else:          h2h_b_wins += 1
-            elif _as2 > _hs:
-                if _a_is_home: h2h_b_wins += 1
-                else:          h2h_a_wins += 1
-            else: h2h_draws += 1
-        _h2h_total = h2h_a_wins + h2h_b_wins + h2h_draws
-        h2h_str = f"{short_a} {h2h_a_wins}W-{h2h_draws}D-{h2h_b_wins}W" if _h2h_total else "\u2014"
-
+        _a_summary = f"{pos_a}/{total_teams} & {pts_a}pts" if pos_a is not None else "\u2014"
+        _b_summary = f"{pos_b}/{total_teams} & {pts_b}pts" if pos_b is not None else "\u2014"
         rows.append({
-            "League":           comp,
-            "Age":              ag,
-            "Positions":        edge,
-            "H2H":              h2h_str,
-            f"{short_a} Pos":  f"{pos_a}/{total_teams}" if pos_a is not None else "\u2014",
-            f"{short_a} Pts":  pts_a if pts_a is not None else "\u2014",
-            f"{short_a} GD":   gd_a  if gd_a  is not None else "\u2014",
-            f"{short_b} Pos":  f"{pos_b}/{total_teams}" if pos_b is not None else "\u2014",
-            f"{short_b} Pts":  pts_b if pts_b is not None else "\u2014",
-            f"{short_b} GD":   gd_b  if gd_b  is not None else "\u2014",
+            "League":     comp,
+            "Age":        ag,
+            "Positions":  edge,
+            f"{short_a}": _a_summary,
+            f"{short_b}": _b_summary,
         })
 
     if not rows:
         return {"type": "error",
                 "message": f"\u274c Shared competitions found but no ladder data yet for {short_a} vs {short_b}"}
 
-    # ── Build match results table — every direct match between the two clubs ──
     match_rows = []
     for r in sorted(results, key=lambda x: x.get("attributes", {}).get("date", "")):
-        a     = r.get("attributes", {})
-        home  = a.get("home_team_name", "")
-        away  = a.get("away_team_name", "")
-        hb    = _strip_age_group(home).lower()
-        ab    = _strip_age_group(away).lower()
-        is_h2h = (
-            (alias_a in hb and alias_b in ab) or
-            (alias_b in hb and alias_a in ab)
-        )
-        if not is_h2h:
+        a    = r.get("attributes", {})
+        home = a.get("home_team_name", "")
+        away = a.get("away_team_name", "")
+        hb   = _strip_age_group(home).lower()
+        ab   = _strip_age_group(away).lower()
+        if not ((alias_a in hb and alias_b in ab) or (alias_b in hb and alias_a in ab)):
             continue
-        hs = a.get("home_score")
+        hs  = a.get("home_score")
         as_ = a.get("away_score")
-        score = f"{hs}–{as_}" if hs is not None and as_ is not None else "—"
+        score = f"{hs}\u2013{as_}" if hs is not None and as_ is not None else "\u2014"
         ag_m  = re.search(r"U\d{2}", home, re.IGNORECASE)
-        ag    = ag_m.group(0).upper() if ag_m else "—"
+        ag    = ag_m.group(0).upper() if ag_m else "\u2014"
         lg    = extract_league_from_league_name(a.get("league_name", ""))
-        date  = format_date_aest(a.get("date", "")) or a.get("date", "—")
-
-        # Result label from club_a perspective
+        date  = format_date_aest(a.get("date", "")) or a.get("date", "\u2014")
+        result = "\u2014"
         if hs is not None and as_ is not None:
             try:
                 hs_i, as_i = int(hs), int(as_)
-                a_is_home = alias_a in hb
-                a_goals   = hs_i if a_is_home else as_i
-                b_goals   = as_i if a_is_home else hs_i
+                a_goals = hs_i if alias_a in hb else as_i
+                b_goals = as_i if alias_a in hb else hs_i
                 if a_goals > b_goals:   result = f"{short_a} Win"
                 elif b_goals > a_goals: result = f"{short_b} Win"
                 else:                   result = "Draw"
             except Exception:
-                result = "—"
-        else:
-            result = "—"
-
-        match_rows.append({
-            "Date":   date,
-            "Age":    ag,
-            "League": lg,
-            "Home":   home,
-            "Score":  score,
-            "Away":   away,
-            "Result": result,
-        })
+                pass
+        match_rows.append({"Date": date, "Age": ag, "League": lg,
+                           "Home": home, "Score": score, "Away": away, "Result": result})
 
     return {
         "type":   "multi_table",
         "title":  f"\u2694\ufe0f {short_a} vs {short_b}",
         "tables": [
-            {
-                "title": f"\U0001f4ca Ladder Positions ({len(rows)} divisions)",
-                "data":  rows,
-            },
-            {
-                "title": f"\u26bd Matches ({len(match_rows)} played)" if match_rows else "\u26bd Matches (none yet)",
-                "data":  match_rows,
-            },
+            {"title": f"\U0001f4ca Ladder Positions ({len(rows)} divisions)", "data": rows},
+            {"title": f"\u26bd Matches ({len(match_rows)} played)" if match_rows else "\u26bd Matches (none yet)", "data": match_rows},
         ],
     }
 
@@ -3589,6 +3587,7 @@ class FastQueryRouter:
         
     def process(self, query: str):
         """Route query to appropriate handler"""
+        _refresh_data()  # picks up new JSON files every 30 min via st.cache_data TTL
         q = query.lower().strip()
  
         # ADD THIS DEBUG BLOCK RIGHT HERE
