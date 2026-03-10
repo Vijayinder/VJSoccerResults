@@ -1264,6 +1264,10 @@ def is_natural_language_query(query):
         "registered in 2", "registered at 2",
         "dual matches", "matches both teams", "matches each team",
         "breakdown", " vs ", " v ",
+        # Appearances / scorers
+        "most appearances", "most matches", "most games", "appearances",
+        "games played", "matches played", "top scorers", "golden boot",
+        "leading scorer",
     ]
     return any(keyword in query.lower() for keyword in keywords)
 
