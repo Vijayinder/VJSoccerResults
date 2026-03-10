@@ -100,27 +100,53 @@ CLUB_ALIASES = {
     "hume city": "Hume City FC",
     "hume city fc": "Hume City FC",
 
-    #Northcote City FC
-    "Northcote": "Northcote City FC",
-   
-    #    Ballarat City FC
-    "Ballarat": "Ballarat City FC",
-    
-    #Dandenong Thunder FC
-    "Dandenong": "Dandenong Thunder FC",
-    "Thunder": "Dandenong Thunder FC",
+    # Northcote City FC
+    "northcote": "Northcote City FC",
+    "northcote city": "Northcote City FC",
+
+    # Ballarat City FC
+    "ballarat": "Ballarat City FC",
+    "ballarat city": "Ballarat City FC",
+
+    # Dandenong Thunder FC
+    "dandenong": "Dandenong Thunder FC",
+    "thunder": "Dandenong Thunder FC",
+    "dandenong thunder": "Dandenong Thunder FC",
 
     # Add more as needed...
-    "Geelong": "Geelong SC",
-    "Murray": "Murray United FC",
-    "Pascoevale": "Pascoe Vale FC",
-    "Paco": "Pascoe Vale FC",
-    "Pascoe Vale": "Pascoe Vale FC",
-    "Pascovale": "Pascoe Vale FC",
-    "North Geelong": "North Geelong Warriors FC",
-    "Warriors": "North Geelong Warriors FC",
-    "Knights": "Melbourne Knights FC",
-    "Melbourne Knights": "Melbourne Knights FC"
+    "geelong": "Geelong SC",
+    "murray": "Murray United FC",
+    "murray united": "Murray United FC",
+    "pascoevale": "Pascoe Vale FC",
+    "paco": "Pascoe Vale FC",
+    "pascoe vale": "Pascoe Vale FC",
+    "pascovale": "Pascoe Vale FC",
+    "north geelong": "North Geelong Warriors FC",
+    "warriors": "North Geelong Warriors FC",
+    "knights": "Melbourne Knights FC",
+    "melbourne knights": "Melbourne Knights FC",
+    "berwick": "Berwick City FC",
+    "berwick city": "Berwick City FC",
+    "oakleigh": "Oakleigh Cannons FC",
+    "oakleigh cannons": "Oakleigh Cannons FC",
+    "cannons": "Oakleigh Cannons FC",
+    "south melbourne": "South Melbourne FC",
+    "south melb": "South Melbourne FC",
+    "port melbourne": "Port Melbourne SC",
+    "port melb": "Port Melbourne SC",
+    "werribee": "Werribee City FC",
+    "werribee city": "Werribee City FC",
+    "st albans": "St Albans Saints FC",
+    "saints": "St Albans Saints FC",
+    "fitzroy": "Fitzroy City SC",
+    "fitzroy city": "Fitzroy City SC",
+    "springvale": "Springvale White Eagles FC",
+    "white eagles": "Springvale White Eagles FC",
+    "eagles": "Springvale White Eagles FC",
+    "narre warren": "Narre Warren FC",
+    "narre": "Narre Warren FC",
+    "casey": "Casey Comets FC",
+    "comets": "Casey Comets FC"
 
     
 }
