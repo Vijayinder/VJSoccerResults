@@ -1264,6 +1264,10 @@ def is_natural_language_query(query):
         "registered in 2", "registered at 2",
         "dual matches", "matches both teams", "matches each team",
         "breakdown", " vs ", " v ",
+        # Appearances / scorers
+        "most appearances", "most matches", "most games", "appearances",
+        "games played", "matches played", "top scorers", "golden boot",
+        "leading scorer",
     ]
     return any(keyword in query.lower() for keyword in keywords)
 
@@ -1274,7 +1278,28 @@ def is_natural_language_query(query):
 def show_admin_dashboard():
     """Display admin dashboard with activity analytics"""
     st.markdown("## 📊 Admin Dashboard")
-    
+
+    # ── Force data refresh button ──
+    col_r1, col_r2, col_r3 = st.columns([1, 2, 5])
+    with col_r1:
+        if st.button("🔄 Force Refresh Data", use_container_width=True):
+            try:
+                from fast_agent import _load_all_data, _refresh_data
+                _load_all_data.clear()
+                _refresh_data()
+                st.success("✅ Data reloaded from disk!")
+            except Exception as e:
+                st.error(f"Refresh failed: {e}")
+    with col_r2:
+        try:
+            from fast_agent import _load_all_data
+            import inspect
+            # Show when cache was last populated (approximate)
+            st.caption("Cache refreshes every 5 min automatically")
+        except Exception:
+            pass
+
+    st.markdown("---")
     # Tabs for different views
 
     tab1, tab2, tab3, tab4 = st.tabs(["📈 Analytics", "👥 Users", "📋 Recent Activity", "🌐 IP Tracking"])
@@ -1659,7 +1684,7 @@ def main_app():
     search = st.text_input(
         "Search",
         key="search_input",
-        placeholder="Try: 'Stats for Shaurya','top scorers in U16', 'yellow cards Heidelberg', 'missing scores'...",
+        placeholder="Try: 'Stats for Shaurya', 'top scorers U16', 'most appearances Heidelberg', 'yellow cards U16', 'missing scores'...",
         label_visibility="collapsed"
     )
     # Bump version when user types a new query (Enter key)
@@ -1722,6 +1747,12 @@ def main_app():
             q1 = f"top scorers in {user_club}"
             if st.button(q1, key="ex1", use_container_width=False):
                 st.session_state["clicked_query"] = q1
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
+
+            q1b = f"most appearances in {user_club}"
+            if st.button(q1b, key="ex1b", use_container_width=False):
+                st.session_state["clicked_query"] = q1b
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
