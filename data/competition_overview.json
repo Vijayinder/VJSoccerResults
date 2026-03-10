@@ -334,6 +334,71 @@
         "overall_rank": 5
       },
       {
+        "club": "Dandenong Thunder FC",
+        "age_groups": {
+          "U18": {
+            "position": 3,
+            "played": 6,
+            "wins": 5,
+            "draws": 1,
+            "losses": 0,
+            "gf": 20,
+            "ga": 7,
+            "gd": 13,
+            "points": 16
+          },
+          "U16": {
+            "position": 10,
+            "played": 6,
+            "wins": 2,
+            "draws": 1,
+            "losses": 3,
+            "gf": 13,
+            "ga": 12,
+            "gd": 1,
+            "points": 7
+          },
+          "U15": {
+            "position": 1,
+            "played": 6,
+            "wins": 5,
+            "draws": 0,
+            "losses": 1,
+            "gf": 14,
+            "ga": 10,
+            "gd": 4,
+            "points": 15
+          },
+          "U14": {
+            "position": 16,
+            "played": 6,
+            "wins": 0,
+            "draws": 0,
+            "losses": 6,
+            "gf": 5,
+            "ga": 25,
+            "gd": -20,
+            "points": 0
+          },
+          "U13": {
+            "position": 7,
+            "played": 6,
+            "wins": 3,
+            "draws": 1,
+            "losses": 2,
+            "gf": 15,
+            "ga": 12,
+            "gd": 3,
+            "points": 10
+          }
+        },
+        "total_position_points": 37,
+        "total_gf": 67,
+        "total_ga": 66,
+        "age_group_count": 5,
+        "overall_rank": 6
+      },
+      {
         "club": "Northcote City FC",
         "age_groups": {
           "U18": {
@@ -396,78 +461,13 @@
         "total_gf": 69,
         "total_ga": 55,
         "age_group_count": 5,
-        "overall_rank": 6
-      },
-      {
-        "club": "Dandenong Thunder FC",
-        "age_groups": {
-          "U18": {
-            "position": 4,
-            "played": 6,
-            "wins": 4,
-            "draws": 1,
-            "losses": 1,
-            "gf": 19,
-            "ga": 8,
-            "gd": 11,
-            "points": 13
-          },
-          "U16": {
-            "position": 10,
-            "played": 6,
-            "wins": 2,
-            "draws": 1,
-            "losses": 3,
-            "gf": 13,
-            "ga": 12,
-            "gd": 1,
-            "points": 7
-          },
-          "U15": {
-            "position": 1,
-            "played": 6,
-            "wins": 5,
-            "draws": 0,
-            "losses": 1,
-            "gf": 14,
-            "ga": 10,
-            "gd": 4,
-            "points": 15
-          },
-          "U14": {
-            "position": 16,
-            "played": 6,
-            "wins": 0,
-            "draws": 0,
-            "losses": 6,
-            "gf": 5,
-            "ga": 25,
-            "gd": -20,
-            "points": 0
-          },
-          "U13": {
-            "position": 7,
-            "played": 6,
-            "wins": 3,
-            "draws": 1,
-            "losses": 2,
-            "gf": 15,
-            "ga": 12,
-            "gd": 3,
-            "points": 10
-          }
-        },
-        "total_position_points": 38,
-        "total_gf": 66,
-        "total_ga": 67,
-        "age_group_count": 5,
         "overall_rank": 7
       },
       {
         "club": "Langwarrin SC",
         "age_groups": {
           "U18": {
-            "position": 10,
+            "position": 9,
             "played": 6,
             "wins": 2,
             "draws": 0,
@@ -522,7 +522,7 @@
             "points": 6
           }
         },
-        "total_position_points": 42,
+        "total_position_points": 41,
         "total_gf": 64,
         "total_ga": 56,
         "age_group_count": 5,
@@ -532,7 +532,7 @@
         "club": "Brunswick Juventus FC",
         "age_groups": {
           "U18": {
-            "position": 11,
+            "position": 10,
             "played": 6,
             "wins": 2,
             "draws": 0,
@@ -587,7 +587,7 @@
             "points": 14
           }
         },
-        "total_position_points": 43,
+        "total_position_points": 42,
         "total_gf": 60,
         "total_ga": 69,
         "age_group_count": 5,
@@ -597,7 +597,7 @@
         "club": "Geelong SC",
         "age_groups": {
           "U18": {
-            "position": 12,
+            "position": 11,
             "played": 5,
             "wins": 1,
             "draws": 2,
@@ -652,7 +652,7 @@
             "points": 13
           }
         },
-        "total_position_points": 44,
+        "total_position_points": 43,
         "total_gf": 57,
         "total_ga": 51,
         "age_group_count": 5,
@@ -857,7 +857,7 @@
         "club": "North Geelong Warriors FC",
         "age_groups": {
           "U18": {
-            "position": 3,
+            "position": 4,
             "played": 6,
             "wins": 5,
             "draws": 1,
@@ -912,76 +912,11 @@
             "points": 12
           }
         },
-        "total_position_points": 50,
+        "total_position_points": 51,
         "total_gf": 51,
         "total_ga": 63,
         "age_group_count": 5,
         "overall_rank": 14
-      },
-      {
-        "club": "Heidelberg United FC",
-        "age_groups": {
-          "U18": {
-            "position": 9,
-            "played": 6,
-            "wins": 2,
-            "draws": 1,
-            "losses": 3,
-            "gf": 11,
-            "ga": 10,
-            "gd": 1,
-            "points": 7
-          },
-          "U16": {
-            "position": 9,
-            "played": 6,
-            "wins": 2,
-            "draws": 2,
-            "losses": 2,
-            "gf": 7,
-            "ga": 14,
-            "gd": -7,
-            "points": 8
-          },
-          "U15": {
-            "position": 13,
-            "played": 6,
-            "wins": 1,
-            "draws": 2,
-            "losses": 3,
-            "gf": 5,
-            "ga": 14,
-            "gd": -9,
-            "points": 5
-          },
-          "U14": {
-            "position": 14,
-            "played": 6,
-            "wins": 1,
-            "draws": 0,
-            "losses": 5,
-            "gf": 10,
-            "ga": 19,
-            "gd": -9,
-            "points": 3
-          },
-          "U13": {
-            "position": 16,
-            "played": 6,
-            "wins": 0,
-            "draws": 1,
-            "losses": 5,
-            "gf": 3,
-            "ga": 17,
-            "gd": -14,
-            "points": 1
-          }
-        },
-        "total_position_points": 61,
-        "total_gf": 36,
-        "total_ga": 74,
-        "age_group_count": 5,
-        "overall_rank": 15
       },
       {
         "club": "Altona Magic SC",
@@ -1045,6 +980,71 @@
         "total_position_points": 63,
         "total_gf": 35,
         "total_ga": 90,
+        "age_group_count": 5,
+        "overall_rank": 15
+      },
+      {
+        "club": "Heidelberg United FC",
+        "age_groups": {
+          "U18": {
+            "position": 12,
+            "played": 6,
+            "wins": 1,
+            "draws": 1,
+            "losses": 4,
+            "gf": 10,
+            "ga": 11,
+            "gd": -1,
+            "points": 4
+          },
+          "U16": {
+            "position": 9,
+            "played": 6,
+            "wins": 2,
+            "draws": 2,
+            "losses": 2,
+            "gf": 7,
+            "ga": 14,
+            "gd": -7,
+            "points": 8
+          },
+          "U15": {
+            "position": 13,
+            "played": 6,
+            "wins": 1,
+            "draws": 2,
+            "losses": 3,
+            "gf": 5,
+            "ga": 14,
+            "gd": -9,
+            "points": 5
+          },
+          "U14": {
+            "position": 14,
+            "played": 6,
+            "wins": 1,
+            "draws": 0,
+            "losses": 5,
+            "gf": 10,
+            "ga": 19,
+            "gd": -9,
+            "points": 3
+          },
+          "U13": {
+            "position": 16,
+            "played": 6,
+            "wins": 0,
+            "draws": 1,
+            "losses": 5,
+            "gf": 3,
+            "ga": 17,
+            "gd": -14,
+            "points": 1
+          }
+        },
+        "total_position_points": 64,
+        "total_gf": 35,
+        "total_ga": 75,
         "age_group_count": 5,
         "overall_rank": 16
       }
@@ -3412,5 +3412,5 @@
       }
     ]
   },
-  "_last_updated": "2026-03-10T16:00:30.175252"
+  "_last_updated": "2026-03-10T20:00:26.456750"
 }
