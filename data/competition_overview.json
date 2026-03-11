@@ -23,7 +23,7 @@
             "points": 16
           },
           "U16": {
-            "position": 2,
+            "position": 3,
             "played": 6,
             "wins": 5,
             "draws": 0,
@@ -67,7 +67,7 @@
             "points": 11
           }
         },
-        "total_position_points": 23,
+        "total_position_points": 24,
         "total_gf": 85,
         "total_ga": 30,
         "age_group_count": 5,
@@ -139,6 +139,71 @@
         "overall_rank": 2
       },
       {
+        "club": "Berwick City SC",
+        "age_groups": {
+          "U18": {
+            "position": 7,
+            "played": 6,
+            "wins": 2,
+            "draws": 3,
+            "losses": 1,
+            "gf": 14,
+            "ga": 10,
+            "gd": 4,
+            "points": 9
+          },
+          "U16": {
+            "position": 1,
+            "played": 6,
+            "wins": 5,
+            "draws": 1,
+            "losses": 0,
+            "gf": 15,
+            "ga": 8,
+            "gd": 7,
+            "points": 16
+          },
+          "U15": {
+            "position": 4,
+            "played": 6,
+            "wins": 4,
+            "draws": 1,
+            "losses": 1,
+            "gf": 13,
+            "ga": 8,
+            "gd": 5,
+            "points": 13
+          },
+          "U14": {
+            "position": 7,
+            "played": 6,
+            "wins": 3,
+            "draws": 1,
+            "losses": 2,
+            "gf": 11,
+            "ga": 6,
+            "gd": 5,
+            "points": 10
+          },
+          "U13": {
+            "position": 13,
+            "played": 6,
+            "wins": 2,
+            "draws": 0,
+            "losses": 4,
+            "gf": 6,
+            "ga": 10,
+            "gd": -4,
+            "points": 6
+          }
+        },
+        "total_position_points": 32,
+        "total_gf": 59,
+        "total_ga": 42,
+        "age_group_count": 5,
+        "overall_rank": 3
+      },
+      {
         "club": "Ballarat City FC",
         "age_groups": {
           "U18": {
@@ -200,71 +265,6 @@
         "total_position_points": 33,
         "total_gf": 70,
         "total_ga": 57,
-        "age_group_count": 5,
-        "overall_rank": 3
-      },
-      {
-        "club": "Berwick City SC",
-        "age_groups": {
-          "U18": {
-            "position": 8,
-            "played": 5,
-            "wins": 2,
-            "draws": 2,
-            "losses": 1,
-            "gf": 13,
-            "ga": 9,
-            "gd": 4,
-            "points": 8
-          },
-          "U16": {
-            "position": 3,
-            "played": 5,
-            "wins": 5,
-            "draws": 0,
-            "losses": 0,
-            "gf": 12,
-            "ga": 5,
-            "gd": 7,
-            "points": 15
-          },
-          "U15": {
-            "position": 4,
-            "played": 6,
-            "wins": 4,
-            "draws": 1,
-            "losses": 1,
-            "gf": 13,
-            "ga": 8,
-            "gd": 5,
-            "points": 13
-          },
-          "U14": {
-            "position": 7,
-            "played": 6,
-            "wins": 3,
-            "draws": 1,
-            "losses": 2,
-            "gf": 11,
-            "ga": 6,
-            "gd": 5,
-            "points": 10
-          },
-          "U13": {
-            "position": 13,
-            "played": 6,
-            "wins": 2,
-            "draws": 0,
-            "losses": 4,
-            "gf": 6,
-            "ga": 10,
-            "gd": -4,
-            "points": 6
-          }
-        },
-        "total_position_points": 35,
-        "total_gf": 55,
-        "total_ga": 38,
         "age_group_count": 5,
         "overall_rank": 4
       },
@@ -402,7 +402,7 @@
         "club": "Northcote City FC",
         "age_groups": {
           "U18": {
-            "position": 7,
+            "position": 8,
             "played": 6,
             "wins": 3,
             "draws": 0,
@@ -413,7 +413,7 @@
             "points": 9
           },
           "U16": {
-            "position": 1,
+            "position": 2,
             "played": 6,
             "wins": 5,
             "draws": 0,
@@ -457,7 +457,7 @@
             "points": 1
           }
         },
-        "total_position_points": 38,
+        "total_position_points": 40,
         "total_gf": 69,
         "total_ga": 55,
         "age_group_count": 5,
@@ -529,10 +529,75 @@
         "overall_rank": 8
       },
       {
-        "club": "Brunswick Juventus FC",
+        "club": "Geelong SC",
         "age_groups": {
           "U18": {
             "position": 10,
+            "played": 6,
+            "wins": 1,
+            "draws": 3,
+            "losses": 2,
+            "gf": 11,
+            "ga": 17,
+            "gd": -6,
+            "points": 6
+          },
+          "U16": {
+            "position": 11,
+            "played": 6,
+            "wins": 2,
+            "draws": 1,
+            "losses": 3,
+            "gf": 10,
+            "ga": 10,
+            "gd": 0,
+            "points": 7
+          },
+          "U15": {
+            "position": 8,
+            "played": 6,
+            "wins": 2,
+            "draws": 3,
+            "losses": 1,
+            "gf": 8,
+            "ga": 7,
+            "gd": 1,
+            "points": 9
+          },
+          "U14": {
+            "position": 9,
+            "played": 6,
+            "wins": 3,
+            "draws": 0,
+            "losses": 3,
+            "gf": 17,
+            "ga": 11,
+            "gd": 6,
+            "points": 9
+          },
+          "U13": {
+            "position": 4,
+            "played": 6,
+            "wins": 4,
+            "draws": 1,
+            "losses": 1,
+            "gf": 15,
+            "ga": 10,
+            "gd": 5,
+            "points": 13
+          }
+        },
+        "total_position_points": 42,
+        "total_gf": 61,
+        "total_ga": 55,
+        "age_group_count": 5,
+        "overall_rank": 9
+      },
+      {
+        "club": "Brunswick Juventus FC",
+        "age_groups": {
+          "U18": {
+            "position": 11,
             "played": 6,
             "wins": 2,
             "draws": 0,
@@ -587,74 +652,9 @@
             "points": 14
           }
         },
-        "total_position_points": 42,
+        "total_position_points": 43,
         "total_gf": 60,
         "total_ga": 69,
-        "age_group_count": 5,
-        "overall_rank": 9
-      },
-      {
-        "club": "Geelong SC",
-        "age_groups": {
-          "U18": {
-            "position": 11,
-            "played": 5,
-            "wins": 1,
-            "draws": 2,
-            "losses": 2,
-            "gf": 10,
-            "ga": 16,
-            "gd": -6,
-            "points": 5
-          },
-          "U16": {
-            "position": 11,
-            "played": 5,
-            "wins": 2,
-            "draws": 0,
-            "losses": 3,
-            "gf": 7,
-            "ga": 7,
-            "gd": 0,
-            "points": 6
-          },
-          "U15": {
-            "position": 8,
-            "played": 6,
-            "wins": 2,
-            "draws": 3,
-            "losses": 1,
-            "gf": 8,
-            "ga": 7,
-            "gd": 1,
-            "points": 9
-          },
-          "U14": {
-            "position": 9,
-            "played": 6,
-            "wins": 3,
-            "draws": 0,
-            "losses": 3,
-            "gf": 17,
-            "ga": 11,
-            "gd": 6,
-            "points": 9
-          },
-          "U13": {
-            "position": 4,
-            "played": 6,
-            "wins": 4,
-            "draws": 1,
-            "losses": 1,
-            "gf": 15,
-            "ga": 10,
-            "gd": 5,
-            "points": 13
-          }
-        },
-        "total_position_points": 43,
-        "total_gf": 57,
-        "total_ga": 51,
         "age_group_count": 5,
         "overall_rank": 10
       },
@@ -3412,5 +3412,5 @@
       }
     ]
   },
-  "_last_updated": "2026-03-11T12:00:26.187550"
+  "_last_updated": "2026-03-11T16:00:29.991897"
 }

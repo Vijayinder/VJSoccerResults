@@ -340,7 +340,7 @@
       },
       "team_stats": {
         "Geelong SC U18": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -349,7 +349,7 @@
         }
       },
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -412,6 +412,18 @@
           "home_or_away": "home",
           "opponent_team_name": "Altona Magic SC U18",
           "opponent_team_id": "pmvzPBp6mv",
+          "events": []
+        },
+        {
+          "match_hash_id": "lNbJjQoq3N",
+          "date": "2026-03-08T04:00:00.000000Z",
+          "team_name": "Geelong SC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Berwick City SC U18",
+          "opponent_team_id": "emA1j2WMmB",
           "events": []
         }
       ]
@@ -435,7 +447,7 @@
       },
       "team_stats": {
         "Geelong SC U18": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -444,7 +456,7 @@
         }
       },
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -507,6 +519,18 @@
           "home_or_away": "home",
           "opponent_team_name": "Altona Magic SC U18",
           "opponent_team_id": "pmvzPBp6mv",
+          "events": []
+        },
+        {
+          "match_hash_id": "lNbJjQoq3N",
+          "date": "2026-03-08T04:00:00.000000Z",
+          "team_name": "Geelong SC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Berwick City SC U18",
+          "opponent_team_id": "emA1j2WMmB",
           "events": []
         }
       ]
@@ -533,7 +557,7 @@
       },
       "team_stats": {
         "Geelong SC U18": {
-          "matches_played": 4,
+          "matches_played": 5,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -550,7 +574,7 @@
         }
       },
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -613,6 +637,18 @@
           "home_or_away": "home",
           "opponent_team_name": "Altona Magic SC U18",
           "opponent_team_id": "pmvzPBp6mv",
+          "events": []
+        },
+        {
+          "match_hash_id": "lNbJjQoq3N",
+          "date": "2026-03-08T04:00:00.000000Z",
+          "team_name": "Geelong SC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Berwick City SC U18",
+          "opponent_team_id": "emA1j2WMmB",
           "events": []
         }
       ]
@@ -8840,7 +8876,7 @@
       },
       "team_stats": {
         "Geelong SC U16": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -8849,7 +8885,7 @@
         }
       },
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -8912,6 +8948,18 @@
           "home_or_away": "home",
           "opponent_team_name": "Altona Magic SC U16",
           "opponent_team_id": "4KLnPqlLmq",
+          "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3kLlK",
+          "date": "2026-03-08T02:00:00.000000Z",
+          "team_name": "Geelong SC U16",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Berwick City SC U16",
+          "opponent_team_id": "BdD1Bqb6mb",
           "events": []
         }
       ]
@@ -8935,7 +8983,7 @@
       },
       "team_stats": {
         "Geelong SC U16": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -8944,7 +8992,7 @@
         }
       },
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -9007,6 +9055,18 @@
           "home_or_away": "home",
           "opponent_team_name": "Altona Magic SC U16",
           "opponent_team_id": "4KLnPqlLmq",
+          "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3kLlK",
+          "date": "2026-03-08T02:00:00.000000Z",
+          "team_name": "Geelong SC U16",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Berwick City SC U16",
+          "opponent_team_id": "BdD1Bqb6mb",
           "events": []
         }
       ]
@@ -9165,7 +9225,7 @@
       },
       "team_stats": {
         "Geelong SC U16": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -9174,7 +9234,7 @@
         }
       },
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -9237,6 +9297,18 @@
           "home_or_away": "home",
           "opponent_team_name": "Altona Magic SC U16",
           "opponent_team_id": "4KLnPqlLmq",
+          "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3kLlK",
+          "date": "2026-03-08T02:00:00.000000Z",
+          "team_name": "Geelong SC U16",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "away",
+          "opponent_team_name": "Berwick City SC U16",
+          "opponent_team_id": "BdD1Bqb6mb",
           "events": []
         }
       ]
@@ -19884,7 +19956,7 @@
       },
       "team_stats": {
         "Berwick City SC U18": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -19893,7 +19965,7 @@
         }
       },
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -19956,6 +20028,18 @@
           "home_or_away": "away",
           "opponent_team_name": "Murray United FC U18",
           "opponent_team_id": "am1qvakjmw",
+          "events": []
+        },
+        {
+          "match_hash_id": "lNbJjQoq3N",
+          "date": "2026-03-08T04:00:00.000000Z",
+          "team_name": "Berwick City SC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Geelong SC U18",
+          "opponent_team_id": "BdD1Bq04mb",
           "events": []
         }
       ]
@@ -19979,7 +20063,7 @@
       },
       "team_stats": {
         "Berwick City SC U18": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -19988,7 +20072,7 @@
         }
       },
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -20051,6 +20135,18 @@
           "home_or_away": "away",
           "opponent_team_name": "Murray United FC U18",
           "opponent_team_id": "am1qvakjmw",
+          "events": []
+        },
+        {
+          "match_hash_id": "lNbJjQoq3N",
+          "date": "2026-03-08T04:00:00.000000Z",
+          "team_name": "Berwick City SC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Geelong SC U18",
+          "opponent_team_id": "BdD1Bq04mb",
           "events": []
         }
       ]
@@ -20087,7 +20183,7 @@
       },
       "team_stats": {
         "Berwick City SC U18": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -20095,7 +20191,7 @@
           "red_cards": 0
         },
         "Berwick City SC U16": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -20128,7 +20224,7 @@
         }
       },
       "stats": {
-        "matches_attended": 28,
+        "matches_attended": 30,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -20467,6 +20563,30 @@
           "home_or_away": "home",
           "opponent_team_name": "Geelong SC U15",
           "opponent_team_id": "ld4OlakrKW",
+          "events": []
+        },
+        {
+          "match_hash_id": "lNbJjQoq3N",
+          "date": "2026-03-08T04:00:00.000000Z",
+          "team_name": "Berwick City SC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Geelong SC U18",
+          "opponent_team_id": "BdD1Bq04mb",
+          "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3kLlK",
+          "date": "2026-03-08T02:00:00.000000Z",
+          "team_name": "Berwick City SC U16",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Geelong SC U16",
+          "opponent_team_id": "am1qvalAmw",
           "events": []
         }
       ]
@@ -29744,7 +29864,7 @@
       },
       "team_stats": {
         "Berwick City SC U16": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -29761,7 +29881,7 @@
         }
       },
       "stats": {
-        "matches_attended": 6,
+        "matches_attended": 7,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -29836,6 +29956,18 @@
           "home_or_away": "away",
           "opponent_team_name": "Murray United FC U14",
           "opponent_team_id": "Ome0RZVvd0",
+          "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3kLlK",
+          "date": "2026-03-08T02:00:00.000000Z",
+          "team_name": "Berwick City SC U16",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Head Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Geelong SC U16",
+          "opponent_team_id": "am1qvalAmw",
           "events": []
         }
       ]
@@ -85944,7 +86076,7 @@
       },
       "team_stats": {
         "Berwick City SC U16": {
-          "matches_played": 3,
+          "matches_played": 4,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -85953,7 +86085,7 @@
         }
       },
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -85993,6 +86125,18 @@
           "opponent_team_name": "Murray United FC U16",
           "opponent_team_id": "ld4Ola40KW",
           "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3kLlK",
+          "date": "2026-03-08T02:00:00.000000Z",
+          "team_name": "Berwick City SC U16",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Geelong SC U16",
+          "opponent_team_id": "am1qvalAmw",
+          "events": []
         }
       ]
     },
@@ -86016,7 +86160,7 @@
       },
       "team_stats": {
         "Berwick City SC U16": {
-          "matches_played": 3,
+          "matches_played": 4,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -86025,7 +86169,7 @@
         }
       },
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -86064,6 +86208,18 @@
           "home_or_away": "away",
           "opponent_team_name": "Murray United FC U16",
           "opponent_team_id": "ld4Ola40KW",
+          "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3kLlK",
+          "date": "2026-03-08T02:00:00.000000Z",
+          "team_name": "Berwick City SC U16",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Team Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Geelong SC U16",
+          "opponent_team_id": "am1qvalAmw",
           "events": []
         }
       ]
@@ -87731,7 +87887,7 @@
       },
       "team_stats": {
         "Geelong SC U16": {
-          "matches_played": 2,
+          "matches_played": 3,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -87740,7 +87896,7 @@
         }
       },
       "stats": {
-        "matches_attended": 2,
+        "matches_attended": 3,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -87767,6 +87923,18 @@
           "home_or_away": "home",
           "opponent_team_name": "Altona Magic SC U16",
           "opponent_team_id": "4KLnPqlLmq",
+          "events": []
+        },
+        {
+          "match_hash_id": "bd9pW3kLlK",
+          "date": "2026-03-08T02:00:00.000000Z",
+          "team_name": "Geelong SC U16",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Berwick City SC U16",
+          "opponent_team_id": "BdD1Bqb6mb",
           "events": []
         }
       ]
@@ -97116,5 +97284,5 @@
       ]
     }
   ],
-  "_last_updated": "2026-03-11T12:00:31.056642"
+  "_last_updated": "2026-03-11T16:00:33.903763"
 }
