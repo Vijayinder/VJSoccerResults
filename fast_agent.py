@@ -6,7 +6,7 @@ Features:
 - Personal team configuration (Heidelberg United FC U16)
 - Advanced filtering for top scorers, yellow/red cards by team/age group
 - Detailed player match-by-match stats
-- Enhanced player profile with jersey, cards, etc.
+- Enhanced player profile with jersey, cards, etc. and own goal
 - Date format: dd-mmm (e.g., 09-Feb)
 - Non-player (coach/staff) support
 - Time information for goals and cards
