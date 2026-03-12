@@ -31,8 +31,10 @@ def get_client_ip():
     """Get client IP address from Streamlit request headers"""
     try:
         # Try to get from Streamlit headers
-        from streamlit.web.server.websocket_headers import _get_websocket_headers
-        headers = _get_websocket_headers()
+        try:
+            headers = st.context.headers
+        except Exception:
+            headers = {}
         
         # Check common proxy headers first
         if headers:
@@ -309,7 +311,7 @@ def show_login_page():
             
             col_a, col_b = st.columns(2)
             with col_a:
-                if st.button("Continue as " + saved_selection['name'], type="primary", use_container_width=True):
+                if st.button("Continue as " + saved_selection['name'], type="primary", width='stretch'):
                     # Login with saved selection
                     st.session_state["authenticated"] = True
                     st.session_state["user_type"] = "player"
@@ -340,7 +342,7 @@ def show_login_page():
                     )
                     st.rerun()
             with col_b:
-                if st.button("Select Different Profile", use_container_width=True):
+                if st.button("Select Different Profile", width='stretch'):
                     clear_player_selection(st.session_state["session_id"])
                     st.rerun()
             
@@ -349,7 +351,7 @@ def show_login_page():
  # Quick login - no player selection needed
         st.markdown("### 👋 Quick Login")
         st.caption("Jump straight in — defaults to Heidelberg United U16 / Guest")
-        if st.button("⚡ Login Now", type="primary", use_container_width=True, key="quick_login"):
+        if st.button("⚡ Login Now", type="primary", width='stretch', key="quick_login"):
             league, competition = get_player_league_info("Guest", "Heidelberg United", "U16")
             st.session_state["authenticated"] = True
             st.session_state["user_type"] = "player"
@@ -417,7 +419,7 @@ def show_login_page():
 
                 # 3. Use a form to capture the "Enter" keypress
                 with st.form("confirmation_form", border=False):
-                    submit = st.form_submit_button("Continue as this player", type="primary", use_container_width=True)
+                    submit = st.form_submit_button("Continue as this player", type="primary", width='stretch')
                     if submit:
                         # Login logic
                         st.session_state["authenticated"] = True
@@ -460,7 +462,7 @@ def show_login_page():
             with st.form("admin_login_form"):
                 admin_username = st.text_input("Admin Username")
                 admin_password = st.text_input("Admin Password", type="password")
-                admin_submit = st.form_submit_button("Login as Admin", use_container_width=True)
+                admin_submit = st.form_submit_button("Login as Admin", width='stretch')
                 
                 if admin_submit:
                     if admin_username and admin_password:
@@ -1268,6 +1270,12 @@ def is_natural_language_query(query):
         "most appearances", "most matches", "most games", "appearances",
         "games played", "matches played", "top scorers", "golden boot",
         "leading scorer",
+        # Match detail triggers
+        "match detail", "match details", "game detail", "lineups for",
+        "stats for", "details",
+        "total cards", "card summary", "cards by", "cards per", "cards each",
+        "cards per club", "card per club",
+        "own goal", "own goals",
     ]
     return any(keyword in query.lower() for keyword in keywords)
 
@@ -1282,7 +1290,7 @@ def show_admin_dashboard():
     # ── Force data refresh button ──
     col_r1, col_r2, col_r3 = st.columns([1, 2, 5])
     with col_r1:
-        if st.button("🔄 Force Refresh Data", use_container_width=True):
+        if st.button("🔄 Force Refresh Data", width='stretch'):
             try:
                 from fast_agent import _load_all_data, _refresh_data
                 _load_all_data.clear()
@@ -1336,7 +1344,7 @@ def show_admin_dashboard():
             st.markdown("### 👥 Most Active Users")
             if stats.get('most_active_users'):
                 df_users = pd.DataFrame(stats['most_active_users'])
-                st.dataframe(df_users, hide_index=True, use_container_width=True)
+                st.dataframe(df_users, hide_index=True, width='stretch')
         
         with col2:
             st.markdown("### 🏟️ Most Viewed Clubs")
@@ -1345,7 +1353,7 @@ def show_admin_dashboard():
                     list(stats['top_clubs'].items()),
                     columns=['Club', 'Views']
                 ).sort_values('Views', ascending=False).head(10)
-                st.dataframe(df_clubs, hide_index=True, use_container_width=True)
+                st.dataframe(df_clubs, hide_index=True, width='stretch')
     
     with tab2:
         # Active users today
@@ -1367,7 +1375,7 @@ def show_admin_dashboard():
                 except Exception as e:
                     st.error(f"Error formatting last_activity: {e}")
             
-            st.dataframe(df_active, hide_index=True, use_container_width=True)
+            st.dataframe(df_active, hide_index=True, width='stretch')
         else:
             st.info("No active users today")
 
@@ -1385,7 +1393,7 @@ def show_admin_dashboard():
             st.dataframe(
                 df_recent[available_cols], 
                 hide_index=True, 
-                use_container_width=True,
+                width='stretch',
                 column_config={
                     "timestamp": st.column_config.TextColumn("Time", width="medium"),
                     "username": st.column_config.TextColumn("User", width="small"),
@@ -1418,18 +1426,18 @@ def show_admin_dashboard():
                     st.markdown("**Most Active IPs**")
                     ip_counts = df_valid_ip['ip_address'].value_counts().head(10).reset_index()
                     ip_counts.columns = ['IP Address', 'Activities']
-                    st.dataframe(ip_counts, hide_index=True, use_container_width=True)
+                    st.dataframe(ip_counts, hide_index=True, width='stretch')
                 
                 with col2:
                     st.markdown("#### 🔐 Recent Logins by IP")
                     logins = df[df['action_type'] == 'login'][['timestamp', 'username', 'full_name', 'ip_address']].head(20)
-                    st.dataframe(logins, hide_index=True, use_container_width=True)
+                    st.dataframe(logins, hide_index=True, width='stretch')
                     
                     st.markdown("#### 🔍 IP to User Mapping")
                     # Show which users use which IPs
                     user_ip_map = df_valid_ip.groupby(['username', 'ip_address']).size().reset_index(name='count')
                     user_ip_map = user_ip_map.sort_values('count', ascending=False).head(20)
-                    st.dataframe(user_ip_map, hide_index=True, use_container_width=True)
+                    st.dataframe(user_ip_map, hide_index=True, width='stretch')
             else:
                 st.info("No IP address data available yet. IP tracking will start with the next login.")
         else:
@@ -1482,10 +1490,6 @@ def get_player_league_info(player_name: str, club: str, age_group: str):
                 # Extract just the competition part (YPL1, YPL2, etc.)
                 competition = extract_competition_from_league(league)
                 
-                print(f"DEBUG: Found player {player_name}")
-                print(f"  Full league: {league}")
-                print(f"  Competition: {competition}")
-                
                 return league, competition
         
         # If not found in players, try staff
@@ -1503,14 +1507,8 @@ def get_player_league_info(player_name: str, club: str, age_group: str):
                 
                 competition = extract_competition_from_league(league)
                 
-                print(f"DEBUG: Found staff {player_name}")
-                print(f"  Full league: {league}")
-                print(f"  Competition: {competition}")
-                
                 return league, competition
-        
-        # If player not found, return empty - NO GUESSING!
-        print(f"WARNING: Could not find league info for {player_name}")
+        # Not found (expected for Guest/anonymous)
         return '', ''
         
     except Exception as e:
@@ -1589,7 +1587,7 @@ def main_app():
             </div>
             """, unsafe_allow_html=True)
     with col_right:
-        if st.button("🚪 Logout", key="logout_button", use_container_width=True):
+        if st.button("🚪 Logout", key="logout_button", width='stretch'):
             st.session_state.clear()
             st.rerun()
     # In your sidebar (after logout button or admin controls)
@@ -1602,7 +1600,7 @@ def main_app():
             
             col1, col2 = st.columns(2)
             with col1:
-                if st.button("🔄 Refresh Data", use_container_width=True, help="Reload all data from files"):
+                if st.button("🔄 Refresh Data", width='stretch', help="Reload all data from files"):
                     force_reload_all_data()
                     st.success("✅ All data refreshed!")
                     st.rerun()
@@ -1620,7 +1618,7 @@ def main_app():
         # Add admin dashboard option in sidebar
         with st.sidebar:
             st.markdown("### Admin Controls")
-            if st.button("📊 View Dashboard", use_container_width=True):
+            if st.button("📊 View Dashboard", width='stretch'):
                 st.session_state["show_admin_dashboard"] = True
     
     # Show admin dashboard if requested
@@ -1745,38 +1743,38 @@ def main_app():
             st.markdown("**📊 Player Stats**")
 
             q1 = f"top scorers in {user_club}"
-            if st.button(q1, key="ex1", use_container_width=False):
+            if st.button(q1, key="ex1", width='content'):
                 st.session_state["clicked_query"] = q1
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
             q1b = f"most appearances in {user_club}"
-            if st.button(q1b, key="ex1b", use_container_width=False):
+            if st.button(q1b, key="ex1b", width='content'):
                 st.session_state["clicked_query"] = q1b
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
 
             q3 = f"stats for {user_name}"
-            if st.button(f"my stats ({user_name})", key="ex3", use_container_width=False):
+            if st.button(f"my stats ({user_name})", key="ex3", width='content'):
                 st.session_state["clicked_query"] = q3
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
             q4 = f"team stats for {user_club} {user_age}"
-            if st.button(q4, key="ex4", use_container_width=False):
+            if st.button(q4, key="ex4", width='content'):
                 st.session_state["clicked_query"] = q4
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
             st.markdown("**📅 Fixtures**")
-            if st.button("my next match", key="ex5", use_container_width=False):
+            if st.button("my next match", key="ex5", width='content'):
                 st.session_state["clicked_query"] = "my next match"
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
             q6 = f"upcoming fixtures {user_club}"
-            if st.button(q6, key="ex6", use_container_width=False):
+            if st.button(q6, key="ex6", width='content'):
                 st.session_state["clicked_query"] = q6
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
@@ -1785,51 +1783,51 @@ def main_app():
             st.markdown("**👥 Squad & Dual Reg**")
 
             q_squad = f"squad for {user_club} {user_age}"
-            if st.button(q_squad, key="ex_squad", use_container_width=False):
+            if st.button(q_squad, key="ex_squad", width='content'):
                 st.session_state["clicked_query"] = q_squad
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
             q_dual = "2 clubs"
-            if st.button("2 clubs", key="ex_dual", use_container_width=False):
+            if st.button("2 clubs", key="ex_dual", width='content'):
                 st.session_state["clicked_query"] = q_dual
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
             q_dual2 = f"dual registration {user_club}"
-            if st.button(q_dual2, key="ex_dual2", use_container_width=False):
+            if st.button(q_dual2, key="ex_dual2", width='content'):
                 st.session_state["clicked_query"] = q_dual2
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
             st.markdown("**⚔️ Club Comparison**")
-            if st.button(_vs_label, key="ex_vs", use_container_width=False):
+            if st.button(_vs_label, key="ex_vs", width='content'):
                 st.session_state["clicked_query"] = _vs_query
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
             st.markdown("**🏆 Competitions**")
             q7 = f"{user_age} {user_league} ladder"
-            if st.button(q7, key="ex7", use_container_width=False):
+            if st.button(q7, key="ex7", width='content'):
                 st.session_state["clicked_query"] = q7
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
             q8 = f"{user_competition} ladder"
-            if st.button(q8, key="ex8", use_container_width=False):
+            if st.button(q8, key="ex8", width='content'):
                 st.session_state["clicked_query"] = q8
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
             st.markdown("**👔 Coaches & Staff**")
             q16 = f"coaches for {user_club}"
-            if st.button(q16, key="ex16", use_container_width=False):
+            if st.button(q16, key="ex16", width='content'):
                 st.session_state["clicked_query"] = q16
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
             q_staff_cards = f"red card staff {user_club}"
-            if st.button(q_staff_cards, key="ex_staff_rc", use_container_width=False):
+            if st.button(q_staff_cards, key="ex_staff_rc", width='content'):
                 st.session_state["clicked_query"] = q_staff_cards
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
@@ -1838,45 +1836,57 @@ def main_app():
             st.markdown("**🟨🟥 Discipline**")
 
             q10 = f"red cards in {user_age}"
-            if st.button(q10, key="ex10", use_container_width=False):
+            if st.button(q10, key="ex10", width='content'):
                 st.session_state["clicked_query"] = q10
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
             q10b = "red cards last week"
-            if st.button(q10b, key="ex10b", use_container_width=False):
+            if st.button(q10b, key="ex10b", width='content'):
                 st.session_state["clicked_query"] = q10b
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
+            q10c = "cards per club"
+            if st.button(q10c, key="ex10c", width='content'):
+                st.session_state["clicked_query"] = q10c
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
+
+            q10d = "own goals"
+            if st.button(q10d, key="ex10d", width='content'):
+                st.session_state["clicked_query"] = q10d
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
+
             q2 = f"yellow cards {user_club} {user_age}"
-            if st.button(q2, key="ex2", use_container_width=False):
+            if st.button(q2, key="ex2", width='content'):
                 st.session_state["clicked_query"] = q2
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
             q2b = f"yellow cards {user_age} last week"
-            if st.button(q2b, key="ex2b", use_container_width=False):
+            if st.button(q2b, key="ex2b", width='content'):
                 st.session_state["clicked_query"] = q2b
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
             st.markdown("**⚠️ Missing Scores**")
             q13 = f"missing scores {user_club}"
-            if st.button(q13, key="ex13", use_container_width=False):
+            if st.button(q13, key="ex13", width='content'):
                 st.session_state["clicked_query"] = q13
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
             st.markdown("**📊 Today's Games**")
             q14 = "todays results"
-            if st.button("Today's Results", key="q14", use_container_width=False):
+            if st.button("Today's Results", key="q14", width='content'):
                 st.session_state["clicked_query"] = q14
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
             q15 = "missing scores today"
-            if st.button(q15, key="q15", use_container_width=False):
+            if st.button(q15, key="q15", width='content'):
                 st.session_state["clicked_query"] = q15
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
@@ -1931,7 +1941,7 @@ def main_app():
                     df_reg = pd.DataFrame(reg_rows)
                     st.caption("👇 Click a club row to view their squad")
                     sel_reg = st.dataframe(
-                        df_reg, hide_index=True, use_container_width=True,
+                        df_reg, hide_index=True, width='stretch',
                         height=(len(reg_rows) + 1) * 35 + 10,
                         selection_mode="single-row", on_select="rerun",
                         key="prof_reg_sel",
@@ -1942,7 +1952,7 @@ def main_app():
                 if m_rows:
                     label = "📅 Match-by-Match" if detailed else f"📅 Recent Matches (last {len(m_rows)})"
                     st.markdown(f"**{label}**")
-                    st.caption("👇 Click a match row to view that opponent's squad")
+                    st.caption("👇 Click a match row to view full match detail (lineups, goals, cards)")
                     df_m = pd.DataFrame(m_rows)
                     _cfg = {}
                     if "Date" in df_m.columns:
@@ -1950,16 +1960,18 @@ def main_app():
                         _cfg["Date"] = st.column_config.DateColumn("Date", format="DD-MMM")
                     h = min(600, (len(m_rows) + 1) * 35 + 10)
                     sel_match = st.dataframe(
-                        df_m, hide_index=True, use_container_width=True,
+                        df_m, hide_index=True, width='stretch',
                         height=h, column_config=_cfg,
                         selection_mode="single-row", on_select="rerun",
                         key="prof_match_sel",
                     )
                     _match_sel = sel_match.selection.get("rows", [])
                     if _match_sel:
-                        _opp = str(df_m.iloc[_match_sel[0]].get("Opponent", "") or "")
+                        _mrow = df_m.iloc[_match_sel[0]]
+                        _opp  = str(_mrow.get("Opponent", "") or "")
+                        _date = str(_mrow.get("Date", "") or "")
                         if _opp and _opp != "\u2014":
-                            _fire_query(f"squad for {_opp}")
+                            _fire_query(f"match details {_opp} {_date}")
                     if not detailed:
                         st.caption(f"💡 Say 'details for {pname}' for full match-by-match breakdown")
                 if note:
@@ -1974,13 +1986,30 @@ def main_app():
                     h = 600 if num_rows > 16 else (num_rows + 1) * 35 + 10
                     st.caption("👇 Click a player row to view their stats")
                     sel = st.dataframe(
-                        df, hide_index=True, use_container_width=True, height=h,
+                        df, hide_index=True, width='stretch', height=h,
                         selection_mode="single-row", on_select="rerun",
                         key="squad_row_sel",
                     )
                     _sel_rows = sel.selection.get("rows", [])
                     if _sel_rows:
                         _fire_query(f"stats for {df.iloc[_sel_rows[0]]['Player']}")
+
+            elif answer.get("type") == "player_list":
+                st.info(answer.get("title", "Players"))
+                data = answer.get("data", [])
+                if data:
+                    df = pd.DataFrame(data)
+                    num_rows = len(df)
+                    h = 600 if num_rows > 16 else (num_rows + 1) * 35 + 10
+                    st.caption("👇 Click a player row to view their full profile")
+                    sel = st.dataframe(
+                        df, hide_index=True, width='stretch', height=h,
+                        selection_mode="single-row", on_select="rerun",
+                        key="player_list_sel",
+                    )
+                    _pl_sel = sel.selection.get("rows", [])
+                    if _pl_sel:
+                        _fire_query(f"stats for {df.iloc[_pl_sel[0]]['Player']}")
 
             elif answer.get("type") == "team_stats":
                 st.markdown(answer.get("summary", ""))
@@ -1989,7 +2018,7 @@ def main_app():
                     st.markdown("**📅 Recent Results**")
                     df_res = pd.DataFrame(results_data)
                     h = min(400, (len(df_res) + 1) * 35 + 10)
-                    st.dataframe(df_res, hide_index=True, use_container_width=True,
+                    st.dataframe(df_res, hide_index=True, width='stretch',
                                  height=h,
                                  column_config={
                                      "Date":     st.column_config.TextColumn("Date",     width="small"),
@@ -1998,6 +2027,110 @@ def main_app():
                                      "Score":    st.column_config.TextColumn("Score",    width="small"),
                                      "Result":   st.column_config.TextColumn("Result",   width="small"),
                                  })
+            elif answer.get("type") == "card_summary":
+                st.info(answer.get("title", "Card Summary"))
+                data       = answer.get("data", [])
+                mode       = answer.get("mode", "club")
+                col_key    = answer.get("col_key", "Club")
+                base_club  = answer.get("base_club", "")
+                age_group  = answer.get("age_group", "")
+                staff_only = answer.get("staff_only", False)
+                _sf        = " staff" if staff_only else ""
+                if data:
+                    df = pd.DataFrame(data)
+                    h  = min(600, (len(df) + 1) * 35 + 10)
+                    _cs_key = f"card_sum_{mode}_{st.session_state.get('expander_collapse_counter', 0)}"
+                    if mode == "players":
+                        _lbl = "staff member" if staff_only else "player"
+                        st.caption(f"👇 Click a {_lbl} to view their profile")
+                        sel = st.dataframe(df, hide_index=True, width='stretch',
+                            height=h, selection_mode="single-row", on_select="rerun",
+                            key=_cs_key)
+                        _cs = sel.selection.get("rows", [])
+                        if _cs:
+                            import re as _re
+                            _raw = str(df.iloc[_cs[0]][col_key])
+                            _clean = _re.sub(r'\s*\(.*?\)\s*$', '', _raw).strip()
+                            _fire_query(f"stats for {_clean}")
+                    elif mode == "age":
+                        _lbl = "age group" if not staff_only else "age group (staff)"
+                        st.caption(f"👇 Click an age group to see cards")
+                        sel = st.dataframe(df, hide_index=True, width='stretch',
+                            height=h, selection_mode="single-row", on_select="rerun",
+                            key=_cs_key)
+                        _cs = sel.selection.get("rows", [])
+                        if _cs:
+                            _ag = df.iloc[_cs[0]][col_key]
+                            if staff_only:
+                                _fire_query(f"card summary {base_club} {_ag} staff")
+                            else:
+                                _fire_query(f"card summary {base_club} {_ag}")
+                    else:  # club mode
+                        st.caption("👇 Click a club to see breakdown by age group")
+                        sel = st.dataframe(df, hide_index=True, width='stretch',
+                            height=h, selection_mode="single-row", on_select="rerun",
+                            key=_cs_key)
+                        _cs = sel.selection.get("rows", [])
+                        if _cs:
+                            _club = df.iloc[_cs[0]][col_key]
+                            _fire_query(f"cards per club {_club}{_sf}")
+
+            elif answer.get("type") == "match_detail":
+                st.markdown(f"### {answer.get('title', 'Match Detail')}")
+                tables = answer.get("tables", [])
+                if tables:
+                    tab_labels = [t["title"] for t in tables]
+                    tabs = st.tabs(tab_labels)
+                    for _ti, (tab, tbl) in enumerate(zip(tabs, tables)):
+                        with tab:
+                            data = tbl.get("data", [])
+                            if data:
+                                df = pd.DataFrame(data)
+                                num_rows = len(df)
+                                h = 600 if num_rows > 16 else (num_rows + 1) * 35 + 10
+                                is_clickable = tbl.get("clickable", False)
+                                # Totals row is last — not clickable
+                                player_rows_only = [r for r in data if r.get("Player","").startswith("─") is False]
+                                if is_clickable and len(player_rows_only) > 1:
+                                    st.caption("👇 Click a player to view their full profile")
+                                    _md_sel = st.dataframe(
+                                        df, hide_index=True, width='stretch', height=h,
+                                        selection_mode="single-row", on_select="rerun",
+                                        key=f"match_detail_sel_{_ti}",
+                                    )
+                                    _md_rows = _md_sel.selection.get("rows", [])
+                                    if _md_rows:
+                                        _md_name = df.iloc[_md_rows[0]]["Player"]
+                                        if not str(_md_name).startswith("─"):
+                                            _fire_query(f"stats for {_md_name}")
+                                else:
+                                    st.dataframe(df, hide_index=True, width='stretch', height=h)
+                            else:
+                                st.info("No lineup data available.")
+
+            elif answer.get("type") == "ladder":
+                st.info(answer.get("title", "Ladder"))
+                tables = answer.get("tables", [])
+                competition = answer.get("competition", "")
+                if tables:
+                    tab_labels = [t["title"] for t in tables]
+                    tabs = st.tabs(tab_labels)
+                    for _ti, (tab, tbl) in enumerate(zip(tabs, tables)):
+                        with tab:
+                            data = tbl.get("data", [])
+                            if data:
+                                df = pd.DataFrame(data)
+                                h = min(600, (len(df) + 1) * 35 + 10)
+                                st.caption("👇 Click a club to see their matches")
+                                sel = st.dataframe(df, hide_index=True, width='stretch',
+                                    height=h, selection_mode="single-row", on_select="rerun",
+                                    key=f"ladder_sel_{_ti}_{st.session_state.get('expander_collapse_counter',0)}")
+                                _lr = sel.selection.get("rows", [])
+                                if _lr:
+                                    _team = df.iloc[_lr[0]]["Team"]
+                                    _fire_query(f"results for {_team}")
+                            else:
+                                st.info("No data available.")
             elif answer.get("type") == "multi_table":
                 st.info(answer.get("title", "Results"))
                 tables = answer.get("tables", [])
@@ -2011,9 +2144,49 @@ def main_app():
                                 df = pd.DataFrame(data)
                                 num_rows = len(df)
                                 h = 600 if num_rows > 16 else (num_rows + 1) * 35 + 10
-                                st.dataframe(df, hide_index=True, use_container_width=True, height=h)
+                                st.dataframe(df, hide_index=True, width='stretch', height=h)
                             else:
                                 st.info("No data available.")
+            elif answer.get("type") == "own_goal_list":
+                st.info(answer.get("title", "Own Goals"))
+                data   = answer.get("data", [])
+                hashes = answer.get("hashes", [])
+                if data:
+                    df = pd.DataFrame(data)
+                    h  = min(600, (len(df) + 1) * 35 + 10)
+                    st.caption("👇 Click a row to view the full match detail")
+                    _og_key = f"og_sel_{st.session_state.get('expander_collapse_counter', 0)}"
+                    sel = st.dataframe(df, hide_index=True, width='stretch',
+                        height=h, selection_mode="single-row", on_select="rerun",
+                        key=_og_key)
+                    _ogr = sel.selection.get("rows", [])
+                    if _ogr:
+                        _row  = df.iloc[_ogr[0]]
+                        _hash = hashes[_ogr[0]] if _ogr[0] < len(hashes) else ""
+                        if _hash:
+                            _fire_query(f"match details {_hash}")
+                        else:
+                            _fire_query(f"match details {_row['Opponent']} {_row['Date']}")
+
+            elif answer.get("type") == "match_list":
+                st.info(answer.get("title", "Matches"))
+                data = answer.get("data", [])
+                if data:
+                    df = pd.DataFrame(data)
+                    h  = min(600, (len(df) + 1) * 35 + 10)
+                    st.caption("👇 Click a match to view full details & squad")
+                    _ml_key = f"match_list_{st.session_state.get('expander_collapse_counter', 0)}"
+                    sel = st.dataframe(df, hide_index=True, width='stretch',
+                        height=h, selection_mode="single-row", on_select="rerun",
+                        key=_ml_key)
+                    _mr = sel.selection.get("rows", [])
+                    if _mr:
+                        _row = df.iloc[_mr[0]]
+                        _home = _row.get("Home", "")
+                        _away = _row.get("Away", "")
+                        _date = str(_row.get("Date", "")).strip()
+                        _fire_query(f"match details {_home} vs {_away} {_date}")
+
             elif answer.get("type") == "table":
                 st.info(answer.get("title", "Results"))
                 data = answer.get("data", [])
@@ -2028,22 +2201,31 @@ def main_app():
                         _cfg["First @ To"] = st.column_config.DateColumn("First @ To", format="DD-MMM")
                     num_rows = len(df)
                     final_height = 600 if num_rows > 16 else (num_rows + 1) * 35
-                    if "Player" in df.columns and "\u26bd" in df.columns:
-                        st.caption("👇 Click a player row to view their stats")
+                    # Determine name column and whether table is clickable
+                    _name_col = None
+                    if "Player" in df.columns:
+                        _name_col = "Player"
+                    elif "Name" in df.columns:
+                        _name_col = "Name"
+                    _has_stats = any(c in df.columns for c in ["\u26bd", "\U0001f7e8", "\U0001f7e5", "Total \U0001f7e8"])
+                    if _name_col and _has_stats:
+                        st.caption("👇 Click a player row to view their profile")
                         sel = st.dataframe(
-                            df, hide_index=True, use_container_width=True,
+                            df, hide_index=True, width='stretch',
                             height=final_height, column_config=_cfg,
                             selection_mode="single-row", on_select="rerun",
                             key="top_scorers_sel",
                         )
                         _ts_sel = sel.selection.get("rows", [])
                         if _ts_sel:
-                            _fire_query(f"stats for {df.iloc[_ts_sel[0]]['Player']}")
+                            _fire_query(f"stats for {df.iloc[_ts_sel[0]][_name_col]}")
                     else:
-                        st.dataframe(df, hide_index=True, use_container_width=True,
+                        st.dataframe(df, hide_index=True, width='stretch',
                                      height=final_height, column_config=_cfg)
             elif answer.get("type") == "error":
                 st.error(answer.get("message", "An error occurred"))
+
+
         else:
             st.chat_message("assistant").write(answer)
         st.caption(f"⏱️ {st.session_state['search_answer_time']:.3f}s")
@@ -2064,10 +2246,10 @@ def main_app():
     # Navigation buttons
     if st.session_state["level"] != "league":
         col1, col2, _ = st.columns([1, 1, 6])
-        if col1.button("⬅️ Back", use_container_width=True):
+        if col1.button("⬅️ Back", width='stretch'):
             back_one_level()
             st.rerun()
-        if col2.button("🔄 Restart", use_container_width=True):
+        if col2.button("🔄 Restart", width='stretch'):
             restart_to_top()
             st.rerun()
 
@@ -2092,7 +2274,7 @@ def main_app():
         for idx, league_name in enumerate(leagues):
             col_idx = idx % 4
             with cols[col_idx]:
-                if st.button(league_name, key=f"league_btn_{idx}", use_container_width=True):
+                if st.button(league_name, key=f"league_btn_{idx}", width='stretch'):
                     st.session_state["selected_league"] = league_name
                     st.session_state["level"] = "competition"
                     st.session_state["_pending_search_clear"] = True   # cleared before widget next run
@@ -2120,7 +2302,7 @@ def main_app():
             col_idx = idx % 4
             with league_cols[col_idx]:
                 btn_type = "primary" if league_name == league else "secondary"
-                if st.button(league_name, key=f"league_btn2_{idx}", use_container_width=True, type=btn_type):
+                if st.button(league_name, key=f"league_btn2_{idx}", width='stretch', type=btn_type):
                     st.session_state["selected_league"] = league_name
                     st.session_state["level"] = "competition"
                     st.session_state["selected_competition"] = None
@@ -2145,7 +2327,7 @@ def main_app():
         for idx, comp_name in enumerate(comps):
             col_idx = idx % 5
             with cols[col_idx]:
-                if st.button(comp_name, key=f"comp_btn_{idx}", use_container_width=True):
+                if st.button(comp_name, key=f"comp_btn_{idx}", width='stretch'):
                     st.session_state["selected_competition"] = comp_name
                     st.session_state["level"] = "ladder_clubs"
                     st.session_state["selected_club"] = None
@@ -2181,7 +2363,7 @@ def main_app():
                 st.dataframe(
                     overall_display_df,
                     hide_index=True,
-                    use_container_width=False,
+                    width='content',
                     height=598,
                     column_config={
                         "Rank": st.column_config.NumberColumn("Rank", width="small"),
@@ -2228,7 +2410,7 @@ def main_app():
                 }
                 for age in age_groups:
                     configs[age] = st.column_config.TextColumn(age, width="small")
-                st.dataframe(df_overview, hide_index=True, use_container_width=False, height=598, column_config=configs)
+                st.dataframe(df_overview, hide_index=True, width='content', height=598, column_config=configs)
             else:
                 st.info("No competition overview data available for this league.")
 
@@ -2263,7 +2445,7 @@ def main_app():
         st.dataframe(
             display_df,
             hide_index=True,
-            use_container_width=False,
+            width='content',
             height=590,
         )
 
@@ -2359,7 +2541,7 @@ def main_app():
                             "Score": st.column_config.TextColumn("Score", width="small")
                         },
                         disabled=["Date", "H/A", "Opponent", "Score"],
-                        use_container_width=False,
+                        width='content',
                         key="club_matches_editor"
                     )
 
@@ -2493,7 +2675,7 @@ def main_app():
                             "🟥":     st.column_config.NumberColumn("🟥", width="small"),
                         },
                         disabled=["Age", "Player", "#", "M", "G", "🟨", "🟥"],
-                        use_container_width=False, height=730, key="players_editor"
+                        width='content', height=730, key="players_editor"
                     )
 
                     selected_player_rows = edited_players[edited_players["Select"] == True]
@@ -2549,7 +2731,7 @@ def main_app():
                             "🟨": st.column_config.NumberColumn("🟨", width="small"),
                             "🟥": st.column_config.NumberColumn("🟥", width="small")
                         },
-                        use_container_width=False,
+                        width='content',
                     )
 # PLAYER DETAIL PANEL — inline below squad
                 selected_player = st.session_state.get("selected_player")
@@ -2652,7 +2834,7 @@ def main_app():
                         if is_dual:
                             col_cfg["Club"] = st.column_config.TextColumn("Club", width="medium")
                         h = min(600, (len(match_rows) + 1) * 35 + 10)
-                        st.dataframe(df_player, hide_index=True, use_container_width=False,
+                        st.dataframe(df_player, hide_index=True, width='content',
                                      column_config=col_cfg, height=h)
                     else:
                         st.info("No match history found.")
@@ -2689,7 +2871,7 @@ def main_app():
         st.dataframe(
             df, 
             hide_index=True, 
-            use_container_width=False,
+            width='content',
             column_config={
                 "H/A": st.column_config.TextColumn("", width="small"),
                 "Goals": st.column_config.NumberColumn("G", width="small"),
@@ -2779,4 +2961,3 @@ if __name__ == "__main__":
 # Last auto-update: 2026-03-11 16:00:36 AEDT
 # Last auto-update: 2026-03-11 20:00:32 AEDT
 # Last auto-update: 2026-03-12 00:00:32 AEDT
-# Last auto-update: 2026-03-12 04:00:33 AEDT

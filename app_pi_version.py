@@ -188,6 +188,10 @@ def init_session_state():
     
     if "session_id" not in st.session_state:
         st.session_state["session_id"] = str(uuid.uuid4())
+
+    if "device_id" not in st.session_state:
+        # Try to read device_id injected by the JS snippet below
+        st.session_state["device_id"] = st.query_params.get("_did", "")
     
     if "last_activity" not in st.session_state:
         st.session_state["last_activity"] = datetime.now()
@@ -359,9 +363,14 @@ def show_login_page():
             st.session_state["player_league"] = league
             st.session_state["player_competition"] = competition
             update_user_config("Heidelberg United", "U16")
+            _did = st.session_state.get("device_id", "")
+            _guest_id = f"guest_{_did[:8]}" if _did else "guest_unknown"
+            st.session_state["username"]  = _guest_id
+            st.session_state["full_name"] = f"Guest ({_did[:8]})" if _did else "Guest Player"
             log_login(
-                username="shaurya_default",
-                full_name="Shaurya",
+                username=_guest_id,
+                full_name=st.session_state["full_name"],
+                ip_address=get_client_ip(),
                 session_id=st.session_state["session_id"]
             )
             st.rerun()
@@ -1253,6 +1262,12 @@ def is_natural_language_query(query):
         "2 clubs", "2 teams", "two clubs", "two teams",
         "playing for 2", "playing for two", "2 or more",
         "registered in 2", "registered at 2",
+        "dual matches", "matches both teams", "matches each team",
+        "breakdown", " vs ", " v ",
+        # Appearances / scorers
+        "most appearances", "most matches", "most games", "appearances",
+        "games played", "matches played", "top scorers", "golden boot",
+        "leading scorer",
     ]
     return any(keyword in query.lower() for keyword in keywords)
 
@@ -1263,7 +1278,28 @@ def is_natural_language_query(query):
 def show_admin_dashboard():
     """Display admin dashboard with activity analytics"""
     st.markdown("## 📊 Admin Dashboard")
-    
+
+    # ── Force data refresh button ──
+    col_r1, col_r2, col_r3 = st.columns([1, 2, 5])
+    with col_r1:
+        if st.button("🔄 Force Refresh Data", use_container_width=True):
+            try:
+                from fast_agent import _load_all_data, _refresh_data
+                _load_all_data.clear()
+                _refresh_data()
+                st.success("✅ Data reloaded from disk!")
+            except Exception as e:
+                st.error(f"Refresh failed: {e}")
+    with col_r2:
+        try:
+            from fast_agent import _load_all_data
+            import inspect
+            # Show when cache was last populated (approximate)
+            st.caption("Cache refreshes every 5 min automatically")
+        except Exception:
+            pass
+
+    st.markdown("---")
     # Tabs for different views
 
     tab1, tab2, tab3, tab4 = st.tabs(["📈 Analytics", "👥 Users", "📋 Recent Activity", "🌐 IP Tracking"])
@@ -1484,6 +1520,37 @@ def get_player_league_info(player_name: str, club: str, age_group: str):
 # Main Application
 # ---------------------------------------------------------
 
+def _inject_device_id_script():
+    """
+    Inject a tiny JS snippet that:
+      1. Reads (or creates) a UUID stored in localStorage under key 'dribl_did'
+      2. Writes it into the URL as ?_did=xxxx so Streamlit can read it via st.query_params
+    Runs once per page load; harmless on subsequent reruns.
+    """
+    st.components.v1.html("""
+    <script>
+    (function() {
+        function uuidv4() {
+            return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+                (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16));
+        }
+        var key = 'dribl_did';
+        var did = localStorage.getItem(key);
+        if (!did) {
+            did = uuidv4();
+            localStorage.setItem(key, did);
+        }
+        // Write into URL query param so Streamlit can read it
+        var url = new URL(window.parent.location.href);
+        if (url.searchParams.get('_did') !== did) {
+            url.searchParams.set('_did', did);
+            window.parent.history.replaceState({}, '', url.toString());
+        }
+    })();
+    </script>
+    """, height=0)
+
+
 def main_app():
     """Main application logic"""
     header()
@@ -1587,8 +1654,28 @@ def main_app():
         st.session_state["search_version"] = 0
         st.session_state["last_processed_version"] = -1
 
+    # Initialise history stack
+    if "search_history" not in st.session_state:
+        st.session_state["search_history"] = []
+
+    # Consume _restore_search BEFORE widget renders (back-button restore)
+    if "_restore_search" in st.session_state:
+        _rs = st.session_state.pop("_restore_search")
+        st.session_state["search_input"]       = _rs["query"]
+        st.session_state["search_answer"]      = _rs["answer"]
+        st.session_state["search_answer_time"] = _rs["answer_time"]
+        st.session_state["search_version"]    += 1
+        st.session_state["last_processed_version"] = st.session_state["search_version"]
+
     # Consume clicked_query BEFORE the widget renders so key= update is honoured
     if st.session_state.get("clicked_query"):
+        _cq_prev_q   = st.session_state.get("search_input", "")
+        _cq_prev_ans = st.session_state.get("search_answer")
+        _cq_prev_t   = st.session_state.get("search_answer_time", 0.0)
+        if _cq_prev_ans is not None and _cq_prev_q:
+            _hist = st.session_state.get("search_history", [])
+            _hist.append({"query": _cq_prev_q, "answer": _cq_prev_ans, "answer_time": _cq_prev_t})
+            st.session_state["search_history"] = _hist[-20:]
         st.session_state["search_input"]   = st.session_state.pop("clicked_query")
         st.session_state["search_version"] += 1
 
@@ -1597,7 +1684,7 @@ def main_app():
     search = st.text_input(
         "Search",
         key="search_input",
-        placeholder="Try: 'Stats for Shaurya','top scorers in U16', 'yellow cards Heidelberg', 'missing scores'...",
+        placeholder="Try: 'Stats for Shaurya', 'top scorers U16', 'most appearances Heidelberg', 'yellow cards U16', 'missing scores'...",
         label_visibility="collapsed"
     )
     # Bump version when user types a new query (Enter key)
@@ -1608,8 +1695,44 @@ def main_app():
     user_club = st.session_state.get("player_club") or "Heidelberg United"
     user_age = st.session_state.get("player_age_group") or "U16"
     user_name = st.session_state.get("full_name") or "Guest"
-    user_league = st.session_state.get("player_league") or "YPL2"  # ADD THIS
-    user_competition = st.session_state.get("player_competition") or "YPL2"  
+    user_league = st.session_state.get("player_league") or "YPL2"
+    user_competition = st.session_state.get("player_competition") or "YPL2"
+
+    # ── Find next opponent for the user's team from fixtures ──
+    def _get_next_opponent():
+        """Return (opponent_base_name, is_home) for user's next upcoming fixture."""
+        import pytz as _pytz
+        from fast_agent import fixtures as _fixtures, USER_CONFIG as _UC, \
+            parse_date_utc_to_aest as _parse, _strip_age_group as _strip
+        melbourne_tz = _pytz.timezone('Australia/Melbourne')
+        now = datetime.now(melbourne_tz)
+        user_team = _UC["team"].lower()
+        upcoming = []
+        for f in _fixtures:
+            a = f.get("attributes", {})
+            home = (a.get("home_team_name") or "").lower()
+            away = (a.get("away_team_name") or "").lower()
+            if user_team not in home and user_team not in away:
+                continue
+            dt = _parse(a.get("date",""))
+            if dt and dt > now:
+                is_home = user_team in home
+                opp_raw = a.get("away_team_name") if is_home else a.get("home_team_name")
+                upcoming.append((dt, _strip(opp_raw or ""), is_home))
+        if not upcoming:
+            return None, None
+        upcoming.sort(key=lambda x: x[0])
+        _, opp, is_home = upcoming[0]
+        return opp, is_home
+
+    _next_opp, _next_is_home = _get_next_opponent()
+    # Build the vs example: always "Heidelberg vs Opponent"
+    if _next_opp:
+        _vs_query = f"{user_club} vs {_next_opp}"
+        _vs_label = f"{'🏠' if _next_is_home else '✈️'} {_vs_query}"
+    else:
+        _vs_query = f"{user_club} vs Altona Magic"
+        _vs_label = f"⚔️ {_vs_query}"
 
     # Example queries - collapse after click/search by changing label so Streamlit treats it as new widget
     _collapse = st.session_state.get("expander_collapse_counter", 0)
@@ -1624,6 +1747,12 @@ def main_app():
             q1 = f"top scorers in {user_club}"
             if st.button(q1, key="ex1", use_container_width=False):
                 st.session_state["clicked_query"] = q1
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
+
+            q1b = f"most appearances in {user_club}"
+            if st.button(q1b, key="ex1b", use_container_width=False):
+                st.session_state["clicked_query"] = q1b
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
@@ -1653,13 +1782,7 @@ def main_app():
                 st.rerun()
 
         with col2:
-            st.markdown("**👥 Squad Lists**")
-
-            q_show = f"show me {user_club} {user_age}"
-            if st.button(q_show, key="ex_show", use_container_width=False):
-                st.session_state["clicked_query"] = q_show
-                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-                st.rerun()
+            st.markdown("**👥 Squad & Dual Reg**")
 
             q_squad = f"squad for {user_club} {user_age}"
             if st.button(q_squad, key="ex_squad", use_container_width=False):
@@ -1676,6 +1799,12 @@ def main_app():
             q_dual2 = f"dual registration {user_club}"
             if st.button(q_dual2, key="ex_dual2", use_container_width=False):
                 st.session_state["clicked_query"] = q_dual2
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
+
+            st.markdown("**⚔️ Club Comparison**")
+            if st.button(_vs_label, key="ex_vs", use_container_width=False):
+                st.session_state["clicked_query"] = _vs_query
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
@@ -1780,6 +1909,11 @@ def main_app():
             st.session_state["search_answer_time"] = round(_t1 - _t0, 3)
 
     # ── Render: always show stored answer (persists across reruns) ──────────
+    def _fire_query(q):
+        st.session_state["clicked_query"] = q
+        st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+        st.rerun()
+
     def _render_answer(answer):
         st.markdown("---")
         if isinstance(answer, dict):
@@ -1787,7 +1921,6 @@ def main_app():
                 pname    = answer.get("name", "")
                 is_dual  = answer.get("is_dual", False)
                 reg_rows = answer.get("registrations", [])
-                s_stats  = answer.get("season_stats", {})
                 m_rows   = answer.get("matches", [])
                 detailed = answer.get("detailed", False)
                 note     = answer.get("note", "")
@@ -1796,23 +1929,59 @@ def main_app():
                     st.caption("🔄 Dual Registration")
                 if reg_rows:
                     df_reg = pd.DataFrame(reg_rows)
-                    st.dataframe(df_reg, hide_index=True, use_container_width=True,
-                                 height=(len(reg_rows) + 1) * 35 + 10)
+                    st.caption("👇 Click a club row to view their squad")
+                    sel_reg = st.dataframe(
+                        df_reg, hide_index=True, use_container_width=True,
+                        height=(len(reg_rows) + 1) * 35 + 10,
+                        selection_mode="single-row", on_select="rerun",
+                        key="prof_reg_sel",
+                    )
+                    _reg_sel = sel_reg.selection.get("rows", [])
+                    if _reg_sel:
+                        _fire_query(f"squad for {df_reg.iloc[_reg_sel[0]]['Club']}")
                 if m_rows:
                     label = "📅 Match-by-Match" if detailed else f"📅 Recent Matches (last {len(m_rows)})"
                     st.markdown(f"**{label}**")
+                    st.caption("👇 Click a match row to view that opponent's squad")
                     df_m = pd.DataFrame(m_rows)
                     _cfg = {}
                     if "Date" in df_m.columns:
                         df_m["Date"] = pd.to_datetime(df_m["Date"], errors="coerce").dt.date
                         _cfg["Date"] = st.column_config.DateColumn("Date", format="DD-MMM")
                     h = min(600, (len(m_rows) + 1) * 35 + 10)
-                    st.dataframe(df_m, hide_index=True, use_container_width=True,
-                                 height=h, column_config=_cfg)
+                    sel_match = st.dataframe(
+                        df_m, hide_index=True, use_container_width=True,
+                        height=h, column_config=_cfg,
+                        selection_mode="single-row", on_select="rerun",
+                        key="prof_match_sel",
+                    )
+                    _match_sel = sel_match.selection.get("rows", [])
+                    if _match_sel:
+                        _opp = str(df_m.iloc[_match_sel[0]].get("Opponent", "") or "")
+                        if _opp and _opp != "\u2014":
+                            _fire_query(f"squad for {_opp}")
                     if not detailed:
                         st.caption(f"💡 Say 'details for {pname}' for full match-by-match breakdown")
                 if note:
                     st.caption(f"ℹ️ {note}")
+
+            elif answer.get("type") == "squad_table":
+                st.info(answer.get("title", "Squad"))
+                data = answer.get("data", [])
+                if data:
+                    df = pd.DataFrame(data)
+                    num_rows = len(df)
+                    h = 600 if num_rows > 16 else (num_rows + 1) * 35 + 10
+                    st.caption("👇 Click a player row to view their stats")
+                    sel = st.dataframe(
+                        df, hide_index=True, use_container_width=True, height=h,
+                        selection_mode="single-row", on_select="rerun",
+                        key="squad_row_sel",
+                    )
+                    _sel_rows = sel.selection.get("rows", [])
+                    if _sel_rows:
+                        _fire_query(f"stats for {df.iloc[_sel_rows[0]]['Player']}")
+
             elif answer.get("type") == "team_stats":
                 st.markdown(answer.get("summary", ""))
                 results_data = answer.get("results", [])
@@ -1854,10 +2023,25 @@ def main_app():
                     if "Date" in df.columns:
                         df["Date"] = pd.to_datetime(df["Date"], errors="coerce").dt.date
                         _cfg["Date"] = st.column_config.DateColumn("Date", format="DD-MMM")
+                    if "First @ To" in df.columns:
+                        df["First @ To"] = pd.to_datetime(df["First @ To"], errors="coerce").dt.date
+                        _cfg["First @ To"] = st.column_config.DateColumn("First @ To", format="DD-MMM")
                     num_rows = len(df)
                     final_height = 600 if num_rows > 16 else (num_rows + 1) * 35
-                    st.dataframe(df, hide_index=True, use_container_width=True,
-                                 height=final_height, column_config=_cfg)
+                    if "Player" in df.columns and "\u26bd" in df.columns:
+                        st.caption("👇 Click a player row to view their stats")
+                        sel = st.dataframe(
+                            df, hide_index=True, use_container_width=True,
+                            height=final_height, column_config=_cfg,
+                            selection_mode="single-row", on_select="rerun",
+                            key="top_scorers_sel",
+                        )
+                        _ts_sel = sel.selection.get("rows", [])
+                        if _ts_sel:
+                            _fire_query(f"stats for {df.iloc[_ts_sel[0]]['Player']}")
+                    else:
+                        st.dataframe(df, hide_index=True, use_container_width=True,
+                                     height=final_height, column_config=_cfg)
             elif answer.get("type") == "error":
                 st.error(answer.get("message", "An error occurred"))
         else:
@@ -1867,6 +2051,15 @@ def main_app():
 
     if st.session_state.get("search_answer") is not None and search:
         _render_answer(st.session_state["search_answer"])
+
+    # ── Back button ──
+    _hist = st.session_state.get("search_history", [])
+    if _hist:
+        if st.button(f"\u2b05\ufe0f Back  ({_hist[-1]['query']})", key='search_back_btn'):
+            _entry = _hist.pop()
+            st.session_state["search_history"] = _hist
+            st.session_state["_restore_search"] = _entry
+            st.rerun()
 
     # Navigation buttons
     if st.session_state["level"] != "league":
@@ -2512,6 +2705,11 @@ def main_app():
 def main():
     """Main entry point"""
     init_session_state()
+    _inject_device_id_script()
+    # Refresh device_id from query_params on every run (JS may have just set it)
+    _did = st.query_params.get("_did", "")
+    if _did:
+        st.session_state["device_id"] = _did
 
     params = st.query_params
 
@@ -2565,82 +2763,20 @@ def main():
 if __name__ == "__main__":
     main()
 # Last auto-update: 2026-03-02 10:00:32 AEDT
-# Last auto-update: 2026-03-02 11:00:33 AEDT
-# Last auto-update: 2026-03-02 14:00:28 AEDT
-# Last auto-update: 2026-03-02 15:00:28 AEDT
-# Last auto-update: 2026-03-02 16:00:31 AEDT
-# Last auto-update: 2026-03-02 17:00:28 AEDT
-# Last auto-update: 2026-03-02 18:00:28 AEDT
-# Last auto-update: 2026-03-02 19:00:28 AEDT
-# Last auto-update: 2026-03-02 20:00:28 AEDT
-# Last auto-update: 2026-03-02 21:00:27 AEDT
-# Last auto-update: 2026-03-02 22:00:28 AEDT
-# Last auto-update: 2026-03-02 23:00:30 AEDT
-# Last auto-update: 2026-03-03 00:00:28 AEDT
-# Last auto-update: 2026-03-03 04:00:28 AEDT
-# Last auto-update: 2026-03-03 08:00:29 AEDT
-# Last auto-update: 2026-03-03 12:00:28 AEDT
-# Last auto-update: 2026-03-05 00:00:29 AEDT
-# Last auto-update: 2026-03-05 04:00:28 AEDT
-# Last auto-update: 2026-03-05 08:00:28 AEDT
-# Last auto-update: 2026-03-05 12:00:28 AEDT
-# Last auto-update: 2026-03-05 16:00:30 AEDT
-# Last auto-update: 2026-03-05 20:00:29 AEDT
-# Last auto-update: 2026-03-06 00:00:28 AEDT
-# Last auto-update: 2026-03-06 04:00:29 AEDT
-# Last auto-update: 2026-03-06 08:00:31 AEDT
-# Last auto-update: 2026-03-06 12:00:31 AEDT
-# Last auto-update: 2026-03-06 16:00:27 AEDT
-# Last auto-update: 2026-03-06 20:00:30 AEDT
-# Last auto-update: 2026-03-07 00:00:31 AEDT
-# Last auto-update: 2026-03-07 04:00:29 AEDT
-# Last auto-update: 2026-03-07 08:00:28 AEDT
-# Last auto-update: 2026-03-07 12:00:29 AEDT
-# Last auto-update: 2026-03-07 16:00:30 AEDT
-# Last auto-update: 2026-03-07 20:00:27 AEDT
-# Last auto-update: 2026-03-08 00:00:29 AEDT
-# Last auto-update: 2026-03-08 01:00:28 AEDT
-# Last auto-update: 2026-03-08 02:00:29 AEDT
-# Last auto-update: 2026-03-08 03:00:28 AEDT
-# Last auto-update: 2026-03-08 04:00:29 AEDT
-# Last auto-update: 2026-03-08 05:00:29 AEDT
-# Last auto-update: 2026-03-08 06:00:29 AEDT
-# Last auto-update: 2026-03-08 07:00:31 AEDT
-# Last auto-update: 2026-03-08 08:00:28 AEDT
-# Last auto-update: 2026-03-08 09:00:30 AEDT
-# Last auto-update: 2026-03-08 10:00:29 AEDT
-# Last auto-update: 2026-03-08 11:00:36 AEDT
-# Last auto-update: 2026-03-08 12:00:41 AEDT
-# Last auto-update: 2026-03-08 13:00:43 AEDT
-# Last auto-update: 2026-03-08 14:00:37 AEDT
-# Last auto-update: 2026-03-08 15:00:43 AEDT
-# Last auto-update: 2026-03-08 16:00:43 AEDT
-# Last auto-update: 2026-03-08 17:00:37 AEDT
-# Last auto-update: 2026-03-08 18:00:41 AEDT
-# Last auto-update: 2026-03-08 19:00:38 AEDT
-# Last auto-update: 2026-03-08 20:00:33 AEDT
-# Last auto-update: 2026-03-08 21:00:38 AEDT
-# Last auto-update: 2026-03-08 22:00:31 AEDT
-# Last auto-update: 2026-03-08 23:00:33 AEDT
-# Last auto-update: 2026-03-09 00:00:31 AEDT
-# Last auto-update: 2026-03-09 01:00:31 AEDT
-# Last auto-update: 2026-03-09 02:00:33 AEDT
-# Last auto-update: 2026-03-09 03:00:32 AEDT
-# Last auto-update: 2026-03-09 04:00:32 AEDT
-# Last auto-update: 2026-03-09 05:00:32 AEDT
-# Last auto-update: 2026-03-09 06:00:33 AEDT
-# Last auto-update: 2026-03-09 07:00:31 AEDT
-# Last auto-update: 2026-03-09 08:00:31 AEDT
-# Last auto-update: 2026-03-09 09:00:38 AEDT
-# Last auto-update: 2026-03-09 10:00:33 AEDT
-# Last auto-update: 2026-03-09 11:00:33 AEDT
-# Last auto-update: 2026-03-09 12:00:32 AEDT
-# Last auto-update: 2026-03-09 13:00:31 AEDT
-# Last auto-update: 2026-03-09 14:00:31 AEDT
-# Last auto-update: 2026-03-09 15:00:33 AEDT
-# Last auto-update: 2026-03-09 16:00:32 AEDT
-# Last auto-update: 2026-03-09 17:00:33 AEDT
-# Last auto-update: 2026-03-09 18:00:31 AEDT
-# Last auto-update: 2026-03-09 19:00:35 AEDT
+
 # Last auto-update: 2026-03-09 20:00:32 AEDT
-# Last auto-update: 2026-03-09 21:00:32 AEDT
+# Last auto-update: 2026-03-09 23:00:32 AEDT
+# Last auto-update: 2026-03-10 00:00:33 AEDT
+# Last auto-update: 2026-03-10 04:00:35 AEDT
+# Last auto-update: 2026-03-10 08:00:33 AEDT
+# Last auto-update: 2026-03-10 12:00:32 AEDT
+# Last auto-update: 2026-03-10 16:00:36 AEDT
+# Last auto-update: 2026-03-10 20:00:33 AEDT
+# Last auto-update: 2026-03-11 00:00:33 AEDT
+# Last auto-update: 2026-03-11 04:00:32 AEDT
+# Last auto-update: 2026-03-11 08:00:33 AEDT
+# Last auto-update: 2026-03-11 12:00:32 AEDT
+# Last auto-update: 2026-03-11 16:00:36 AEDT
+# Last auto-update: 2026-03-11 20:00:32 AEDT
+# Last auto-update: 2026-03-12 00:00:32 AEDT
+# Last auto-update: 2026-03-12 04:00:33 AEDT

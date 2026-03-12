@@ -326,7 +326,8 @@ def _normalize_person(p: Dict, is_player: bool) -> Dict:
 
         y_events = [e for e in events if _etype(e) == "yellow_card"]
         r_events = [e for e in events if _etype(e) == "red_card"]
-        g_events = [e for e in events if _etype(e) == "goal"]
+        g_events  = [e for e in events if _etype(e) in ("goal", "goal_scored") and not e.get("own_goal") and _etype(e) != "own_goal"]
+        og_events = [e for e in events if _etype(e) == "own_goal" or ((_etype(e) in ("goal","goal_scored")) and e.get("own_goal"))]
 
         if "yellow_cards"   not in m: m["yellow_cards"]   = len(y_events)
         if "yellow_minutes" not in m: m["yellow_minutes"]  = [e.get("minute") for e in y_events if e.get("minute")]
@@ -334,6 +335,8 @@ def _normalize_person(p: Dict, is_player: bool) -> Dict:
         if "red_minutes"    not in m: m["red_minutes"]     = [e.get("minute") for e in r_events if e.get("minute")]
         if "goals"          not in m: m["goals"]           = len(g_events)
         if "goal_minutes"   not in m: m["goal_minutes"]    = [e.get("minute") for e in g_events if e.get("minute")]
+        if "own_goals"      not in m: m["own_goals"]       = len(og_events)
+        if "og_minutes"     not in m: m["og_minutes"]      = [e.get("minute") for e in og_events if e.get("minute")]
 
     return out
 
@@ -598,7 +601,15 @@ def fuzzy_team(q: str) -> Optional[str]:
     if len(exact_matches) == 1:
         return exact_matches[0]
     elif len(exact_matches) > 1:
-        # Multiple matches - try to find the shortest one (most specific)
+        # Prefer the candidate whose age group exactly matches the query age group
+        q_ag = re.search(r'\bu(\d{2})\b', q_lower)
+        if q_ag:
+            ag_str = f"u{q_ag.group(1)}"
+            ag_exact = [t for t in exact_matches if re.search(r'\b' + re.escape(ag_str) + r'\b', t)]
+            if len(ag_exact) == 1:
+                return ag_exact[0]
+            if ag_exact:
+                exact_matches = ag_exact  # narrow down, then fall through
         return min(exact_matches, key=len)
     
     # Step 3: Check if query contains team name (query is longer than team name)
@@ -606,7 +617,13 @@ def fuzzy_team(q: str) -> Optional[str]:
     if len(reverse_matches) == 1:
         return reverse_matches[0]
     elif len(reverse_matches) > 1:
-        # Multiple matches - return the longest match (most specific)
+        # Prefer age-group-exact match
+        q_ag = re.search(r'\bu(\d{2})\b', q_lower)
+        if q_ag:
+            ag_str = f"u{q_ag.group(1)}"
+            ag_exact = [t for t in reverse_matches if re.search(r'\b' + re.escape(ag_str) + r'\b', t)]
+            if ag_exact:
+                return max(ag_exact, key=len)
         return max(reverse_matches, key=len)
     
     # Step 4: Fall back to fuzzy matching with higher threshold
@@ -654,14 +671,26 @@ def find_matches_by_teams_or_hash(
         home = attrs.get("home_team_name", "")
         away = attrs.get("away_team_name", "")
 
+        def _cn(s):
+            """Core name: strip age group + club-type suffix for fuzzy matching."""
+            import re as _re2
+            s = s.lower().strip()
+            s = _re2.sub(r'\bu\d{2}\b', '', s)
+            s = _re2.sub(r'\b(fc|sc|afc|fk|ac|bfc)\b', '', s)
+            return _re2.sub(r'\s+', ' ', s).strip()
+
         if home_like:
             norm_home = normalize_team(home_like) or home_like
-            if norm_home.lower() not in home.lower():
+            nh_lower  = norm_home.lower()
+            h_lower   = home.lower()
+            if nh_lower not in h_lower and _cn(norm_home) not in _cn(home):
                 continue
 
         if away_like:
             norm_away = normalize_team(away_like) or away_like
-            if norm_away.lower() not in away.lower():
+            na_lower  = norm_away.lower()
+            a_lower   = away.lower()
+            if na_lower not in a_lower and _cn(norm_away) not in _cn(away):
                 continue
 
         if home_like or away_like:
@@ -1488,6 +1517,48 @@ def tool_all_results(query: str = "", round_filter: int = None, limit: int = 60)
         date_display = iso_date_aest(date_str) if date_str else ""
         match_round = attrs.get("full_round") or attrs.get("round") or ""
 
+        # Determine result label from the filtered team's perspective
+        _result = ""
+
+        def _core_name(s):
+            """Strip age group and club-type suffixes to get comparable base name.
+            e.g. 'Berwick City FC U16' → 'berwick city'
+                 'Berwick City SC'     → 'berwick city'
+            """
+            s = s.lower().strip()
+            s = re.sub(r'\bu\d{2}\b', '', s)            # remove U16, U18 etc
+            s = re.sub(r'\b(fc|sc|afc|fk|ac|bfc)\b', '', s)  # remove club type
+            s = re.sub(r'\s+', ' ', s).strip()
+            return s
+
+        # Build query team core from best available source
+        _q_src = canonical_club or (CLUB_ALIASES.get(club_token, club_token) if club_token else "") or q_lower
+        _q_core = _core_name(_q_src)
+        _home_core = _core_name(home)
+        _away_core = _core_name(away)
+
+        _is_home = bool(_q_core and _q_core in _home_core)
+        _is_away = bool(_q_core and _q_core in _away_core)
+        # Also try reverse: home/away core contains query core
+        if not _is_home and _q_core:
+            _is_home = _home_core in _q_core and bool(_home_core)
+        if not _is_away and _q_core:
+            _is_away = _away_core in _q_core and bool(_away_core)
+
+        if _is_home or _is_away:
+            try:
+                _hs, _as = int(home_score), int(away_score)
+                if _hs == _as:
+                    _result = "🟰 D"
+                elif (_is_home and _hs > _as) or (_is_away and _as > _hs):
+                    _result = "✅ W"
+                else:
+                    _result = "❌ L"
+            except (ValueError, TypeError):
+                pass
+
+        if len(matched) < 3:  # debug first 3 rows
+            print(f"  [results debug] home={home!r} away={away!r} scores={home_score!r}-{away_score!r} q_core={_q_core!r} result={_result!r}")
         matched.append({
             "sort_key": date_str,
             "Date":     date_display,
@@ -1496,6 +1567,7 @@ def tool_all_results(query: str = "", round_filter: int = None, limit: int = 60)
             "Home":     home,
             "Score":    f"{home_score}-{away_score}",
             "Away":     away,
+            "Result":   _result,
         })
 
     if not matched:
@@ -1517,7 +1589,7 @@ def tool_all_results(query: str = "", round_filter: int = None, limit: int = 60)
     filter_suffix = " — " + " / ".join(filter_parts) if filter_parts else ""
 
     return {
-        "type":  "table",
+        "type":  "match_list",
         "data":  data,
         "title": f"⚽ Results{filter_suffix} ({len(data)} matches)",
     }
@@ -2002,7 +2074,29 @@ def tool_yellow_cards(query: str = "", show_details: bool = False,
                 if mins:
                     all_mins.append(mins)
 
-        total_count = stats.get(stat_key, 0)
+        # If filtered by team/age, count only cards from matches for that team
+        if age_group or base_club or team_name:
+            filter_team = team_name or (f"{base_club} {age_group}".strip() if base_club and age_group else base_club or "")
+            team_card_count = 0
+            for m in p.get("matches", []):
+                m_team = m.get("team_name", "")
+                # Match the match to the right team
+                if filter_team and m_team and filter_team.lower() not in m_team.lower():
+                    if age_group and age_group.lower() not in m_team.lower():
+                        continue
+                    if base_club and base_club.lower() not in m_team.lower():
+                        continue
+                events = m.get("events", [])
+                yc = m.get("yellow_cards",
+                    sum(1 for e in events
+                        if (e.get("type") or e.get("event_type","")).lower() == "yellow_card"))
+                team_card_count += yc
+            total_count = team_card_count
+        else:
+            total_count = stats.get(stat_key, 0)
+
+        if total_count == 0 and this_week_count == 0 and last_week_count == 0:
+            continue  # skip players with no cards in this context
 
         row = {
             "#":         i,
@@ -2131,7 +2225,28 @@ def tool_red_cards(query: str = "", show_details: bool = False,
                 if mins:
                     all_mins.append(mins)
 
-        total_count = stats.get(stat_key, 0)
+        # If filtered by team/age, count only cards from matches for that team
+        if age_group or base_club or team_name:
+            filter_team = team_name or (f"{base_club} {age_group}".strip() if base_club and age_group else base_club or "")
+            team_card_count = 0
+            for m in p.get("matches", []):
+                m_team = m.get("team_name", "")
+                if filter_team and m_team and filter_team.lower() not in m_team.lower():
+                    if age_group and age_group.lower() not in m_team.lower():
+                        continue
+                    if base_club and base_club.lower() not in m_team.lower():
+                        continue
+                events = m.get("events", [])
+                rc = m.get("red_cards",
+                    sum(1 for e in events
+                        if (e.get("type") or e.get("event_type","")).lower() == "red_card"))
+                team_card_count += rc
+            total_count = team_card_count
+        else:
+            total_count = stats.get(stat_key, 0)
+
+        if total_count == 0 and this_week_count == 0 and last_week_count == 0:
+            continue
 
         row = {
             "#":         i,
@@ -2229,6 +2344,221 @@ def tool_top_scorers(query: str = "", limit: int = 50):
         "type":  "table",
         "data":  data,
         "title": f"⚽ Top Scorers{filter_desc} — {len(scorers)} players with goals, showing top {min(limit, len(scorers))}"
+    }
+
+
+def tool_own_goals(query: str = "") -> Any:
+    """List players who scored own goals, with match details. Clickable → match detail."""
+    ag    = extract_age_group(query)
+    club  = extract_base_club_name(query)
+
+    rows = []
+    for p in players_summary:
+        pname = f"{p.get('first_name','')} {p.get('last_name','')}".strip()
+        for m in p.get("matches", []):
+            if not (m.get("available", False) or m.get("started", False)):
+                continue
+            og = m.get("own_goals", 0)
+            if not og:
+                events = m.get("events", [])
+                def _et(e): return (e.get("type") or e.get("event_type","")).lower()
+                og = sum(1 for e in events if _et(e) == "own_goal" or (_et(e) in ("goal","goal_scored") and e.get("own_goal")))
+            if og == 0:
+                continue
+            m_team = m.get("team_name","")
+            if ag   and ag.lower()   not in m_team.lower(): continue
+            if club and club.lower() not in m_team.lower(): continue
+            rows.append({
+                "Player":   pname,
+                "Team":     m_team,
+                "Date":     iso_date_aest(m.get("date","")),
+                "Opponent": m.get("opponent_team_name","—"),
+                "H/A":      "🏠" if m.get("home_or_away") == "home" else "✈️",
+                "🥅 OG":    og,
+                "_hash":    m.get("match_hash_id",""),
+                "_date_raw": m.get("date",""),
+            })
+
+    if not rows:
+        return f"❌ No own goals found" + (f" for '{query}'" if query else "")
+
+    rows.sort(key=lambda r: r["_date_raw"], reverse=True)
+
+    filters = []
+    if ag:   filters.append(ag)
+    if club: filters.append(club)
+    fs = " — " + " / ".join(filters) if filters else ""
+    title = f"🥅 Own Goals{fs} ({len(rows)} entries)"
+
+    # Strip internal fields
+    display = [{k: v for k, v in r.items() if not k.startswith("_")} for r in rows]
+    hashes  = [r["_hash"] for r in rows]
+    dates   = [r["_date_raw"][:10] for r in rows]
+
+    return {
+        "type":    "own_goal_list",
+        "data":    display,
+        "hashes":  hashes,
+        "dates":   dates,
+        "title":   title,
+    }
+
+
+def tool_card_summary(query: str = "") -> Any:
+    """
+    Cards aggregated by CLUB (stripped of age group).
+    If a specific club is in the query, break down by age group for that club.
+    If a specific age group AND club are given, list players.
+    Example queries:
+      "cards per club"           → all clubs, total yellows+reds
+      "cards per club Heidelberg"→ Heidelberg broken down by age group
+      "card summary U16 Heidelberg" → players with cards in Heidelberg U16
+    """
+    q = query.lower().strip()
+
+    age_group  = extract_age_group(query)
+    league_code = None
+    for pl in ['ypl1', 'ypl2', 'ysl nw', 'ysl se', 'vpl men', 'vpl women']:
+        if pl in q:
+            league_code = extract_league_from_league_name(pl)
+            break
+
+    # Build raw club filter from query — strip age, league, card AND role keywords
+    # Use RAW substring match (not alias lookup) so "Dandenong City" stays "Dandenong City"
+    _club_q = re.sub(r'\b(card|cards?|summary|per|by|total|club|clubs?|show|me|list|all|each|staff|coaches?|managers?|non.?player|everyone|combined)\b', '', q, flags=re.IGNORECASE)
+    if age_group:
+        _club_q = re.sub(re.escape(age_group), '', _club_q, flags=re.IGNORECASE)
+    if league_code:
+        _club_q = re.sub(re.escape(league_code), '', _club_q, flags=re.IGNORECASE)
+    for pl in ['ypl1', 'ypl2', 'ysl nw', 'ysl se', 'vpl men', 'vpl women']:
+        _club_q = _club_q.replace(pl, "")
+    base_club = _club_q.strip()
+
+    # Staff-only filter
+    staff_only = any(kw in q for kw in ["staff", "coach", "coaches", "non-player", "non player", "manager"])
+    players_only = not staff_only and not any(kw in q for kw in ["all", "everyone", "combined"])
+
+    # Mode: for staff there are few people so skip age breakdown — go club → players directly
+    # For players: club → age → players
+    if base_club and (age_group or staff_only):
+        mode = "players"
+    elif base_club:
+        mode = "age"
+    else:
+        mode = "club"
+
+    totals: dict = {}
+
+    if staff_only:
+        _pool = list(staff_summary)
+    elif players_only:
+        _pool = list(players_summary)
+    else:
+        _pool = list(players_summary) + list(staff_summary)
+
+    for p in _pool:
+        for m in p.get("matches", []):
+            # Players need available/started; staff just need a match entry
+            _is_player = not p.get("role") or str(p.get("role","")).lower() == "player"
+            if _is_player and not (m.get("available", False) or m.get("started", False)):
+                continue
+            m_team = m.get("team_name", "")
+            if not m_team:
+                continue
+
+            # Apply league filter
+            if league_code:
+                m_league = extract_league_from_league_name(
+                    m.get("league_name", "") or m.get("competition_name", "")
+                )
+                if m_league.lower() != league_code.lower():
+                    continue
+
+            # Apply club filter
+            if base_club and base_club.lower() not in m_team.lower():
+                continue
+            # Apply age filter
+            if age_group and age_group.lower() not in m_team.lower():
+                continue
+
+            # Count cards for this match
+            events = m.get("events", [])
+            yc = m.get("yellow_cards",
+                sum(1 for e in events if (e.get("type") or e.get("event_type","")).lower() == "yellow_card"))
+            rc = m.get("red_cards",
+                sum(1 for e in events if (e.get("type") or e.get("event_type","")).lower() == "red_card"))
+
+            pname = f"{p.get('first_name','')} {p.get('last_name','')}".strip()
+
+            # Determine grouping key
+            if mode == "players":
+                role = p.get("role") or (p.get("roles") or [""])[0] or "player"
+                key = pname if role.lower() in ("player", "") else f"{pname} ({role.title()})"
+            elif mode == "age":
+                ag_m = re.search(r'U\d{2}', m_team, re.IGNORECASE)
+                key  = ag_m.group(0).upper() if ag_m else "Other"
+            else:  # club
+                key = re.sub(r'\s+U\d{2}$', '', m_team, flags=re.IGNORECASE).strip()
+
+            if key not in totals:
+                totals[key] = {"yc": 0, "rc": 0, "players": set(), "matches": 0}
+            totals[key]["yc"] += yc
+            totals[key]["rc"] += rc
+            totals[key]["players"].add(pname)
+            totals[key]["matches"] += 1
+
+    if not totals:
+        return f"❌ No card data found" + (f" for '{query}'" if query else "")
+
+    # Build rows — skip zero-card entries
+    data = []
+    for key, v in sorted(totals.items(), key=lambda x: -(x[1]["yc"] + x[1]["rc"] * 2)):
+        if v["yc"] == 0 and v["rc"] == 0:
+            continue
+        row = {
+            "🟨 Yellow": v["yc"],
+            "🟥 Red":    v["rc"],
+            "Total":     v["yc"] + v["rc"],
+            "Players":   len(v["players"]),
+        }
+        if mode == "players":
+            row["Player"] = key
+        elif mode == "age":
+            row["Age"] = key
+        else:
+            row["Club"] = key
+        # Reorder so name col is first
+        ordered = {list(row.keys())[-1]: list(row.values())[-1]}
+        ordered.update({k: v2 for k, v2 in row.items() if k != list(row.keys())[-1]})
+        data.append(ordered)
+
+    filters = []
+    if base_club: filters.append(base_club)
+    if age_group: filters.append(age_group)
+    if league_code: filters.append(league_code)
+    filter_str = " — " + " / ".join(filters) if filters else ""
+
+    if mode == "players":
+        label = f"Players with cards — {base_club} {age_group}"
+        col_key = "Player"
+    elif mode == "age":
+        label = f"Cards by Age Group — {base_club}"
+        col_key = "Age"
+    else:
+        label = "Cards by Club"
+        col_key = "Club"
+
+    title = f"📊 {label}{filter_str} ({len(data)} entries)"
+
+    return {
+        "type":       "card_summary",
+        "mode":       mode,
+        "col_key":    col_key,
+        "base_club":  base_club or "",
+        "age_group":  age_group or "",
+        "staff_only": staff_only,
+        "data":       data,
+        "title":      title,
     }
 
 
@@ -2598,18 +2928,34 @@ def tool_players(query: str, detailed: bool = False) -> str:
                     # Old JSON without team_name on matches — show totals on first row
                     if i == 0:
                         mp = stats.get("matches_played", len(matches))
-                        g  = stats.get("goals", 0)
-                        yc = stats.get("yellow_cards", 0)
-                        rc = stats.get("red_cards", 0)
+                        g   = stats.get("goals", 0)
+                        og  = stats.get("own_goals", 0)
+                        pen = stats.get("penalties", 0)
+                        yc  = stats.get("yellow_cards", 0)
+                        rc  = stats.get("red_cards", 0)
                     else:
                         mp, g, yc, rc = "—", "—", "—", "—"
 
+                # Count own goals + penalties per team from match data
+                if has_team_in_matches and tm_played:
+                    og_reg  = sum(m.get("own_goals", 0) for m in tm_played)
+                    pen_reg = sum(
+                        sum(1 for e in m.get("events",[]) if e.get("penalty_kick") and not e.get("own_goal"))
+                        for m in tm_played
+                    )
+                elif i == 0:
+                    og_reg  = stats.get("own_goals", 0)
+                    pen_reg = stats.get("penalties", 0)
+                else:
+                    og_reg, pen_reg = "—", "—"
                 reg_rows.append({
                     "Club":    t,
                     "League":  league,
                     "Jersey":  f"#{jersey}",
                     "Matches": mp,
                     "⚽":      g,
+                    "🅿️ Pen":  pen_reg if pen_reg else "",
+                    "🥅 OG":   og_reg  if og_reg  else "",
                     "🟨":      yc,
                     "🟥":      rc,
                 })
@@ -2627,7 +2973,8 @@ def tool_players(query: str, detailed: bool = False) -> str:
             for m in display_matches:
                 events  = m.get("events", [])
                 def _etype(e): return (e.get("type") or e.get("event_type") or "").lower()
-                goals   = m.get("goals",       sum(1 for e in events if _etype(e) == "goal"))
+                goals   = m.get("goals",       sum(1 for e in events if _etype(e) in ("goal","goal_scored") and not e.get("own_goal") and _etype(e) != "own_goal"))
+                og      = m.get("own_goals",   sum(1 for e in events if _etype(e) == "own_goal" or e.get("own_goal")))
                 yellows = m.get("yellow_cards", sum(1 for e in events if _etype(e) == "yellow_card"))
                 reds    = m.get("red_cards",    sum(1 for e in events if _etype(e) == "red_card"))
 
@@ -2644,6 +2991,7 @@ def tool_players(query: str, detailed: bool = False) -> str:
                     "Opponent": m.get("opponent_team_name", "—"),
                     "Started":  started_icon,
                     "⚽":       goals,
+                    "🥅 OG":    og if og else "",
                     "🟨":       yellows,
                     "🟥":       reds,
                 }
@@ -2674,47 +3022,98 @@ def tool_players(query: str, detailed: bool = False) -> str:
                 "note":     note,
             }
         else:
-            # Multiple players found - return as table
+            # Multiple players → clickable player_list
             data = []
-            for p in exact_matches[:10]:
-                stats = p.get("stats", {})
+            for p in exact_matches[:20]:
+                stats  = p.get("stats", {})
+                teams  = p.get("teams", []) or ([p.get("team_name")] if p.get("team_name") else [])
+                team   = teams[0] if teams else ""
+                ag_m2  = re.search(r'U\d{2}', team, re.IGNORECASE)
+                age_grp = ag_m2.group(0).upper() if ag_m2 else "—"
+                club   = re.sub(r'\s+U\d{2}$', '', team, flags=re.IGNORECASE).strip() or team
+                all_m  = p.get("matches", [])
+                played = len([m for m in all_m if m.get("available", False) or m.get("started", False)])
                 data.append({
-                    "Player": f"{p.get('first_name')} {p.get('last_name')}",
-                    "Jersey": f"#{p.get('jersey')}",
-                    "Team": p.get('team_name', ''),
-                    "Goals": stats.get('goals', 0),
-                    "Matches": stats.get('matches_played', 0),
-                    "Yellow": stats.get('yellow_cards', 0),
-                    "Red": stats.get('red_cards', 0)
+                    "Player": f"{p.get('first_name', '')} {p.get('last_name', '')}".strip(),
+                    "Club":   club,
+                    "Div":    age_grp,
+                    "M":      played,
+                    "⚽":     stats.get("goals", 0),
+                    "🟨":     stats.get("yellow_cards", 0),
+                    "🟥":     stats.get("red_cards", 0),
                 })
-            
             return {
-                "type": "table",
-                "data": data,
-                "title": f"👤 Found {len(exact_matches)} players matching '{query}' (showing {min(10, len(exact_matches))})"
+                "type":  "player_list",
+                "data":  data,
+                "title": f"👤 {len(exact_matches)} players matching '{query}' — click to view profile",
             }
     
     # Fuzzy match fallback
     matched_name = fuzzy_find(q, [n.lower() for n in player_names], threshold=50)
     
+    # Single fuzzy match → add to candidates list, show player_list for selection
     if matched_name and matched_name in player_lookup:
-        p = player_lookup[matched_name]
-        stats = p.get("stats", {})
-        return (
-            f"Did you mean:\n\n"
-            f"👤 **{p.get('first_name')} {p.get('last_name')}** (#{p.get('jersey')})\n"
-            f"   {p.get('team_name')}\n"
-            f"   ⚽ {stats.get('goals', 0)} | 🎮 {stats.get('matches_played', 0)} | "
-            f"🟨 {stats.get('yellow_cards', 0)} | 🟥 {stats.get('red_cards', 0)}"
-        )
+        single_p = player_lookup[matched_name]
+        stats  = single_p.get("stats", {})
+        teams  = single_p.get("teams", []) or ([single_p.get("team_name")] if single_p.get("team_name") else [])
+        team   = teams[0] if teams else ""
+        ag_m   = re.search(r'U\d{2}', team, re.IGNORECASE)
+        age_grp = ag_m.group(0).upper() if ag_m else "—"
+        club   = re.sub(r'\s+U\d{2}$', '', team, flags=re.IGNORECASE).strip() or team
+        all_m  = single_p.get("matches", [])
+        played = len([m for m in all_m if m.get("available", False) or m.get("started", False)])
+        return {
+            "type":  "player_list",
+            "data":  [{
+                "Player": f"{single_p.get('first_name', '')} {single_p.get('last_name', '')}".strip(),
+                "Club":   club,
+                "Div":    age_grp,
+                "M":      played,
+                "⚽":     stats.get("goals", 0),
+                "🟨":     stats.get("yellow_cards", 0),
+                "🟥":     stats.get("red_cards", 0),
+                "Match":  "Best match",
+            }],
+            "title": f"🔍 Did you mean: click to view profile",
+        }
     
-    similar = process.extract(q, [n.lower() for n in player_names], scorer=fuzz.WRatio, limit=5)
+    # Multiple candidates → clickable player_list
+    similar = process.extract(q, [n.lower() for n in player_names], scorer=fuzz.WRatio, limit=8)
     if similar:
-        lines = [f"No exact match. Did you mean:\n"]
+        data = []
         for name, score, _ in similar:
-            actual = next((n for n in player_names if n.lower() == name), name)
-            lines.append(f"  - {actual} ({score}%)")
-        return "\n".join(lines)
+            if score < 45:
+                continue
+            p = player_lookup.get(name)
+            if not p:
+                actual = next((n for n in player_names if n.lower() == name), name)
+                p = player_lookup.get(actual.lower())
+            if not p:
+                continue
+            stats  = p.get("stats", {})
+            teams  = p.get("teams", []) or ([p.get("team_name")] if p.get("team_name") else [])
+            team   = teams[0] if teams else ""
+            ag_m   = re.search(r'U\d{2}', team, re.IGNORECASE)
+            age_grp = ag_m.group(0).upper() if ag_m else "—"
+            club   = re.sub(r'\s+U\d{2}$', '', team, flags=re.IGNORECASE).strip() or team
+            all_m  = p.get("matches", [])
+            played = len([m for m in all_m if m.get("available", False) or m.get("started", False)])
+            data.append({
+                "Player": f"{p.get('first_name', '')} {p.get('last_name', '')}".strip(),
+                "Club":   club,
+                "Div":    age_grp,
+                "M":      played,
+                "⚽":     stats.get("goals", 0),
+                "🟨":     stats.get("yellow_cards", 0),
+                "🟥":     stats.get("red_cards", 0),
+                "Match":  f"{score}%",
+            })
+        if data:
+            return {
+                "type":  "player_list",
+                "data":  data,
+                "title": f"🔍 Did you mean one of these? Click to view profile",
+            }
     
     return f"❌ No player found: {query}"
 
@@ -2829,8 +3228,11 @@ def _build_ladder_table(results_list, competition_code_lower, age_group_lower=No
         a = r.get("attributes", {})
         league_name = (a.get("league_name") or "").lower()
         comp_name   = (a.get("competition_name") or "").lower()
-        if competition_code_lower not in league_name and competition_code_lower not in comp_name:
-            continue
+        row_lc = extract_league_from_league_name(league_name).lower()
+        row_cc = extract_league_from_league_name(comp_name).lower()
+        if competition_code_lower != row_lc and competition_code_lower != row_cc:
+            if competition_code_lower not in league_name and competition_code_lower not in comp_name:
+                continue
         if age_group_lower and age_group_lower not in league_name and age_group_lower not in comp_name:
             continue
         home = a.get("home_team_name") or ""
@@ -2890,9 +3292,12 @@ def tool_ladder(query: str) -> str:
         if not data:
             return f"❌ No ladder for {competition_to_use.upper()} {age_group} — no completed matches found."
         return {
-            "type":  "table",
-            "data":  data,
-            "title": f"📊 {competition_to_use.upper()} {age_group} Ladder ({len(data)} teams)"
+            "type":        "ladder",
+            "competition": competition_to_use,
+            "age_group":   age_group,
+            "data":        data,
+            "tables": [{"title": f"{age_group} — {competition_to_use.upper()}", "data": data}],
+            "title":       f"📊 {competition_to_use.upper()} {age_group} Ladder ({len(data)} teams)"
         }
 
     # ── No age group → discover every age group in this competition and return all ──
@@ -2901,8 +3306,11 @@ def tool_ladder(query: str) -> str:
         a = r.get("attributes", {})
         ln = (a.get("league_name") or "").lower()
         cn = (a.get("competition_name") or "").lower()
-        if comp_lower not in ln and comp_lower not in cn:
-            continue
+        row_lc2 = extract_league_from_league_name(ln).lower()
+        row_cc2 = extract_league_from_league_name(cn).lower()
+        if comp_lower != row_lc2 and comp_lower != row_cc2:
+            if comp_lower not in ln and comp_lower not in cn:
+                continue
         # Extract U-code from the league name
         ag_m = re.search(r'\bu(\d{2})\b', ln or cn)
         if ag_m:
@@ -2934,9 +3342,10 @@ def tool_ladder(query: str) -> str:
         return f"❌ No completed matches found for {competition_to_use.upper()}."
 
     return {
-        "type":   "multi_table",
-        "title":  f"📊 {competition_to_use.upper()} — All Age Groups ({len(tables)} divisions)",
-        "tables": tables,
+        "type":       "ladder",
+        "title":      f"📊 {competition_to_use.upper()} — All Age Groups ({len(tables)} divisions)",
+        "competition": competition_to_use,
+        "tables":     tables,
     }
     
 def tool_form(query: str) -> str:
@@ -2992,6 +3401,320 @@ def tool_form(query: str) -> str:
         "data": match_data,
         "title": f"📈 Recent Form: {team} - {' '.join(form)}"
     }
+
+def tool_match_detail(query: str) -> Any:
+    """
+    Full match detail: both team lineups split into Players / Staff tabs,
+    with goals & cards sourced from match_centre events (attributed by player name)
+    and career totals cross-referenced from player_lookup.
+    """
+    import re as _re
+    q = query.strip()
+    q_clean = _re.sub(r'\b(match|details?|game|lineups?|for)\b', '', q, flags=_re.IGNORECASE).strip()
+
+    # ── 1. Locate the match ──────────────────────────────────────────────
+    matches = find_matches_by_teams_or_hash(match_hash_id=q_clean)
+
+    if not matches:
+        date_m    = _re.search(r'(\d{4}-\d{2}-\d{2})', q_clean)
+        team_part = _re.sub(r'\d{4}-\d{2}-\d{2}', '', q_clean).strip()
+        if date_m and team_part:
+            target_date = date_m.group(1)
+            # Extract age group from team_part so U16 query never matches U14 game
+            ag_m2 = _re.search(r'\b(u\d{2})\b', team_part, _re.IGNORECASE)
+            ag_req = ag_m2.group(1).lower() if ag_m2 else None
+
+            def _cn2(s):
+                s = s.lower()
+                s = _re.sub(r'\bu\d{2}\b', '', s)
+                s = _re.sub(r'\b(fc|sc|afc|fk|ac|bfc)\b', '', s)
+                return _re.sub(r'\s+', ' ', s).strip()
+
+            # Split on "vs" to get individual team tokens
+            vs_parts  = _re.split(r'\s+vs?\s+', team_part, flags=_re.IGNORECASE)
+            team_cores = [_cn2(p) for p in vs_parts if p.strip()]
+
+            for mc in match_centre_data:
+                ra   = mc.get("result", {}).get("attributes", {})
+                d    = (ra.get("date") or "")[:10]
+                if d != target_date:
+                    continue
+                h = ra.get("home_team_name", "")
+                a = ra.get("away_team_name", "")
+                hc = _cn2(h)
+                ac = _cn2(a)
+                # Must match age group exactly if one was specified
+                if ag_req:
+                    if ag_req not in h.lower() and ag_req not in a.lower():
+                        continue
+                # Each query team token must match one of home/away core names
+                if all(any(tc in side for side in (hc, ac)) for tc in team_cores if tc):
+                    matches.append(mc)
+
+    if not matches:
+        parts     = _re.split(r'\s+v(?:s)?\s+', q_clean, flags=_re.IGNORECASE)
+        home_like = parts[0].strip() if parts else q_clean
+        away_like = parts[1].strip() if len(parts) > 1 else None
+        matches   = find_matches_by_teams_or_hash(home_like=home_like, away_like=away_like)
+
+    if not matches:
+        return {"type": "error", "message": f"❌ No match found: {query}"}
+
+    mc        = matches[0]
+    r_attrs   = mc.get("result", {}).get("attributes", {})
+    match_id  = mc.get("match_hash_id", "")
+    home_name = r_attrs.get("home_team_name", "")
+    away_name = r_attrs.get("away_team_name", "")
+    home_score = r_attrs.get("home_score", "—")
+    away_score = r_attrs.get("away_score", "—")
+    date_str   = format_date_aest(r_attrs.get("date", "")) or r_attrs.get("date", "")[:10]
+    league     = extract_league_from_league_name(r_attrs.get("league_name", ""))
+    venue      = r_attrs.get("ground_name", "")
+
+    # ── 2. Build card/goal maps keyed by player name ──────────────────────
+    # Primary: use player_summary matches (match_hash_id matched) — most reliable
+    # Fallback: mc_events player_name field
+    from collections import defaultdict
+    goal_mins      = defaultdict(list)
+    own_goal_mins  = defaultdict(list)
+    pen_mins       = defaultdict(list)
+    yellow_mins    = defaultdict(list)
+    red_mins       = defaultdict(list)
+
+    def _etype(e):
+        return (e.get("type") or e.get("event_type") or "").lower()
+
+    # Pass 1: scan player_summary for this match_hash_id
+    for p in players_summary:
+        pname = f"{p.get('first_name','')} {p.get('last_name','')}".strip()
+        for m in p.get("matches", []):
+            if m.get("match_hash_id") != match_id:
+                continue
+            events = m.get("events", [])
+            # Own goals
+            og_field = m.get("own_goals", 0)
+            if isinstance(og_field, list):
+                for e in og_field:
+                    own_goal_mins[pname].append(str(e.get("minute","")) if isinstance(e,dict) else "")
+            else:
+                og_n = int(og_field or 0)
+                if og_n > 0:
+                    og_from_ev = [str(e.get("minute","")) for e in events
+                                  if _etype(e) == "own_goal" or e.get("own_goal")]
+                    own_goal_mins[pname].extend(og_from_ev or [""] * og_n)
+            # Penalty goals (subset of regular goals — add ⚽P marker via pen_mins)
+            pen_from_ev = [str(e.get("minute","")) for e in events
+                           if e.get("penalty_kick") and not e.get("own_goal")]
+            if pen_from_ev:
+                pen_mins[pname].extend(pen_from_ev)
+            # Goals (regular only)
+            g_field = m.get("goals", 0)
+            if isinstance(g_field, list):
+                for e in g_field:
+                    if not e.get("own_goal"):
+                        goal_mins[pname].append(str(e.get("minute","")) if isinstance(e,dict) else "")
+            elif int(g_field or 0) > 0:
+                for e in events:
+                    if _etype(e) in ("goal","goal_scored") and not e.get("own_goal"):
+                        goal_mins[pname].append(str(e.get("minute","")) if e.get("minute") not in (None,"") else "")
+            # Yellow cards
+            yc_field = m.get("yellow_cards", 0)
+            if isinstance(yc_field, list):
+                for e in yc_field:
+                    mn = str(e.get("minute","")) if isinstance(e,dict) else ""
+                    yellow_mins[pname].append(mn)
+            else:
+                yc_n = int(yc_field or 0)
+                if yc_n > 0:
+                    mins_from_events = [str(e.get("minute","")) for e in events
+                                        if _etype(e) == "yellow_card" and e.get("minute") not in (None,"")]
+                    yellow_mins[pname].extend(mins_from_events or [""] * yc_n)
+            # Red cards
+            rc_field = m.get("red_cards", 0)
+            if isinstance(rc_field, list):
+                for e in rc_field:
+                    mn = str(e.get("minute","")) if isinstance(e,dict) else ""
+                    red_mins[pname].append(mn)
+            else:
+                rc_n = int(rc_field or 0)
+                if rc_n > 0:
+                    mins_from_events = [str(e.get("minute","")) for e in events
+                                        if _etype(e) == "red_card" and e.get("minute") not in (None,"")]
+                    red_mins[pname].extend(mins_from_events or [""] * rc_n)
+
+    # Pass 2: mc_events fallback for any player not found above
+    mc_entry  = next((m for m in match_centre_data if m.get("match_hash_id") == match_id), None)
+    mc_events = mc_entry.get("events", []) if mc_entry else []
+    for e in mc_events:
+        pn = (e.get("player_name") or "").strip()
+        mn = str(e.get("minute","")) if e.get("minute") not in (None,"") else ""
+        et = _etype(e)
+        if not pn:
+            continue
+        if et == "own_goal" or (et in ("goal","goal_scored") and e.get("own_goal")):
+            if pn not in own_goal_mins: own_goal_mins[pn].append(mn)
+        elif et in ("goal","goal_scored") and pn not in goal_mins:
+            goal_mins[pn].append(mn)
+            if e.get("penalty_kick"): pen_mins[pn].append(mn)
+        elif et == "yellow_card" and pn not in yellow_mins:
+            yellow_mins[pn].append(mn)
+        elif et == "red_card" and pn not in red_mins:
+            red_mins[pn].append(mn)
+
+    # ── 3. Career totals from player_lookup ──────────────────────────────
+    def _career(full_name: str):
+        """Return (goals, yellows, reds) career totals from player_lookup."""
+        p = player_lookup.get(full_name.lower())
+        if not p:
+            return None
+        st = p.get("stats", {})
+        return st.get("goals", 0), st.get("yellow_cards", 0), st.get("red_cards", 0)
+
+    # ── 4. Format minutes ────────────────────────────────────────────────
+    def _mins_str(mins_list):
+        clean = [m for m in mins_list if m]
+        return ", ".join(f"{m}'" for m in clean) if clean else ""
+
+    def _fmt_cell(count, mins_list, emoji):
+        if count == 0:
+            return ""
+        ms = _mins_str(mins_list)
+        return f"{emoji}×{count} ({ms})" if ms else f"{emoji}×{count}"
+
+    # ── 5. Build rows for one side ───────────────────────────────────────
+    def _build_side(lineup_list):
+        """
+        Returns (player_rows, staff_rows) — separated by whether the entry
+        has a jersey number or appears in player_lookup.
+        """
+        player_rows = []
+        staff_rows  = []
+
+        for p in lineup_list:
+            fn   = (p.get("first_name") or "").strip()
+            ln   = (p.get("last_name")  or "").strip()
+            name = f"{fn} {ln}".strip()
+            jersey = p.get("jersey_number") or p.get("jersey")
+
+            # Determine if this is a player or non-playing staff
+            in_player_lookup = name.lower() in player_lookup
+            has_jersey       = bool(jersey)
+            is_starting      = bool(p.get("starting"))
+            # Heuristic: staff have no jersey AND not in player_lookup AND not starting
+            is_staff = (not has_jersey) and (not in_player_lookup) and (not is_starting)
+
+            role = "✅" if is_starting else "🪑"
+            if p.get("captain"): role += " ©"
+            if p.get("goalie"):  role += " 🧤"
+
+            # Match events for this player
+            g_list   = goal_mins.get(name,      [])
+            og_list  = own_goal_mins.get(name,  [])
+            pen_list = pen_mins.get(name,       [])
+            yc_list  = yellow_mins.get(name,    [])
+            rc_list  = red_mins.get(name,       [])
+
+            # Fallback: lineup entry may store counts/lists directly
+            def _from_field(field_val, fallback_list):
+                if isinstance(field_val, list) and len(field_val) > 0:
+                    # Non-empty list of event dicts — use directly
+                    return len(field_val), [str(e.get("minute","")) for e in field_val if isinstance(e,dict)]
+                # Empty list or zero int — prefer mc_events (authoritative)
+                if fallback_list:
+                    return len(fallback_list), fallback_list
+                # Fall back to numeric field
+                if isinstance(field_val, (int, float)) and int(field_val) > 0:
+                    return int(field_val), []
+                return 0, []
+
+            g_cnt,   g_m   = _from_field(p.get("goals", 0),         g_list)
+            og_cnt,  og_m  = _from_field(p.get("own_goals", 0),     og_list)
+            pen_cnt, pen_m = len(pen_list), pen_list
+            yc_cnt,  yc_m  = _from_field(p.get("yellow_cards", 0),  yc_list)
+            rc_cnt,  rc_m  = _from_field(p.get("red_cards", 0),     rc_list)
+
+            # Career totals
+            career = _career(name)
+            if career:
+                c_g, c_yc, c_rc = career
+                # Show goals only if player has scored (incl. OG separately)
+                career_str = f"⚽{c_g} 🟨{c_yc} 🟥{c_rc}" if c_g or c_yc or c_rc else ""
+            else:
+                career_str = ""
+
+            # Build goal cell: regular goals + pen marker + OG separately
+            _g_cell = ""
+            if g_cnt > 0:
+                _g_cell = _fmt_cell(g_cnt, g_m, "⚽")
+                if pen_cnt > 0:
+                    _pen_str = ", ".join(f"{mn}'" for mn in pen_m if mn)
+                    _g_cell += f" (🅿️×{pen_cnt}" + (f" {_pen_str}" if _pen_str else "") + ")"
+            row = {
+                "Player":  name,
+                "#":       f"#{jersey}" if jersey else "—",
+                "Role":    role,
+                "⚽":      _g_cell,
+                "🥅 OG":   _fmt_cell(og_cnt, og_m, "🥅") or "",
+                "🟨":      _fmt_cell(yc_cnt, yc_m, "🟨") or "",
+                "🟥":      _fmt_cell(rc_cnt, rc_m, "🟥") or "",
+                "Season":  career_str,
+            }
+
+            if is_staff:
+                staff_rows.append(row)
+            else:
+                player_rows.append(row)
+
+        # Sort: starters first, then bench, then alpha
+        def _sort_key(r):
+            return (0 if "✅" in str(r["Role"]) else 1, r["Player"])
+        player_rows.sort(key=_sort_key)
+        staff_rows.sort(key=lambda r: r["Player"])
+
+        # Totals row for players
+        if player_rows:
+            total_g  = sum(1 for r in player_rows if r["⚽"])
+            total_yc = sum(1 for r in player_rows if r["🟨"])
+            total_rc = sum(1 for r in player_rows if r["🟥"])
+            player_rows.append({
+                "Player": "─── TOTAL ───",
+                "#": "",
+                "Role": "",
+                "⚽": f"⚽ {total_g}" if total_g else "",
+                "🟨": f"🟨 {total_yc}" if total_yc else "",
+                "🟥": f"🟥 {total_rc}" if total_rc else "",
+                "Season": "",
+            })
+
+        return player_rows, staff_rows
+
+    # ── 6. Get lineup ────────────────────────────────────────────────────
+    lineup = find_lineup_by_match_hash(match_id)
+    home_players, home_staff = _build_side(lineup.get("home_lineup", [])) if lineup else ([], [])
+    away_players, away_staff = _build_side(lineup.get("away_lineup", [])) if lineup else ([], [])
+
+    title = f"⚽ {home_name}  {home_score} – {away_score}  {away_name}  |  {date_str}  ·  {league}"
+    if venue:
+        title += f"  ·  {venue}"
+
+    # ── 7. Build tab list ────────────────────────────────────────────────
+    tables = []
+    if home_players:
+        tables.append({"title": f"🏠 {home_name}", "data": home_players, "clickable": True})
+    if away_players:
+        tables.append({"title": f"✈️ {away_name}", "data": away_players, "clickable": True})
+
+    if not tables:
+        return {"type": "error", "message": "❌ No lineup data for this match"}
+
+    return {
+        "type":      "match_detail",
+        "title":     title,
+        "home_name": home_name,
+        "away_name": away_name,
+        "tables":    tables,
+    }
+
 
 def tool_match_centre(query: str) -> str:
     q = query.strip()
@@ -3662,13 +4385,9 @@ class FastQueryRouter:
         _refresh_data()  # picks up new JSON files every 30 min via st.cache_data TTL
         q = query.lower().strip()
  
-        # ADD THIS DEBUG BLOCK RIGHT HERE
-        print("="*60)
-        print(f"ROUTER DEBUG: Received query: '{query}'")
-        print(f"ROUTER DEBUG: Lowercase query: '{q}'")
-        print(f"ROUTER DEBUG: 'missing' in q: {'missing' in q}")
-        print(f"ROUTER DEBUG: 'today' in q: {'today' in q}")
-        print("="*60) 
+        import fast_agent as _fa_self
+        _fa_self._last_debug = {"query": query, "fn": None, "args": {}}
+        print(f"\n━━━ QUERY: {query!r}")
         # --- 1. INITIALIZE ALL VARIABLES AT THE START ---
         # This prevents the UnboundLocalError by ensuring they exist immediately
         filter_query = ""
@@ -3687,6 +4406,12 @@ class FastQueryRouter:
                 r'\b(dual|matches?|both|each|teams?|clubs?|for|per|breakdown|show|me|detail)\b',
                 '', q
             ).strip()
+            import fast_agent as _fa_mod
+
+            _fa_mod._last_debug = {'query': query, 'fn': 'tool_dual_player_detail', 'args': 'clean'}
+            print(f"\n🔧 TOOL: tool_dual_player_detail()  args='clean'  query={query!r}")
+
+
             return tool_dual_player_detail(clean)
 
         # --- 1B. DUAL REGISTRATION / MULTI-TEAM PLAYERS ---
@@ -3719,6 +4444,11 @@ class FastQueryRouter:
                 r'\b(dual|registration|reg|playing|for|in|two|2|clubs?|teams?|multiple|multi|registered|both|leagues?|age|groups?|different|cross|another|other|outside|second|or|more|than|one|1)\b',
                 '', q
             ).strip()
+            import fast_agent as _fa_mod
+
+            _fa_mod._last_debug = {'query': query, 'fn': 'tool_dual_registration', 'args': 'filter_query, different_clubs_only=is_diff_club_query'}
+
+            print(f"\n🔧 TOOL: tool_dual_registration()  query={query!r}")
             return tool_dual_registration(filter_query, different_clubs_only=is_diff_club_query)
 
         # --- 2. MISSING SCORES ---
@@ -3739,6 +4469,13 @@ class FastQueryRouter:
 
             include_all = 'all leagues' in q or 'all league' in q
 
+            import fast_agent as _fa_mod
+
+
+            _fa_mod._last_debug = {'query': query, 'fn': 'tool_missing_scores', 'args': '\n                filter_query,\n                include_all_leagues=include_all,\n                today_only=today_only,\n                last_week=last_week,\n                round_filter=round_filter\n            '}
+
+
+            print(f"\n🔧 TOOL: tool_missing_scores()  query={query!r}")
             return tool_missing_scores(
                 filter_query,
                 include_all_leagues=include_all,
@@ -3768,6 +4505,11 @@ class FastQueryRouter:
             round_m = re.search(r'\bround\s*(\d+)\b', q)
             r_num = int(round_m.group(1)) if round_m else None
             filter_query = re.sub(r'\bround\s*\d+\b', '', filter_query).strip()
+            import fast_agent as _fa_mod
+
+            _fa_mod._last_debug = {'query': query, 'fn': 'tool_todays_results', 'args': 'filter_query, round_filter=r_num'}
+
+            print(f"\n🔧 TOOL: tool_todays_results()  query={query!r}")
             return tool_todays_results(filter_query, round_filter=r_num)
 
         if is_broad_results:
@@ -3777,39 +4519,74 @@ class FastQueryRouter:
             round_m = re.search(r'\bround\s*(\d+)\b', q)
             r_num = int(round_m.group(1)) if round_m else None
             filter_query = re.sub(r'\bround\s*\d+\b', '', filter_query).strip()
+            import fast_agent as _fa_mod
+
+            _fa_mod._last_debug = {'query': query, 'fn': 'tool_all_results', 'args': 'filter_query, round_filter=r_num'}
+
+            print(f"\n🔧 TOOL: tool_all_results()  query={query!r}")
             return tool_all_results(filter_query, round_filter=r_num)
         # --- 2C. TOP SCORERS TODAY ---
         top_scorers_today_keywords = ['top scorers today', 'goals today', 'who scored today', 'scorers today', "today's scorers", "today's goals"]
         if any(keyword in q for keyword in top_scorers_today_keywords):
             filter_query = re.sub(r'\b(top|scorer|scorers?|goals?|who|scored|today|todays|today\'s|for|show|list|me)\b', '', q).strip()
+            import fast_agent as _fa_mod
+
+            _fa_mod._last_debug = {'query': query, 'fn': 'tool_top_scorers_today', 'args': 'filter_query'}
+
+            print(f"\n🔧 TOOL: tool_top_scorers_today()  query={query!r}")
             return tool_top_scorers_today(filter_query)
         
         # --- 2D. TEAMS THAT LOST TODAY ---
         teams_lost_keywords = ['teams that lost today', 'who lost today', 'losses today', 'teams lost today', "today's losses"]
         if any(keyword in q for keyword in teams_lost_keywords):
             filter_query = re.sub(r'\b(teams?|that|who|lost|losses?|today|todays|today\'s|for|show|list|me)\b', '', q).strip()
+            import fast_agent as _fa_mod
+
+            _fa_mod._last_debug = {'query': query, 'fn': 'tool_teams_lost_today', 'args': 'filter_query'}
+
+            print(f"\n🔧 TOOL: tool_teams_lost_today()  query={query!r}")
             return tool_teams_lost_today(filter_query)
 
         # --- 2E. MISSING SCORES TODAY ---
         missing_today_keywords = ['missing scores today', 'missing today', 'scores not entered today', 'todays missing scores']
         if any(keyword in q for keyword in missing_today_keywords):
             filter_query = re.sub(r'\b(missing|today|todays|today\'s|scores?|not|entered|for|show|list|me)\b', '', q).strip()
+            import fast_agent as _fa_mod
+
+            _fa_mod._last_debug = {'query': query, 'fn': 'tool_missing_scores', 'args': 'filter_query, include_all_leagues=False, today_only=True'}
+
+            print(f"\n🔧 TOOL: tool_missing_scores()  query={query!r}")
             return tool_missing_scores(filter_query, include_all_leagues=False, today_only=True)
             
         # --- 3. COMPETITION OVERVIEW ---
         comp_overview_keywords = ['competition overview', 'competition standings', 'ypl1 overview', 'ypl2 overview', 'ysl overview', 'vpl overview', 'club rankings', 'overall standings']
         if any(keyword in q for keyword in comp_overview_keywords) or any(comp in q for comp in ['ypl1', 'ypl2', 'ysl nw', 'ysl se', 'vpl']):
             if any(word in q for word in ['overview', 'standings', 'ranking', 'competition']):
+                import fast_agent as _fa_mod
+
+                _fa_mod._last_debug = {'query': query, 'fn': 'tool_competition_overview', 'args': 'query'}
+
+                print(f"\n🔧 TOOL: tool_competition_overview()  query={query!r}")
                 return tool_competition_overview(query)
 
         # --- 4. FIXTURES / NEXT MATCH ---
         fixture_keywords = ['next match', 'next game', 'upcoming', 'when do i play', 'where do i play', 'my next', 'schedule', 'fixture', 'fixtures', 'when is my', 'where is my', 'our next']
         if any(keyword in q for keyword in fixture_keywords):
             if is_personal_query:
+                import fast_agent as _fa_mod
+
+                _fa_mod._last_debug = {'query': query, 'fn': 'tool_fixtures', 'args': 'query="", limit=5, use_user_team=True'}
+
+                print(f"\n🔧 TOOL: tool_fixtures()  query={query!r}")
                 return tool_fixtures(query="", limit=5, use_user_team=True)
             else:
                 team_query = re.sub(r'\b(next|match|game|upcoming|when|where|do|i|play|my|schedule|fixtures?|is)\b', '', q).strip()
                 limit = 5 if team_query else 10
+                import fast_agent as _fa_mod
+
+                _fa_mod._last_debug = {'query': query, 'fn': 'tool_fixtures', 'args': 'team_query, limit, use_user_team=False'}
+
+                print(f"\n🔧 TOOL: tool_fixtures()  query={query!r}")
                 return tool_fixtures(team_query, limit, use_user_team=False)
 
         # --- 5. YELLOW CARDS ---
@@ -3821,6 +4598,11 @@ class FastQueryRouter:
             _staff_only       = is_non_player_query and not any(x in q for x in ["player", "players"])
             _non_player_cards = is_non_player_query and not _staff_only   # mixed mode
             filter_query = re.sub(r'\b(yellow|card|cards|details?|show|list|with|for|me|this|last|week|previous|round|coach|coaches|staff|non|player|players|manager)\b', '', q).strip()
+            import fast_agent as _fa_mod
+
+            _fa_mod._last_debug = {'query': query, 'fn': 'tool_yellow_cards', 'args': 'filter_query, show_details,\n                                     include_non_players=_non_player_cards,\n                                     staff_only=_staff_only,\n                                     date_mode=_date_mode'}
+
+            print(f"\n🔧 TOOL: tool_yellow_cards()  query={query!r}")
             return tool_yellow_cards(filter_query, show_details,
                                      include_non_players=_non_player_cards,
                                      staff_only=_staff_only,
@@ -3834,6 +4616,11 @@ class FastQueryRouter:
             _staff_only       = is_non_player_query and not any(x in q for x in ["player", "players"])
             _non_player_cards = is_non_player_query and not _staff_only
             filter_query = re.sub(r'\b(red|card|cards|details?|show|list|with|for|me|this|last|week|previous|round|coach|coaches|staff|non|player|players|manager)\b', '', q).strip()
+            import fast_agent as _fa_mod
+
+            _fa_mod._last_debug = {'query': query, 'fn': 'tool_red_cards', 'args': 'filter_query, show_details,\n                                  include_non_players=_non_player_cards,\n                                  staff_only=_staff_only,\n                                  date_mode=_date_mode'}
+
+            print(f"\n🔧 TOOL: tool_red_cards()  query={query!r}")
             return tool_red_cards(filter_query, show_details,
                                   include_non_players=_non_player_cards,
                                   staff_only=_staff_only,
@@ -3842,6 +4629,11 @@ class FastQueryRouter:
         # --- 7. STANDALONE NON-PLAYER LIST ---
         if is_non_player_query:
             filter_query = re.sub(r'\b(non|player|players?|staff|coach|coaches?|manager|managers|for|all|show|list|with|get|me)\b', '', q).strip()
+            import fast_agent as _fa_mod
+
+            _fa_mod._last_debug = {'query': query, 'fn': 'tool_non_players', 'args': 'filter_query'}
+
+            print(f"\n🔧 TOOL: tool_non_players()  query={query!r}")
             return tool_non_players(filter_query)
 
         # --- 8. TOP SCORERS ---
@@ -3854,6 +4646,25 @@ class FastQueryRouter:
                 else:
                     result["title"] = f"🏆 Top Scorers — All Leagues & Divisions"
             return result
+
+        # --- 8A2. CARD SUMMARY BY TEAM/CLUB/AGE ---
+        if any(kw in q for kw in ["total cards", "card summary", "cards by", "cards per", "cards each"]):
+            clean = re.sub(r'\b(total|card|cards?|summary|by|per|each|show|me|list|all)\b', '', q).strip()
+            import fast_agent as _fa_mod
+
+            _fa_mod._last_debug = {'query': query, 'fn': 'tool_card_summary', 'args': 'clean'}
+
+            print(f"\n🔧 TOOL: tool_card_summary()  query={query!r}")
+            return tool_card_summary(clean)
+
+        if any(kw in q for kw in ["own goal", "own goals", "og ", "own-goal"]):
+            clean = re.sub(r'\b(own.?goal|list|show|me|all|with)\b', '', q).strip()
+            import fast_agent as _fa_mod
+
+            _fa_mod._last_debug = {'query': query, 'fn': 'tool_own_goals', 'args': 'clean'}
+
+            print(f"\n🔧 TOOL: tool_own_goals()  query={query!r}")
+            return tool_own_goals(clean)
 
         # --- 8B. MOST APPEARANCES ---
         if any(word in q for word in ["most appearances", "most matches", "most games", "appearances", "games played", "matches played"]):
@@ -3877,6 +4688,11 @@ class FastQueryRouter:
                 r'\b(show|me|players?|for|in|list|squad|who|plays?|at|team)\b',
                 '', q
             ).strip()
+            import fast_agent as _fa_mod
+
+            _fa_mod._last_debug = {'query': query, 'fn': 'tool_squad_list', 'args': 'clean'}
+
+            print(f"\n🔧 TOOL: tool_squad_list()  query={query!r}")
             return tool_squad_list(clean)
 
         # --- 9B. TEAM STATS (detailed summary) ---
@@ -3897,8 +4713,25 @@ class FastQueryRouter:
 
         # --- 10. LADDER & OTHER TOOLS ---
         if any(word in q for word in ["ladder", "table", "standings"]):
+            import fast_agent as _fa_mod
+
+            _fa_mod._last_debug = {'query': query, 'fn': 'tool_ladder', 'args': 'query'}
+
+            print(f"\n🔧 TOOL: tool_ladder()  query={query!r}")
             return tool_ladder(query)
+        if any(kw in q for kw in ["match detail", "match details", "game detail", "lineups for"]):
+            import fast_agent as _fa_mod
+
+            _fa_mod._last_debug = {'query': query, 'fn': 'tool_match_detail', 'args': 'query'}
+
+            print(f"\n🔧 TOOL: tool_match_detail()  query={query!r}")
+            return tool_match_detail(query)
         if "lineup" in q or "starting" in q:
+            import fast_agent as _fa_mod
+
+            _fa_mod._last_debug = {'query': query, 'fn': 'tool_lineups', 'args': 'query'}
+
+            print(f"\n🔧 TOOL: tool_lineups()  query={query!r}")
             return tool_lineups(query)
 
         # Club vs Club comparison (two recognised clubs on either side of vs/v)
@@ -3909,16 +4742,41 @@ class FastQueryRouter:
             has_club_a = any(alias in club_a_token for alias in CLUB_ALIASES)
             has_club_b = any(alias in club_b_token for alias in CLUB_ALIASES)
             if has_club_a and has_club_b:
+                import fast_agent as _fa_mod
+
+                _fa_mod._last_debug = {'query': query, 'fn': 'tool_club_vs_club', 'args': 'query'}
+
+                print(f"\n🔧 TOOL: tool_club_vs_club()  query={query!r}")
                 return tool_club_vs_club(query)
             # Fall through to match centre for single match lookups
+            import fast_agent as _fa_mod
+
+            _fa_mod._last_debug = {'query': query, 'fn': 'tool_match_centre', 'args': 'query'}
+
+            print(f"\n🔧 TOOL: tool_match_centre()  query={query!r}")
             return tool_match_centre(query)
 
         if "form" in q:
             team = normalize_team(query)
+            import fast_agent as _fa_mod
+
+            _fa_mod._last_debug = {'query': query, 'fn': 'tool_form', 'args': 'team if team else query'}
+
+            print(f"\n🔧 TOOL: tool_form()  query={query!r}")
             return tool_form(team if team else query)
         
         # --- 11. DEFAULT FALLBACK ---
         team = normalize_team(query)
         if team:
+            import fast_agent as _fa_mod
+
+            _fa_mod._last_debug = {'query': query, 'fn': 'tool_form', 'args': 'team'}
+
+            print(f"\n🔧 TOOL: tool_form()  query={query!r}")
             return tool_form(team)
+        import fast_agent as _fa_mod
+
+        _fa_mod._last_debug = {'query': query, 'fn': 'tool_matches', 'args': 'query'}
+
+        print(f"\n🔧 TOOL: tool_matches()  query={query!r}")
         return tool_matches(query)
