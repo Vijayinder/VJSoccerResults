@@ -29661,13 +29661,13 @@
           "own_goals": 0,
           "penalties": 0,
           "yellow_cards": 0,
-          "red_cards": 1
+          "red_cards": 0
         }
       },
       "stats": {
         "matches_attended": 6,
         "yellow_cards": 0,
-        "red_cards": 1
+        "red_cards": 0
       },
       "matches": [
         {
@@ -29728,12 +29728,7 @@
           "home_or_away": "away",
           "opponent_team_name": "Dandenong City SC U16",
           "opponent_team_id": "lNb3Veb6Kx",
-          "events": [
-            {
-              "type": "red_card",
-              "minute": "65"
-            }
-          ]
+          "events": []
         },
         {
           "match_hash_id": "1K3pvQg1Rd",
@@ -38161,8 +38156,8 @@
     },
     {
       "person_id": "Vdz1vO2yZK",
-      "first_name": "Mario",
-      "last_name": "Cauteruccio",
+      "first_name": "mario",
+      "last_name": "cauteruccio",
       "role_slug": "staff",
       "roles": [
         "Coach",
@@ -47855,7 +47850,7 @@
           "goals": 0,
           "own_goals": 0,
           "penalties": 0,
-          "yellow_cards": 0,
+          "yellow_cards": 1,
           "red_cards": 0
         },
         "Dandenong City SC U16": {
@@ -47871,7 +47866,7 @@
       },
       "stats": {
         "matches_attended": 8,
-        "yellow_cards": 0,
+        "yellow_cards": 1,
         "red_cards": 0
       },
       "matches": [
@@ -47909,7 +47904,12 @@
           "home_or_away": "away",
           "opponent_team_name": "Essendon Royals SC U14",
           "opponent_team_id": "EN2O48D3Kq",
-          "events": []
+          "events": [
+            {
+              "type": "yellow_card",
+              "minute": null
+            }
+          ]
         },
         {
           "match_hash_id": "4KLlzMzQ0K",
@@ -99604,5 +99604,5 @@
       ]
     }
   ],
-  "_last_updated": "2026-03-13T08:00:47.586426"
+  "_last_updated": "2026-03-13T08:13:37.619034"
 }
