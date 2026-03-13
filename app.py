@@ -2162,11 +2162,14 @@ def main_app():
                     _ogr = sel.selection.get("rows", [])
                     if _ogr:
                         _row  = df.iloc[_ogr[0]]
-                        _hash = hashes[_ogr[0]] if _ogr[0] < len(hashes) else ""
-                        if _hash:
-                            _fire_query(f"match details {_hash}")
-                        else:
-                            _fire_query(f"match details {_row['Opponent']} {_row['Date']}")
+                        # Use human-readable Team vs Opponent + Date
+                        _team_og = str(_row.get("Team", "")).strip()
+                        _opp_og  = str(_row.get("Opponent", "")).strip()
+                        _date_og = str(_row.get("Date", "")).strip()
+                        if _team_og and _opp_og and _date_og:
+                            _fire_query(f"match details {_team_og} vs {_opp_og} {_date_og}")
+                        elif _opp_og and _date_og:
+                            _fire_query(f"match details {_opp_og} {_date_og}")
 
             elif answer.get("type") == "match_list":
                 st.info(answer.get("title", "Matches"))
@@ -2946,6 +2949,18 @@ if __name__ == "__main__":
     main()
 # Last auto-update: 2026-03-02 10:00:32 AEDT
 
+# Last auto-update: 2026-03-09 20:00:32 AEDT
+# Last auto-update: 2026-03-09 23:00:32 AEDT
+# Last auto-update: 2026-03-10 00:00:33 AEDT
+# Last auto-update: 2026-03-10 04:00:35 AEDT
+# Last auto-update: 2026-03-10 08:00:33 AEDT
+# Last auto-update: 2026-03-10 12:00:32 AEDT
+# Last auto-update: 2026-03-10 16:00:36 AEDT
+# Last auto-update: 2026-03-10 20:00:33 AEDT
+# Last auto-update: 2026-03-11 00:00:33 AEDT
+# Last auto-update: 2026-03-11 04:00:32 AEDT
+# Last auto-update: 2026-03-11 08:00:33 AEDT
+# Last auto-update: 2026-03-11 12:00:32 AEDT
+# Last auto-update: 2026-03-11 16:00:36 AEDT
 # Last auto-update: 2026-03-11 20:00:32 AEDT
 # Last auto-update: 2026-03-12 00:00:32 AEDT
-# Last auto-update: 2026-03-12 22:21:40 AEDT

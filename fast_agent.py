@@ -6,7 +6,7 @@ Features:
 - Personal team configuration (Heidelberg United FC U16)
 - Advanced filtering for top scorers, yellow/red cards by team/age group
 - Detailed player match-by-match stats
-- Enhanced player profile with jersey, cards, etc. and own goal
+- Enhanced player profile with jersey, cards, etc.
 - Date format: dd-mmm (e.g., 09-Feb)
 - Non-player (coach/staff) support
 - Time information for goals and cards
@@ -2493,7 +2493,13 @@ def tool_card_summary(query: str = "") -> Any:
             # Determine grouping key
             if mode == "players":
                 role = p.get("role") or (p.get("roles") or [""])[0] or "player"
-                key = pname if role.lower() in ("player", "") else f"{pname} ({role.title()})"
+                # For staff, append age group from team name so you see "John Smith (U16)"
+                if staff_only:
+                    ag_m2 = re.search(r'U\d{2}', m_team, re.IGNORECASE)
+                    ag_sfx = f" ({ag_m2.group(0).upper()})" if ag_m2 else ""
+                    key = pname + ag_sfx
+                else:
+                    key = pname if role.lower() in ("player", "") else f"{pname} ({role.title()})"
             elif mode == "age":
                 ag_m = re.search(r'U\d{2}', m_team, re.IGNORECASE)
                 key  = ag_m.group(0).upper() if ag_m else "Other"
@@ -2855,31 +2861,35 @@ def tool_players(query: str, detailed: bool = False) -> str:
         if len(staff_matches) == 1:
             p = staff_matches[0]
             stats = p.get("stats", {})
-            teams = ", ".join(p.get("teams", []) or [p.get("team_name", "")])
             role = (p.get("roles") or [p.get("role", "Staff")])[0] if (p.get("roles") or p.get("role")) else "Staff"
-            lines = [
-                f"👤 **{p.get('first_name')} {p.get('last_name')}** ({role})",
-                f"   Teams: {teams}",
-                f"   Matches Attended: {stats.get('matches_attended', stats.get('matches_played', 0))}",
-                f"   🟨 Yellow Cards: {stats.get('yellow_cards', 0)}",
-                f"   🟥 Red Cards: {stats.get('red_cards', 0)}",
-            ]
+            pname = f"{p.get('first_name')} {p.get('last_name')}"
             matches = p.get("matches", [])
-            if detailed and matches:
-                lines.append(f"\n📅 **Match-by-Match:** ({len(matches)} matches)\n")
-                for m in matches:
-                    date_str = format_date_aest(m.get('date', ''))
-                    opp = m.get('opponent_team_name') or m.get('opponent', '')
-                    role_match = m.get('role_in_match', '')
-                    perf = []
-                    if m.get('yellow_cards', 0) > 0:
-                        ym = format_minutes(m.get('yellow_minutes', []))
-                        perf.append(f"🟨 ({ym})" if ym else "🟨")
-                    if m.get('red_cards', 0) > 0:
-                        rm = format_minutes(m.get('red_minutes', []))
-                        perf.append(f"🟥 ({rm})" if rm else "🟥")
-                    lines.append(f"   {date_str} vs {opp} - {role_match} " + (" ".join(perf) if perf else ""))
-            return "\n".join(lines)
+            # Build match-by-match table
+            rows = []
+            for m in sorted(matches, key=lambda x: x.get("date", ""), reverse=True):
+                date_str = iso_date_aest(m.get("date", ""))
+                opp      = m.get("opponent_team_name") or m.get("opponent") or "—"
+                ag_m     = re.search(r'U\d{2}', m.get("team_name", ""), re.IGNORECASE)
+                age_grp  = ag_m.group(0).upper() if ag_m else "—"
+                yc = m.get("yellow_cards", 0)
+                rc = m.get("red_cards",    0)
+                ym = format_minutes(m.get("yellow_minutes", []))
+                rm = format_minutes(m.get("red_minutes",    []))
+                rows.append({
+                    "Date":      date_str,
+                    "Opponent":  opp,
+                    "Age Group": age_grp,
+                    "🟨":        f"🟨 ({ym})" if yc and ym else ("🟨" if yc else ""),
+                    "🟥":        f"🟥 ({rm})" if rc and rm else ("🟥" if rc else ""),
+                })
+            title = (f"👤 {pname} ({role}) — "
+                     f"{stats.get('matches_attended', stats.get('matches_played', 0))} matches, "
+                     f"🟨 {stats.get('yellow_cards', 0)}  🟥 {stats.get('red_cards', 0)}")
+            return {
+                "type":  "table",
+                "data":  rows,
+                "title": title,
+            }
         elif len(staff_matches) > 1:
             data = [{"Name": f"{s.get('first_name')} {s.get('last_name')}", "Role": (s.get("roles") or ["Staff"])[0], "Team": (s.get("teams") or [""])[0], "Yellow": s.get("stats", {}).get("yellow_cards", 0), "Red": s.get("stats", {}).get("red_cards", 0)} for s in staff_matches[:10]]
             return {"type": "table", "data": data, "title": f"👤 Found {len(staff_matches)} staff matching '{query}'"}
@@ -2953,9 +2963,13 @@ def tool_players(query: str, detailed: bool = False) -> str:
                     "League":  league,
                     "Jersey":  f"#{jersey}",
                     "Matches": mp,
-                    "⚽":      g,
-                    "🅿️ Pen":  pen_reg if pen_reg else "",
-                    "🥅 OG":   og_reg  if og_reg  else "",
+                    "⚽":      _goal_cell_simple(
+                        g   if isinstance(g,   int) else 0,
+                        None,
+                        og_reg  if isinstance(og_reg,  int) else 0,
+                        None, None,
+                        pen_reg if isinstance(pen_reg, int) else 0,
+                    ),
                     "🟨":      yc,
                     "🟥":      rc,
                 })
@@ -2985,13 +2999,18 @@ def tool_players(query: str, detailed: bool = False) -> str:
                 if m.get("goalie"):
                     started_icon += " 🧤"
 
+                # Build goals cell inline (no separate OG column)
+                _events  = m.get("events", [])
+                _pen_m   = [e.get("minute") for e in _events if e.get("penalty_kick") and not e.get("own_goal")]
+                _og_m    = [e.get("minute") for e in _events if e.get("own_goal") or e.get("type") == "own_goal"]
+                _g_m_raw = [e.get("minute") for e in _events if e.get("type") in ("goal","goal_scored") and not e.get("own_goal")]
+                _g_cell  = _goal_cell_simple(goals, _g_m_raw, og, _og_m, _pen_m)
                 row = {
                     "Date":     iso_date_aest(m.get("date", "")),
                     "H/A":      "🏠" if m.get("home_or_away") == "home" else "✈️",
                     "Opponent": m.get("opponent_team_name", "—"),
                     "Started":  started_icon,
-                    "⚽":       goals,
-                    "🥅 OG":    og if og else "",
+                    "⚽":       _g_cell,
                     "🟨":       yellows,
                     "🟥":       reds,
                 }
@@ -3402,6 +3421,41 @@ def tool_form(query: str) -> str:
         "title": f"📈 Recent Form: {team} - {' '.join(form)}"
     }
 
+def _goal_cell_simple(g_cnt, g_m, og_cnt, og_m, pen_m, pen_cnt=None):
+    """Combine goals + OGs + penalties into one cell.
+    g_m / og_m / pen_m may be None (totals only) or lists of minute strings.
+    e.g.  2 (30'P, 58') +OG (22')
+    """
+    parts = []
+    if g_cnt:
+        pen_set = set(str(m) for m in (pen_m or []) if m)
+        if g_m:
+            min_strs = []
+            for mn in g_m:
+                mn_s = str(mn) if mn else ""
+                if mn_s in pen_set:
+                    min_strs.append(mn_s + "'P")
+                    pen_set.discard(mn_s)
+                else:
+                    min_strs.append(mn_s + "'" if mn_s else "")
+            min_strs = [s for s in min_strs if s]
+            if min_strs:
+                parts.append("⚽×" + str(g_cnt) + " (" + ", ".join(min_strs) + ")")
+            else:
+                parts.append("⚽×" + str(g_cnt))
+        else:
+            pc = pen_cnt or 0
+            parts.append("⚽×" + str(g_cnt) + (" (" + str(pc) + "P)" if pc else ""))
+    if og_cnt:
+        if og_m:
+            og_mins = [str(mn) + "'" for mn in og_m if mn]
+            parts.append("+OG (" + ", ".join(og_mins) + ")" if og_mins else "+OG×" + str(og_cnt))
+        else:
+            parts.append("+OG×" + str(og_cnt))
+    return " ".join(parts)
+
+
+
 def tool_match_detail(query: str) -> Any:
     """
     Full match detail: both team lineups split into Players / Staff tabs,
@@ -3436,7 +3490,8 @@ def tool_match_detail(query: str) -> Any:
 
             for mc in match_centre_data:
                 ra   = mc.get("result", {}).get("attributes", {})
-                d    = (ra.get("date") or "")[:10]
+                # Compare using AEST date (same as display) to avoid UTC boundary mismatch
+                d = iso_date_aest(ra.get("date") or "")
                 if d != target_date:
                     continue
                 h = ra.get("home_team_name", "")
@@ -3455,7 +3510,16 @@ def tool_match_detail(query: str) -> Any:
         parts     = _re.split(r'\s+v(?:s)?\s+', q_clean, flags=_re.IGNORECASE)
         home_like = parts[0].strip() if parts else q_clean
         away_like = parts[1].strip() if len(parts) > 1 else None
-        matches   = find_matches_by_teams_or_hash(home_like=home_like, away_like=away_like)
+        candidates = find_matches_by_teams_or_hash(home_like=home_like, away_like=away_like)
+        # Filter by age group if present in query to avoid U14 matching U16 queries
+        _ag_fb = _re.search(r'\b(u\d{2})\b', q_clean, _re.IGNORECASE)
+        if _ag_fb and candidates:
+            _ag_str = _ag_fb.group(1).lower()
+            filtered = [m for m in candidates if
+                        _ag_str in (m.get("result",{}).get("attributes",{}).get("home_team_name","") or "").lower() or
+                        _ag_str in (m.get("result",{}).get("attributes",{}).get("away_team_name","") or "").lower()]
+            candidates = filtered or candidates  # fall back if filter removes everything
+        matches = candidates
 
     if not matches:
         return {"type": "error", "message": f"❌ No match found: {query}"}
@@ -3563,12 +3627,13 @@ def tool_match_detail(query: str) -> Any:
 
     # ── 3. Career totals from player_lookup ──────────────────────────────
     def _career(full_name: str):
-        """Return (goals, yellows, reds) career totals from player_lookup."""
+        """Return (goals, own_goals, penalties, yellows, reds) career totals."""
         p = player_lookup.get(full_name.lower())
         if not p:
             return None
         st = p.get("stats", {})
-        return st.get("goals", 0), st.get("yellow_cards", 0), st.get("red_cards", 0)
+        return (st.get("goals", 0), st.get("own_goals", 0),
+                st.get("penalties", 0), st.get("yellow_cards", 0), st.get("red_cards", 0))
 
     # ── 4. Format minutes ────────────────────────────────────────────────
     def _mins_str(mins_list):
@@ -3580,6 +3645,29 @@ def tool_match_detail(query: str) -> Any:
             return ""
         ms = _mins_str(mins_list)
         return f"{emoji}×{count} ({ms})" if ms else f"{emoji}×{count}"
+
+    def _goal_cell(g_cnt, g_m, og_cnt, og_m, pen_m):
+        """Single ⚽ cell: goals with (P) on penalty mins, +OG appended.
+        e.g. ⚽×2 (30'P, 58') +OG (22')
+        """
+        parts = []
+        if g_cnt > 0:
+            pen_set = set(str(m) for m in pen_m if m)
+            min_strs = []
+            for mn in g_m:
+                if str(mn) in pen_set:
+                    min_strs.append(f"{mn}'P")
+                    pen_set.discard(str(mn))
+                else:
+                    min_strs.append(f"{mn}'" if mn else "")
+            min_strs = [s for s in min_strs if s]
+            sep = ", "
+            parts.append(f"⚽×{g_cnt} ({sep.join(min_strs)})" if min_strs else f"⚽×{g_cnt}")
+        if og_cnt > 0:
+            og_mins = [f"{mn}'" for mn in og_m if mn]
+            sep2 = ", "
+            parts.append(f"+OG ({sep2.join(og_mins)})" if og_mins else f"+OG×{og_cnt}")
+        return " ".join(parts)
 
     # ── 5. Build rows for one side ───────────────────────────────────────
     def _build_side(lineup_list):
@@ -3627,8 +3715,16 @@ def tool_match_detail(query: str) -> Any:
                     return int(field_val), []
                 return 0, []
 
-            g_cnt,   g_m   = _from_field(p.get("goals", 0),         g_list)
-            og_cnt,  og_m  = _from_field(p.get("own_goals", 0),     og_list)
+            # goals field in raw lineup JSON includes own_goals — strip them out
+            _raw_goals = p.get("goals", 0)
+            if isinstance(_raw_goals, list):
+                _reg_goals = [g for g in _raw_goals if not g.get("own_goal")]
+                _og_goals  = [g for g in _raw_goals if g.get("own_goal")]
+            else:
+                _reg_goals = _raw_goals
+                _og_goals  = p.get("own_goals", 0)
+            g_cnt,   g_m   = _from_field(_reg_goals, g_list)
+            og_cnt,  og_m  = _from_field(_og_goals,  og_list)
             pen_cnt, pen_m = len(pen_list), pen_list
             yc_cnt,  yc_m  = _from_field(p.get("yellow_cards", 0),  yc_list)
             rc_cnt,  rc_m  = _from_field(p.get("red_cards", 0),     rc_list)
@@ -3636,25 +3732,18 @@ def tool_match_detail(query: str) -> Any:
             # Career totals
             career = _career(name)
             if career:
-                c_g, c_yc, c_rc = career
-                # Show goals only if player has scored (incl. OG separately)
-                career_str = f"⚽{c_g} 🟨{c_yc} 🟥{c_rc}" if c_g or c_yc or c_rc else ""
+                c_g, c_og, c_pen, c_yc, c_rc = career
+                g_part = _goal_cell_simple(c_g, None, c_og, None, None, c_pen) if (c_g or c_og) else ""
+                card_part = ("🟨" + str(c_yc) + " " if c_yc else "") + ("🟥" + str(c_rc) if c_rc else "")
+                career_str = (g_part + " " + card_part).strip() if (g_part or card_part) else ""
             else:
                 career_str = ""
 
-            # Build goal cell: regular goals + pen marker + OG separately
-            _g_cell = ""
-            if g_cnt > 0:
-                _g_cell = _fmt_cell(g_cnt, g_m, "⚽")
-                if pen_cnt > 0:
-                    _pen_str = ", ".join(f"{mn}'" for mn in pen_m if mn)
-                    _g_cell += f" (🅿️×{pen_cnt}" + (f" {_pen_str}" if _pen_str else "") + ")"
             row = {
                 "Player":  name,
                 "#":       f"#{jersey}" if jersey else "—",
                 "Role":    role,
-                "⚽":      _g_cell,
-                "🥅 OG":   _fmt_cell(og_cnt, og_m, "🥅") or "",
+                "⚽":      _goal_cell(g_cnt, g_m, og_cnt, og_m, pen_m),
                 "🟨":      _fmt_cell(yc_cnt, yc_m, "🟨") or "",
                 "🟥":      _fmt_cell(rc_cnt, rc_m, "🟥") or "",
                 "Season":  career_str,
@@ -4626,13 +4715,27 @@ class FastQueryRouter:
                                   staff_only=_staff_only,
                                   date_mode=_date_mode)
 
+        # --- 8A2. CARD SUMMARY BY TEAM/CLUB/AGE (must be before non-player fallback) ---
+        if any(kw in q for kw in ["total cards", "card summary", "cards by", "cards per", "cards each"]):
+            clean = re.sub(r'\b(total|card|cards?|summary|by|per|each|show|me|list|all)\b', '', q).strip()
+            import fast_agent as _fa_mod
+            _fa_mod._last_debug = {'query': query, 'fn': 'tool_card_summary', 'args': 'clean'}
+            print(f"\n🔧 TOOL: tool_card_summary()  query={query!r}")
+            return tool_card_summary(clean)
+
+        # --- 8A2b. CARD + STAFF keyword (e.g. "cards per club staff") ---
+        if is_non_player_query and any(kw in q for kw in ["cards", "card"]):
+            clean = re.sub(r'\b(card|cards?|show|me|list|all)\b', '', q).strip()
+            import fast_agent as _fa_mod
+            _fa_mod._last_debug = {'query': query, 'fn': 'tool_card_summary', 'args': 'clean (staff)'}
+            print(f"\n🔧 TOOL: tool_card_summary()  query={query!r}")
+            return tool_card_summary(clean)
+
         # --- 7. STANDALONE NON-PLAYER LIST ---
         if is_non_player_query:
             filter_query = re.sub(r'\b(non|player|players?|staff|coach|coaches?|manager|managers|for|all|show|list|with|get|me)\b', '', q).strip()
             import fast_agent as _fa_mod
-
             _fa_mod._last_debug = {'query': query, 'fn': 'tool_non_players', 'args': 'filter_query'}
-
             print(f"\n🔧 TOOL: tool_non_players()  query={query!r}")
             return tool_non_players(filter_query)
 
@@ -4646,16 +4749,6 @@ class FastQueryRouter:
                 else:
                     result["title"] = f"🏆 Top Scorers — All Leagues & Divisions"
             return result
-
-        # --- 8A2. CARD SUMMARY BY TEAM/CLUB/AGE ---
-        if any(kw in q for kw in ["total cards", "card summary", "cards by", "cards per", "cards each"]):
-            clean = re.sub(r'\b(total|card|cards?|summary|by|per|each|show|me|list|all)\b', '', q).strip()
-            import fast_agent as _fa_mod
-
-            _fa_mod._last_debug = {'query': query, 'fn': 'tool_card_summary', 'args': 'clean'}
-
-            print(f"\n🔧 TOOL: tool_card_summary()  query={query!r}")
-            return tool_card_summary(clean)
 
         if any(kw in q for kw in ["own goal", "own goals", "og ", "own-goal"]):
             clean = re.sub(r'\b(own.?goal|list|show|me|all|with)\b', '', q).strip()
