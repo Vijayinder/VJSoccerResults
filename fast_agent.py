@@ -881,10 +881,11 @@ def tool_fixtures(query: str = "", limit: int = 10, use_user_team: bool = False)
 
     # For club matching use the raw alias (short word like "heidelberg") — more robust
     # than the full canonical name which may differ slightly in fixture data
+    # Sort longest first so "dandenong thunder" matches before "dandenong"
     club_token = None
-    for alias in CLUB_ALIASES:
+    for alias in sorted(CLUB_ALIASES, key=len, reverse=True):
         if alias in q_lower:
-            club_token = alias  # e.g. "heidelberg"
+            club_token = alias  # e.g. "dandenong thunder"
             break
 
     def _match_passes_filter(home: str, away: str, league: str) -> bool:
@@ -1457,9 +1458,10 @@ def tool_all_results(query: str = "", round_filter: int = None, limit: int = 60)
         if rm:
             round_filter = int(rm.group(1))
 
-    # Club token for flexible matching
+    # Club token for flexible matching — longest alias first to avoid
+    # "dandenong" matching before "dandenong thunder"
     club_token = None
-    for alias in CLUB_ALIASES:
+    for alias in sorted(CLUB_ALIASES, key=len, reverse=True):
         if alias in q_lower:
             club_token = alias
             break
