@@ -502,6 +502,7 @@ def show_login_page():
 
 def get_last_updated_time():
     """Get the last data update time from last_updated.json written by pipeline."""
+    # Primary: dedicated last_updated.json written at end of each pipeline run
     lu_path = os.path.join(DATA_DIR, "last_updated.json")
     if os.path.exists(lu_path):
         try:
@@ -514,10 +515,21 @@ def get_last_updated_time():
                 if update_time.tzinfo is None:
                     update_time = pytz.UTC.localize(update_time)
                 return update_time.astimezone(aest).strftime("%a, %d %b %Y, %I:%M %p AEST")
-            return f"last_updated key missing — keys: {list(data.keys())}"
-        except Exception as e:
-            return f"Error parsing last_updated.json: {e}"
-    return f"last_updated.json not found at: {lu_path}"
+        except Exception:
+            pass
+
+    # Fallback: use file modification time
+    results_path = os.path.join(DATA_DIR, "master_results.json")
+    if not os.path.exists(results_path):
+        return "Data file not found"
+    try:
+        mod_time = os.path.getmtime(results_path)
+        utc_time = datetime.fromtimestamp(mod_time, tz=pytz.UTC)
+        aest = pytz.timezone("Australia/Melbourne")
+        aest_time = utc_time.astimezone(aest)
+        return aest_time.strftime("%a, %d %b %Y, %I:%M %p AEST") + " (approx)"
+    except Exception as e:
+        return f"Error reading timestamp: {str(e)}"
 
 # ---------------------------------------------------------
 # Router
@@ -1771,6 +1783,12 @@ def main_app():
             q_squad = f"squad for {user_club} {user_age}"
             if st.button(q_squad, key="ex_squad", width='content'):
                 st.session_state["clicked_query"] = q_squad
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
+                
+            q_squadOp = f"squad for {_next_opp} {user_age}"
+            if st.button(q_squadOp, key="ex_squadOp", width='content'):
+                st.session_state["clicked_query"] = q_squadOp
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
