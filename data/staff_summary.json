@@ -20396,7 +20396,7 @@
       },
       "team_stats": {
         "Berwick City SC U18": {
-          "matches_played": 6,
+          "matches_played": 7,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -20407,7 +20407,7 @@
         }
       },
       "stats": {
-        "matches_attended": 6,
+        "matches_attended": 7,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -20482,6 +20482,18 @@
           "home_or_away": "home",
           "opponent_team_name": "Geelong SC U18",
           "opponent_team_id": "BdD1Bq04mb",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw72Prm",
+          "date": "2026-03-14T01:00:00.000000Z",
+          "team_name": "Berwick City SC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Brunswick Juventus FC U18",
+          "opponent_team_id": "Pmrk7xrVNo",
           "events": []
         }
       ]
@@ -20505,7 +20517,7 @@
       },
       "team_stats": {
         "Berwick City SC U18": {
-          "matches_played": 6,
+          "matches_played": 7,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -20516,7 +20528,7 @@
         }
       },
       "stats": {
-        "matches_attended": 6,
+        "matches_attended": 7,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -20591,6 +20603,18 @@
           "home_or_away": "home",
           "opponent_team_name": "Geelong SC U18",
           "opponent_team_id": "BdD1Bq04mb",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw72Prm",
+          "date": "2026-03-14T01:00:00.000000Z",
+          "team_name": "Berwick City SC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Brunswick Juventus FC U18",
+          "opponent_team_id": "Pmrk7xrVNo",
           "events": []
         }
       ]
@@ -20627,7 +20651,7 @@
       },
       "team_stats": {
         "Berwick City SC U18": {
-          "matches_played": 6,
+          "matches_played": 7,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -20678,7 +20702,7 @@
         }
       },
       "stats": {
-        "matches_attended": 30,
+        "matches_attended": 31,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -21041,6 +21065,18 @@
           "home_or_away": "home",
           "opponent_team_name": "Geelong SC U16",
           "opponent_team_id": "am1qvalAmw",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw72Prm",
+          "date": "2026-03-14T01:00:00.000000Z",
+          "team_name": "Berwick City SC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "away",
+          "opponent_team_name": "Brunswick Juventus FC U18",
+          "opponent_team_id": "Pmrk7xrVNo",
           "events": []
         }
       ]
@@ -32162,7 +32198,7 @@
           "red_cards": 0
         },
         "Brunswick Juventus FC U18": {
-          "matches_played": 12,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -32193,7 +32229,7 @@
         }
       },
       "stats": {
-        "matches_attended": 36,
+        "matches_attended": 38,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -32628,6 +32664,30 @@
           "home_or_away": "away",
           "opponent_team_name": "Altona Magic SC U16",
           "opponent_team_id": "4KLnPqlLmq",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw72Prm",
+          "date": "2026-03-14T01:00:00.000000Z",
+          "team_name": "Brunswick Juventus FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Berwick City SC U18",
+          "opponent_team_id": "emA1j2WMmB",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw72Prm",
+          "date": "2026-03-14T01:00:00.000000Z",
+          "team_name": "Brunswick Juventus FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Berwick City SC U18",
+          "opponent_team_id": "emA1j2WMmB",
           "events": []
         }
       ]
@@ -32685,7 +32745,7 @@
           "red_cards": 0
         },
         "Brunswick Juventus FC U18": {
-          "matches_played": 12,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -32716,7 +32776,7 @@
         }
       },
       "stats": {
-        "matches_attended": 42,
+        "matches_attended": 44,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -33223,6 +33283,30 @@
           "home_or_away": "away",
           "opponent_team_name": "Altona Magic SC U16",
           "opponent_team_id": "4KLnPqlLmq",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw72Prm",
+          "date": "2026-03-14T01:00:00.000000Z",
+          "team_name": "Brunswick Juventus FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Berwick City SC U18",
+          "opponent_team_id": "emA1j2WMmB",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw72Prm",
+          "date": "2026-03-14T01:00:00.000000Z",
+          "team_name": "Brunswick Juventus FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Berwick City SC U18",
+          "opponent_team_id": "emA1j2WMmB",
           "events": []
         }
       ]
@@ -33280,7 +33364,7 @@
           "red_cards": 0
         },
         "Brunswick Juventus FC U18": {
-          "matches_played": 12,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -33311,7 +33395,7 @@
         }
       },
       "stats": {
-        "matches_attended": 48,
+        "matches_attended": 50,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -33890,6 +33974,30 @@
           "home_or_away": "away",
           "opponent_team_name": "Altona Magic SC U16",
           "opponent_team_id": "4KLnPqlLmq",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw72Prm",
+          "date": "2026-03-14T01:00:00.000000Z",
+          "team_name": "Brunswick Juventus FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Berwick City SC U18",
+          "opponent_team_id": "emA1j2WMmB",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw72Prm",
+          "date": "2026-03-14T01:00:00.000000Z",
+          "team_name": "Brunswick Juventus FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Berwick City SC U18",
+          "opponent_team_id": "emA1j2WMmB",
           "events": []
         }
       ]
@@ -45526,7 +45634,7 @@
       },
       "team_stats": {
         "Brunswick Juventus FC U18": {
-          "matches_played": 6,
+          "matches_played": 7,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -45537,7 +45645,7 @@
         }
       },
       "stats": {
-        "matches_attended": 6,
+        "matches_attended": 7,
         "yellow_cards": 1,
         "red_cards": 0
       },
@@ -45618,6 +45726,18 @@
           "opponent_team_name": "Altona Magic SC U18",
           "opponent_team_id": "pmvzPBp6mv",
           "events": []
+        },
+        {
+          "match_hash_id": "pmvvw72Prm",
+          "date": "2026-03-14T01:00:00.000000Z",
+          "team_name": "Brunswick Juventus FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Assistant Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Berwick City SC U18",
+          "opponent_team_id": "emA1j2WMmB",
+          "events": []
         }
       ]
     },
@@ -45640,7 +45760,7 @@
       },
       "team_stats": {
         "Brunswick Juventus FC U18": {
-          "matches_played": 6,
+          "matches_played": 7,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -45651,7 +45771,7 @@
         }
       },
       "stats": {
-        "matches_attended": 6,
+        "matches_attended": 7,
         "yellow_cards": 0,
         "red_cards": 1
       },
@@ -45732,6 +45852,18 @@
           "opponent_team_name": "Altona Magic SC U18",
           "opponent_team_id": "pmvzPBp6mv",
           "events": []
+        },
+        {
+          "match_hash_id": "pmvvw72Prm",
+          "date": "2026-03-14T01:00:00.000000Z",
+          "team_name": "Brunswick Juventus FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Head Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Berwick City SC U18",
+          "opponent_team_id": "emA1j2WMmB",
+          "events": []
         }
       ]
     },
@@ -45754,7 +45886,7 @@
       },
       "team_stats": {
         "Brunswick Juventus FC U18": {
-          "matches_played": 6,
+          "matches_played": 7,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -45765,7 +45897,7 @@
         }
       },
       "stats": {
-        "matches_attended": 6,
+        "matches_attended": 7,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -45841,6 +45973,18 @@
           "opponent_team_name": "Altona Magic SC U18",
           "opponent_team_id": "pmvzPBp6mv",
           "events": []
+        },
+        {
+          "match_hash_id": "pmvvw72Prm",
+          "date": "2026-03-14T01:00:00.000000Z",
+          "team_name": "Brunswick Juventus FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Team Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Berwick City SC U18",
+          "opponent_team_id": "emA1j2WMmB",
+          "events": []
         }
       ]
     },
@@ -45866,7 +46010,7 @@
       },
       "team_stats": {
         "Brunswick Juventus FC U18": {
-          "matches_played": 6,
+          "matches_played": 7,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -45887,7 +46031,7 @@
         }
       },
       "stats": {
-        "matches_attended": 12,
+        "matches_attended": 13,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -46035,6 +46179,18 @@
           "opponent_team_name": "Altona Magic SC U18",
           "opponent_team_id": "pmvzPBp6mv",
           "events": []
+        },
+        {
+          "match_hash_id": "pmvvw72Prm",
+          "date": "2026-03-14T01:00:00.000000Z",
+          "team_name": "Brunswick Juventus FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Berwick City SC U18",
+          "opponent_team_id": "emA1j2WMmB",
+          "events": []
         }
       ]
     },
@@ -46057,7 +46213,7 @@
       },
       "team_stats": {
         "Brunswick Juventus FC U18": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -46068,7 +46224,7 @@
         }
       },
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -46131,6 +46287,18 @@
           "home_or_away": "away",
           "opponent_team_name": "Altona Magic SC U18",
           "opponent_team_id": "pmvzPBp6mv",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw72Prm",
+          "date": "2026-03-14T01:00:00.000000Z",
+          "team_name": "Brunswick Juventus FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Berwick City SC U18",
+          "opponent_team_id": "emA1j2WMmB",
           "events": []
         }
       ]
@@ -99604,5 +99772,5 @@
       ]
     }
   ],
-  "_last_updated": "2026-03-14T15:14:48.339646"
+  "_last_updated": "2026-03-14T15:40:28.299562"
 }
