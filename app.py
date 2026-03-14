@@ -527,7 +527,7 @@ def get_last_updated_time():
         utc_time = datetime.fromtimestamp(mod_time, tz=pytz.UTC)
         aest = pytz.timezone("Australia/Melbourne")
         aest_time = utc_time.astimezone(aest)
-        return aest_time.strftime("%a, %d %b %Y, %I:%M %p AEST") + " (file time)"
+        return aest_time.strftime("%a, %d %b %Y, %I:%M %p AEST") + " (approx)"
     except Exception as e:
         return f"Error reading timestamp: {str(e)}"
 
