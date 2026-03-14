@@ -4348,6 +4348,122 @@ def tool_club_vs_club(query: str) -> Any:
         ],
     }
 
+
+def tool_player_by_jersey(jersey_number: str, club_query: str = "") -> Any:
+    """Find a player by jersey number and optionally club/age group.
+    e.g. '#30 heidelberg', 'stats for #30 heidelberg u16'
+    """
+    jersey_clean = jersey_number.lstrip("#").strip()
+    if not jersey_clean.isdigit():
+        return f"❌ Invalid jersey number: {jersey_number}"
+
+    age_group_f    = extract_age_group(club_query) if club_query else None
+    canonical_club = get_canonical_club_name(club_query) if club_query else None
+    club_token     = None
+    if club_query:
+        for alias in sorted(CLUB_ALIASES, key=len, reverse=True):
+            if alias in club_query.lower():
+                club_token = alias
+                break
+
+    matches = []
+    for p in players_summary:
+        jerseys = p.get("jerseys", {})
+        # Check jersey across all teams
+        for team, j in jerseys.items():
+            if str(j) != jersey_clean:
+                continue
+            # Apply club filter
+            if club_token and club_token not in team.lower():
+                continue
+            if canonical_club and canonical_club.lower() not in team.lower():
+                continue
+            if age_group_f and age_group_f.lower() not in team.lower():
+                continue
+            matches.append((p, team))
+            break  # one entry per player
+
+    if not matches:
+        hint = f" for #{jersey_clean}"
+        if club_query:
+            hint += f" at {club_query}"
+        return f"❌ No player found wearing #{jersey_clean}" + (f" at {club_query}" if club_query else "")
+
+    if len(matches) == 1:
+        p, team = matches[0]
+        # Reuse tool_player_profile by full name
+        name = f"{p.get('first_name','')} {p.get('last_name','')}".strip()
+        return tool_player_profile(name)
+
+    # Multiple matches — show list
+    data = []
+    for p, team in matches:
+        stats = p.get("stats", {})
+        data.append({
+            "Player": f"{p.get('first_name','')} {p.get('last_name','')}".strip(),
+            "Team":   team,
+            "#":      f"#{jersey_clean}",
+            "M":      stats.get("matches_played", 0),
+            "G":      stats.get("goals", 0),
+        })
+    return {"type": "table", "data": data,
+            "title": f"👕 Players wearing #{jersey_clean}"}
+
+
+def tool_opponent_squad(query: str = "") -> Any:
+    """Show the squad for our next opponent.
+    If today is Sunday (match day) show this week's opponent,
+    otherwise show next week's opponent.
+    Usage: 'opponent squad', 'show opponent', 'who do we play', 'next opponent squad'
+    """
+    import pytz
+    melbourne_tz   = pytz.timezone('Australia/Melbourne')
+    now_melbourne  = datetime.now(melbourne_tz)
+
+    # Age group from query or fall back to USER_CONFIG
+    age_group_f = extract_age_group(query) or USER_CONFIG.get("age_group", "U16")
+    my_team     = USER_CONFIG["team"]  # e.g. "Heidelberg United FC U16"
+
+    # Find next fixture for our team
+    upcoming = []
+    for f in fixtures:
+        attrs    = f.get("attributes", {})
+        date_str = attrs.get("date", "")
+        match_dt = parse_date_utc_to_aest(date_str)
+        if not match_dt or match_dt < now_melbourne:
+            continue
+        home  = attrs.get("home_team_name", "")
+        away  = attrs.get("away_team_name", "")
+        blob  = f"{home} {away}".lower()
+        if "heidelberg" in blob and age_group_f.lower() in blob:
+            upcoming.append((match_dt, attrs))
+
+    upcoming.sort(key=lambda x: x[0])
+
+    if not upcoming:
+        return f"❌ No upcoming fixtures found for {my_team}"
+
+    match_dt, attrs = upcoming[0]
+    home  = attrs.get("home_team_name", "")
+    away  = attrs.get("away_team_name", "")
+
+    # Determine opponent
+    if "heidelberg" in home.lower():
+        opponent = away
+    else:
+        opponent = home
+
+    date_str = match_dt.strftime("%a %d %b %I:%M %p")
+    venue    = attrs.get("ground_name", "")
+
+    result = tool_squad_list(opponent)
+
+    # Prepend match context
+    if isinstance(result, dict):
+        result["title"] = (f"👥 Opponent Squad: {opponent}\n"
+                           f"📅 {date_str}" + (f" @ {venue}" if venue else ""))
+    return result
+
 def tool_squad_list(query: str = "") -> Any:
     """
     Return a formatted player table for a team/club query.
@@ -4659,6 +4775,29 @@ class FastQueryRouter:
 
                 print(f"\n🔧 TOOL: tool_competition_overview()  query={query!r}")
                 return tool_competition_overview(query)
+
+        # --- 3B. JERSEY NUMBER SEARCH ---
+        # e.g. "stats for #30 heidelberg", "#30 heidelberg u16", "who wears #10"
+        jersey_match = re.search(r'#(\d+)', q)
+        if jersey_match:
+            jersey_num  = jersey_match.group(1)
+            club_part   = re.sub(r'#\d+', '', q)
+            club_part   = re.sub(r'\b(stats|for|who|wears|wearing|player|show|me|is)\b', '', club_part).strip()
+            import fast_agent as _fa_mod
+            _fa_mod._last_debug = {'query': query, 'fn': 'tool_player_by_jersey', 'args': f'#{jersey_num}, {club_part}'}
+            print(f"\n🔧 TOOL: tool_player_by_jersey()  jersey=#{jersey_num} club={club_part!r}")
+            return tool_player_by_jersey(jersey_num, club_part)
+
+        # --- 3C. OPPONENT SQUAD ---
+        # e.g. "opponent squad", "show opponent", "who do we play", "next opponent squad"
+        opponent_keywords = ['opponent squad', 'show opponent', 'opponent players',
+                             'who do we play', 'next opponent', 'playing against',
+                             'squad this week', 'squad next week']
+        if any(kw in q for kw in opponent_keywords):
+            import fast_agent as _fa_mod
+            _fa_mod._last_debug = {'query': query, 'fn': 'tool_opponent_squad', 'args': 'query'}
+            print(f"\n🔧 TOOL: tool_opponent_squad()  query={query!r}")
+            return tool_opponent_squad(query)
 
         # --- 4. FIXTURES / NEXT MATCH ---
         fixture_keywords = ['next match', 'next game', 'upcoming', 'when do i play', 'where do i play', 'my next', 'schedule', 'fixture', 'fixtures', 'when is my', 'where is my', 'our next']
