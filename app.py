@@ -501,35 +501,33 @@ def show_login_page():
 # ---------------------------------------------------------
 
 def get_last_updated_time():
-    """Get the last data update time from JSON (not file timestamp)"""
-    results_path = os.path.join(DATA_DIR, "all_results_recent.json")
-    
+    """Get the last data update time from last_updated.json written by pipeline."""
+    # Primary: dedicated last_updated.json written at end of each pipeline run
+    lu_path = os.path.join(DATA_DIR, "last_updated.json")
+    if os.path.exists(lu_path):
+        try:
+            with open(lu_path, 'r') as f:
+                data = json.load(f)
+            ts = data.get("last_updated", "")
+            if ts:
+                update_time = datetime.fromisoformat(ts)
+                aest = pytz.timezone("Australia/Melbourne")
+                if update_time.tzinfo is None:
+                    update_time = pytz.UTC.localize(update_time)
+                return update_time.astimezone(aest).strftime("%a, %d %b %Y, %I:%M %p AEST")
+        except Exception:
+            pass
+
+    # Fallback: use file modification time
+    results_path = os.path.join(DATA_DIR, "master_results.json")
     if not os.path.exists(results_path):
         return "Data file not found"
-    
     try:
-        # Try to get from JSON first
-        with open(results_path, 'r') as f:
-            data = json.load(f)
-        
-        if '_last_updated' in data:
-            update_time = datetime.fromisoformat(data['_last_updated'])
-            aest = pytz.timezone('Australia/Melbourne')
-            
-            if update_time.tzinfo is None:
-                utc = pytz.UTC
-                update_time = utc.localize(update_time)
-            
-            aest_time = update_time.astimezone(aest)
-            return aest_time.strftime("%a, %d %b %Y, %I:%M %p AEST")
-        
-        # Fallback: use file timestamp (for local testing with old files)
         mod_time = os.path.getmtime(results_path)
         utc_time = datetime.fromtimestamp(mod_time, tz=pytz.UTC)
-        aest = pytz.timezone('Australia/Melbourne')
+        aest = pytz.timezone("Australia/Melbourne")
         aest_time = utc_time.astimezone(aest)
-        return aest_time.strftime("%a, %d %b %Y, %I:%M %p AEST") + " (file time)"
-        
+        return aest_time.strftime("%a, %d %b %Y, %I:%M %p AEST") + " (approx)"
     except Exception as e:
         return f"Error reading timestamp: {str(e)}"
 
