@@ -37966,5 +37966,149 @@
                 "href": "https://mc-api.dribl.com/api/results/emAnePJ2MN"
             }
         }
+    },
+    {
+        "type": "results",
+        "hash_id": "ld4549Ql0m",
+        "attributes": {
+            "name": "FV54539513 - FC Bulleen Lions v Avondale FC",
+            "date": "2026-03-15 05:00:00",
+            "round": "R7",
+            "full_round": "Round 7",
+            "ground_name": "Veneto Club",
+            "field_name": "Main Pitch (S)",
+            "home_team_name": "FC Bulleen Lions U18",
+            "home_logo": "https://ocean.dribl.com/cae7084082a44b0596c073d4d6751163",
+            "away_team_name": "Avondale FC U18",
+            "away_logo": "https://ocean.dribl.com/aa620c163b524970beec05f0b0d95879",
+            "competition_name": "Boys Victorian Youth Premier League 1",
+            "league_name": "U18 YPL1 Boys",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 3,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 1,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": true,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 3,
+            "enable_referees_allocated": true,
+            "match_hash_id": "nmYnZlgOrN",
+            "home_team_hash_id": "jdye8k2Dd5",
+            "away_team_hash_id": "4KLnPbGpmq",
+            "forfeit_team_hash_id": null
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/ld4549Ql0m"
+            }
+        }
+    },
+    {
+        "type": "results",
+        "hash_id": "PmrGqZQlLN",
+        "attributes": {
+            "name": "FV54532115 - Oakleigh Cannons FC v Dandenong Thunder FC",
+            "date": "2026-03-15 06:30:00",
+            "round": "R7",
+            "full_round": "Round 7",
+            "ground_name": "Jack Edwards Reserve",
+            "field_name": "Pitch 2 (S)",
+            "home_team_name": "Oakleigh Cannons FC U16",
+            "home_logo": "https://ocean.dribl.com/83022e3737d94f8d9724dba79fb76086",
+            "away_team_name": "Dandenong Thunder FC U16",
+            "away_logo": "https://ocean.dribl.com/ba801f8cb82343289f0043e229d92fc7",
+            "competition_name": "Boys Victorian Youth Premier League 2",
+            "league_name": "U16 YPL2 Boys",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 4,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 0,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": true,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 3,
+            "enable_referees_allocated": true,
+            "match_hash_id": "2Kp0pg7vWK",
+            "home_team_hash_id": "gdMvMqLOmE",
+            "away_team_hash_id": "1K3YkalYmQ",
+            "forfeit_team_hash_id": null
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/PmrGqZQlLN"
+            }
+        }
+    },
+    {
+        "type": "results",
+        "hash_id": "nmYnZXE83N",
+        "attributes": {
+            "name": "FV54534959 - Ringwood City FC v Port Melbourne SC",
+            "date": "2026-03-15 04:45:00",
+            "round": "R5",
+            "full_round": "Round 5",
+            "ground_name": "Jubilee Park",
+            "field_name": "Main Pitch (S)",
+            "home_team_name": "Ringwood City FC U18",
+            "home_logo": "https://ocean.dribl.com/57ba68d748f54318b1463543a9a4d850",
+            "away_team_name": "Port Melbourne SC U18",
+            "away_logo": "https://ocean.dribl.com/ebff8b236f70438786f51a60733e7fab",
+            "competition_name": "Boys Youth State League South-East",
+            "league_name": "U18 YSL Boys - South-East",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 3,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 1,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": true,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 3,
+            "enable_referees_allocated": true,
+            "match_hash_id": "OmepXrgO6d",
+            "home_team_hash_id": "nmYyQ3zamz",
+            "away_team_hash_id": "pmvzPeQ5mv",
+            "forfeit_team_hash_id": null
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/nmYnZXE83N"
+            }
+        }
     }
 ]
