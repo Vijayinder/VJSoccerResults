@@ -118,8 +118,10 @@ CLUB_ALIASES = {
     "warriors": "North Geelong Warriors FC",
     "knights": "Melbourne Knights FC",
     "melbourne knights": "Melbourne Knights FC",
-    "berwick": "Berwick City FC",
-    "berwick city": "Berwick City FC",
+    "berwick": "Berwick City SC",
+    "berwick city": "Berwick City SC",
+    "berwick city sc": "Berwick City SC",
+    "berwick city fc": "Berwick City SC",
     "oakleigh": "Oakleigh Cannons FC",
     "oakleigh cannons": "Oakleigh Cannons FC",
     "cannons": "Oakleigh Cannons FC",
@@ -4485,10 +4487,18 @@ def tool_squad_list(query: str = "") -> Any:
     else:
         team_filter = normalize_team(query) or query
 
-    # Filter players
+    # Filter players — match on team_filter, but also try stripping FC/SC suffix
+    # to handle cases where alias canonical name has wrong FC/SC vs actual data
+    _team_filter_lower = team_filter.lower()
+    _team_filter_bare  = re.sub(r'\b(fc|sc|afc)\b', '', _team_filter_lower).strip()
+
     def _matches_team(p):
         for t in _person_teams(p):
-            if team_filter.lower() in (t or "").lower():
+            t_lower = (t or "").lower()
+            if _team_filter_lower in t_lower:
+                return True
+            # Bare match (strip FC/SC from both sides)
+            if _team_filter_bare and _team_filter_bare in re.sub(r'\b(fc|sc|afc)\b', '', t_lower).strip():
                 return True
         return False
 
@@ -4582,6 +4592,176 @@ def tool_squad_list(query: str = "") -> Any:
 
 
 
+def tool_club_season(club_query: str = "heidelberg", age_group_filter: str = "") -> dict:
+    """
+    Combined season view for a club:
+      - All completed results (date, opponent, score, W/D/L)
+      - All upcoming fixtures
+      - Current ladder position per age group
+    Returns dict with type="season_summary".
+    """
+    _refresh_data()
+    melbourne_tz = pytz.timezone('Australia/Melbourne')
+    now          = datetime.now(melbourne_tz)
+
+    canonical  = get_canonical_club_name(club_query) or club_query
+    # Build a search token that is resilient to FC vs SC mismatches:
+    # use the raw query words (stripped of age group) if they are more specific,
+    # but fall back to the canonical name minus any FC/SC/AFC suffix.
+    _raw_token = re.sub(r'\bu\d{2}\b', '', club_query, flags=re.IGNORECASE).strip().lower()
+    _raw_token = re.sub(r'\b(fc|sc|afc|united fc|united sc)\s*$', '', _raw_token).strip()
+    _canon_token = re.sub(r'\b(fc|sc|afc)\s*$', '', canonical, flags=re.IGNORECASE).strip().lower()
+    # Prefer the longer (more specific) token; both will match "berwick city" in fixture data
+    club_token = _raw_token if len(_raw_token) >= len(_canon_token) else _canon_token
+    # Always keep at least 4 chars to avoid false matches
+    if len(club_token) < 4:
+        club_token = canonical.lower()
+    age_filter = (age_group_filter or extract_age_group(club_query) or "").lower()
+
+    def _matches_club(home: str, away: str) -> bool:
+        blob = f"{home} {away}".lower()
+        if club_token not in blob:
+            return False
+        if age_filter and age_filter not in blob:
+            return False
+        return True
+
+    # ── Past results ──────────────────────────────────────────────────────────
+    past = []
+    for r in results:
+        a    = r.get("attributes", {})
+        home = a.get("home_team_name", "")
+        away = a.get("away_team_name", "")
+        if not _matches_club(home, away):
+            continue
+        hs = a.get("home_score")
+        as_ = a.get("away_score")
+        if hs is None or as_ is None:
+            continue
+        try:
+            hs, as_ = int(hs), int(as_)
+        except (ValueError, TypeError):
+            continue
+        match_dt = parse_date_utc_to_aest(a.get("date", ""))
+        if not match_dt:
+            continue
+        is_home  = club_token in home.lower()
+        us       = hs if is_home else as_
+        them     = as_ if is_home else hs
+        opponent = away if is_home else home
+        opponent = re.sub(r'\s+U\d{2}$', '', opponent, flags=re.IGNORECASE).strip()
+        if us > them:   outcome, icon = "W", "🟢"
+        elif us < them: outcome, icon = "L", "🔴"
+        else:           outcome, icon = "D", "🟡"
+        league_name = a.get("league_name", "") or a.get("competition_name", "")
+        ag_m   = re.search(r'U\d{2}', f"{home} {away} {league_name}", re.IGNORECASE)
+        age_grp = ag_m.group(0).upper() if ag_m else "—"
+        past.append({
+            "dt": match_dt, "date": match_dt.strftime("%d %b"),
+            "age": age_grp, "opponent": opponent[:18],
+            "score": f"{us}–{them}", "outcome": outcome, "icon": icon,
+            "venue": (a.get("ground_name") or "")[:20], "league": league_name,
+        })
+    past.sort(key=lambda x: x["dt"])
+
+    # ── Upcoming fixtures ─────────────────────────────────────────────────────
+    upcoming = []
+    for f in fixtures:
+        a    = f.get("attributes", {})
+        home = a.get("home_team_name", "")
+        away = a.get("away_team_name", "")
+        if not _matches_club(home, away):
+            continue
+        match_dt = parse_date_utc_to_aest(a.get("date", ""))
+        if not match_dt or match_dt <= now:
+            continue
+        is_home  = club_token in home.lower()
+        opponent = away if is_home else home
+        opponent = re.sub(r'\s+U\d{2}$', '', opponent, flags=re.IGNORECASE).strip()
+        league_name = a.get("league_name", "") or a.get("competition_name", "")
+        ag_m   = re.search(r'U\d{2}', f"{home} {away} {league_name}", re.IGNORECASE)
+        age_grp = ag_m.group(0).upper() if ag_m else "—"
+        days = (match_dt.date() - now.date()).days
+        when = "TODAY" if days == 0 else ("Tomorrow" if days == 1 else f"In {days}d")
+        # Raw opponent team name (with age group) for ladder lookup
+        opp_full = away if is_home else home
+        upcoming.append({
+            "dt": match_dt, "date": match_dt.strftime("%d %b %a %I:%M%p"),
+            "age": age_grp, "opponent": opponent[:18],
+            "venue": (a.get("ground_name") or "TBD")[:20],
+            "when": when, "league": league_name,
+            "_opp_full": opp_full,   # used below for ladder lookup
+        })
+    upcoming.sort(key=lambda x: x["dt"])
+
+    # ── Enrich upcoming with opponent's current ladder position ──────────────
+    for fix in upcoming:
+        opp_full    = fix.pop("_opp_full", "")
+        opp_token   = opp_full.lower()
+        league_name = fix["league"]
+        comp_code   = extract_league_from_league_name(league_name).lower()
+        ag_m        = re.search(r'u\d{2}', league_name.lower())
+        age_grp_lc  = ag_m.group(0) if ag_m else ""
+        try:
+            table = _build_ladder_table(results, comp_code, age_grp_lc if age_grp_lc else None)
+            opp_row = next((row for row in table if opp_token in row["Team"].lower()), None)
+            if opp_row:
+                fix["opp_pos"]   = opp_row["Pos"]
+                fix["opp_total"] = len(table)
+                fix["opp_pts"]   = opp_row["PTS"]
+                fix["opp_w"]     = opp_row["W"]
+                fix["opp_d"]     = opp_row["D"]
+                fix["opp_l"]     = opp_row["L"]
+            else:
+                fix["opp_pos"] = None
+        except Exception:
+            fix["opp_pos"] = None
+
+    # ── Ladder positions ──────────────────────────────────────────────────────
+    seen_comps = {}
+    for r in results:
+        a    = r.get("attributes", {})
+        home = a.get("home_team_name", "")
+        away = a.get("away_team_name", "")
+        if club_token not in f"{home} {away}".lower():
+            continue
+        league_name = a.get("league_name", "") or a.get("competition_name", "")
+        comp_code   = extract_league_from_league_name(league_name).lower()
+        ag_m        = re.search(r'u\d{2}', league_name.lower())
+        age_grp     = ag_m.group(0) if ag_m else ""
+        if age_filter and age_filter != age_grp:
+            continue
+        key = (comp_code, age_grp)
+        if key not in seen_comps:
+            seen_comps[key] = league_name
+
+    ladder_sections = []
+    for (comp_code, age_grp), league_name in sorted(seen_comps.items(), key=lambda x: x[0][1]):
+        table = _build_ladder_table(results, comp_code, age_grp if age_grp else None)
+        if not table:
+            continue
+        our_row = next((row for row in table if club_token in row["Team"].lower()), None)
+        if not our_row:
+            continue
+        ag_label   = age_grp.upper() if age_grp else "Open"
+        comp_label = comp_code.upper()
+        ladder_sections.append({
+            "label": f"{ag_label} — {comp_label}",
+            "pos": our_row["Pos"], "total": len(table),
+            "pts": our_row["PTS"], "w": our_row["W"],
+            "d": our_row["D"],    "l": our_row["L"],
+            "gd": our_row["GD"],  "table": table,
+        })
+
+    return {
+        "type": "season_summary",
+        # Use the raw query club name stripped of age group as display, falling back to canonical
+        "club": re.sub(r'\s+U\d{2}$', '', club_query, flags=re.IGNORECASE).strip() or canonical,
+        "age_filter": age_filter.upper() if age_filter else "",
+        "past": past, "upcoming": upcoming, "ladder": ladder_sections,
+    }
+
+
 class FastQueryRouter:
     """Enhanced pattern-based query router with personal team support"""
     def __init__(self):
@@ -4601,6 +4781,29 @@ class FastQueryRouter:
         show_details = False
         is_non_player_query = any(keyword in q for keyword in ['non player', 'non-player', 'coach', 'coaches', 'staff', 'manager'])
         is_personal_query = any(keyword in q for keyword in ['my next', 'when do i play', 'where do i play', 'my schedule', 'when is my', 'where is my', 'our next'])
+
+        # --- 0. SEASON SUMMARY ---
+        _season_kw = [
+            'season summary', 'season', 'full season',
+            'results and fixtures', 'fixtures and results',
+            'all matches', 'all results', 'all fixtures',
+        ]
+        if any(kw in q for kw in _season_kw):
+            clean   = re.sub(
+                r'\b(season|summary|full|results?|fixtures?|all|matches?|for|show|me|and)\b',
+                '', q
+            ).strip()
+            age_grp = extract_age_group(clean) or ""
+            club_q  = re.sub(r'\bu\d{2}\b', '', clean, flags=re.IGNORECASE).strip()
+            if not club_q:
+                club_q = USER_CONFIG.get("club", "heidelberg")
+            import fast_agent as _fa_mod
+            _fa_mod._last_debug = {
+                'query': query, 'fn': 'tool_club_season',
+                'args': f'club_q={club_q!r}, age_grp={age_grp!r}',
+            }
+            print(f"\n🔧 TOOL: tool_club_season()  query={query!r}")
+            return tool_club_season(club_q, age_grp)
 
         # --- 1A. DUAL PLAYER MATCH DETAIL ---
         dual_detail_keywords = [
