@@ -1459,8 +1459,8 @@
             "draws": 1,
             "losses": 4,
             "gf": 13,
-            "ga": 18,
-            "gd": -5,
+            "ga": 21,
+            "gd": -8,
             "points": 7
           },
           "U16": {
@@ -1510,7 +1510,7 @@
         },
         "total_position_points": 39,
         "total_gf": 58,
-        "total_ga": 69,
+        "total_ga": 72,
         "age_group_count": 5,
         "overall_rank": 7
       },
@@ -1518,14 +1518,14 @@
         "club": "Dandenong City SC",
         "age_groups": {
           "U18": {
-            "position": 13,
+            "position": 12,
             "played": 7,
             "wins": 2,
             "draws": 0,
             "losses": 5,
-            "gf": 17,
+            "gf": 20,
             "ga": 24,
-            "gd": -7,
+            "gd": -4,
             "points": 6
           },
           "U16": {
@@ -1573,8 +1573,8 @@
             "points": 8
           }
         },
-        "total_position_points": 42,
-        "total_gf": 63,
+        "total_position_points": 41,
+        "total_gf": 66,
         "total_ga": 52,
         "age_group_count": 5,
         "overall_rank": 8
@@ -1843,7 +1843,7 @@
         "club": "Eastern Lions SC",
         "age_groups": {
           "U18": {
-            "position": 12,
+            "position": 13,
             "played": 7,
             "wins": 1,
             "draws": 3,
@@ -1898,7 +1898,7 @@
             "points": 10
           }
         },
-        "total_position_points": 56,
+        "total_position_points": 57,
         "total_gf": 40,
         "total_ga": 63,
         "age_group_count": 5,
@@ -3412,5 +3412,5 @@
       }
     ]
   },
-  "_last_updated": "2026-03-16T10:05:04.252140"
+  "_last_updated": "2026-03-16T12:04:42.718617"
 }
