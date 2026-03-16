@@ -264,25 +264,20 @@ def search_link(label, query):
     return link
     
 def logout_user():
-    """Logout current user"""
-    if st.session_state["authenticated"]:
-        log_logout(
-            username=st.session_state.get("username", "unknown"),
-            full_name=st.session_state.get("full_name", "Unknown"),
-            session_id=st.session_state["session_id"]
-        )
-    
+    """Logout current user and fully reset session state"""
+    try:
+        if st.session_state.get("authenticated"):
+            log_logout(
+                username=st.session_state.get("username", "unknown"),
+                full_name=st.session_state.get("full_name", "Unknown"),
+                session_id=st.session_state.get("session_id", "")
+            )
+    except Exception:
+        pass
+    # Clear everything then re-set only the minimum needed to show login
+    st.session_state.clear()
     st.session_state["authenticated"] = False
-    st.session_state["user_type"] = None  # ADD
-    st.session_state["username"] = None
-    st.session_state["full_name"] = None
-    st.session_state["role"] = None
-    st.session_state["player_club"] = None  # ADD
-    st.session_state["player_age_group"] = None  # ADD
-    st.session_state["player_role"] = None  # ADD
-    st.session_state["session_id"] = str(uuid.uuid4())
-    st.session_state["player_league"] = None  # ADD THIS
-    st.session_state["player_competition"] = None  # ADD THIS
+    st.session_state["session_id"]    = str(uuid.uuid4())
 
 # ---------------------------------------------------------
 # Login Page
@@ -1737,6 +1732,7 @@ def main_app():
             """, unsafe_allow_html=True)
     with col_right:
         if st.button("🚪 Logout", key="logout_button", width='stretch'):
+            logout_user()
             st.session_state.clear()
             st.rerun()
     # In your sidebar (after logout button or admin controls)
