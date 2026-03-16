@@ -223,6 +223,10 @@ def init_session_state():
         st.session_state["expander_state"] = False
     if "expander_collapse_counter" not in st.session_state:
         st.session_state["expander_collapse_counter"] = 0
+    if "show_season_page" not in st.session_state:
+        st.session_state["show_season_page"] = False
+    if "season_auto_load" not in st.session_state:
+        st.session_state["season_auto_load"] = False
     if "user_type" not in st.session_state:
         st.session_state["user_type"] = None  # 'player' or 'admin'
     
@@ -260,25 +264,20 @@ def search_link(label, query):
     return link
     
 def logout_user():
-    """Logout current user"""
-    if st.session_state["authenticated"]:
-        log_logout(
-            username=st.session_state.get("username", "unknown"),
-            full_name=st.session_state.get("full_name", "Unknown"),
-            session_id=st.session_state["session_id"]
-        )
-    
+    """Logout current user and fully reset session state"""
+    try:
+        if st.session_state.get("authenticated"):
+            log_logout(
+                username=st.session_state.get("username", "unknown"),
+                full_name=st.session_state.get("full_name", "Unknown"),
+                session_id=st.session_state.get("session_id", "")
+            )
+    except Exception:
+        pass
+    # Clear everything then re-set only the minimum needed to show login
+    st.session_state.clear()
     st.session_state["authenticated"] = False
-    st.session_state["user_type"] = None  # ADD
-    st.session_state["username"] = None
-    st.session_state["full_name"] = None
-    st.session_state["role"] = None
-    st.session_state["player_club"] = None  # ADD
-    st.session_state["player_age_group"] = None  # ADD
-    st.session_state["player_role"] = None  # ADD
-    st.session_state["session_id"] = str(uuid.uuid4())
-    st.session_state["player_league"] = None  # ADD THIS
-    st.session_state["player_competition"] = None  # ADD THIS
+    st.session_state["session_id"]    = str(uuid.uuid4())
 
 # ---------------------------------------------------------
 # Login Page
@@ -1274,6 +1273,10 @@ def is_natural_language_query(query):
         "total cards", "card summary", "cards by", "cards per", "cards each",
         "cards per club", "card per club",
         "own goal", "own goals",
+        # Season summary
+        "season summary", "season", "full season",
+        "results and fixtures", "fixtures and results",
+        "all matches", "all results", "all fixtures",
     ]
     return any(keyword in query.lower() for keyword in keywords)
 
@@ -1547,6 +1550,149 @@ def _inject_device_id_script():
     """, height=0)
 
 
+def _render_season_summary(data: dict):
+    """Render tool_club_season() output inside app.py."""
+    club       = data.get("club", "")
+    age_filter = data.get("age_filter", "")
+    past       = data.get("past", [])
+    upcoming   = data.get("upcoming", [])
+    ladder     = data.get("ladder", [])
+
+    title_suffix = f" {age_filter}" if age_filter else " — All Age Groups"
+    st.markdown(f"### 📋 Season Summary: **{club}**{title_suffix}")
+
+    if not past and not upcoming and not ladder:
+        st.warning(f"No season data found for {club}{title_suffix}.")
+        return
+
+    # ── Standings ─────────────────────────────────────────────────────────────
+    if ladder:
+        st.markdown("#### 📊 Standings")
+        for s in ladder:
+            medal = "🥇" if s["pos"] == 1 else ("🥈" if s["pos"] == 2 else ("🥉" if s["pos"] == 3 else "  "))
+            st.markdown(
+                f"{medal} **{s['label']}** — "
+                f"Position **{s['pos']}/{s['total']}** &nbsp;|&nbsp; "
+                f"**{s['pts']} pts** &nbsp;|&nbsp; "
+                f"W{s['w']} D{s['d']} L{s['l']} &nbsp;|&nbsp; GD {s['gd']}"
+            )
+            df_ladder = pd.DataFrame(s["table"])
+            df_ladder = df_ladder.rename(columns={"PTS": "Pts"})
+            club_lower = club.lower()
+
+            def _highlight(row, _club=club_lower):
+                colour = "background-color: #FFF9C4; font-weight: bold;"
+                return [colour if _club in row["Team"].lower() else "" for _ in row]
+
+            h = min(600, (len(df_ladder) + 1) * 35 + 10)
+            st.dataframe(
+                df_ladder.style.apply(_highlight, axis=1),
+                hide_index=True,
+                width='stretch',
+                height=h,
+                column_config={
+                    "Pos": st.column_config.NumberColumn("Pos", width="small"),
+                    "Team": st.column_config.TextColumn("Team", width="large"),
+                    "P":   st.column_config.NumberColumn("P",   width="small"),
+                    "W":   st.column_config.NumberColumn("W",   width="small"),
+                    "D":   st.column_config.NumberColumn("D",   width="small"),
+                    "L":   st.column_config.NumberColumn("L",   width="small"),
+                    "GF":  st.column_config.NumberColumn("GF",  width="small"),
+                    "GA":  st.column_config.NumberColumn("GA",  width="small"),
+                    "GD":  st.column_config.NumberColumn("GD",  width="small"),
+                    "Pts": st.column_config.NumberColumn("Pts", width="small"),
+                }
+            )
+
+    # ── Results + Fixtures side by side per age group ─────────────────────────
+    age_groups = sorted(set([m["age"] for m in past] + [m["age"] for m in upcoming]))
+
+    for age_grp in age_groups:
+        st.markdown(f"---\n#### ⚽ {age_grp}")
+        col_res, col_fix = st.columns(2)
+
+        age_past     = [m for m in past     if m["age"] == age_grp]
+        age_upcoming = [m for m in upcoming if m["age"] == age_grp]
+
+        with col_res:
+            if age_past:
+                w = sum(1 for m in age_past if m["outcome"] == "W")
+                d = sum(1 for m in age_past if m["outcome"] == "D")
+                l = sum(1 for m in age_past if m["outcome"] == "L")
+                st.markdown(f"**📋 Results** — {len(age_past)} played &nbsp; W{w} D{d} L{l}")
+                rows = [{"Date": m["date"], "Opponent": m["opponent"], "Score": f"{m['icon']} {m['score']}"} for m in age_past]
+                df_r = pd.DataFrame(rows)
+                h = min(500, (len(df_r) + 1) * 35 + 10)
+                st.dataframe(df_r, hide_index=True, width='stretch', height=h,
+                    column_config={
+                        "Date":     st.column_config.TextColumn("Date",     width="small"),
+                        "Opponent": st.column_config.TextColumn("Opponent", width="medium"),
+                        "Score":    st.column_config.TextColumn("Score",    width="small"),
+                    })
+            else:
+                st.info("No results yet.")
+
+        with col_fix:
+            if age_upcoming:
+                st.markdown(f"**🗓️ Upcoming Fixtures** — {len(age_upcoming)}")
+                rows = []
+                for m in age_upcoming:
+                    opp_pos = m.get("opp_pos")
+                    if opp_pos:
+                        pos_str = f"{opp_pos}/{m.get('opp_total','?')} ({m.get('opp_pts','?')}pts W{m.get('opp_w',0)}D{m.get('opp_d',0)}L{m.get('opp_l',0)})"
+                    else:
+                        pos_str = "—"
+                    rows.append({
+                        "Date":         m["date"],
+                        "Opponent":     m["opponent"],
+                        "Opp Position": pos_str,
+                        "Venue":        m["venue"],
+                        "When":         m["when"],
+                    })
+                df_f = pd.DataFrame(rows)
+                h = min(500, (len(df_f) + 1) * 35 + 10)
+                st.dataframe(df_f, hide_index=True, width='stretch', height=h,
+                    column_config={
+                        "Date":         st.column_config.TextColumn("Date",         width="medium"),
+                        "Opponent":     st.column_config.TextColumn("Opponent",     width="medium"),
+                        "Opp Position": st.column_config.TextColumn("Opp Position", width="large"),
+                        "Venue":        st.column_config.TextColumn("Venue",        width="medium"),
+                        "When":         st.column_config.TextColumn("When",         width="small"),
+                    })
+            else:
+                st.info("No upcoming fixtures.")
+
+
+def show_season_page():
+    """Dedicated Season Summary page triggered by sidebar button."""
+    st.markdown("### 📋 Season Summary")
+
+    default_club = st.session_state.get("player_club", "Heidelberg United FC")
+    default_age  = st.session_state.get("player_age_group", "")
+
+    col_club, col_age, col_go = st.columns([3, 1, 1])
+    with col_club:
+        club_input = st.text_input("Club", value=default_club, key="season_club_input")
+    with col_age:
+        age_input = st.text_input("Age group (optional)", value=default_age, placeholder="U16", key="season_age_input")
+    with col_go:
+        st.markdown("<br>", unsafe_allow_html=True)
+        go = st.button("🔍 Go", key="season_go_btn", type="primary", width='stretch')
+
+    if go or st.session_state.get("season_auto_load"):
+        st.session_state["season_auto_load"] = False
+        with st.spinner("Loading season data…"):
+            try:
+                from fast_agent import tool_club_season
+                data = tool_club_season(club_input.strip(), age_input.strip())
+                _render_season_summary(data)
+            except Exception as e:
+                st.error(f"Error loading season data: {e}")
+    else:
+        st.session_state["season_auto_load"] = True
+        st.rerun()
+
+
 def main_app():
     """Main application logic"""
     header()
@@ -1586,6 +1732,7 @@ def main_app():
             """, unsafe_allow_html=True)
     with col_right:
         if st.button("🚪 Logout", key="logout_button", width='stretch'):
+            logout_user()
             st.session_state.clear()
             st.rerun()
     # In your sidebar (after logout button or admin controls)
@@ -1625,6 +1772,21 @@ def main_app():
             st.session_state["show_admin_dashboard"] = False
             st.rerun()
         show_admin_dashboard()
+        return
+
+    # ── Season Summary page shortcut ──────────────────────────────────────────
+    with st.sidebar:
+        st.markdown("---")
+        if st.button("📋 Season Summary", key="sidebar_season_btn", width='stretch'):
+            st.session_state["show_season_page"] = True
+            st.session_state["season_auto_load"] = True
+            st.rerun()
+
+    if st.session_state.get("show_season_page"):
+        if st.button("⬅️ Back to App", key="season_back_btn"):
+            st.session_state["show_season_page"] = False
+            st.rerun()
+        show_season_page()
         return
     
 
@@ -1697,32 +1859,42 @@ def main_app():
     # ── Find next opponent for the user's team from fixtures ──
     def _get_next_opponent():
         """Return (opponent_base_name, is_home) for user's next upcoming fixture."""
-        import pytz as _pytz
-        from fast_agent import fixtures as _fixtures, USER_CONFIG as _UC, \
-            parse_date_utc_to_aest as _parse, _strip_age_group as _strip
-        melbourne_tz = _pytz.timezone('Australia/Melbourne')
-        now = datetime.now(melbourne_tz)
-        user_team = _UC["team"].lower()
-        upcoming = []
-        for f in _fixtures:
-            a = f.get("attributes", {})
-            home = (a.get("home_team_name") or "").lower()
-            away = (a.get("away_team_name") or "").lower()
-            if user_team not in home and user_team not in away:
-                continue
-            dt = _parse(a.get("date",""))
-            if dt and dt > now:
-                is_home = user_team in home
-                opp_raw = a.get("away_team_name") if is_home else a.get("home_team_name")
-                upcoming.append((dt, _strip(opp_raw or ""), is_home))
-        if not upcoming:
+        try:
+            import pytz as _pytz
+            from fast_agent import fixtures as _fixtures, USER_CONFIG as _UC, \
+                parse_date_utc_to_aest as _parse, _strip_age_group as _strip
+            melbourne_tz = _pytz.timezone('Australia/Melbourne')
+            now = datetime.now(melbourne_tz)
+            # Match on club name + age group independently (more robust than full team string)
+            user_club_lower = (_UC.get("club") or "").lower()
+            user_age_lower  = (_UC.get("age_group") or "").lower()
+            upcoming = []
+            for f in _fixtures:
+                a = f.get("attributes", {})
+                home = (a.get("home_team_name") or "")
+                away = (a.get("away_team_name") or "")
+                blob = f"{home} {away}".lower()
+                if not user_club_lower or user_club_lower not in blob:
+                    continue
+                if user_age_lower and user_age_lower not in blob:
+                    continue
+                dt = _parse(a.get("date", ""))
+                if dt and dt > now:
+                    is_home = user_club_lower in home.lower()
+                    opp_raw = a.get("away_team_name") if is_home else a.get("home_team_name")
+                    opp_stripped = _strip(opp_raw or "").strip()
+                    if opp_stripped:
+                        upcoming.append((dt, opp_stripped, is_home))
+            if not upcoming:
+                return None, None
+            upcoming.sort(key=lambda x: x[0])
+            _, opp, is_home = upcoming[0]
+            return opp, is_home
+        except Exception:
             return None, None
-        upcoming.sort(key=lambda x: x[0])
-        _, opp, is_home = upcoming[0]
-        return opp, is_home
 
     _next_opp, _next_is_home = _get_next_opponent()
-    # Build the vs example: always "Heidelberg vs Opponent"
+    # Build the vs example: always "user_club vs Opponent"
     if _next_opp:
         _vs_query = f"{user_club} vs {_next_opp}"
         _vs_label = f"{'🏠' if _next_is_home else '✈️'} {_vs_query}"
@@ -1771,6 +1943,12 @@ def main_app():
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
+            q_season = f"season {user_club} {user_age}"
+            if st.button(f"📋 season summary {user_club} {user_age}", key="ex_season", width='content'):
+                st.session_state["clicked_query"] = q_season
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
+
             q6 = f"upcoming fixtures {user_club}"
             if st.button(q6, key="ex6", width='content'):
                 st.session_state["clicked_query"] = q6
@@ -1785,12 +1963,19 @@ def main_app():
                 st.session_state["clicked_query"] = q_squad
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
-                
-            q_squadOp = f"squad for {_next_opp} {user_age}"
-            if st.button(q_squadOp, key="ex_squadOp", width='content'):
-                st.session_state["clicked_query"] = q_squadOp
-                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-                st.rerun()
+
+            if _next_opp:
+                q_squadOp = f"squad for {_next_opp} {user_age}"
+                if st.button(f"opponent squad ({_next_opp})", key="ex_squadOp", width='content'):
+                    st.session_state["clicked_query"] = q_squadOp
+                    st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                    st.rerun()
+
+                q_opp_season = f"season {_next_opp} {user_age}"
+                if st.button(f"📋 {_next_opp} season", key="ex_opp_season", width='content'):
+                    st.session_state["clicked_query"] = q_opp_season
+                    st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                    st.rerun()
 
             q_dual = "2 clubs"
             if st.button("2 clubs", key="ex_dual", width='content'):
@@ -2229,6 +2414,9 @@ def main_app():
                     else:
                         st.dataframe(df, hide_index=True, width='stretch',
                                      height=final_height, column_config=_cfg)
+            elif answer.get("type") == "season_summary":
+                _render_season_summary(answer)
+
             elif answer.get("type") == "error":
                 st.error(answer.get("message", "An error occurred"))
 
