@@ -1565,7 +1565,7 @@ def _render_season_summary(data: dict):
         st.warning(f"No season data found for {club}{title_suffix}.")
         return
 
-    # ── Standings ─────────────────────────────────────────────────────────────
+    # ── Standings summary (keep as-is per request) ────────────────────────────
     if ladder:
         st.markdown("#### 📊 Standings")
         for s in ladder:
@@ -1576,89 +1576,153 @@ def _render_season_summary(data: dict):
                 f"**{s['pts']} pts** &nbsp;|&nbsp; "
                 f"W{s['w']} D{s['d']} L{s['l']} &nbsp;|&nbsp; GD {s['gd']}"
             )
-            df_ladder = pd.DataFrame(s["table"])
-            df_ladder = df_ladder.rename(columns={"PTS": "Pts"})
-            club_lower = club.lower()
 
-            def _highlight(row, _club=club_lower):
-                colour = "background-color: #FFF9C4; font-weight: bold;"
-                return [colour if _club in row["Team"].lower() else "" for _ in row]
-
-            h = min(600, (len(df_ladder) + 1) * 35 + 10)
-            st.dataframe(
-                df_ladder.style.apply(_highlight, axis=1),
-                hide_index=True,
-                width='stretch',
-                height=h,
-                column_config={
-                    "Pos": st.column_config.NumberColumn("Pos", width="small"),
-                    "Team": st.column_config.TextColumn("Team", width="large"),
-                    "P":   st.column_config.NumberColumn("P",   width="small"),
-                    "W":   st.column_config.NumberColumn("W",   width="small"),
-                    "D":   st.column_config.NumberColumn("D",   width="small"),
-                    "L":   st.column_config.NumberColumn("L",   width="small"),
-                    "GF":  st.column_config.NumberColumn("GF",  width="small"),
-                    "GA":  st.column_config.NumberColumn("GA",  width="small"),
-                    "GD":  st.column_config.NumberColumn("GD",  width="small"),
-                    "Pts": st.column_config.NumberColumn("Pts", width="small"),
-                }
-            )
-
-    # ── Results + Fixtures side by side per age group ─────────────────────────
+    # ── One tab per age group ─────────────────────────────────────────────────
     age_groups = sorted(set([m["age"] for m in past] + [m["age"] for m in upcoming]))
 
-    for age_grp in age_groups:
-        st.markdown(f"---\n#### ⚽ {age_grp}")
-        col_res, col_fix = st.columns(2)
+    if not age_groups:
+        return
 
-        age_past     = [m for m in past     if m["age"] == age_grp]
-        age_upcoming = [m for m in upcoming if m["age"] == age_grp]
+    tabs = st.tabs([f"⚽ {ag}" for ag in age_groups])
 
-        with col_res:
+    for tab, age_grp in zip(tabs, age_groups):
+        with tab:
+            age_past     = [m for m in past     if m["age"] == age_grp]
+            age_upcoming = [m for m in upcoming if m["age"] == age_grp]
+
+            # Find this age group's ladder section for full table
+            ladder_section = next((s for s in ladder if age_grp.lower() in s["label"].lower()), None)
+
+            # ── Full ladder for this age group ────────────────────────────────
+            if ladder_section:
+                with st.expander(f"📊 Full {age_grp} Ladder", expanded=False):
+                    club_lower = club.lower()
+                    df_lad = pd.DataFrame(ladder_section["table"])
+                    df_lad = df_lad.rename(columns={"PTS": "Pts"})
+
+                    def _hl(row, _c=club_lower):
+                        colour = "background-color: #FFF9C4; font-weight: bold;"
+                        return [colour if _c in row["Team"].lower() else "" for _ in row]
+
+                    h = min(500, (len(df_lad) + 1) * 35 + 10)
+                    st.dataframe(
+                        df_lad.style.apply(_hl, axis=1),
+                        hide_index=True, width='stretch', height=h,
+                        column_config={
+                            "Pos":  st.column_config.NumberColumn("Pos", width="small"),
+                            "Team": st.column_config.TextColumn("Team", width="medium"),
+                            "P":    st.column_config.NumberColumn("P",   width="small"),
+                            "W":    st.column_config.NumberColumn("W",   width="small"),
+                            "D":    st.column_config.NumberColumn("D",   width="small"),
+                            "L":    st.column_config.NumberColumn("L",   width="small"),
+                            "GF":   st.column_config.NumberColumn("GF",  width="small"),
+                            "GA":   st.column_config.NumberColumn("GA",  width="small"),
+                            "GD":   st.column_config.NumberColumn("GD",  width="small"),
+                            "Pts":  st.column_config.NumberColumn("Pts", width="small"),
+                        }
+                    )
+
+            st.markdown("---")
+
+            # ── Results ───────────────────────────────────────────────────────
             if age_past:
                 w = sum(1 for m in age_past if m["outcome"] == "W")
                 d = sum(1 for m in age_past if m["outcome"] == "D")
                 l = sum(1 for m in age_past if m["outcome"] == "L")
-                st.markdown(f"**📋 Results** — {len(age_past)} played &nbsp; W{w} D{d} L{l}")
-                rows = [{"Date": m["date"], "Opponent": m["opponent"], "Score": f"{m['icon']} {m['score']}"} for m in age_past]
-                df_r = pd.DataFrame(rows)
-                h = min(500, (len(df_r) + 1) * 35 + 10)
-                st.dataframe(df_r, hide_index=True, width='stretch', height=h,
+                st.markdown(f"**📋 Results** — {len(age_past)} played &nbsp; 🟢{w} 🟡{d} 🔴{l}")
+                st.caption("👇 Click a match row to view full match details")
+
+                res_rows = []
+                for m in age_past:
+                    res_rows.append({
+                        "Date":     m["date"],
+                        "Opponent": m["opponent"],      # full name now
+                        "Score":    f"{m['icon']} {m['score']}",
+                        "Venue":    m.get("venue", ""),
+                        "_hash":    m.get("hash", ""),
+                        "_home":    m.get("home", ""),
+                        "_away":    m.get("away", ""),
+                        "_iso":     m.get("iso_date", ""),
+                    })
+
+                df_r = pd.DataFrame(res_rows)
+                _res_key = f"season_res_{age_grp}_{st.session_state.get('expander_collapse_counter',0)}"
+                h = min(400, (len(df_r) + 1) * 35 + 10)
+                sel_r = st.dataframe(
+                    df_r[["Date", "Opponent", "Score", "Venue"]],
+                    hide_index=True, width='stretch', height=h,
+                    selection_mode="single-row", on_select="rerun",
+                    key=_res_key,
                     column_config={
                         "Date":     st.column_config.TextColumn("Date",     width="small"),
                         "Opponent": st.column_config.TextColumn("Opponent", width="medium"),
                         "Score":    st.column_config.TextColumn("Score",    width="small"),
-                    })
+                        "Venue":    st.column_config.TextColumn("Venue",    width="medium"),
+                    }
+                )
+                _rr = sel_r.selection.get("rows", [])
+                if _rr:
+                    _row  = res_rows[_rr[0]]
+                    # Prefer hash-based lookup — exact and unambiguous
+                    _hash = _row.get("_hash", "")
+                    if _hash:
+                        st.session_state["clicked_query"] = f"match details {_hash}"
+                    else:
+                        # Fallback: full team names + ISO date
+                        st.session_state["clicked_query"] = (
+                            f"match details {_row['_home']} vs {_row['_away']} {_row['_iso']}"
+                        )
+                    st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                    st.session_state["show_season_page"] = False
+                    st.rerun()
             else:
                 st.info("No results yet.")
 
-        with col_fix:
+            st.markdown("---")
+
+            # ── Upcoming fixtures ─────────────────────────────────────────────
             if age_upcoming:
                 st.markdown(f"**🗓️ Upcoming Fixtures** — {len(age_upcoming)}")
-                rows = []
+                st.caption("👇 Click a fixture row to see that team's season summary")
+
+                fix_rows = []
                 for m in age_upcoming:
                     opp_pos = m.get("opp_pos")
                     if opp_pos:
-                        pos_str = f"{opp_pos}/{m.get('opp_total','?')} ({m.get('opp_pts','?')}pts W{m.get('opp_w',0)}D{m.get('opp_d',0)}L{m.get('opp_l',0)})"
+                        pos_str = f"{opp_pos}/{m.get('opp_total','?')} · {m.get('opp_pts','?')}pts · W{m.get('opp_w',0)} D{m.get('opp_d',0)} L{m.get('opp_l',0)}"
                     else:
                         pos_str = "—"
-                    rows.append({
+                    fix_rows.append({
                         "Date":         m["date"],
                         "Opponent":     m["opponent"],
-                        "Opp Position": pos_str,
+                        "Opp Standing": pos_str,
                         "Venue":        m["venue"],
                         "When":         m["when"],
                     })
-                df_f = pd.DataFrame(rows)
-                h = min(500, (len(df_f) + 1) * 35 + 10)
-                st.dataframe(df_f, hide_index=True, width='stretch', height=h,
+
+                df_f = pd.DataFrame(fix_rows)
+                _fix_key = f"season_fix_{age_grp}_{st.session_state.get('expander_collapse_counter',0)}"
+                h = min(400, (len(df_f) + 1) * 35 + 10)
+                sel_f = st.dataframe(
+                    df_f,
+                    hide_index=True, width='stretch', height=h,
+                    selection_mode="single-row", on_select="rerun",
+                    key=_fix_key,
                     column_config={
-                        "Date":         st.column_config.TextColumn("Date",         width="medium"),
+                        "Date":         st.column_config.TextColumn("Date",         width="small"),
                         "Opponent":     st.column_config.TextColumn("Opponent",     width="medium"),
-                        "Opp Position": st.column_config.TextColumn("Opp Position", width="large"),
+                        "Opp Standing": st.column_config.TextColumn("Opp Standing", width="large"),
                         "Venue":        st.column_config.TextColumn("Venue",        width="medium"),
                         "When":         st.column_config.TextColumn("When",         width="small"),
-                    })
+                    }
+                )
+                _fr = sel_f.selection.get("rows", [])
+                if _fr:
+                    _opp_name = fix_rows[_fr[0]]["Opponent"]
+                    st.session_state["clicked_query"] = f"season {_opp_name} {age_grp}"
+                    st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                    st.session_state["show_season_page"] = False
+                    st.rerun()
             else:
                 st.info("No upcoming fixtures.")
 
@@ -1667,18 +1731,21 @@ def show_season_page():
     """Dedicated Season Summary page triggered by sidebar button."""
     st.markdown("### 📋 Season Summary")
 
-    default_club = st.session_state.get("player_club", "Heidelberg United FC")
-    default_age  = st.session_state.get("player_age_group", "")
+    # Always default to the logged-in user's own club
+    default_club = st.session_state.get("player_club") or "Heidelberg United FC"
+    default_age  = st.session_state.get("player_age_group") or ""
 
     col_club, col_age, col_go = st.columns([3, 1, 1])
     with col_club:
         club_input = st.text_input("Club", value=default_club, key="season_club_input")
     with col_age:
-        age_input = st.text_input("Age group (optional)", value=default_age, placeholder="U16", key="season_age_input")
+        age_input = st.text_input("Age group (optional)", value=default_age,
+                                  placeholder="U16", key="season_age_input")
     with col_go:
         st.markdown("<br>", unsafe_allow_html=True)
         go = st.button("🔍 Go", key="season_go_btn", type="primary", width='stretch')
 
+    # Auto-load on first open using the user's own club, or when Go is clicked
     if go or st.session_state.get("season_auto_load"):
         st.session_state["season_auto_load"] = False
         with st.spinner("Loading season data…"):
@@ -1689,6 +1756,7 @@ def show_season_page():
             except Exception as e:
                 st.error(f"Error loading season data: {e}")
     else:
+        # Trigger auto-load immediately on first open
         st.session_state["season_auto_load"] = True
         st.rerun()
 
@@ -1937,17 +2005,24 @@ def main_app():
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
-            st.markdown("**📅 Fixtures**")
+            st.markdown("**📅 Fixtures & Season**")
             if st.button("my next match", key="ex5", width='content'):
                 st.session_state["clicked_query"] = "my next match"
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
             q_season = f"season {user_club} {user_age}"
-            if st.button(f"📋 season summary {user_club} {user_age}", key="ex_season", width='content'):
+            if st.button(f"📋 {user_club} {user_age} season", key="ex_season", width='content'):
                 st.session_state["clicked_query"] = q_season
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
+
+            if _next_opp:
+                q_opp_season = f"season {_next_opp} {user_age}"
+                if st.button(f"📋 {_next_opp} {user_age} season", key="ex_opp_season", width='content'):
+                    st.session_state["clicked_query"] = q_opp_season
+                    st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                    st.rerun()
 
             q6 = f"upcoming fixtures {user_club}"
             if st.button(q6, key="ex6", width='content'):
@@ -1968,12 +2043,6 @@ def main_app():
                 q_squadOp = f"squad for {_next_opp} {user_age}"
                 if st.button(f"opponent squad ({_next_opp})", key="ex_squadOp", width='content'):
                     st.session_state["clicked_query"] = q_squadOp
-                    st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-                    st.rerun()
-
-                q_opp_season = f"season {_next_opp} {user_age}"
-                if st.button(f"📋 {_next_opp} season", key="ex_opp_season", width='content'):
-                    st.session_state["clicked_query"] = q_opp_season
                     st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                     st.rerun()
 
@@ -2326,16 +2395,46 @@ def main_app():
                 if tables:
                     tab_labels = [t["title"] for t in tables]
                     tabs = st.tabs(tab_labels)
-                    for tab, tbl in zip(tabs, tables):
+                    for _ti, (tab, tbl) in enumerate(zip(tabs, tables)):
                         with tab:
                             data = tbl.get("data", [])
-                            if data:
-                                df = pd.DataFrame(data)
-                                num_rows = len(df)
-                                h = 600 if num_rows > 16 else (num_rows + 1) * 35 + 10
-                                st.dataframe(df, hide_index=True, width='stretch', height=h)
-                            else:
+                            if not data:
                                 st.info("No data available.")
+                                continue
+                            df = pd.DataFrame(data)
+                            num_rows = len(df)
+                            h = 600 if num_rows > 16 else (num_rows + 1) * 35 + 10
+                            _mt_key = f"multi_tbl_{_ti}_{st.session_state.get('expander_collapse_counter',0)}"
+                            # Ladder table — click row to view season for that age group
+                            if "Age" in df.columns and "League" in df.columns:
+                                st.caption("👇 Click a row to view season summary for that age group")
+                                sel = st.dataframe(df, hide_index=True, width='stretch',
+                                    height=h, selection_mode="single-row", on_select="rerun",
+                                    key=_mt_key)
+                                _lr = sel.selection.get("rows", [])
+                                if _lr:
+                                    _row     = df.iloc[_lr[0]]
+                                    _age     = str(_row.get("Age", "")).strip()
+                                    # Get the first club column (after League/Age/Positions)
+                                    _club_cols = [c for c in df.columns if c not in ("League", "Age", "Positions")]
+                                    _club_name = _club_cols[0] if _club_cols else ""
+                                    if _club_name and _age:
+                                        _fire_query(f"season {_club_name} {_age}")
+                            # Matches table — click row to view match detail
+                            elif "Home" in df.columns and "Away" in df.columns:
+                                st.caption("👇 Click a match to view full details")
+                                sel = st.dataframe(df, hide_index=True, width='stretch',
+                                    height=h, selection_mode="single-row", on_select="rerun",
+                                    key=_mt_key)
+                                _mr = sel.selection.get("rows", [])
+                                if _mr:
+                                    _mrow  = df.iloc[_mr[0]]
+                                    _home  = str(_mrow.get("Home", "")).strip()
+                                    _away  = str(_mrow.get("Away", "")).strip()
+                                    _mdate = str(_mrow.get("Date", "")).strip()
+                                    _fire_query(f"match details {_home} vs {_away} {_mdate}")
+                            else:
+                                st.dataframe(df, hide_index=True, width='stretch', height=h)
             elif answer.get("type") == "own_goal_list":
                 st.info(answer.get("title", "Own Goals"))
                 data   = answer.get("data", [])

@@ -4220,8 +4220,13 @@ def tool_club_vs_club(query: str) -> Any:
     token_b = re.sub(noise, '', vs_parts[1].strip()).strip()
 
     def _resolve(token):
+        # Try exact substring first (alias in token)
         for alias in sorted(CLUB_ALIASES.keys(), key=len, reverse=True):
             if alias in token:
+                return alias, CLUB_ALIASES[alias]
+        # Then try reverse (token in alias) — handles "pascoe" matching "pascoe vale"
+        for alias in sorted(CLUB_ALIASES.keys(), key=len, reverse=True):
+            if token in alias and len(token) >= 4:
                 return alias, CLUB_ALIASES[alias]
         return token, token
 
@@ -4657,10 +4662,19 @@ def tool_club_season(club_query: str = "heidelberg", age_group_filter: str = "")
         ag_m   = re.search(r'U\d{2}', f"{home} {away} {league_name}", re.IGNORECASE)
         age_grp = ag_m.group(0).upper() if ag_m else "—"
         past.append({
-            "dt": match_dt, "date": match_dt.strftime("%d %b"),
-            "age": age_grp, "opponent": opponent[:18],
-            "score": f"{us}–{them}", "outcome": outcome, "icon": icon,
-            "venue": (a.get("ground_name") or "")[:20], "league": league_name,
+            "dt":       match_dt,
+            "date":     match_dt.strftime("%d %b"),
+            "iso_date": match_dt.strftime("%Y-%m-%d"),
+            "age":      age_grp,
+            "opponent": opponent,                          # full name, no truncation
+            "home":     home,                              # full home team name
+            "away":     away,                              # full away team name
+            "hash":     a.get("match_hash_id", ""),        # direct lookup key
+            "score":    f"{us}–{them}",
+            "outcome":  outcome,
+            "icon":     icon,
+            "venue":    (a.get("ground_name") or "")[:20],
+            "league":   league_name,
         })
     past.sort(key=lambda x: x["dt"])
 
@@ -5176,8 +5190,16 @@ class FastQueryRouter:
             vs_parts = re.split(r'\s+v(?:s)?\s+', q)
             club_a_token = vs_parts[0].strip() if len(vs_parts) > 0 else ""
             club_b_token = vs_parts[1].strip() if len(vs_parts) > 1 else ""
-            has_club_a = any(alias in club_a_token for alias in CLUB_ALIASES)
-            has_club_b = any(alias in club_b_token for alias in CLUB_ALIASES)
+
+            def _token_matches_alias(token):
+                """True if token matches any alias — either alias in token OR token in alias."""
+                for alias in CLUB_ALIASES:
+                    if alias in token or token in alias:
+                        return True
+                return False
+
+            has_club_a = _token_matches_alias(club_a_token)
+            has_club_b = _token_matches_alias(club_b_token)
             if has_club_a and has_club_b:
                 import fast_agent as _fa_mod
 
