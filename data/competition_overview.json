@@ -2775,7 +2775,7 @@
         "club": "Monash City Villarreal FC",
         "age_groups": {
           "U18": {
-            "position": 3,
+            "position": 4,
             "played": 4,
             "wins": 2,
             "draws": 1,
@@ -2830,7 +2830,7 @@
             "points": 10
           }
         },
-        "total_position_points": 13,
+        "total_position_points": 14,
         "total_gf": 70,
         "total_ga": 27,
         "age_group_count": 5,
@@ -2905,15 +2905,15 @@
         "club": "Mornington SC",
         "age_groups": {
           "U18": {
-            "position": 5,
-            "played": 3,
-            "wins": 2,
+            "position": 2,
+            "played": 4,
+            "wins": 3,
             "draws": 0,
             "losses": 1,
-            "gf": 8,
+            "gf": 12,
             "ga": 6,
-            "gd": 2,
-            "points": 6
+            "gd": 6,
+            "points": 9
           },
           "U16": {
             "position": 2,
@@ -2960,8 +2960,8 @@
             "points": 12
           }
         },
-        "total_position_points": 18,
-        "total_gf": 47,
+        "total_position_points": 15,
+        "total_gf": 51,
         "total_ga": 22,
         "age_group_count": 5,
         "overall_rank": 3
@@ -2970,7 +2970,7 @@
         "club": "Port Melbourne SC",
         "age_groups": {
           "U18": {
-            "position": 2,
+            "position": 3,
             "played": 4,
             "wins": 3,
             "draws": 0,
@@ -3025,7 +3025,7 @@
             "points": 7
           }
         },
-        "total_position_points": 18,
+        "total_position_points": 19,
         "total_gf": 57,
         "total_ga": 35,
         "age_group_count": 5,
@@ -3165,14 +3165,14 @@
         "club": "Nunawading City FC",
         "age_groups": {
           "U18": {
-            "position": 4,
-            "played": 4,
+            "position": 5,
+            "played": 5,
             "wins": 2,
             "draws": 0,
-            "losses": 2,
+            "losses": 3,
             "gf": 9,
-            "ga": 5,
-            "gd": 4,
+            "ga": 9,
+            "gd": 0,
             "points": 6
           },
           "U16": {
@@ -3220,9 +3220,9 @@
             "points": 13
           }
         },
-        "total_position_points": 31,
+        "total_position_points": 32,
         "total_gf": 36,
-        "total_ga": 51,
+        "total_ga": 55,
         "age_group_count": 5,
         "overall_rank": 7
       },
@@ -3412,5 +3412,5 @@
       }
     ]
   },
-  "_last_updated": "2026-03-17T07:58:41.052506"
+  "_last_updated": "2026-03-17T12:05:33.294939"
 }
