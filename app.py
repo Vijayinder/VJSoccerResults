@@ -64,6 +64,19 @@ from activity_tracker import (
     get_recent_activity, get_user_stats, get_active_users_today
 )
 
+try:
+    from prediction_tracker import (
+        get_prediction_for_match, get_predictions_for_club,
+        get_all_upcoming_predictions, get_accuracy_stats,
+        get_all_scored_predictions, score_predictions,
+        generate_all_predictions, run_monday_predictions,
+        list_snapshot_dates, get_snapshot_accuracy,
+        get_snapshot_predictions, score_and_save_snapshot
+    )
+    PREDICTION_TRACKER_AVAILABLE = True
+except ImportError:
+    PREDICTION_TRACKER_AVAILABLE = False
+
 # ---------------------------------------------------------
 # Page setup with enhanced styling
 # ---------------------------------------------------------
@@ -227,6 +240,8 @@ def init_session_state():
         st.session_state["show_season_page"] = False
     if "season_auto_load" not in st.session_state:
         st.session_state["season_auto_load"] = False
+    if "show_predictions_page" not in st.session_state:
+        st.session_state["show_predictions_page"] = False
     if "user_type" not in st.session_state:
         st.session_state["user_type"] = None  # 'player' or 'admin'
     
@@ -1250,9 +1265,10 @@ def is_natural_language_query(query):
         "details for", "top scorer", "ladder", "table", "form",
         "yellow card", "red card", "lineup", "vs", " v ",
         "team", "overview", "competition", "standings", "rankings",
-        "ypl1", "ypl2", "ysl", "missing score", "no score", "overdue",
+        "ypl1", "ypl2", "ysl", "overdue",
         "coach", "coaches", "staff", "manager", "managers",
-        "today", "todays", "result",
+        "today", "todays", "result", "cards this week", "all cards",
+        "latest results", "latest result", "recent results",
         # Squad / player list queries
         "show me", "players for", "players in", "list players",
         "squad", "who plays", "players at",
@@ -1277,6 +1293,11 @@ def is_natural_language_query(query):
         "season summary", "season", "full season",
         "results and fixtures", "fixtures and results",
         "all matches", "all results", "all fixtures",
+        # Predicted ladder and match prediction (admin example buttons only, but queries work for all)
+        "predicted ladder", "predict ladder", "ladder after",
+        "predicted standings", "end of season ladder", "projected ladder",
+        "where will i finish", "final ladder",
+        "predict", "prediction", "score prediction", "preview",
     ]
     return any(keyword in query.lower() for keyword in keywords)
 
@@ -1311,7 +1332,7 @@ def show_admin_dashboard():
     st.markdown("---")
     # Tabs for different views
 
-    tab1, tab2, tab3, tab4 = st.tabs(["📈 Analytics", "👥 Users", "📋 Recent Activity", "🌐 IP Tracking"])
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(["📈 Analytics", "👥 Users", "📋 Recent Activity", "🌐 IP Tracking", "🔮 Predictions"])
     with tab1:
         # Get overall stats
         stats = get_user_stats()
@@ -1443,6 +1464,202 @@ def show_admin_dashboard():
                 st.info("No IP address data available yet. IP tracking will start with the next login.")
         else:
             st.info("No activity data")
+
+    with tab5:
+        st.markdown("### 🔮 Match Predictions")
+
+        if not PREDICTION_TRACKER_AVAILABLE:
+            st.error("prediction_tracker.py not found. Ensure it is in the same directory as app.py.")
+        else:
+            # ── Accuracy summary ──────────────────────────────────────────────
+            stats = get_accuracy_stats()
+            if stats["total"] > 0:
+                col1, col2, col3, col4 = st.columns(4)
+                col1.metric("Total scored",      stats["total"])
+                col2.metric("Exact score ✅",    stats["correct_score"])
+                col3.metric("Right result ✅",   stats["correct_result"])
+                col4.metric("Wrong ❌",          stats["wrong"])
+                st.metric("Overall accuracy",    f"{stats['accuracy_pct']}%")
+                st.markdown("---")
+            else:
+                st.info("No scored predictions yet — predictions will be scored automatically after matches are played.")
+
+            # ── Admin actions ─────────────────────────────────────────────────
+            col_btn1, col_btn2, col_btn3 = st.columns(3)
+
+            with col_btn1:
+                if st.button("🔄 Score predictions now", key="score_now_btn"):
+                    with st.spinner("Scoring…"):
+                        n = score_predictions()
+                    st.success(f"Scored {n} prediction{'s' if n != 1 else ''}.")
+                    st.rerun()
+
+            with col_btn2:
+                if st.button("🔮 Generate missing predictions", key="gen_missing_btn"):
+                    with st.spinner("Generating new predictions for unfilled fixtures…"):
+                        generate_all_predictions(force=False)
+                    st.success("Done — new predictions generated.")
+                    st.rerun()
+
+            with col_btn3:
+                if st.button("♻️ Regenerate ALL predictions", key="regen_all_btn",
+                             help="Force-regenerates every prediction. Takes a minute."):
+                    with st.spinner("Regenerating all predictions for all clubs…"):
+                        generate_all_predictions(force=True)
+                    st.success("All predictions regenerated.")
+                    st.rerun()
+
+            st.markdown("---")
+
+            # ── Upcoming predictions browser ──────────────────────────────────
+            st.markdown("#### 🗓️ Upcoming Predictions")
+            _comps = ["All"] + sorted({"YPL1","YPL2","YSL NW","YSL SE","YSL","VPL Men","VPL Women"})
+            _comp_sel = st.selectbox("Filter by competition", _comps, key="pred_comp_filter")
+            _comp_arg = "" if _comp_sel == "All" else _comp_sel
+
+            upcoming_preds = get_all_upcoming_predictions(_comp_arg)
+            if not upcoming_preds:
+                st.info("No upcoming predictions stored. Click 'Generate missing predictions' above.")
+            else:
+                rows_up = []
+                for e in upcoming_preds:
+                    rows_up.append({
+                        "Date":    e.get("match_date", ""),
+                        "Comp":    e.get("comp_code", ""),
+                        "Age":     e.get("age_grp", ""),
+                        "Home":    e.get("home_short", "")[:20],
+                        "Away":    e.get("away_short", "")[:20],
+                        "Pred":    f"{e.get('pred_home')}–{e.get('pred_away')}",
+                        "Home Win%": f"{e.get('win_pct_home','?')}%",
+                        "Confidence": "⚠️ Low" if e.get("confidence") else "✅ OK",
+                    })
+                df_up = pd.DataFrame(rows_up)
+                h = min(600, (len(df_up) + 1) * 35 + 10)
+                sel_up = st.dataframe(df_up, hide_index=True, width='stretch', height=h,
+                    selection_mode="single-row", on_select="rerun", key="pred_upcoming_sel")
+                _usel = sel_up.selection.get("rows", [])
+                if _usel:
+                    e = upcoming_preds[_usel[0]]
+                    st.info(f"💡 {e.get('one_liner','')}")
+                    if st.button("🔮 Full prediction details", key="pred_detail_btn"):
+                        _fire_query = lambda q: (
+                            st.session_state.update({"clicked_query": q,
+                                "show_admin_dashboard": False,
+                                "expander_collapse_counter": st.session_state.get("expander_collapse_counter",0)+1})
+                            or st.rerun()
+                        )
+                        st.session_state["clicked_query"] = (
+                            f"predict {e.get('home','')} vs {e.get('away','')} {e.get('age_grp','')}")
+                        st.session_state["show_admin_dashboard"] = False
+                        st.rerun()
+
+            st.markdown("---")
+
+            # ── Scored predictions ────────────────────────────────────────────
+            st.markdown("#### 📋 Past Predictions (Scored)")
+            scored_preds = get_all_scored_predictions()
+            if not scored_preds:
+                st.info("No scored predictions yet.")
+            else:
+                rows_sc = []
+                for e in scored_preds:
+                    outcome = e.get("outcome", "")
+                    label = {"correct_score": "✅ Exact", "correct_result": "✅ Result",
+                             "wrong": "❌ Wrong"}.get(outcome, outcome)
+                    rows_sc.append({
+                        "Match Date":   e.get("match_date",""),
+                        "Comp":         e.get("comp_code",""),
+                        "Age":          e.get("age_grp",""),
+                        "Home":         e.get("home_short","")[:18],
+                        "Away":         e.get("away_short","")[:18],
+                        "Predicted":    f"{e.get('pred_home')}–{e.get('pred_away')}",
+                        "Actual":       f"{e.get('actual_home')}–{e.get('actual_away')}",
+                        "Result":       label,
+                    })
+                df_sc = pd.DataFrame(rows_sc)
+                h = min(600, (len(df_sc) + 1) * 35 + 10)
+                st.dataframe(df_sc, hide_index=True, width='stretch', height=h)
+
+            st.markdown("---")
+
+            # ── Historical snapshots ──────────────────────────────────────────
+            st.markdown("#### 🗂️ Historical Snapshots")
+            snap_dates = list_snapshot_dates()
+
+            if not snap_dates:
+                st.info("No historical snapshots yet. They are created each time you run "
+                        "prediction_tracker.py.")
+            else:
+                # Snapshot selector
+                st.markdown("**Compare a specific snapshot against actuals**")
+                col_snap, col_score_snap = st.columns([3, 1])
+                with col_snap:
+                    snap_labels = [f"{d} ({get_snapshot_accuracy(d)['total']} scored, "
+                                   f"{get_snapshot_accuracy(d)['pending']} pending, "
+                                   f"{get_snapshot_accuracy(d)['accuracy_pct']}% acc)"
+                                   for d in snap_dates]
+                    sel_snap = st.selectbox("Select snapshot", snap_labels,
+                                            key="admin_snap_sel")
+                    selected_date = snap_dates[snap_labels.index(sel_snap)] if sel_snap else None
+                with col_score_snap:
+                    st.markdown("<br>", unsafe_allow_html=True)
+                    if st.button("🔄 Score this snapshot", key="score_snap_btn"):
+                        if selected_date:
+                            with st.spinner("Scoring…"):
+                                n = score_and_save_snapshot(selected_date)
+                            st.success(f"Scored {n} new predictions.")
+                            st.rerun()
+
+                if selected_date:
+                    snap_stats = get_snapshot_accuracy(selected_date)
+                    snap_preds = get_snapshot_predictions(selected_date)
+
+                    # Accuracy metrics for this snapshot
+                    if snap_stats["total"] > 0:
+                        c1, c2, c3, c4, c5 = st.columns(5)
+                        c1.metric("Scored",        snap_stats["total"])
+                        c2.metric("Exact ✅",      snap_stats["correct_score"])
+                        c3.metric("Result ✅",     snap_stats["correct_result"])
+                        c4.metric("Wrong ❌",      snap_stats["wrong"])
+                        c5.metric("Accuracy",      f"{snap_stats['accuracy_pct']}%")
+
+                        # Factor accuracy breakdown
+                        fa = snap_stats.get("factor_accuracy", {})
+                        if fa:
+                            st.markdown("**Which factors predicted best:**")
+                            fa_rows = [{"Factors used": k,
+                                        "Predictions": v["total"],
+                                        "Correct": v["correct"],
+                                        "Accuracy %": f"{v['pct']}%"}
+                                       for k, v in fa.items()]
+                            st.dataframe(pd.DataFrame(fa_rows), hide_index=True, width='stretch')
+
+                    # Full prediction vs actual table
+                    if snap_preds:
+                        st.markdown("**Predicted vs Actual**")
+                        rows_h = []
+                        for e in snap_preds:
+                            outcome = e.get("outcome")
+                            label   = {"correct_score":  "✅ Exact",
+                                       "correct_result": "✅ Result",
+                                       "wrong":          "❌ Wrong"}.get(outcome, "⏳ Pending")
+                            act_h = e.get("actual_home")
+                            act_a = e.get("actual_away")
+                            rows_h.append({
+                                "Match Date": e.get("match_date",""),
+                                "Comp":       e.get("comp_code",""),
+                                "Age":        e.get("age_grp",""),
+                                "Home":       e.get("home_short","")[:18],
+                                "Away":       e.get("away_short","")[:18],
+                                "Predicted":  f"{e.get('pred_home')}–{e.get('pred_away')}",
+                                "Actual":     f"{act_h}–{act_a}" if act_h is not None else "—",
+                                "Home Win%":  f"{e.get('win_pct_home','?')}%",
+                                "Result":     label,
+                                "Method":     e.get("weight_note","")[:40],
+                            })
+                        df_h = pd.DataFrame(rows_h)
+                        h = min(600, (len(df_h) + 1) * 35 + 10)
+                        st.dataframe(df_h, hide_index=True, width='stretch', height=h)
             
 def update_user_config(club_name: str, age_group: str):
     """Update USER_CONFIG in fast_agent module with player's club and age group"""
@@ -1550,13 +1767,295 @@ def _inject_device_id_script():
     """, height=0)
 
 
+def _render_ladder_prediction(data: dict):
+    """Render a predicted ladder result."""
+    title         = data.get("title", "📊 Predicted Ladder")
+    club          = data.get("club", "")
+    club_token    = data.get("club_token", club.lower())
+    n_matches     = data.get("n_matches", 0)
+    our_pos_now   = data.get("our_pos_now", "?")
+    our_pos_pred  = data.get("our_pos_predicted", "?")
+    movement      = data.get("movement", "")
+    pred_ladder   = data.get("predicted_ladder", [])
+    extrap_ladder = data.get("extrap_ladder", [])
+    fix_preds     = data.get("fixture_predictions", [])
+    curr_ladder   = data.get("current_ladder", [])
+
+    st.markdown(f"### {title}")
+
+    # ── Summary banner ────────────────────────────────────────────────────────
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric("Current Position", f"{our_pos_now}/{len(curr_ladder)}")
+    with col2:
+        st.metric(f"Predicted (after {n_matches} matches)", f"{our_pos_pred}/{len(pred_ladder)}")
+    with col3:
+        st.metric("Movement", movement or "—")
+
+    st.markdown("---")
+
+    # ── Tabs: Predicted Ladder | Extrapolated | Fixture Predictions ───────────
+    tabs = st.tabs(["🏆 Predicted Ladder", "📈 Extrapolated Rate", "🔮 Fixture Predictions"])
+
+    with tabs[0]:
+        st.caption("Based on predicting each remaining match using attack/defence strength model")
+        if pred_ladder:
+            df = pd.DataFrame(pred_ladder)[["Pos","Team","P","W","D","L","GF","GA","GD","Pts"]]
+            df["Team"] = df["Team"].apply(
+                lambda t: f"▶ {t}" if club_token in t.lower() else t)
+            h = min(600, (len(df) + 1) * 35 + 10)
+            st.dataframe(df, hide_index=True, width='stretch', height=h,
+                column_config={
+                    "Pos":  st.column_config.NumberColumn("Pos", width="small"),
+                    "Team": st.column_config.TextColumn("Team", width="medium"),
+                    "P":    st.column_config.NumberColumn("P",   width="small"),
+                    "W":    st.column_config.NumberColumn("W",   width="small"),
+                    "D":    st.column_config.NumberColumn("D",   width="small"),
+                    "L":    st.column_config.NumberColumn("L",   width="small"),
+                    "GF":   st.column_config.NumberColumn("GF",  width="small"),
+                    "GA":   st.column_config.NumberColumn("GA",  width="small"),
+                    "GD":   st.column_config.NumberColumn("GD",  width="small"),
+                    "Pts":  st.column_config.NumberColumn("Pts", width="small"),
+                })
+
+    with tabs[1]:
+        st.caption("Based on each team's current points-per-game rate × games remaining")
+        if extrap_ladder:
+            df_e = pd.DataFrame(extrap_ladder)[["Proj Pos","Team","Current Pts","PPG","Games Left","Projected Pts"]]
+            df_e["Team"] = df_e["Team"].apply(
+                lambda t: f"▶ {t}" if club_token in t.lower() else t)
+            h = min(600, (len(df_e) + 1) * 35 + 10)
+            st.dataframe(df_e, hide_index=True, width='stretch', height=h,
+                column_config={
+                    "Proj Pos":      st.column_config.NumberColumn("Pos",           width="small"),
+                    "Team":          st.column_config.TextColumn("Team",            width="medium"),
+                    "Current Pts":   st.column_config.NumberColumn("Current Pts",   width="small"),
+                    "PPG":           st.column_config.NumberColumn("PPG",           width="small"),
+                    "Games Left":    st.column_config.NumberColumn("Games Left",    width="small"),
+                    "Projected Pts": st.column_config.NumberColumn("Projected Pts", width="small"),
+                })
+
+    with tabs[2]:
+        st.caption("Predicted scorelines for each remaining fixture used in the model")
+        if fix_preds:
+            df_f = pd.DataFrame(fix_preds)
+            h = min(600, (len(df_f) + 1) * 35 + 10)
+            st.dataframe(df_f, hide_index=True, width='stretch', height=h,
+                column_config={
+                    "Date":  st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="small"),
+                    "Home":  st.column_config.TextColumn("Home",  width="medium"),
+                    "Score": st.column_config.TextColumn("Score", width="small"),
+                    "Away":  st.column_config.TextColumn("Away",  width="medium"),
+                    "When":  st.column_config.TextColumn("When",  width="small"),
+                })
+        else:
+            st.info("No fixture predictions.")
+
+    st.caption("📌 Statistical model only — not a guarantee. Predictions improve as more results come in.")
+
+
+def show_predictions_page():
+    """
+    Standalone predictions page — all upcoming fixtures with predictions,
+    grouped by competition and age group. Available to all users.
+    """
+    st.markdown("### 🔮 Match Predictions")
+    st.caption("Predictions are generated every Monday and stored centrally. "
+               "Win% is from the home team's perspective.")
+
+    if not PREDICTION_TRACKER_AVAILABLE:
+        st.warning("Predictions not available — prediction_tracker.py not found.")
+        return
+
+    # ── Filters ───────────────────────────────────────────────────────────────
+    col_comp, col_club = st.columns([2, 3])
+    with col_comp:
+        comp_options = ["All competitions", "YPL1", "YPL2", "YSL NW", "YSL SE",
+                        "YSL", "VPL Men", "VPL Women"]
+        comp_sel = st.selectbox("Competition", comp_options, key="pred_page_comp")
+    with col_club:
+        club_filter = st.text_input("Filter by club (optional)",
+                                    placeholder="e.g. heidelberg",
+                                    key="pred_page_club")
+
+    comp_arg = "" if comp_sel == "All competitions" else comp_sel
+    all_preds = get_all_upcoming_predictions(comp_arg)
+
+    if not all_preds:
+        st.info("No predictions stored yet. Predictions are generated on Monday "
+                "by the pipeline. Ask your admin to run 'Generate missing predictions'.")
+        return
+
+    # Apply club filter
+    if club_filter.strip():
+        cl = club_filter.strip().lower()
+        all_preds = [p for p in all_preds
+                     if cl in p.get("home", "").lower()
+                     or cl in p.get("away", "").lower()]
+        if not all_preds:
+            st.info(f"No predictions found for '{club_filter}'.")
+            return
+
+    # ── Group by comp_code then age_grp ──────────────────────────────────────
+    from collections import defaultdict
+    grouped = defaultdict(list)
+    for p in all_preds:
+        key = f"{p.get('comp_code','Other')} — {p.get('age_grp','?')}"
+        grouped[key].append(p)
+
+    for group_label in sorted(grouped.keys()):
+        matches = grouped[group_label]
+        with st.expander(f"**{group_label}** — {len(matches)} fixtures", expanded=True):
+            rows = []
+            for m in matches:
+                win_pct  = m.get("win_pct_home", "?")
+                pred_h   = m.get("pred_home", "?")
+                pred_a   = m.get("pred_away", "?")
+                conf     = "⚠️" if m.get("confidence") else ""
+                rows.append({
+                    "Date":       m.get("match_date_display", m.get("match_date", "")),
+                    "Home":       m.get("home_short", m.get("home", ""))[:22],
+                    "Away":       m.get("away_short", m.get("away", ""))[:22],
+                    "Pred":       f"{pred_h}–{pred_a}",
+                    "Home Win%":  f"{win_pct}%" if win_pct != "?" else "—",
+                    "Note":       conf,
+                    "_one_liner": m.get("one_liner", ""),
+                })
+
+            df = pd.DataFrame(rows)
+            _key = f"pred_page_{group_label.replace(' ','_')}_{st.session_state.get('expander_collapse_counter',0)}"
+            h = min(500, (len(df) + 1) * 35 + 10)
+            sel = st.dataframe(
+                df[["Date", "Home", "Away", "Pred", "Home Win%", "Note"]],
+                hide_index=True, width='stretch', height=h,
+                selection_mode="single-row", on_select="rerun",
+                key=_key,
+                column_config={
+                    "Date":      st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="small"),
+                    "Home":      st.column_config.TextColumn("Home",      width="medium"),
+                    "Away":      st.column_config.TextColumn("Away",      width="medium"),
+                    "Pred":      st.column_config.TextColumn("Pred",      width="small"),
+                    "Home Win%": st.column_config.TextColumn("Home Win%", width="small"),
+                    "Note":      st.column_config.TextColumn("",          width="small"),
+                }
+            )
+            _sel = sel.selection.get("rows", [])
+            if _sel:
+                _one_liner = rows[_sel[0]].get("_one_liner", "")
+                if _one_liner:
+                    st.info(f"💡 {_one_liner}")
+
+    # ── Accuracy footer ───────────────────────────────────────────────────────
+    stats = get_accuracy_stats()
+    if stats["total"] > 0:
+        st.markdown("---")
+        st.caption(
+            f"📊 Prediction accuracy so far: **{stats['accuracy_pct']}%** "
+            f"({stats['correct_result']} correct results, "
+            f"{stats['correct_score']} exact scores) "
+            f"from {stats['total']} scored predictions."
+        )
+
+
+def _render_prediction(data: dict):
+    """Render a match prediction: one-liner first, full details in expander."""
+    club_a       = data.get("club_a", "")
+    club_b       = data.get("club_b", "")
+    pred_a       = data.get("pred_a", 0)
+    pred_b       = data.get("pred_b", 0)
+    xg_a         = data.get("xg_a", 0)
+    xg_b         = data.get("xg_b", 0)
+    verdict      = data.get("verdict", "")
+    win_pct_a    = data.get("win_pct_a", 50)
+    one_liner    = data.get("one_liner", "")
+    form_a       = data.get("form_a", "")
+    form_b       = data.get("form_b", "")
+    att_a        = data.get("att_a", 1.0)
+    def_a        = data.get("def_a", 1.0)
+    att_b        = data.get("att_b", 1.0)
+    def_b        = data.get("def_b", 1.0)
+    form_rows_a  = data.get("form_rows_a", [])
+    form_rows_b  = data.get("form_rows_b", [])
+    league_avg   = data.get("league_avg", 0)
+    confidence_note = data.get("confidence_note", "")
+    reasoning    = data.get("reasoning", "")
+
+    st.markdown(f"### {data.get('title', '🔮 Match Prediction')}")
+
+    # ── One-liner summary ─────────────────────────────────────────────────────
+    st.markdown(f"**{one_liner}**")
+    if confidence_note:
+        st.warning(confidence_note)
+
+    # ── Details expander ──────────────────────────────────────────────────────
+    with st.expander("📊 Full details", expanded=False):
+        # Score display
+        col_a, col_score, col_b = st.columns([3, 2, 3])
+        with col_a:
+            st.markdown(f"**{club_a}**")
+            st.caption(f"xG: {xg_a} | Attack {att_a:.2f}x | Defence {def_a:.2f}x")
+        with col_score:
+            st.markdown(
+                f"<div style='text-align:center;font-size:2rem;font-weight:bold;"
+                f"padding:0.3rem 0;'>{pred_a} – {pred_b}</div>",
+                unsafe_allow_html=True
+            )
+            st.markdown(f"<div style='text-align:center'>{verdict}</div>",
+                        unsafe_allow_html=True)
+        with col_b:
+            st.markdown(f"**{club_b}**")
+            st.caption(f"xG: {xg_b} | Attack {att_b:.2f}x | Defence {def_b:.2f}x")
+
+        st.caption(f"League avg goals/team: {league_avg} | "
+                   f"Based on {data.get('matches_used_a','?')} matches for {club_a}, "
+                   f"{data.get('matches_used_b','?')} for {club_b}")
+
+        if reasoning:
+            st.markdown("**💡 Why:**")
+            st.markdown(reasoning)
+
+        st.markdown("---")
+        tabs = st.tabs([f"📋 {club_a[:18]} Form", f"📋 {club_b[:18]} Form"])
+        with tabs[0]:
+            st.caption(f"Form: {form_a}")
+            if form_rows_a:
+                st.dataframe(pd.DataFrame(form_rows_a), hide_index=True, width='stretch',
+                    height=(len(form_rows_a) + 1) * 35 + 10,
+                    column_config={
+                        "Date":     st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="small"),
+                        "H/A":      st.column_config.TextColumn("H/A",      width="small"),
+                        "Opponent": st.column_config.TextColumn("Opponent", width="medium"),
+                        "Score":    st.column_config.TextColumn("Score",    width="small"),
+                    })
+        with tabs[1]:
+            st.caption(f"Form: {form_b}")
+            if form_rows_b:
+                st.dataframe(pd.DataFrame(form_rows_b), hide_index=True, width='stretch',
+                    height=(len(form_rows_b) + 1) * 35 + 10,
+                    column_config={
+                        "Date":     st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="small"),
+                        "H/A":      st.column_config.TextColumn("H/A",      width="small"),
+                        "Opponent": st.column_config.TextColumn("Opponent", width="medium"),
+                        "Score":    st.column_config.TextColumn("Score",    width="small"),
+                    })
+
+
+def _strip_age_group_display(name: str) -> str:
+    """Strip age group suffix for display e.g. 'Heidelberg United FC U16' → 'Heidelberg United FC'."""
+    import re as _re
+    return _re.sub(r'\s+U\d{2}$', '', (name or ""), flags=_re.IGNORECASE).strip()
+
+
 def _render_season_summary(data: dict):
     """Render tool_club_season() output inside app.py."""
-    club       = data.get("club", "")
-    age_filter = data.get("age_filter", "")
-    past       = data.get("past", [])
-    upcoming   = data.get("upcoming", [])
-    ladder     = data.get("ladder", [])
+    club         = data.get("club", "")
+    age_filter   = data.get("age_filter", "")
+    past         = data.get("past", [])
+    upcoming     = data.get("upcoming", [])
+    ladder       = data.get("ladder", [])
+    top_scorers  = data.get("top_scorers", [])
+    discipline   = data.get("discipline", [])
+    latest_match = data.get("latest_match")
 
     title_suffix = f" {age_filter}" if age_filter else " — All Age Groups"
     st.markdown(f"### 📋 Season Summary: **{club}**{title_suffix}")
@@ -1565,7 +2064,7 @@ def _render_season_summary(data: dict):
         st.warning(f"No season data found for {club}{title_suffix}.")
         return
 
-    # ── Standings summary (keep as-is per request) ────────────────────────────
+    # ── Top summary row: standings ────────────────────────────────────────────
     if ladder:
         st.markdown("#### 📊 Standings")
         for s in ladder:
@@ -1577,37 +2076,195 @@ def _render_season_summary(data: dict):
                 f"W{s['w']} D{s['d']} L{s['l']} &nbsp;|&nbsp; GD {s['gd']}"
             )
 
+    # ── Summary: top scorers + discipline + latest match ─────────────────────
+    sum_col1, sum_col2, sum_col3 = st.columns(3)
+
+    with sum_col1:
+        st.markdown("**⚽ Top Scorers**")
+        if top_scorers:
+            for i, p in enumerate(top_scorers[:5], 1):
+                st.caption(f"{i}. {p['Player']} — {p['Goals']} goals ({p['Per Game']}/game)")
+        else:
+            st.caption("No scorer data yet.")
+
+    with sum_col2:
+        st.markdown("**🟨 Discipline**")
+        if discipline:
+            for p in discipline[:5]:
+                st.caption(f"{p['Player']} — 🟨{p['🟨']} 🟥{p['🟥']}")
+        else:
+            st.caption("No cards yet.")
+
+    with sum_col3:
+        st.markdown("**📅 Latest Match**")
+        if not age_filter and len(set(m["age"] for m in past)) > 1:
+            # Multiple age groups — show one latest per age group
+            age_groups_past = sorted(set(m["age"] for m in past))
+            for ag in age_groups_past:
+                ag_past = [m for m in past if m["age"] == ag]
+                if ag_past:
+                    latest = ag_past[-1]
+                    st.caption(
+                        f"**{ag}** {latest['icon']} {latest['date']}  "
+                        f"{_strip_age_group_display(latest.get('home',''))} "
+                        f"{latest['score']} "
+                        f"{_strip_age_group_display(latest.get('away',''))}"
+                    )
+                    if latest.get("hash"):
+                        if st.button(f"📋 {ag} details", key=f"latest_match_btn_{club}_{ag}"):
+                            st.session_state["clicked_query"] = f"match details {latest['hash']}"
+                            st.session_state["show_season_page"] = False
+                            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                            st.rerun()
+        elif latest_match:
+            # Single age group — show full detail
+            st.caption(
+                f"{latest_match['icon']} {latest_match['date']}  "
+                f"{_strip_age_group_display(latest_match['home'])} "
+                f"{latest_match['score']} "
+                f"{_strip_age_group_display(latest_match['away'])}"
+            )
+            if latest_match.get("goals"):
+                for g in latest_match["goals"]:
+                    st.caption(f"⚽ {g['player']} {g['min']}'")
+            if latest_match.get("cards"):
+                for c in latest_match["cards"]:
+                    icon = "🟥" if "red" in (c["type"] or "").lower() else "🟨"
+                    st.caption(f"{icon} {c['player']} {c['min']}'")
+            if latest_match.get("hash"):
+                if st.button("📋 Full match details", key=f"latest_match_btn_{club}"):
+                    st.session_state["clicked_query"] = f"match details {latest_match['hash']}"
+                    st.session_state["show_season_page"] = False
+                    st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                    st.rerun()
+        else:
+            st.caption("No matches played yet.")
+
+    st.markdown("---")
+
     # ── One tab per age group ─────────────────────────────────────────────────
     age_groups = sorted(set([m["age"] for m in past] + [m["age"] for m in upcoming]))
-
     if not age_groups:
         return
 
-    tabs = st.tabs([f"⚽ {ag}" for ag in age_groups])
+    # When no age filter and multiple age groups — prepend an "All Matches" tab
+    show_all_tab = (not age_filter) and len(age_groups) > 1
+    tab_labels   = (["📋 All Matches"] if show_all_tab else []) + [f"⚽ {ag}" for ag in age_groups]
+    tabs         = st.tabs(tab_labels)
+    tab_offset   = 1 if show_all_tab else 0
 
-    for tab, age_grp in zip(tabs, age_groups):
+    # ── All Matches tab ───────────────────────────────────────────────────────
+    if show_all_tab:
+        with tabs[0]:
+            # Combined results — all age groups, sorted by date desc
+            all_res_rows = []
+            for m in sorted(past, key=lambda x: x.get("iso_date",""), reverse=True):
+                all_res_rows.append({
+                    "Date":     m.get("iso_date", m.get("date", "")),
+                    "Age":      m["age"],
+                    "Opponent": m["opponent"],
+                    "Score":    f"{m['icon']} {m['score']}",
+                    "Venue":    m.get("venue", ""),
+                    "_hash":    m.get("hash", ""),
+                    "_home":    m.get("home", ""),
+                    "_away":    m.get("away", ""),
+                    "_iso":     m.get("iso_date", ""),
+                })
+
+            if all_res_rows:
+                st.markdown(f"**📋 All Results — {len(all_res_rows)} matches across {len(age_groups)} age groups**")
+                st.caption("👇 Click a match row to view full match details")
+                df_all = pd.DataFrame(all_res_rows)
+                _all_key = f"season_all_{st.session_state.get('expander_collapse_counter',0)}"
+                h = min(600, (len(df_all) + 1) * 35 + 10)
+                sel_all = st.dataframe(
+                    df_all[["Date","Age","Opponent","Score","Venue"]],
+                    hide_index=True, width='stretch', height=h,
+                    selection_mode="single-row", on_select="rerun",
+                    key=_all_key,
+                    column_config={
+                        "Date":     st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="small"),
+                        "Age":      st.column_config.TextColumn("Age",      width="small"),
+                        "Opponent": st.column_config.TextColumn("Opponent", width="medium"),
+                        "Score":    st.column_config.TextColumn("Score",    width="small"),
+                        "Venue":    st.column_config.TextColumn("Venue",    width="medium"),
+                    }
+                )
+                _ar = sel_all.selection.get("rows", [])
+                if _ar:
+                    _row  = all_res_rows[_ar[0]]
+                    _hash = _row.get("_hash", "")
+                    if _hash:
+                        st.session_state["clicked_query"] = f"match details {_hash}"
+                    else:
+                        st.session_state["clicked_query"] = (
+                            f"match details {_row['_home']} vs {_row['_away']} {_row['_iso']}"
+                        )
+                    st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                    st.session_state["show_season_page"] = False
+                    st.rerun()
+            else:
+                st.info("No results yet.")
+
+            # Combined upcoming — all age groups
+            all_fix_rows = []
+            for m in sorted(upcoming, key=lambda x: x.get("dt", "")):
+                opp_pos = m.get("opp_pos")
+                pos_str = (f"{opp_pos}/{m.get('opp_total','?')} · {m.get('opp_pts','?')}pts · "
+                           f"W{m.get('opp_w',0)} D{m.get('opp_d',0)} L{m.get('opp_l',0)}"
+                           if opp_pos else "—")
+                all_fix_rows.append({
+                    "Date":         m["date"],
+                    "Age":          m["age"],
+                    "H/A":          "🏠" if m.get("is_home") else "✈️",
+                    "Opponent":     m["opponent"],
+                    "Opp Standing": pos_str,
+                    "Venue":        m["venue"],
+                    "When":         m["when"],
+                })
+
+            if all_fix_rows:
+                st.markdown(f"**🗓️ All Upcoming Fixtures — {len(all_fix_rows)}**")
+                df_af = pd.DataFrame(all_fix_rows)
+                h = min(400, (len(df_af) + 1) * 35 + 10)
+                st.dataframe(
+                    df_af[["Date","Age","H/A","Opponent","Opp Standing","Venue","When"]],
+                    hide_index=True, width='stretch', height=h,
+                    key=f"season_all_fix_{st.session_state.get('expander_collapse_counter',0)}",
+                    column_config={
+                        "Date":         st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="small"),
+                        "Age":          st.column_config.TextColumn("Age",          width="small"),
+                        "H/A":          st.column_config.TextColumn("H/A",          width="small"),
+                        "Opponent":     st.column_config.TextColumn("Opponent",     width="medium"),
+                        "Opp Standing": st.column_config.TextColumn("Opp Standing", width="large"),
+                        "Venue":        st.column_config.TextColumn("Venue",        width="medium"),
+                        "When":         st.column_config.TextColumn("When",         width="small"),
+                    }
+                )
+
+    for tab, age_grp in zip(tabs[tab_offset:], age_groups):
         with tab:
             age_past     = [m for m in past     if m["age"] == age_grp]
             age_upcoming = [m for m in upcoming if m["age"] == age_grp]
 
-            # Find this age group's ladder section for full table
+            # Find this age group's ladder section
             ladder_section = next((s for s in ladder if age_grp.lower() in s["label"].lower()), None)
 
-            # ── Full ladder for this age group ────────────────────────────────
+            # ── Full ladder — clickable to fire team season query ─────────────
             if ladder_section:
                 with st.expander(f"📊 Full {age_grp} Ladder", expanded=False):
                     club_lower = club.lower()
                     df_lad = pd.DataFrame(ladder_section["table"])
                     df_lad = df_lad.rename(columns={"PTS": "Pts"})
-
-                    def _hl(row, _c=club_lower):
-                        colour = "background-color: #FFF9C4; font-weight: bold;"
-                        return [colour if _c in row["Team"].lower() else "" for _ in row]
-
+                    df_lad["Team"] = df_lad["Team"].apply(
+                        lambda t: f"▶ {t}" if club_lower in t.lower() else t)
                     h = min(500, (len(df_lad) + 1) * 35 + 10)
-                    st.dataframe(
-                        df_lad.style.apply(_hl, axis=1),
-                        hide_index=True, width='stretch', height=h,
+                    st.caption("👇 Click a team to see their season summary")
+                    _lad_key = f"season_lad_{age_grp}_{st.session_state.get('expander_collapse_counter',0)}"
+                    sel_lad = st.dataframe(
+                        df_lad, hide_index=True, width='stretch', height=h,
+                        selection_mode="single-row", on_select="rerun",
+                        key=_lad_key,
                         column_config={
                             "Pos":  st.column_config.NumberColumn("Pos", width="small"),
                             "Team": st.column_config.TextColumn("Team", width="medium"),
@@ -1621,6 +2278,13 @@ def _render_season_summary(data: dict):
                             "Pts":  st.column_config.NumberColumn("Pts", width="small"),
                         }
                     )
+                    _lr = sel_lad.selection.get("rows", [])
+                    if _lr:
+                        _team_name = df_lad.iloc[_lr[0]]["Team"].lstrip("▶ ").strip()
+                        st.session_state["clicked_query"] = f"season {_team_name} {age_grp}"
+                        st.session_state["show_season_page"] = False
+                        st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                        st.rerun()
 
             st.markdown("---")
 
@@ -1636,7 +2300,7 @@ def _render_season_summary(data: dict):
                 for m in age_past:
                     res_rows.append({
                         "Date":     m["date"],
-                        "Opponent": m["opponent"],      # full name now
+                        "Opponent": m["opponent"],
                         "Score":    f"{m['icon']} {m['score']}",
                         "Venue":    m.get("venue", ""),
                         "_hash":    m.get("hash", ""),
@@ -1654,7 +2318,7 @@ def _render_season_summary(data: dict):
                     selection_mode="single-row", on_select="rerun",
                     key=_res_key,
                     column_config={
-                        "Date":     st.column_config.TextColumn("Date",     width="small"),
+                        "Date":     st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="small"),
                         "Opponent": st.column_config.TextColumn("Opponent", width="medium"),
                         "Score":    st.column_config.TextColumn("Score",    width="small"),
                         "Venue":    st.column_config.TextColumn("Venue",    width="medium"),
@@ -1663,12 +2327,10 @@ def _render_season_summary(data: dict):
                 _rr = sel_r.selection.get("rows", [])
                 if _rr:
                     _row  = res_rows[_rr[0]]
-                    # Prefer hash-based lookup — exact and unambiguous
                     _hash = _row.get("_hash", "")
                     if _hash:
                         st.session_state["clicked_query"] = f"match details {_hash}"
                     else:
-                        # Fallback: full team names + ISO date
                         st.session_state["clicked_query"] = (
                             f"match details {_row['_home']} vs {_row['_away']} {_row['_iso']}"
                         )
@@ -1683,46 +2345,35 @@ def _render_season_summary(data: dict):
             # ── Upcoming fixtures ─────────────────────────────────────────────
             if age_upcoming:
                 st.markdown(f"**🗓️ Upcoming Fixtures** — {len(age_upcoming)}")
-                st.caption("👇 Click a fixture row to see that team's season summary")
-
                 fix_rows = []
                 for m in age_upcoming:
                     opp_pos = m.get("opp_pos")
-                    if opp_pos:
-                        pos_str = f"{opp_pos}/{m.get('opp_total','?')} · {m.get('opp_pts','?')}pts · W{m.get('opp_w',0)} D{m.get('opp_d',0)} L{m.get('opp_l',0)}"
-                    else:
-                        pos_str = "—"
+                    pos_str = (f"{opp_pos}/{m.get('opp_total','?')} · {m.get('opp_pts','?')}pts · "
+                               f"W{m.get('opp_w',0)} D{m.get('opp_d',0)} L{m.get('opp_l',0)}"
+                               if opp_pos else "—")
                     fix_rows.append({
                         "Date":         m["date"],
+                        "H/A":          "🏠" if m.get("is_home") else "✈️",
                         "Opponent":     m["opponent"],
                         "Opp Standing": pos_str,
                         "Venue":        m["venue"],
                         "When":         m["when"],
                     })
-
                 df_f = pd.DataFrame(fix_rows)
-                _fix_key = f"season_fix_{age_grp}_{st.session_state.get('expander_collapse_counter',0)}"
                 h = min(400, (len(df_f) + 1) * 35 + 10)
-                sel_f = st.dataframe(
-                    df_f,
+                st.dataframe(
+                    df_f[["Date","H/A","Opponent","Opp Standing","Venue","When"]],
                     hide_index=True, width='stretch', height=h,
-                    selection_mode="single-row", on_select="rerun",
-                    key=_fix_key,
+                    key=f"season_fix_{age_grp}_{st.session_state.get('expander_collapse_counter',0)}",
                     column_config={
-                        "Date":         st.column_config.TextColumn("Date",         width="small"),
+                        "Date":         st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="small"),
+                        "H/A":          st.column_config.TextColumn("H/A",          width="small"),
                         "Opponent":     st.column_config.TextColumn("Opponent",     width="medium"),
                         "Opp Standing": st.column_config.TextColumn("Opp Standing", width="large"),
                         "Venue":        st.column_config.TextColumn("Venue",        width="medium"),
                         "When":         st.column_config.TextColumn("When",         width="small"),
                     }
                 )
-                _fr = sel_f.selection.get("rows", [])
-                if _fr:
-                    _opp_name = fix_rows[_fr[0]]["Opponent"]
-                    st.session_state["clicked_query"] = f"season {_opp_name} {age_grp}"
-                    st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-                    st.session_state["show_season_page"] = False
-                    st.rerun()
             else:
                 st.info("No upcoming fixtures.")
 
@@ -1846,9 +2497,21 @@ def main_app():
     with st.sidebar:
         st.markdown("---")
         if st.button("📋 Season Summary", key="sidebar_season_btn", width='stretch'):
-            st.session_state["show_season_page"] = True
-            st.session_state["season_auto_load"] = True
+            st.session_state["show_season_page"]      = True
+            st.session_state["show_predictions_page"] = False
+            st.session_state["season_auto_load"]      = True
             st.rerun()
+        if st.button("🔮 Predictions", key="sidebar_predictions_btn", width='stretch'):
+            st.session_state["show_predictions_page"] = True
+            st.session_state["show_season_page"]      = False
+            st.rerun()
+
+    if st.session_state.get("show_predictions_page"):
+        if st.button("⬅️ Back to App", key="pred_page_back_btn"):
+            st.session_state["show_predictions_page"] = False
+            st.rerun()
+        show_predictions_page()
+        return
 
     if st.session_state.get("show_season_page"):
         if st.button("⬅️ Back to App", key="season_back_btn"):
@@ -1910,7 +2573,7 @@ def main_app():
     search = st.text_input(
         "Search",
         key="search_input",
-        placeholder="Try: 'Stats for Shaurya', 'top scorers U16', 'most appearances Heidelberg', 'yellow cards U16', 'missing scores'...",
+        placeholder="Try: 'Stats for Shaurya', 'top scorers U16', 'cards this week', 'yellow cards U16', 'todays results'...",
         label_visibility="collapsed"
     )
     # Bump version when user types a new query (Enter key)
@@ -1999,12 +2662,6 @@ def main_app():
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
-            q4 = f"team stats for {user_club} {user_age}"
-            if st.button(q4, key="ex4", width='content'):
-                st.session_state["clicked_query"] = q4
-                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-                st.rerun()
-
             st.markdown("**📅 Fixtures & Season**")
             if st.button("my next match", key="ex5", width='content'):
                 st.session_state["clicked_query"] = "my next match"
@@ -2058,22 +2715,30 @@ def main_app():
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
-            st.markdown("**⚔️ Club Comparison**")
+            st.markdown("**⚔️ Club Comparison & Prediction**")
             if st.button(_vs_label, key="ex_vs", width='content'):
                 st.session_state["clicked_query"] = _vs_query
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
-            st.markdown("**🏆 Competitions**")
-            q7 = f"{user_age} {user_league} ladder"
-            if st.button(q7, key="ex7", width='content'):
-                st.session_state["clicked_query"] = q7
-                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-                st.rerun()
+            q_pred_ladder = f"predicted ladder {user_club} {user_age}"
+            if st.session_state.get("role") == "admin":
+                if st.button(f"📊 predicted ladder {user_age}", key="ex_pred_ladder", width='content'):
+                    st.session_state["clicked_query"] = q_pred_ladder
+                    st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                    st.rerun()
 
-            q8 = f"{user_competition} ladder"
-            if st.button(q8, key="ex8", width='content'):
-                st.session_state["clicked_query"] = q8
+            q_pred_ladder1 = f"predicted ladder {user_club} {user_age} after 1 match"
+            if st.session_state.get("role") == "admin":
+                if st.button(f"📊 ladder after 1 match", key="ex_pred_ladder1", width='content'):
+                    st.session_state["clicked_query"] = q_pred_ladder1
+                    st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                    st.rerun()
+
+            st.markdown("**🏆 Competitions**")
+            q_ypl2 = "YPL2 ladder"
+            if st.button("YPL2 ladder", key="ex_ypl2", width='content'):
+                st.session_state["clicked_query"] = q_ypl2
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
@@ -2091,17 +2756,17 @@ def main_app():
                 st.rerun()
 
         with col3:
-            st.markdown("**🟨🟥 Discipline**")
+            st.markdown("**🟨🟥 Discipline & Results**")
 
-            q10 = f"red cards in {user_age}"
-            if st.button(q10, key="ex10", width='content'):
-                st.session_state["clicked_query"] = q10
+            q10b = f"cards this week {user_competition} {user_age}"
+            if st.button(f"cards this week {user_competition} {user_age}", key="ex10b", width='content'):
+                st.session_state["clicked_query"] = q10b
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
-            q10b = "red cards last week"
-            if st.button(q10b, key="ex10b", width='content'):
-                st.session_state["clicked_query"] = q10b
+            q10b_all = f"all cards {user_competition} {user_age}"
+            if st.button(f"all cards {user_competition} {user_age}", key="ex10b_all", width='content'):
+                st.session_state["clicked_query"] = q10b_all
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
@@ -2117,34 +2782,14 @@ def main_app():
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
-            q2 = f"yellow cards {user_club} {user_age}"
-            if st.button(q2, key="ex2", width='content'):
-                st.session_state["clicked_query"] = q2
-                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-                st.rerun()
-
-            q2b = f"yellow cards {user_age} last week"
-            if st.button(q2b, key="ex2b", width='content'):
-                st.session_state["clicked_query"] = q2b
-                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-                st.rerun()
-
-            st.markdown("**⚠️ Missing Scores**")
-            q13 = f"missing scores {user_club}"
-            if st.button(q13, key="ex13", width='content'):
-                st.session_state["clicked_query"] = q13
-                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-                st.rerun()
-
-            st.markdown("**📊 Today's Games**")
-            q14 = "todays results"
-            if st.button("Today's Results", key="q14", width='content'):
+            q14 = "latest results"
+            if st.button("Latest Results", key="q14", width='content'):
                 st.session_state["clicked_query"] = q14
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
-            q15 = "missing scores today"
-            if st.button(q15, key="q15", width='content'):
+            q15 = "latest missing scores"
+            if st.button("Latest Missing Scores", key="q15", width='content'):
                 st.session_state["clicked_query"] = q15
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
@@ -2215,7 +2860,7 @@ def main_app():
                     _cfg = {}
                     if "Date" in df_m.columns:
                         df_m["Date"] = pd.to_datetime(df_m["Date"], errors="coerce").dt.date
-                        _cfg["Date"] = st.column_config.DateColumn("Date", format="DD-MMM")
+                        _cfg["Date"] = st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="small")
                     h = min(600, (len(m_rows) + 1) * 35 + 10)
                     sel_match = st.dataframe(
                         df_m, hide_index=True, width='stretch',
@@ -2276,15 +2921,89 @@ def main_app():
                     st.markdown("**📅 Recent Results**")
                     df_res = pd.DataFrame(results_data)
                     h = min(400, (len(df_res) + 1) * 35 + 10)
-                    st.dataframe(df_res, hide_index=True, width='stretch',
-                                 height=h,
+                    st.dataframe(df_res, hide_index=True, width='stretch', height=h,
                                  column_config={
-                                     "Date":     st.column_config.TextColumn("Date",     width="small"),
+                                     "Date":     st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="small"),
                                      "H/A":      st.column_config.TextColumn("",         width="small"),
                                      "Opponent": st.column_config.TextColumn("Opponent", width="medium"),
                                      "Score":    st.column_config.TextColumn("Score",    width="small"),
                                      "Result":   st.column_config.TextColumn("Result",   width="small"),
                                  })
+                upcoming_data = answer.get("upcoming", [])
+                if upcoming_data:
+                    st.markdown("**📆 Upcoming Fixtures**")
+                    df_up = pd.DataFrame(upcoming_data)
+                    h = min(400, (len(df_up) + 1) * 35 + 10)
+                    st.dataframe(df_up, hide_index=True, width='stretch', height=h,
+                                 column_config={
+                                     "Date":         st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="small"),
+                                     "H/A":          st.column_config.TextColumn("",             width="small"),
+                                     "Opponent":     st.column_config.TextColumn("Opponent",     width="medium"),
+                                     "Venue":        st.column_config.TextColumn("Venue",        width="medium"),
+                                     "When":         st.column_config.TextColumn("When",         width="small"),
+                                     "Opp Standing": st.column_config.TextColumn("Opp Standing", width="large"),
+                                 })
+            elif answer.get("type") == "cards_this_week":
+                st.markdown(f"### {answer.get('title','🟨🟥 Cards This Week')}")
+                yellow_rows = answer.get("yellow_rows", [])
+                red_rows    = answer.get("red_rows", [])
+
+                col_y, col_r = st.columns(2)
+
+                with col_y:
+                    st.markdown(f"**🟨 Yellow Cards — {len(yellow_rows)} player{'s' if len(yellow_rows) != 1 else ''}**")
+                    if yellow_rows:
+                        df_y = pd.DataFrame([{k: v for k, v in r.items() if not k.startswith("_")}
+                                             for r in yellow_rows])
+                        _yk = f"cards_week_y_{st.session_state.get('expander_collapse_counter',0)}"
+                        h = min(500, (len(df_y) + 1) * 35 + 10)
+                        st.caption("👇 Click a row to view player details")
+                        sel_y = st.dataframe(df_y, hide_index=True, width='stretch', height=h,
+                            selection_mode="single-row", on_select="rerun", key=_yk,
+                            column_config={
+                                "Date":     st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="small"),
+                                "Player":   st.column_config.TextColumn("Player",   width="medium"),
+                                "Team":     st.column_config.TextColumn("Team",     width="medium"),
+                                "Age":      st.column_config.TextColumn("Age",      width="small"),
+                                "Opponent": st.column_config.TextColumn("Opponent", width="medium"),
+                                "Min":      st.column_config.TextColumn("Min",      width="small"),
+                                "Role":     st.column_config.TextColumn("Role",     width="small"),
+                            })
+                        _ysel = sel_y.selection.get("rows", [])
+                        if _ysel:
+                            _pname = yellow_rows[_ysel[0]].get("_pname", "")
+                            if _pname:
+                                _fire_query(f"stats for {_pname}")
+                    else:
+                        st.info("No yellow cards this week.")
+
+                with col_r:
+                    st.markdown(f"**🟥 Red Cards — {len(red_rows)} player{'s' if len(red_rows) != 1 else ''}**")
+                    if red_rows:
+                        df_r = pd.DataFrame([{k: v for k, v in r.items() if not k.startswith("_")}
+                                             for r in red_rows])
+                        _rk = f"cards_week_r_{st.session_state.get('expander_collapse_counter',0)}"
+                        h = min(500, (len(df_r) + 1) * 35 + 10)
+                        st.caption("👇 Click a row to view player details")
+                        sel_r = st.dataframe(df_r, hide_index=True, width='stretch', height=h,
+                            selection_mode="single-row", on_select="rerun", key=_rk,
+                            column_config={
+                                "Date":     st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="small"),
+                                "Player":   st.column_config.TextColumn("Player",   width="medium"),
+                                "Team":     st.column_config.TextColumn("Team",     width="medium"),
+                                "Age":      st.column_config.TextColumn("Age",      width="small"),
+                                "Opponent": st.column_config.TextColumn("Opponent", width="medium"),
+                                "Min":      st.column_config.TextColumn("Min",      width="small"),
+                                "Role":     st.column_config.TextColumn("Role",     width="small"),
+                            })
+                        _rsel = sel_r.selection.get("rows", [])
+                        if _rsel:
+                            _pname = red_rows[_rsel[0]].get("_pname", "")
+                            if _pname:
+                                _fire_query(f"stats for {_pname}")
+                    else:
+                        st.info("No red cards this week. 🎉")
+
             elif answer.get("type") == "card_summary":
                 st.info(answer.get("title", "Card Summary"))
                 data       = answer.get("data", [])
@@ -2344,12 +3063,14 @@ def main_app():
                             data = tbl.get("data", [])
                             if data:
                                 df = pd.DataFrame(data)
+                                # Drop hidden count columns before display
+                                display_cols = [c for c in df.columns if not c.startswith("_")]
+                                df = df[display_cols]
                                 num_rows = len(df)
                                 h = 600 if num_rows > 16 else (num_rows + 1) * 35 + 10
                                 is_clickable = tbl.get("clickable", False)
-                                # Totals row is last — not clickable
-                                player_rows_only = [r for r in data if r.get("Player","").startswith("─") is False]
-                                if is_clickable and len(player_rows_only) > 1:
+                                # Totals row is first (row 0) — guard against clicking it
+                                if is_clickable:
                                     st.caption("👇 Click a player to view their full profile")
                                     _md_sel = st.dataframe(
                                         df, hide_index=True, width='stretch', height=h,
@@ -2486,10 +3207,10 @@ def main_app():
                     _cfg = {}
                     if "Date" in df.columns:
                         df["Date"] = pd.to_datetime(df["Date"], errors="coerce").dt.date
-                        _cfg["Date"] = st.column_config.DateColumn("Date", format="DD-MMM")
+                        _cfg["Date"] = st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="small")
                     if "First @ To" in df.columns:
                         df["First @ To"] = pd.to_datetime(df["First @ To"], errors="coerce").dt.date
-                        _cfg["First @ To"] = st.column_config.DateColumn("First @ To", format="DD-MMM")
+                        _cfg["First @ To"] = st.column_config.DateColumn("First @ To", format="ddd, DD-MMM", width="small")
                     num_rows = len(df)
                     final_height = 600 if num_rows > 16 else (num_rows + 1) * 35
                     # Determine name column and whether table is clickable
@@ -2513,6 +3234,19 @@ def main_app():
                     else:
                         st.dataframe(df, hide_index=True, width='stretch',
                                      height=final_height, column_config=_cfg)
+            elif answer.get("type") == "ladder_prediction":
+                if st.session_state.get("role") == "admin":
+                    _render_ladder_prediction(answer)
+                else:
+                    st.info("📊 Predicted ladder is available to admins only.")
+
+            elif answer.get("type") == "prediction":
+                # Match predictions are admin-only
+                if st.session_state.get("role") == "admin":
+                    _render_prediction(answer)
+                else:
+                    st.info("🔮 Match predictions are available to admins. Ask your admin to check the prediction dashboard.")
+
             elif answer.get("type") == "season_summary":
                 _render_season_summary(answer)
 
@@ -2829,7 +3563,7 @@ def main_app():
                         hide_index=True,
                         column_config={
                             "Select": st.column_config.CheckboxColumn("", default=False, width="small"),
-                            "Date": st.column_config.TextColumn("Date", width="small"),
+                            "Date": st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="small"),
                             "H/A": st.column_config.TextColumn("", width="small"),
                             "Opponent": st.column_config.TextColumn("Opponent", width="medium"),
                             "Score": st.column_config.TextColumn("Score", width="small")
@@ -3118,7 +3852,7 @@ def main_app():
                             match_rows.append(row)
                         df_player = pd.DataFrame(match_rows)
                         col_cfg = {
-                            "Date":     st.column_config.TextColumn("Date", width="small"),
+                            "Date":     st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="small"),
                             "Age":      st.column_config.TextColumn("Age", width="small"),
                             "Started":  st.column_config.TextColumn("", width="small"),
                             "Opponent": st.column_config.TextColumn("Opponent", width="medium"),
