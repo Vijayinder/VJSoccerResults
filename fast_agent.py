@@ -134,7 +134,29 @@ CLUB_ALIASES = {
     "fitzroy city": "Fitzroy City SC",
     "narre warren": "Narre Warren FC",
     "narre": "Narre Warren FC",
-    "casey": "Casey Comets FC"
+    "casey": "Casey Comets FC",
+    # Malvern
+    "malvern": "Malvern City FC",
+    "malvern city": "Malvern City FC",
+    "malvern city fc": "Malvern City FC",
+    # Kingston
+    "kingston city": "Kingston City FC",
+    "kingston": "Kingston City FC",
+    # Boroondara
+    "boroondara": "Boroondara Eagles FC",
+    "boroondara eagles": "Boroondara Eagles FC",
+    "eagles": "Boroondara Eagles FC",
+    # Green Gully
+    "green gully": "Green Gully FC",
+    "gully": "Green Gully FC",
+    # Sunshine
+    "sunshine": "Sunshine FC",
+    "sunshine george cross": "Sunshine George Cross SC",
+    # Werribee
+    "werribee city": "Werribee City FC",
+    # Preston
+    "preston": "Preston Lions FC",
+    "preston lions": "Preston Lions FC",
 
     
 }
@@ -185,7 +207,7 @@ def load_json(name: str):
         return {"staff": []}
     elif "competition_overview" in name:
         return {}
-    elif "fixtures" in name or "results" in name or "match_centre" in name or "lineups" in name:
+    elif "fixtures" in name or "results" in name or "match_centre" in name or "lineups" in name or "predictions" in name:
         return []
     else:
         return {}
@@ -2408,6 +2430,166 @@ def tool_own_goals(query: str = "") -> Any:
     }
 
 
+def _extract_league_code(query: str) -> str:
+    """Extract a league code from a query string. Covers all known leagues."""
+    q = query.lower()
+    # Check longer codes first to avoid partial matches
+    for code in ['ysl nw', 'ysl se', 'ysl north west', 'ysl south east',
+                 'ypl1', 'ypl 1', 'ypl2', 'ypl 2',
+                 'vpl men', 'vpl women', 'vpl',
+                 'ysl', 'npl', 'ffv']:
+        if code in q:
+            return extract_league_from_league_name(code)
+    return ""
+
+
+def tool_cards_this_week(query: str = "", last_week: bool = False) -> dict:
+    """
+    Combined yellow + red cards this or last week.
+    Supports filtering by age group, club, or league (e.g. YPL2, U16).
+    Returns type='cards_this_week'.
+    """
+    _refresh_data()
+
+    age_group   = extract_age_group(query) if query else None
+    base_club   = extract_base_club_name(query) if query else None
+    league_code = _extract_league_code(query) if query else ""
+
+    this_week_day = get_match_day_date()
+    if last_week:
+        match_day = this_week_day - timedelta(days=7)
+    else:
+        match_day = this_week_day
+    start_date = match_day
+    end_date   = match_day
+
+    def _build_rows(stat_key: str, card_type_lower: str) -> list:
+        rows = []
+        pool = list(players_summary) + list(staff_summary)
+        for p in pool:
+            pname = f"{p.get('first_name','')} {p.get('last_name','')}".strip()
+            role  = p.get("role") or (p.get("roles") or [""])[0] or "player"
+            for m in p.get("matches", []):
+                if not _match_in_date_range(m, start_date, end_date):
+                    continue
+                m_team = m.get("team_name", "")
+                if base_club and base_club.lower() not in m_team.lower():
+                    continue
+                if age_group and age_group.lower() not in m_team.lower():
+                    continue
+                if league_code:
+                    m_league = extract_league_from_league_name(
+                        m.get("league_name", "") or m.get("competition_name", ""))
+                    if m_league != league_code:
+                        continue
+                events = m.get("events", [])
+                count  = m.get(stat_key,
+                    sum(1 for e in events
+                        if (e.get("type") or e.get("event_type","")).lower() == card_type_lower))
+                if count == 0:
+                    continue
+                mins = _card_minutes(m, card_type_lower)
+                ag_m = re.search(r'U\d{2}', m_team, re.IGNORECASE)
+                rows.append({
+                    "Date":     iso_date_aest(m.get("date", "")),
+                    "Player":   pname,
+                    "Team":     re.sub(r'\s+U\d{2}$', '', m_team, flags=re.IGNORECASE).strip(),
+                    "Age":      ag_m.group(0).upper() if ag_m else "—",
+                    "Opponent": m.get("opponent_team_name", "?"),
+                    "Min":      mins or "—",
+                    "Role":     role.title() if role.lower() not in ("player","") else "Player",
+                    "_pname":   pname,
+                })
+        rows.sort(key=lambda x: (x["Team"], x["Player"]))
+        return rows
+
+    yellow_rows = _build_rows("yellow_cards", "yellow_card")
+    red_rows    = _build_rows("red_cards",    "red_card")
+
+    date_label  = f" — {match_day.strftime('%d %b %Y')}" if match_day else ""
+    week_label  = "Last Week" if last_week else "This Week"
+    filter_str  = ""
+    if league_code: filter_str += f" {league_code}"
+    if base_club:   filter_str += f" {base_club}"
+    if age_group:   filter_str += f" {age_group}"
+
+    return {
+        "type":        "cards_this_week",
+        "title":       f"🟨🟥 Cards {week_label}{filter_str}{date_label}",
+        "date":        match_day.strftime("%d %b %Y") if match_day else "",
+        "yellow_rows": yellow_rows,
+        "red_rows":    red_rows,
+    }
+
+
+def tool_all_cards(query: str = "") -> dict:
+    """
+    All cards for the season — no date filter.
+    Supports filtering by age group, club, or league (e.g. YPL2, U16).
+    Returns type='cards_this_week' (reuses same renderer).
+    """
+    _refresh_data()
+
+    age_group   = extract_age_group(query) if query else None
+    base_club   = extract_base_club_name(query) if query else None
+    league_code = _extract_league_code(query) if query else ""
+
+    def _build_rows(stat_key: str, card_type_lower: str) -> list:
+        rows = []
+        pool = list(players_summary) + list(staff_summary)
+        for p in pool:
+            pname = f"{p.get('first_name','')} {p.get('last_name','')}".strip()
+            role  = p.get("role") or (p.get("roles") or [""])[0] or "player"
+            for m in p.get("matches", []):
+                m_team = m.get("team_name", "")
+                if base_club and base_club.lower() not in m_team.lower():
+                    continue
+                if age_group and age_group.lower() not in m_team.lower():
+                    continue
+                if league_code:
+                    m_league = extract_league_from_league_name(
+                        m.get("league_name", "") or m.get("competition_name", ""))
+                    if m_league != league_code:
+                        continue
+                events = m.get("events", [])
+                count  = m.get(stat_key,
+                    sum(1 for e in events
+                        if (e.get("type") or e.get("event_type","")).lower() == card_type_lower))
+                if count == 0:
+                    continue
+                mins = _card_minutes(m, card_type_lower)
+                ag_m = re.search(r'U\d{2}', m_team, re.IGNORECASE)
+                rows.append({
+                    "Date":     iso_date_aest(m.get("date", "")),
+                    "Player":   pname,
+                    "Team":     re.sub(r'\s+U\d{2}$', '', m_team, flags=re.IGNORECASE).strip(),
+                    "Age":      ag_m.group(0).upper() if ag_m else "—",
+                    "Opponent": m.get("opponent_team_name", "?"),
+                    "Min":      mins or "—",
+                    "Role":     role.title() if role.lower() not in ("player","") else "Player",
+                    "_pname":   pname,
+                })
+        rows.sort(key=lambda x: (-len([r for r in rows if r["Player"] == x["Player"]]),
+                                 x["Team"], x["Player"]))
+        return rows
+
+    yellow_rows = _build_rows("yellow_cards", "yellow_card")
+    red_rows    = _build_rows("red_cards",    "red_card")
+
+    filter_str = ""
+    if league_code: filter_str += f" {league_code}"
+    if base_club:   filter_str += f" {base_club}"
+    if age_group:   filter_str += f" {age_group}"
+
+    return {
+        "type":        "cards_this_week",
+        "title":       f"🟨🟥 All Cards — Season{filter_str}",
+        "date":        "",
+        "yellow_rows": yellow_rows,
+        "red_rows":    red_rows,
+    }
+
+
 def tool_card_summary(query: str = "") -> Any:
     """
     Cards aggregated by CLUB (stripped of age group).
@@ -2759,7 +2941,7 @@ def tool_team_stats(query: str = "") -> str:
             score = "—"
             result_str = "—"
         results_table.append({
-            "Date":     format_date_aest(a.get("date", "")),
+            "Date":     iso_date_aest(a.get("date", "")),
             "H/A":      ha,
             "Opponent": opponent,
             "Score":    score,
@@ -2771,7 +2953,54 @@ def tool_team_stats(query: str = "") -> str:
         "summary": "\n".join(lines),
         "results": results_table,
         "team":    display_team,
+        "upcoming": _get_upcoming_for_team(team_name_to_match),
     }
+
+
+def _get_upcoming_for_team(team_name: str) -> list:
+    """Return upcoming fixtures for a team, sorted by date."""
+    import pytz as _pytz
+    melbourne_tz = _pytz.timezone('Australia/Melbourne')
+    now = datetime.now(melbourne_tz)
+    upcoming = []
+    for f in fixtures:
+        a    = f.get("attributes", {})
+        home = a.get("home_team_name", "")
+        away = a.get("away_team_name", "")
+        if team_name.lower() not in home.lower() and team_name.lower() not in away.lower():
+            continue
+        match_dt = parse_date_utc_to_aest(a.get("date", ""))
+        if not match_dt or match_dt <= now:
+            continue
+        is_home  = team_name.lower() in home.lower()
+        opponent = _strip_age_group(away if is_home else home)
+        days     = (match_dt.date() - now.date()).days
+        when     = "TODAY" if days == 0 else ("Tomorrow" if days == 1 else f"In {days}d")
+        opp_full = away if is_home else home
+        # Ladder position for opponent
+        league_name = a.get("league_name", "") or a.get("competition_name", "")
+        comp_code   = extract_league_from_league_name(league_name).lower()
+        ag_m        = re.search(r'u\d{2}', league_name.lower())
+        age_grp_lc  = ag_m.group(0) if ag_m else ""
+        opp_pos = None
+        try:
+            table   = _build_ladder_table(results, comp_code, age_grp_lc or None)
+            opp_row = next((row for row in table
+                            if _strip_age_group(opp_full).lower() in row["Team"].lower()), None)
+            if opp_row:
+                opp_pos = f"{opp_row['Pos']}/{len(table)} · {opp_row['PTS']}pts · W{opp_row['W']} D{opp_row['D']} L{opp_row['L']}"
+        except Exception:
+            pass
+        upcoming.append({
+            "Date":         match_dt.strftime("%Y-%m-%d"),
+            "H/A":          "🏠" if is_home else "✈️",
+            "Opponent":     opponent,
+            "Venue":        (a.get("ground_name") or "TBD")[:20],
+            "When":         when,
+            "Opp Standing": opp_pos or "—",
+        })
+    upcoming.sort(key=lambda x: x["When"])
+    return upcoming
 
 
 def tool_competition_overview(query: str = ""):
@@ -3751,6 +3980,9 @@ def tool_match_detail(query: str) -> Any:
                 "🟨":      _fmt_cell(yc_cnt, yc_m, "🟨") or "",
                 "🟥":      _fmt_cell(rc_cnt, rc_m, "🟥") or "",
                 "Season":  career_str,
+                "_g_cnt":  g_cnt + og_cnt + pen_cnt,   # hidden: total goals this match
+                "_yc_cnt": yc_cnt,
+                "_rc_cnt": rc_cnt,
             }
 
             if is_staff:
@@ -3764,20 +3996,22 @@ def tool_match_detail(query: str) -> Any:
         player_rows.sort(key=_sort_key)
         staff_rows.sort(key=lambda r: r["Player"])
 
-        # Totals row for players
+        # Totals row — correct counts from hidden fields, inserted at TOP
         if player_rows:
-            total_g  = sum(1 for r in player_rows if r["⚽"])
-            total_yc = sum(1 for r in player_rows if r["🟨"])
-            total_rc = sum(1 for r in player_rows if r["🟥"])
-            player_rows.append({
+            total_g  = sum(r.get("_g_cnt",  0) for r in player_rows)
+            total_yc = sum(r.get("_yc_cnt", 0) for r in player_rows)
+            total_rc = sum(r.get("_rc_cnt", 0) for r in player_rows)
+            totals_row = {
                 "Player": "─── TOTAL ───",
-                "#": "",
-                "Role": "",
-                "⚽": f"⚽ {total_g}" if total_g else "",
-                "🟨": f"🟨 {total_yc}" if total_yc else "",
-                "🟥": f"🟥 {total_rc}" if total_rc else "",
+                "#":      "",
+                "Role":   "",
+                "⚽":     f"⚽ {total_g}"  if total_g  else "",
+                "🟨":     f"🟨 {total_yc}" if total_yc else "",
+                "🟥":     f"🟥 {total_rc}" if total_rc else "",
                 "Season": "",
-            })
+                "_g_cnt": 0, "_yc_cnt": 0, "_rc_cnt": 0,
+            }
+            player_rows.insert(0, totals_row)
 
         return player_rows, staff_rows
 
@@ -4331,7 +4565,7 @@ def tool_club_vs_club(query: str) -> Any:
         ag_m  = re.search(r"U\d{2}", home, re.IGNORECASE)
         ag    = ag_m.group(0).upper() if ag_m else "\u2014"
         lg    = extract_league_from_league_name(a.get("league_name", ""))
-        date  = format_date_aest(a.get("date", "")) or a.get("date", "\u2014")
+        date  = iso_date_aest(a.get("date", "")) or a.get("date", "\u2014")
         result = "\u2014"
         if hs is not None and as_ is not None:
             try:
@@ -4663,7 +4897,7 @@ def tool_club_season(club_query: str = "heidelberg", age_group_filter: str = "")
         age_grp = ag_m.group(0).upper() if ag_m else "—"
         past.append({
             "dt":       match_dt,
-            "date":     match_dt.strftime("%d %b"),
+            "date":     match_dt.strftime("%Y-%m-%d"),
             "iso_date": match_dt.strftime("%Y-%m-%d"),
             "age":      age_grp,
             "opponent": opponent,                          # full name, no truncation
@@ -4704,7 +4938,8 @@ def tool_club_season(club_query: str = "heidelberg", age_group_filter: str = "")
             "age": age_grp, "opponent": opponent[:18],
             "venue": (a.get("ground_name") or "TBD")[:20],
             "when": when, "league": league_name,
-            "_opp_full": opp_full,   # used below for ladder lookup
+            "is_home": is_home,
+            "_opp_full": opp_full,
         })
     upcoming.sort(key=lambda x: x["dt"])
 
@@ -4767,12 +5002,685 @@ def tool_club_season(club_query: str = "heidelberg", age_group_filter: str = "")
             "gd": our_row["GD"],  "table": table,
         })
 
+    # ── Top scorers & discipline for this club/age ───────────────────────────
+    top_scorers = []
+    discipline  = []
+    for p in players_summary:
+        p_teams = _person_teams(p)
+        if not any(club_token in (t or "").lower() for t in p_teams):
+            continue
+        if age_filter and not any(age_filter in (t or "").lower() for t in p_teams):
+            continue
+        goals   = p.get("stats", {}).get("goals",        0) or 0
+        yellows = p.get("stats", {}).get("yellow_cards", 0) or 0
+        reds    = p.get("stats", {}).get("red_cards",    0) or 0
+        played  = p.get("stats", {}).get("matches_played", 0) or 0
+        name    = f"{p.get('first_name','')} {p.get('last_name','')}".strip()
+        if goals > 0:
+            top_scorers.append({
+                "Player":   name,
+                "Goals":    goals,
+                "Played":   played,
+                "Per Game": round(goals / played, 2) if played else 0,
+            })
+        if yellows + reds > 0:
+            discipline.append({
+                "Player": name,
+                "🟨":     yellows,
+                "🟥":     reds,
+                "Total":  yellows + reds * 2,
+            })
+    top_scorers.sort(key=lambda x: (-x["Goals"], -x["Per Game"]))
+    discipline.sort(key=lambda x: -x["Total"])
+
+    # ── Latest match detail ───────────────────────────────────────────────────
+    latest_match = None
+    if past:
+        most_recent = past[-1]
+        mhash = most_recent.get("hash", "")
+        mc = next((m for m in match_centre_data
+                   if m.get("match_hash_id") == mhash), None) if mhash else None
+        if mc:
+            r_attrs = mc.get("result", {}).get("attributes", {})
+            events  = mc.get("events", []) or []
+            def _etype(e): return (e.get("type") or e.get("event_type") or "").lower()
+            latest_match = {
+                "home":    r_attrs.get("home_team_name", most_recent["home"]),
+                "away":    r_attrs.get("away_team_name", most_recent["away"]),
+                "score":   most_recent["score"],
+                "date":    most_recent["date"],
+                "outcome": most_recent["outcome"],
+                "icon":    most_recent["icon"],
+                "venue":   most_recent.get("venue", ""),
+                "goals":   [{"player": e.get("player_name","?"),
+                             "min":    e.get("minute","?"),
+                             "team":   e.get("team_name","")}
+                            for e in events
+                            if "goal" in _etype(e) and "own" not in _etype(e)],
+                "cards":   [{"player": e.get("player_name","?"),
+                             "type":   _etype(e),
+                             "min":    e.get("minute","?"),
+                             "team":   e.get("team_name","")}
+                            for e in events if "card" in _etype(e)],
+                "hash":    mhash,
+            }
+        else:
+            # No match centre data — use what we have from results
+            latest_match = {
+                "home":    most_recent.get("home", ""),
+                "away":    most_recent.get("away", ""),
+                "score":   most_recent["score"],
+                "date":    most_recent["date"],
+                "outcome": most_recent["outcome"],
+                "icon":    most_recent["icon"],
+                "venue":   most_recent.get("venue", ""),
+                "goals":   [],
+                "cards":   [],
+                "hash":    mhash,
+            }
+
     return {
-        "type": "season_summary",
-        # Use the raw query club name stripped of age group as display, falling back to canonical
-        "club": re.sub(r'\s+U\d{2}$', '', club_query, flags=re.IGNORECASE).strip() or canonical,
-        "age_filter": age_filter.upper() if age_filter else "",
-        "past": past, "upcoming": upcoming, "ladder": ladder_sections,
+        "type":         "season_summary",
+        "club":         re.sub(r'\s+U\d{2}$', '', club_query, flags=re.IGNORECASE).strip() or canonical,
+        "age_filter":   age_filter.upper() if age_filter else "",
+        "past":         past,
+        "upcoming":     upcoming,
+        "ladder":       ladder_sections,
+        "top_scorers":  top_scorers[:10],
+        "discipline":   discipline[:10],
+        "latest_match": latest_match,
+    }
+
+
+def tool_predict_match(query: str, home_team: str = "") -> dict:
+    """
+    Predict a scoreline using a tiered model.
+    home_team: optional explicit home team name to apply home advantage correctly.
+    """
+    _refresh_data()
+
+    vs_parts = re.split(r'\s+v(?:s|ersus)?\s+', query.lower())
+    if len(vs_parts) < 2:
+        return {"type": "error", "message": "❌ Use format: predict Heidelberg vs Brunswick U16"}
+
+    noise = r'\b(predict|prediction|score|match|preview|for|in|the)\b'
+    token_a = re.sub(noise, '', vs_parts[0]).strip()
+    token_b = re.sub(noise, '', vs_parts[1]).strip()
+
+    def _resolve_token(token):
+        token = token.strip()
+        for alias in sorted(CLUB_ALIASES.keys(), key=len, reverse=True):
+            if alias in token or token in alias:
+                return alias, CLUB_ALIASES[alias]
+        return token, token.title()
+
+    alias_a, canon_a = _resolve_token(token_a)
+    alias_b, canon_b = _resolve_token(token_b)
+    age_grp   = extract_age_group(query) or ""
+    age_lower = age_grp.lower()
+
+    def _is_relevant(home, away):
+        return not age_lower or age_lower in f"{home} {away}".lower()
+
+    # ── Collect ALL results for each club (not just recent) ───────────────────
+    def _club_results(alias):
+        rows = []
+        for r in results:
+            a  = r.get("attributes", {})
+            h  = a.get("home_team_name", "")
+            aw = a.get("away_team_name", "")
+            if not _is_relevant(h, aw):
+                continue
+            hs  = a.get("home_score")
+            aws = a.get("away_score")
+            if hs is None or aws is None:
+                continue
+            try:
+                hs, aws = int(hs), int(aws)
+            except (ValueError, TypeError):
+                continue
+            h_base = _strip_age_group(h).lower()
+            a_base = _strip_age_group(aw).lower()
+            if alias in h_base:
+                rows.append({"gf": hs, "ga": aws, "home": True,
+                             "opp": a_base, "dt": a.get("date", "")})
+            elif alias in a_base:
+                rows.append({"gf": aws, "ga": hs, "home": False,
+                             "opp": h_base, "dt": a.get("date", "")})
+        rows.sort(key=lambda x: x["dt"])
+        return rows
+
+    res_a = _club_results(alias_a)
+    res_b = _club_results(alias_b)
+
+    if not res_a and not res_b:
+        return {"type": "error",
+                "message": f"❌ No results found for {canon_a} or {canon_b}. Cannot generate prediction."}
+
+    # ── League average (all results in this age group) ────────────────────────
+    all_goals = []
+    for r in results:
+        a  = r.get("attributes", {})
+        h  = a.get("home_team_name", "")
+        aw = a.get("away_team_name", "")
+        if not _is_relevant(h, aw):
+            continue
+        hs  = a.get("home_score")
+        aws = a.get("away_score")
+        if hs is None or aws is None:
+            continue
+        try:
+            all_goals.append(int(hs) + int(aws))
+        except (ValueError, TypeError):
+            pass
+
+    league_avg_total    = (sum(all_goals) / len(all_goals)) if all_goals else 2.5
+    league_avg_per_team = league_avg_total / 2.0
+
+    # ── Attack / defence strength — ALL matches ───────────────────────────────
+    def _strength(club_res):
+        if not club_res:
+            return 1.0, 1.0
+        avg_gf = sum(r["gf"] for r in club_res) / len(club_res)
+        avg_ga = sum(r["ga"] for r in club_res) / len(club_res)
+        att    = avg_gf / league_avg_per_team if league_avg_per_team > 0 else 1.0
+        defe   = avg_ga / league_avg_per_team if league_avg_per_team > 0 else 1.0
+        return round(att, 2), round(defe, 2)
+
+    att_a, def_a = _strength(res_a)
+    att_b, def_b = _strength(res_b)
+
+    # ── Tier 1: Direct H2H ────────────────────────────────────────────────────
+    h2h_a = [r for r in res_a if alias_b in r["opp"]]   # from A's perspective
+    h2h_xg_a = h2h_xg_b = None
+    h2h_note = ""
+    if h2h_a:
+        h2h_xg_a = sum(r["gf"] for r in h2h_a) / len(h2h_a)
+        h2h_xg_b = sum(r["ga"] for r in h2h_a) / len(h2h_a)
+        wins_a = sum(1 for r in h2h_a if r["gf"] > r["ga"])
+        wins_b = sum(1 for r in h2h_a if r["ga"] > r["gf"])
+        draws  = len(h2h_a) - wins_a - wins_b
+        h2h_note = (
+            f"They've met {len(h2h_a)} time{'s' if len(h2h_a)>1 else ''} — "
+            f"{canon_a} won {wins_a}, {canon_b} won {wins_b}, {draws} draw{'s' if draws!=1 else ''}. "
+            f"Average score in those matches: {round(h2h_xg_a,1)}–{round(h2h_xg_b,1)} from {canon_a}'s perspective."
+        )
+
+    # ── Tier 2: Transitive inference via common opponents ─────────────────────
+    # For each common opponent C: compare A's gf vs C and B's gf vs C
+    # → if A scores more against C than B does, A has an edge
+    opp_a = {r["opp"]: r for r in res_a}   # latest result per opponent
+    opp_b = {r["opp"]: r for r in res_b}
+    # Use all results grouped by opponent (avg)
+    def _by_opp(club_res):
+        d = {}
+        for r in club_res:
+            opp = r["opp"]
+            if opp not in d:
+                d[opp] = {"gf": [], "ga": []}
+            d[opp]["gf"].append(r["gf"])
+            d[opp]["ga"].append(r["ga"])
+        return {opp: {"avg_gf": sum(v["gf"])/len(v["gf"]),
+                      "avg_ga": sum(v["ga"])/len(v["ga"]),
+                      "n":      len(v["gf"])}
+                for opp, v in d.items()}
+
+    by_opp_a = _by_opp(res_a)
+    by_opp_b = _by_opp(res_b)
+    common_opps = set(by_opp_a.keys()) & set(by_opp_b.keys())
+    # Remove direct H2H from common opponents
+    common_opps.discard(alias_a)
+    common_opps.discard(alias_b)
+
+    transitive_xg_a = transitive_xg_b = None
+    transitive_note = ""
+    transitive_examples = []
+    if common_opps:
+        edge_a_list, edge_b_list = [], []
+        for opp in common_opps:
+            ra = by_opp_a[opp]
+            rb = by_opp_b[opp]
+            # A scored ra["avg_gf"] against opp; B scored rb["avg_gf"] against opp
+            # B conceded rb["avg_ga"] against opp; A conceded ra["avg_ga"] against opp
+            # Expected A vs B: A attacks like ra["avg_gf"] / rb["avg_ga"] (normalised)
+            ref_gf  = (ra["avg_gf"] + rb["avg_ga"]) / 2   # how opp concedes
+            ref_ga  = (ra["avg_ga"] + rb["avg_gf"]) / 2   # how opp scores
+            edge_a_list.append(ra["avg_gf"])
+            edge_b_list.append(rb["avg_gf"])
+            transitive_examples.append(
+                f"vs {opp.title()[:16]}: "
+                f"{canon_a[:12]} scored {round(ra['avg_gf'],1)}, "
+                f"{canon_b[:12]} scored {round(rb['avg_gf'],1)}"
+            )
+        transitive_xg_a = sum(edge_a_list) / len(edge_a_list)
+        transitive_xg_b = sum(edge_b_list) / len(edge_b_list)
+        # Normalise to league average scale
+        scale = league_avg_per_team / max((transitive_xg_a + transitive_xg_b) / 2, 0.1)
+        transitive_xg_a *= scale
+        transitive_xg_b *= scale
+        top_examples = transitive_examples[:3]
+        transitive_note = (
+            f"Found {len(common_opps)} common opponent{'s' if len(common_opps)>1 else ''}: "
+            + "; ".join(top_examples) + "."
+        )
+
+    # ── Determine who has home advantage ─────────────────────────────────────
+    # home_team param takes priority; fall back to assuming club_a is home
+    # (caller should pass home_team explicitly when known from fixture data)
+    if home_team:
+        _home_lower = home_team.lower()
+        a_is_home = alias_a in _home_lower or _home_lower in alias_a
+    else:
+        a_is_home = True   # default: first team in query is home
+
+    HOME_ADV = 0.3
+    home_adv_a = HOME_ADV if a_is_home else 0.0
+    home_adv_b = HOME_ADV if not a_is_home else 0.0
+
+    # ── Combine tiers into final xG ───────────────────────────────────────────
+    strength_xg_a = att_a * league_avg_per_team / max(def_b, 0.3)
+    strength_xg_b = att_b * league_avg_per_team / max(def_a, 0.3)
+
+    if h2h_a and transitive_xg_a is not None:
+        xg_a = (0.50 * h2h_xg_a + 0.20 * transitive_xg_a
+              + 0.20 * strength_xg_a + 0.10 * league_avg_per_team + home_adv_a)
+        xg_b = (0.50 * h2h_xg_b + 0.20 * transitive_xg_b
+              + 0.20 * strength_xg_b + 0.10 * league_avg_per_team + home_adv_b)
+        weight_note = "H2H (50%) + common opponents (20%) + season form (20%) + league avg (10%)"
+    elif h2h_a:
+        xg_a = (0.50 * h2h_xg_a + 0.35 * strength_xg_a
+              + 0.15 * league_avg_per_team + home_adv_a)
+        xg_b = (0.50 * h2h_xg_b + 0.35 * strength_xg_b
+              + 0.15 * league_avg_per_team + home_adv_b)
+        weight_note = "H2H (50%) + season form (35%) + league avg (15%)"
+    elif transitive_xg_a is not None:
+        xg_a = (0.40 * transitive_xg_a + 0.40 * strength_xg_a
+              + 0.20 * league_avg_per_team + home_adv_a)
+        xg_b = (0.40 * transitive_xg_b + 0.40 * strength_xg_b
+              + 0.20 * league_avg_per_team + home_adv_b)
+        weight_note = "Common opponents (40%) + season form (40%) + league avg (20%)"
+    else:
+        xg_a = (0.60 * strength_xg_a + 0.40 * league_avg_per_team + home_adv_a)
+        xg_b = (0.60 * strength_xg_b + 0.40 * league_avg_per_team + home_adv_b)
+        weight_note = "Season form (60%) + league avg (40%) — no common opponents yet"
+
+    xg_a = max(0.0, round(xg_a, 2))
+    xg_b = max(0.0, round(xg_b, 2))
+    pred_a = int(round(xg_a))
+    pred_b = int(round(xg_b))
+
+    # ── Win probability % (0=loss, 50=draw, 100=win from club_a perspective) ──
+    # Simple logistic-style: based on xG gap normalised to 0-100
+    xg_diff = xg_a - xg_b
+    # Map xg_diff to win%: 0 diff = 50%, +1 goal ~ 70%, +2 goals ~ 85%
+    import math as _math
+    win_pct_a = round(50 + 50 * (1 - _math.exp(-0.9 * xg_diff)) / (1 + _math.exp(-0.9 * abs(xg_diff))) * (1 if xg_diff >= 0 else -1))
+    win_pct_a = max(5, min(95, win_pct_a))
+
+    if pred_a > pred_b:   verdict = f"🏆 {canon_a} to win"
+    elif pred_b > pred_a: verdict = f"🏆 {canon_b} to win"
+    else:                 verdict = "🤝 Likely a draw"
+
+    # ── Plain-English reasoning note ──────────────────────────────────────────
+    reasoning_parts = []
+    if h2h_note:
+        reasoning_parts.append(f"**Direct H2H:** {h2h_note}")
+    if transitive_note:
+        reasoning_parts.append(f"**Common opponents:** {transitive_note}")
+
+    # Form comparison
+    form_summary_a = f"{canon_a} is scoring {round(att_a * league_avg_per_team, 1)} goals/game and conceding {round(def_a * league_avg_per_team, 1)}"
+    form_summary_b = f"{canon_b} is scoring {round(att_b * league_avg_per_team, 1)} and conceding {round(def_b * league_avg_per_team, 1)}"
+    reasoning_parts.append(f"**Season form ({len(res_a)} matches for {canon_a}, {len(res_b)} for {canon_b}):** {form_summary_a}. {form_summary_b}.")
+
+    if HOME_ADV > 0:
+        home_side = canon_a if a_is_home else canon_b
+        reasoning_parts.append(f"**Home advantage:** +{HOME_ADV} goals to {home_side} (home side).")
+
+    reasoning_parts.append(f"**Weights used:** {weight_note}.")
+    reasoning = "\n\n".join(reasoning_parts)
+
+    # ── Form strings and rows (all matches) ──────────────────────────────────
+    def _form_str(club_res, n=5):
+        icons = []
+        for r in club_res[-n:]:
+            if r["gf"] > r["ga"]:   icons.append("🟢")
+            elif r["gf"] < r["ga"]: icons.append("🔴")
+            else:                   icons.append("🟡")
+        return " ".join(icons) if icons else "—"
+
+    def _form_rows(club_res, n=8):
+        rows = []
+        for r in club_res[-n:]:
+            dt_str = r["dt"][:10] if len(r["dt"]) >= 10 else r["dt"]
+            try:
+                from datetime import datetime as _dt2
+                disp = _dt2.fromisoformat(dt_str.replace("Z", "+00:00")).strftime("%Y-%m-%d")
+            except Exception:
+                disp = dt_str
+            icon = "🟢" if r["gf"] > r["ga"] else ("🔴" if r["gf"] < r["ga"] else "🟡")
+            rows.append({
+                "Date":     disp,
+                "Opponent": r["opp"].title()[:20],
+                "Score":    f"{icon} {r['gf']}–{r['ga']}",
+                "H/A":      "🏠" if r["home"] else "✈️",
+            })
+        return rows
+
+    data_quality = []
+    if len(res_a) < 3:
+        data_quality.append(f"limited data for {canon_a} ({len(res_a)} results)")
+    if len(res_b) < 3:
+        data_quality.append(f"limited data for {canon_b} ({len(res_b)} results)")
+    confidence_note = ("⚠️ Low confidence — " + "; ".join(data_quality)) if data_quality else ""
+
+    # ── One-line summary ──────────────────────────────────────────────────────
+    if win_pct_a >= 65:
+        one_liner = f"{canon_a} likely to win ({win_pct_a}% chance). Predicted {pred_a}–{pred_b}."
+    elif win_pct_a <= 35:
+        one_liner = f"{canon_b} likely to win ({100-win_pct_a}% chance). Predicted {pred_a}–{pred_b}."
+    else:
+        one_liner = f"Tight match — close to a draw. Predicted {pred_a}–{pred_b} ({win_pct_a}% for {canon_a})."
+    if confidence_note:
+        one_liner += f" ⚠️ Limited data."
+
+    title_age = f" {age_grp}" if age_grp else ""
+    return {
+        "type":              "prediction",
+        "title":             f"🔮 Match Prediction{title_age}: {canon_a} vs {canon_b}",
+        "club_a":            canon_a,
+        "club_b":            canon_b,
+        "pred_a":            pred_a,
+        "pred_b":            pred_b,
+        "xg_a":              xg_a,
+        "xg_b":              xg_b,
+        "verdict":           verdict,
+        "win_pct_a":         win_pct_a,
+        "one_liner":         one_liner,
+        "form_a":            _form_str(res_a),
+        "form_b":            _form_str(res_b),
+        "att_a":             att_a,
+        "def_a":             def_a,
+        "att_b":             att_b,
+        "def_b":             def_b,
+        "form_rows_a":       _form_rows(res_a),
+        "form_rows_b":       _form_rows(res_b),
+        "h2h_count":         len(h2h_a),
+        "common_opp_count":  len(common_opps),
+        "league_avg":        round(league_avg_per_team, 2),
+        "confidence_note":   confidence_note,
+        "reasoning":         reasoning,
+        "weight_note":       weight_note,
+        "age_grp":           age_grp,
+        "matches_used_a":    len(res_a),
+        "matches_used_b":    len(res_b),
+        "a_is_home":         a_is_home,
+    }
+
+
+def tool_predict_ladder(club_query: str = "heidelberg",
+                        age_group_filter: str = "",
+                        after_n_matches: int = 0) -> dict:
+    """
+    Predict where a club will sit on the ladder after N more fixtures.
+
+    For each remaining fixture:
+      - Predict the scoreline using the same model as tool_predict_match
+      - Award points (W=3, D=1, L=0) to each team
+      - Apply predicted GF/GA to each team
+    Returns the full predicted ladder after those N matches (or end of season if N=0).
+
+    Also shows both scenarios:
+      - Model prediction (uses match-by-match scoreline predictions)
+      - Extrapolated rate (current points-per-game × remaining games)
+    """
+    _refresh_data()
+    melbourne_tz = pytz.timezone('Australia/Melbourne')
+    now          = datetime.now(melbourne_tz)
+
+    # ── Resolve club ──────────────────────────────────────────────────────────
+    canonical  = get_canonical_club_name(club_query) or club_query
+    _raw_token = re.sub(r'\bu\d{2}\b', '', club_query, flags=re.IGNORECASE).strip().lower()
+    _raw_token = re.sub(r'\b(fc|sc|afc|united fc|united sc)\s*$', '', _raw_token).strip()
+    _canon_token = re.sub(r'\b(fc|sc|afc)\s*$', '', canonical, flags=re.IGNORECASE).strip().lower()
+    club_token = _raw_token if len(_raw_token) >= len(_canon_token) else _canon_token
+    if len(club_token) < 4:
+        club_token = canonical.lower()
+
+    age_filter = (age_group_filter or extract_age_group(club_query) or "").lower()
+
+    # ── Find competition this club plays in ───────────────────────────────────
+    comp_code = ""
+    for r in results:
+        a    = r.get("attributes", {})
+        home = a.get("home_team_name", "")
+        away = a.get("away_team_name", "")
+        blob = f"{home} {away}".lower()
+        if club_token not in blob:
+            continue
+        if age_filter and age_filter not in blob:
+            continue
+        ln = a.get("league_name", "") or a.get("competition_name", "")
+        comp_code = extract_league_from_league_name(ln).lower()
+        break
+
+    if not comp_code or comp_code == "other":
+        return {"type": "error",
+                "message": f"❌ Cannot find competition for {canonical}. Try including the age group, e.g. 'predicted ladder heidelberg u16'."}
+
+    # ── Current ladder ────────────────────────────────────────────────────────
+    current_table = _build_ladder_table(results, comp_code, age_filter if age_filter else None)
+    if not current_table:
+        return {"type": "error", "message": f"❌ No ladder data found for {canonical}."}
+
+    # ── Remaining fixtures for this competition ───────────────────────────────
+    remaining = []
+    for f in fixtures:
+        a    = f.get("attributes", {})
+        home = a.get("home_team_name", "")
+        away = a.get("away_team_name", "")
+        blob = f"{home} {away}".lower()
+        if age_filter and age_filter not in blob:
+            continue
+        ln = a.get("league_name", "") or a.get("competition_name", "")
+        if extract_league_from_league_name(ln).lower() != comp_code:
+            continue
+        match_dt = parse_date_utc_to_aest(a.get("date", ""))
+        if not match_dt or match_dt <= now:
+            continue
+        remaining.append((match_dt, home, away))
+
+    remaining.sort(key=lambda x: x[0])
+
+    # Limit to N fixtures if specified
+    if after_n_matches > 0:
+        remaining = remaining[:after_n_matches]
+
+    if not remaining:
+        return {"type": "error",
+                "message": f"❌ No remaining fixtures found for this competition."}
+
+    # ── Build mutable points table from current standings ────────────────────
+    from collections import defaultdict
+    pred_table = {}
+    for row in current_table:
+        pred_table[row["Team"]] = {
+            "P":   row["P"],
+            "W":   row["W"],
+            "D":   row["D"],
+            "L":   row["L"],
+            "GF":  row["GF"],
+            "GA":  row["GA"],
+            "PTS": row["PTS"],
+        }
+
+    # ── League average per team (for prediction model) ────────────────────────
+    all_goals = []
+    for r in results:
+        a  = r.get("attributes", {})
+        h  = a.get("home_team_name", "")
+        aw = a.get("away_team_name", "")
+        if age_filter and age_filter not in f"{h} {aw}".lower():
+            continue
+        hs  = a.get("home_score")
+        aws = a.get("away_score")
+        if hs is None or aws is None:
+            continue
+        try:
+            all_goals.append(int(hs) + int(aws))
+        except (ValueError, TypeError):
+            pass
+    league_avg_total    = (sum(all_goals) / len(all_goals)) if all_goals else 2.5
+    league_avg_per_team = league_avg_total / 2.0
+
+    def _attack_defence(team_name):
+        """Attack/defence strength for a team based on recent results."""
+        alias = None
+        t_lower = _strip_age_group(team_name).lower()
+        for al in sorted(CLUB_ALIASES.keys(), key=len, reverse=True):
+            if al in t_lower or t_lower in al:
+                alias = al
+                break
+        if not alias:
+            alias = t_lower
+        gf_list, ga_list = [], []
+        for r in results:
+            a  = r.get("attributes", {})
+            h  = a.get("home_team_name", "")
+            aw = a.get("away_team_name", "")
+            if age_filter and age_filter not in f"{h} {aw}".lower():
+                continue
+            hs  = a.get("home_score")
+            aws = a.get("away_score")
+            if hs is None or aws is None:
+                continue
+            try:
+                hs, aws = int(hs), int(aws)
+            except (ValueError, TypeError):
+                continue
+            h_base = _strip_age_group(h).lower()
+            a_base = _strip_age_group(aw).lower()
+            if alias in h_base:
+                gf_list.append(hs); ga_list.append(aws)
+            elif alias in a_base:
+                gf_list.append(aws); ga_list.append(hs)
+        if not gf_list:
+            return 1.0, 1.0
+        n = min(6, len(gf_list))
+        avg_gf = sum(gf_list[-n:]) / n
+        avg_ga = sum(ga_list[-n:]) / n
+        att = avg_gf / league_avg_per_team if league_avg_per_team > 0 else 1.0
+        defe = avg_ga / league_avg_per_team if league_avg_per_team > 0 else 1.0
+        return round(att, 2), round(defe, 2)
+
+    HOME_ADV = 0.3
+    fixture_predictions = []
+
+    for match_dt, home, away in remaining:
+        att_h, def_h = _attack_defence(home)
+        att_a2, def_a2 = _attack_defence(away)
+
+        xg_h = max(0.0, 0.40 * league_avg_per_team
+                       + 0.60 * att_h * league_avg_per_team / max(def_a2, 0.3)
+                       + HOME_ADV)
+        xg_a2 = max(0.0, 0.40 * league_avg_per_team
+                        + 0.60 * att_a2 * league_avg_per_team / max(def_h, 0.3))
+
+        ph = int(round(xg_h))
+        pa = int(round(xg_a2))
+
+        # Award points
+        for team, gf_pred, ga_pred in [(home, ph, pa), (away, pa, ph)]:
+            if team not in pred_table:
+                pred_table[team] = {"P": 0, "W": 0, "D": 0, "L": 0, "GF": 0, "GA": 0, "PTS": 0}
+            pred_table[team]["P"]  += 1
+            pred_table[team]["GF"] += gf_pred
+            pred_table[team]["GA"] += ga_pred
+            if gf_pred > ga_pred:
+                pred_table[team]["W"]   += 1
+                pred_table[team]["PTS"] += 3
+            elif gf_pred < ga_pred:
+                pred_table[team]["L"] += 1
+            else:
+                pred_table[team]["D"]   += 1
+                pred_table[team]["PTS"] += 1
+
+        fixture_predictions.append({
+            "Date":  match_dt.strftime("%Y-%m-%d"),
+            "Home":  _strip_age_group(home),
+            "Score": f"{ph}–{pa}",
+            "Away":  _strip_age_group(away),
+            "When":  f"In {(match_dt.date() - now.date()).days}d",
+        })
+
+    # ── Build sorted predicted ladder ─────────────────────────────────────────
+    predicted_ladder = []
+    for team, row in pred_table.items():
+        gd = row["GF"] - row["GA"]
+        predicted_ladder.append({
+            "Team": team,
+            "P":    row["P"],
+            "W":    row["W"],
+            "D":    row["D"],
+            "L":    row["L"],
+            "GF":   row["GF"],
+            "GA":   row["GA"],
+            "GD":   gd,
+            "Pts":  row["PTS"],
+        })
+    predicted_ladder.sort(key=lambda x: (-x["Pts"], -x["GD"], -x["GF"]))
+    for i, row in enumerate(predicted_ladder, 1):
+        row["Pos"] = i
+
+    # ── Find our club's predicted position ────────────────────────────────────
+    our_pred_row = next(
+        (row for row in predicted_ladder if club_token in row["Team"].lower()), None
+    )
+
+    # ── Extrapolated rate scenario ────────────────────────────────────────────
+    extrap_ladder = []
+    for row in current_table:
+        games_played = row["P"]
+        ppg = row["PTS"] / games_played if games_played > 0 else 0
+        n_remaining  = len(remaining)
+        extrap_pts   = row["PTS"] + round(ppg * n_remaining)
+        extrap_ladder.append({
+            "Team":       row["Team"],
+            "Current Pts": row["PTS"],
+            "Games Left":  n_remaining,
+            "PPG":         round(ppg, 2),
+            "Projected Pts": extrap_pts,
+        })
+    extrap_ladder.sort(key=lambda x: -x["Projected Pts"])
+    for i, row in enumerate(extrap_ladder, 1):
+        row["Proj Pos"] = i
+
+    n_label = f"after {len(remaining)} more match{'es' if len(remaining) != 1 else ''}"
+    our_row_current = next((r for r in current_table if club_token in r["Team"].lower()), None)
+    our_pos_now     = our_row_current["Pos"] if our_row_current else "?"
+    our_pos_pred    = our_pred_row["Pos"] if our_pred_row else "?"
+    movement = ""
+    if isinstance(our_pos_now, int) and isinstance(our_pos_pred, int):
+        diff = our_pos_now - our_pos_pred
+        if diff > 0:   movement = f"⬆️ up {diff} place{'s' if diff > 1 else ''}"
+        elif diff < 0: movement = f"⬇️ down {abs(diff)} place{'s' if abs(diff) > 1 else ''}"
+        else:          movement = "➡️ same position"
+
+    age_label = age_filter.upper() if age_filter else ""
+    return {
+        "type":                "ladder_prediction",
+        "title":               f"📊 Predicted Ladder — {canonical} {age_label} {n_label}",
+        "club":                canonical,
+        "club_token":          club_token,
+        "age_grp":             age_filter.upper(),
+        "n_matches":           len(remaining),
+        "our_pos_now":         our_pos_now,
+        "our_pos_predicted":   our_pos_pred,
+        "movement":            movement,
+        "predicted_ladder":    predicted_ladder,
+        "extrap_ladder":       extrap_ladder,
+        "fixture_predictions": fixture_predictions,
+        "current_ladder":      current_table,
     }
 
 
@@ -4912,6 +5820,7 @@ class FastQueryRouter:
         todays_results_keywords = [
             'today results', 'todays results', 'results today',
             'results for today', "today's results", 'today s results',
+            'latest results', 'latest result', 'recent results',
         ]
         is_today_results = any(keyword in q for keyword in todays_results_keywords)
 
@@ -4923,7 +5832,7 @@ class FastQueryRouter:
 
         if is_today_results:
             filter_query = re.sub(
-                r'\b(today|todays|today\'s|results?|for|show|list|me|this|last|week)\b',
+                r'\b(today|todays|today\'s|results?|for|show|list|me|this|last|week|latest|recent)\b',
                 '', q
             ).strip()
             round_m = re.search(r'\bround\s*(\d+)\b', q)
@@ -5035,6 +5944,22 @@ class FastQueryRouter:
 
                 print(f"\n🔧 TOOL: tool_fixtures()  query={query!r}")
                 return tool_fixtures(team_query, limit, use_user_team=False)
+
+        # --- 4B. ALL CARDS (season, no date filter) ---
+        if ("cards" in q or "card" in q) and any(x in q for x in ["all cards", "all season", "season cards", "total cards season"]):
+            import fast_agent as _fa_mod
+            _fa_mod._last_debug = {'query': query, 'fn': 'tool_all_cards', 'args': query}
+            print(f"\n🔧 TOOL: tool_all_cards()  query={query!r}")
+            return tool_all_cards(query)
+
+        # --- 4B. CARDS THIS/LAST WEEK (combined yellow + red) ---
+        if ("cards" in q or "card" in q) and any(x in q for x in [
+                "this week", "this round", "today", "latest", "last week", "previous week", "last round"]):
+            import fast_agent as _fa_mod
+            _last_week = any(x in q for x in ["last week", "previous week", "last round"])
+            _fa_mod._last_debug = {'query': query, 'fn': 'tool_cards_this_week', 'args': query}
+            print(f"\n🔧 TOOL: tool_cards_this_week()  query={query!r}  last_week={_last_week}")
+            return tool_cards_this_week(query, last_week=_last_week)
 
         # --- 5. YELLOW CARDS ---
         if "yellow card" in q or "yellows" in q:
@@ -5185,11 +6110,77 @@ class FastQueryRouter:
             print(f"\n🔧 TOOL: tool_lineups()  query={query!r}")
             return tool_lineups(query)
 
+        # --- PREDICT LADDER ---
+        _ladder_pred_kw = ["predicted ladder", "predict ladder", "ladder after",
+                           "predicted standings", "end of season ladder",
+                           "where will i finish", "final ladder", "projected ladder"]
+        if any(kw in q for kw in _ladder_pred_kw):
+            clean    = re.sub(
+                r'\b(predicted?|ladder|standings?|after|end|of|season|where|will|i|finish|final|projected?)\b',
+                '', q).strip()
+            club_q   = re.sub(r'\bu\d{2}\b', '', clean, flags=re.IGNORECASE).strip()
+            age_q    = extract_age_group(clean) or ""
+            # Extract "after N matches"
+            n_m      = re.search(r'(\d+)\s*match(?:es)?', q)
+            n_games  = int(n_m.group(1)) if n_m else 0
+            if not club_q:
+                club_q = USER_CONFIG.get("club", "heidelberg")
+            import fast_agent as _fa_mod
+            _fa_mod._last_debug = {'query': query, 'fn': 'tool_predict_ladder',
+                                   'args': f'{club_q!r}, {age_q!r}, {n_games}'}
+            print(f"\n🔧 TOOL: tool_predict_ladder()  query={query!r}")
+            return tool_predict_ladder(club_q, age_q, n_games)
+
+        # --- PREDICT MATCH ---
+        if any(kw in q for kw in ["predict", "prediction", "score prediction", "preview"]):
+            # "predict next match" — resolve actual next fixture first
+            if "next match" in q or "next game" in q or "next fixture" in q:
+                melbourne_tz = pytz.timezone('Australia/Melbourne')
+                now_m = datetime.now(melbourne_tz)
+                user_club_lc  = USER_CONFIG.get("club", "").lower()
+                user_age_lc   = USER_CONFIG.get("age_group", "").lower()
+                upcoming_fix  = []
+                for f in fixtures:
+                    fa   = f.get("attributes", {})
+                    fh   = (fa.get("home_team_name") or "").lower()
+                    faw  = (fa.get("away_team_name") or "").lower()
+                    blob = f"{fh} {faw}"
+                    if user_club_lc not in blob:
+                        continue
+                    if user_age_lc and user_age_lc not in blob:
+                        continue
+                    fdt = parse_date_utc_to_aest(fa.get("date", ""))
+                    if fdt and fdt > now_m:
+                        upcoming_fix.append((fdt, fa))
+                if upcoming_fix:
+                    upcoming_fix.sort(key=lambda x: x[0])
+                    _, next_fa = upcoming_fix[0]
+                    home_t = next_fa.get("home_team_name", "")
+                    away_t = next_fa.get("away_team_name", "")
+                    ag_match = re.search(r'u\d{2}', f"{home_t} {away_t}".lower())
+                    ag_str = ag_match.group(0) if ag_match else user_age_lc
+                    predict_q = f"{home_t} vs {away_t} {ag_str}"
+                    home_team_arg = home_t
+                else:
+                    predict_q = query
+                    home_team_arg = ""
+            else:
+                predict_q = query
+                home_team_arg = ""
+            import fast_agent as _fa_mod
+            _fa_mod._last_debug = {'query': query, 'fn': 'tool_predict_match', 'args': predict_q}
+            print(f"\n🔧 TOOL: tool_predict_match()  query={predict_q!r}")
+            return tool_predict_match(predict_q, home_team=home_team_arg)
+
         # Club vs Club comparison (two recognised clubs on either side of vs/v)
         if " vs " in q or " v " in q:
             vs_parts = re.split(r'\s+v(?:s)?\s+', q)
             club_a_token = vs_parts[0].strip() if len(vs_parts) > 0 else ""
             club_b_token = vs_parts[1].strip() if len(vs_parts) > 1 else ""
+
+            _club_words = {"fc", "sc", "afc", "city", "united", "utd", "rangers",
+                           "lions", "eagles", "knights", "warriors", "magic", "thunder",
+                           "greens", "cannons", "royals", "juventus", "comets", "wanderers"}
 
             def _token_matches_alias(token):
                 """True if token matches any alias — either alias in token OR token in alias."""
@@ -5198,8 +6189,13 @@ class FastQueryRouter:
                         return True
                 return False
 
-            has_club_a = _token_matches_alias(club_a_token)
-            has_club_b = _token_matches_alias(club_b_token)
+            def _looks_like_club(token):
+                """True if token contains a known club word suffix/keyword."""
+                words = set(token.lower().split())
+                return bool(words & _club_words)
+
+            has_club_a = _token_matches_alias(club_a_token) or _looks_like_club(club_a_token)
+            has_club_b = _token_matches_alias(club_b_token) or _looks_like_club(club_b_token)
             if has_club_a and has_club_b:
                 import fast_agent as _fa_mod
 
