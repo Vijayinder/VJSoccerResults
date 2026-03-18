@@ -4844,17 +4844,15 @@ def tool_club_season(club_query: str = "heidelberg", age_group_filter: str = "")
     now          = datetime.now(melbourne_tz)
 
     canonical  = get_canonical_club_name(club_query) or club_query
-    # Build a search token that is resilient to FC vs SC mismatches:
-    # use the raw query words (stripped of age group) if they are more specific,
-    # but fall back to the canonical name minus any FC/SC/AFC suffix.
     _raw_token = re.sub(r'\bu\d{2}\b', '', club_query, flags=re.IGNORECASE).strip().lower()
     _raw_token = re.sub(r'\b(fc|sc|afc|united fc|united sc)\s*$', '', _raw_token).strip()
     _canon_token = re.sub(r'\b(fc|sc|afc)\s*$', '', canonical, flags=re.IGNORECASE).strip().lower()
-    # Prefer the longer (more specific) token; both will match "berwick city" in fixture data
     club_token = _raw_token if len(_raw_token) >= len(_canon_token) else _canon_token
-    # Always keep at least 4 chars to avoid false matches
-    if len(club_token) < 4:
+
+    # Guard: token must be at least 5 chars to avoid false matches on generic words like "city"
+    if len(club_token) < 5:
         club_token = canonical.lower()
+
     age_filter = (age_group_filter or extract_age_group(club_query) or "").lower()
 
     def _matches_club(home: str, away: str) -> bool:
@@ -4864,6 +4862,39 @@ def tool_club_season(club_query: str = "heidelberg", age_group_filter: str = "")
         if age_filter and age_filter not in blob:
             return False
         return True
+
+    # ── Detect ambiguous token — find all distinct club names that match ──────
+    matched_clubs = set()
+    for r in results:
+        a    = r.get("attributes", {})
+        home = a.get("home_team_name", "")
+        away = a.get("away_team_name", "")
+        blob = f"{home} {away}".lower()
+        if club_token in blob:
+            if club_token in home.lower():
+                base = re.sub(r'\s+U\d{2}$', '', home, flags=re.IGNORECASE).strip()
+                matched_clubs.add(base)
+            if club_token in away.lower():
+                base = re.sub(r'\s+U\d{2}$', '', away, flags=re.IGNORECASE).strip()
+                matched_clubs.add(base)
+
+    if len(matched_clubs) > 1:
+        # Ambiguous — return options for user to pick from
+        options = sorted(matched_clubs)
+        return {
+            "type":    "ambiguous_club",
+            "query":   club_query,
+            "options": options,
+            "age_grp": age_filter.upper() if age_filter else "",
+            "message": f"Found {len(options)} clubs matching '{club_query}'. Please select one:",
+        }
+
+    # ── Resolve display name from actual data (not raw query) ─────────────────
+    display_club = club_query  # fallback
+    if matched_clubs:
+        display_club = next(iter(matched_clubs))  # actual name from data
+    elif canonical and canonical != club_query:
+        display_club = re.sub(r'\s+U\d{2}$', '', canonical, flags=re.IGNORECASE).strip()
 
     # ── Past results ──────────────────────────────────────────────────────────
     past = []
@@ -5081,7 +5112,7 @@ def tool_club_season(club_query: str = "heidelberg", age_group_filter: str = "")
 
     return {
         "type":         "season_summary",
-        "club":         re.sub(r'\s+U\d{2}$', '', club_query, flags=re.IGNORECASE).strip() or canonical,
+        "club":         display_club,
         "age_filter":   age_filter.upper() if age_filter else "",
         "past":         past,
         "upcoming":     upcoming,

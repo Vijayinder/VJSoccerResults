@@ -3247,6 +3247,19 @@ def main_app():
                 else:
                     st.info("🔮 Match predictions are available to admins. Ask your admin to check the prediction dashboard.")
 
+            elif answer.get("type") == "ambiguous_club":
+                st.warning(answer.get("message", "Multiple clubs found."))
+                options = answer.get("options", [])
+                age_q   = answer.get("age_grp", "")
+                st.markdown("**Select a club:**")
+                for opt in options:
+                    btn_label = f"📋 {opt}"
+                    if st.button(btn_label, key=f"amb_{opt.replace(' ','_')}"):
+                        q = f"season {opt} {age_q}".strip()
+                        st.session_state["clicked_query"] = q
+                        st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                        st.rerun()
+
             elif answer.get("type") == "season_summary":
                 _render_season_summary(answer)
 
