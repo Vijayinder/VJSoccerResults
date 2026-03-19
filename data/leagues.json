@@ -355,5 +355,60 @@
       }
     ]
   },
-  "_last_updated": "2026-03-20T09:29:47.200734"
+  "1pN6pRypd0": {
+    "data": [
+      {
+        "type": "leagues",
+        "id": "OEN2MExEmq",
+        "value": "OEN2MExEmq",
+        "order": 95519,
+        "title": "NPL VIC Men",
+        "name": "NPL VIC Men",
+        "ladder_access": "public",
+        "result_access": "public",
+        "fixture_access": "public",
+        "image": null,
+        "links": {
+          "self": {
+            "href": "https://mc-api.dribl.com/api/leagues/OEN2MExEmq"
+          }
+        }
+      },
+      {
+        "type": "leagues",
+        "id": "LBdDy8Rwmb",
+        "value": "LBdDy8Rwmb",
+        "order": 95529,
+        "title": "NPL VIC Men - U20",
+        "name": "NPL VIC Men - U20",
+        "ladder_access": "public",
+        "result_access": "public",
+        "fixture_access": "public",
+        "image": null,
+        "links": {
+          "self": {
+            "href": "https://mc-api.dribl.com/api/leagues/LBdDy8Rwmb"
+          }
+        }
+      },
+      {
+        "type": "leagues",
+        "id": "08NO4JQ2KZ",
+        "value": "08NO4JQ2KZ",
+        "order": 95524,
+        "title": "NPL VIC Men - U23",
+        "name": "NPL VIC Men - U23",
+        "ladder_access": "public",
+        "result_access": "public",
+        "fixture_access": "public",
+        "image": null,
+        "links": {
+          "self": {
+            "href": "https://mc-api.dribl.com/api/leagues/08NO4JQ2KZ"
+          }
+        }
+      }
+    ]
+  },
+  "_last_updated": "2026-03-20T09:39:00.869609"
 }
