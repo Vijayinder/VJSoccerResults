@@ -2993,6 +2993,7 @@ def _get_upcoming_for_team(team_name: str) -> list:
             pass
         upcoming.append({
             "Date":         match_dt.strftime("%Y-%m-%d"),
+            "Time":         match_dt.strftime("%I:%M %p").lstrip("0") if match_dt.hour or match_dt.minute else "TBC",
             "H/A":          "🏠" if is_home else "✈️",
             "Opponent":     opponent,
             "Venue":        (a.get("ground_name") or "TBD")[:20],
@@ -4965,10 +4966,15 @@ def tool_club_season(club_query: str = "heidelberg", age_group_filter: str = "")
         # Raw opponent team name (with age group) for ladder lookup
         opp_full = away if is_home else home
         upcoming.append({
-            "dt": match_dt, "date": match_dt.strftime("%d %b %a %I:%M%p"),
-            "age": age_grp, "opponent": opponent[:18],
-            "venue": (a.get("ground_name") or "TBD")[:20],
-            "when": when, "league": league_name,
+            "dt":      match_dt,
+            "Date":    match_dt.strftime("%Y-%m-%d"),
+            "Time":    match_dt.strftime("%I:%M %p").lstrip("0") if match_dt.hour or match_dt.minute else "TBC",
+            "date":    match_dt.strftime("%Y-%m-%d"),   # kept for backward compat
+            "age":     age_grp,
+            "opponent": opponent[:18],
+            "venue":   (a.get("ground_name") or "TBD")[:20],
+            "when":    when,
+            "league":  league_name,
             "is_home": is_home,
             "_opp_full": opp_full,
         })

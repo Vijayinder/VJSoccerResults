@@ -325,7 +325,7 @@ def show_login_page():
             
             col_a, col_b = st.columns(2)
             with col_a:
-                if st.button("Continue as " + saved_selection['name'], type="primary", width='stretch'):
+                if st.button("Continue as " + saved_selection['name'], type="primary", width='content'):
                     # Login with saved selection
                     st.session_state["authenticated"] = True
                     st.session_state["user_type"] = "player"
@@ -356,7 +356,7 @@ def show_login_page():
                     )
                     st.rerun()
             with col_b:
-                if st.button("Select Different Profile", width='stretch'):
+                if st.button("Select Different Profile", width='content'):
                     clear_player_selection(st.session_state["session_id"])
                     st.rerun()
             
@@ -365,7 +365,7 @@ def show_login_page():
  # Quick login - no player selection needed
         st.markdown("### 👋 Quick Login")
         st.caption("Jump straight in — defaults to Heidelberg United U16 / Guest")
-        if st.button("⚡ Login Now", type="primary", width='stretch', key="quick_login"):
+        if st.button("⚡ Login Now", type="primary", width='content', key="quick_login"):
             league, competition = get_player_league_info("Guest", "Heidelberg United", "U16")
             st.session_state["authenticated"] = True
             st.session_state["user_type"] = "player"
@@ -433,7 +433,7 @@ def show_login_page():
 
                 # 3. Use a form to capture the "Enter" keypress
                 with st.form("confirmation_form", border=False):
-                    submit = st.form_submit_button("Continue as this player", type="primary", width='stretch')
+                    submit = st.form_submit_button("Continue as this player", type="primary", width='content')
                     if submit:
                         # Login logic
                         st.session_state["authenticated"] = True
@@ -476,7 +476,7 @@ def show_login_page():
             with st.form("admin_login_form"):
                 admin_username = st.text_input("Admin Username")
                 admin_password = st.text_input("Admin Password", type="password")
-                admin_submit = st.form_submit_button("Login as Admin", width='stretch')
+                admin_submit = st.form_submit_button("Login as Admin", width='content')
                 
                 if admin_submit:
                     if admin_username and admin_password:
@@ -1312,7 +1312,7 @@ def show_admin_dashboard():
     # ── Force data refresh button ──
     col_r1, col_r2, col_r3 = st.columns([1, 2, 5])
     with col_r1:
-        if st.button("🔄 Force Refresh Data", width='stretch'):
+        if st.button("🔄 Force Refresh Data", width='content'):
             try:
                 from fast_agent import _load_all_data, _refresh_data
                 _load_all_data.clear()
@@ -1366,7 +1366,7 @@ def show_admin_dashboard():
             st.markdown("### 👥 Most Active Users")
             if stats.get('most_active_users'):
                 df_users = pd.DataFrame(stats['most_active_users'])
-                st.dataframe(df_users, hide_index=True, width='stretch')
+                st.dataframe(df_users, hide_index=True, width='content')
         
         with col2:
             st.markdown("### 🏟️ Most Viewed Clubs")
@@ -1375,7 +1375,7 @@ def show_admin_dashboard():
                     list(stats['top_clubs'].items()),
                     columns=['Club', 'Views']
                 ).sort_values('Views', ascending=False).head(10)
-                st.dataframe(df_clubs, hide_index=True, width='stretch')
+                st.dataframe(df_clubs, hide_index=True, width='content')
     
     with tab2:
         # Active users today
@@ -1397,7 +1397,7 @@ def show_admin_dashboard():
                 except Exception as e:
                     st.error(f"Error formatting last_activity: {e}")
             
-            st.dataframe(df_active, hide_index=True, width='stretch')
+            st.dataframe(df_active, hide_index=True, width='content')
         else:
             st.info("No active users today")
 
@@ -1415,7 +1415,7 @@ def show_admin_dashboard():
             st.dataframe(
                 df_recent[available_cols], 
                 hide_index=True, 
-                width='stretch',
+                width='content',
                 column_config={
                     "timestamp": st.column_config.TextColumn("Time", width="medium"),
                     "username": st.column_config.TextColumn("User", width="small"),
@@ -1448,18 +1448,18 @@ def show_admin_dashboard():
                     st.markdown("**Most Active IPs**")
                     ip_counts = df_valid_ip['ip_address'].value_counts().head(10).reset_index()
                     ip_counts.columns = ['IP Address', 'Activities']
-                    st.dataframe(ip_counts, hide_index=True, width='stretch')
+                    st.dataframe(ip_counts, hide_index=True, width='content')
                 
                 with col2:
                     st.markdown("#### 🔐 Recent Logins by IP")
                     logins = df[df['action_type'] == 'login'][['timestamp', 'username', 'full_name', 'ip_address']].head(20)
-                    st.dataframe(logins, hide_index=True, width='stretch')
+                    st.dataframe(logins, hide_index=True, width='content')
                     
                     st.markdown("#### 🔍 IP to User Mapping")
                     # Show which users use which IPs
                     user_ip_map = df_valid_ip.groupby(['username', 'ip_address']).size().reset_index(name='count')
                     user_ip_map = user_ip_map.sort_values('count', ascending=False).head(20)
-                    st.dataframe(user_ip_map, hide_index=True, width='stretch')
+                    st.dataframe(user_ip_map, hide_index=True, width='content')
             else:
                 st.info("No IP address data available yet. IP tracking will start with the next login.")
         else:
@@ -1535,7 +1535,7 @@ def show_admin_dashboard():
                     })
                 df_up = pd.DataFrame(rows_up)
                 h = min(600, (len(df_up) + 1) * 35 + 10)
-                sel_up = st.dataframe(df_up, hide_index=True, width='stretch', height=h,
+                sel_up = st.dataframe(df_up, hide_index=True, width='content', height=h,
                     selection_mode="single-row", on_select="rerun", key="pred_upcoming_sel")
                 _usel = sel_up.selection.get("rows", [])
                 if _usel:
@@ -1578,7 +1578,7 @@ def show_admin_dashboard():
                     })
                 df_sc = pd.DataFrame(rows_sc)
                 h = min(600, (len(df_sc) + 1) * 35 + 10)
-                st.dataframe(df_sc, hide_index=True, width='stretch', height=h)
+                st.dataframe(df_sc, hide_index=True, width='content', height=h)
 
             st.markdown("---")
 
@@ -1632,7 +1632,7 @@ def show_admin_dashboard():
                                         "Correct": v["correct"],
                                         "Accuracy %": f"{v['pct']}%"}
                                        for k, v in fa.items()]
-                            st.dataframe(pd.DataFrame(fa_rows), hide_index=True, width='stretch')
+                            st.dataframe(pd.DataFrame(fa_rows), hide_index=True, width='content')
 
                     # Full prediction vs actual table
                     if snap_preds:
@@ -1659,7 +1659,7 @@ def show_admin_dashboard():
                             })
                         df_h = pd.DataFrame(rows_h)
                         h = min(600, (len(df_h) + 1) * 35 + 10)
-                        st.dataframe(df_h, hide_index=True, width='stretch', height=h)
+                        st.dataframe(df_h, hide_index=True, width='content', height=h)
             
 def update_user_config(club_name: str, age_group: str):
     """Update USER_CONFIG in fast_agent module with player's club and age group"""
@@ -1804,7 +1804,7 @@ def _render_ladder_prediction(data: dict):
             df["Team"] = df["Team"].apply(
                 lambda t: f"▶ {t}" if club_token in t.lower() else t)
             h = min(600, (len(df) + 1) * 35 + 10)
-            st.dataframe(df, hide_index=True, width='stretch', height=h,
+            st.dataframe(df, hide_index=True, width='content', height=h,
                 column_config={
                     "Pos":  st.column_config.NumberColumn("Pos", width="small"),
                     "Team": st.column_config.TextColumn("Team", width="medium"),
@@ -1825,7 +1825,7 @@ def _render_ladder_prediction(data: dict):
             df_e["Team"] = df_e["Team"].apply(
                 lambda t: f"▶ {t}" if club_token in t.lower() else t)
             h = min(600, (len(df_e) + 1) * 35 + 10)
-            st.dataframe(df_e, hide_index=True, width='stretch', height=h,
+            st.dataframe(df_e, hide_index=True, width='content', height=h,
                 column_config={
                     "Proj Pos":      st.column_config.NumberColumn("Pos",           width="small"),
                     "Team":          st.column_config.TextColumn("Team",            width="medium"),
@@ -1840,9 +1840,9 @@ def _render_ladder_prediction(data: dict):
         if fix_preds:
             df_f = pd.DataFrame(fix_preds)
             h = min(600, (len(df_f) + 1) * 35 + 10)
-            st.dataframe(df_f, hide_index=True, width='stretch', height=h,
+            st.dataframe(df_f, hide_index=True, width='content', height=h,
                 column_config={
-                    "Date":  st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="small"),
+                    "Date":  st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="medium"),
                     "Home":  st.column_config.TextColumn("Home",  width="medium"),
                     "Score": st.column_config.TextColumn("Score", width="small"),
                     "Away":  st.column_config.TextColumn("Away",  width="medium"),
@@ -1927,11 +1927,11 @@ def show_predictions_page():
             h = min(500, (len(df) + 1) * 35 + 10)
             sel = st.dataframe(
                 df[["Date", "Home", "Away", "Pred", "Home Win%", "Note"]],
-                hide_index=True, width='stretch', height=h,
+                hide_index=True, width='content', height=h,
                 selection_mode="single-row", on_select="rerun",
                 key=_key,
                 column_config={
-                    "Date":      st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="small"),
+                    "Date":      st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="medium"),
                     "Home":      st.column_config.TextColumn("Home",      width="medium"),
                     "Away":      st.column_config.TextColumn("Away",      width="medium"),
                     "Pred":      st.column_config.TextColumn("Pred",      width="small"),
@@ -2019,10 +2019,10 @@ def _render_prediction(data: dict):
         with tabs[0]:
             st.caption(f"Form: {form_a}")
             if form_rows_a:
-                st.dataframe(pd.DataFrame(form_rows_a), hide_index=True, width='stretch',
+                st.dataframe(pd.DataFrame(form_rows_a), hide_index=True, width='content',
                     height=(len(form_rows_a) + 1) * 35 + 10,
                     column_config={
-                        "Date":     st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="small"),
+                        "Date":     st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="medium"),
                         "H/A":      st.column_config.TextColumn("H/A",      width="small"),
                         "Opponent": st.column_config.TextColumn("Opponent", width="medium"),
                         "Score":    st.column_config.TextColumn("Score",    width="small"),
@@ -2030,10 +2030,10 @@ def _render_prediction(data: dict):
         with tabs[1]:
             st.caption(f"Form: {form_b}")
             if form_rows_b:
-                st.dataframe(pd.DataFrame(form_rows_b), hide_index=True, width='stretch',
+                st.dataframe(pd.DataFrame(form_rows_b), hide_index=True, width='content',
                     height=(len(form_rows_b) + 1) * 35 + 10,
                     column_config={
-                        "Date":     st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="small"),
+                        "Date":     st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="medium"),
                         "H/A":      st.column_config.TextColumn("H/A",      width="small"),
                         "Opponent": st.column_config.TextColumn("Opponent", width="medium"),
                         "Score":    st.column_config.TextColumn("Score",    width="small"),
@@ -2179,11 +2179,11 @@ def _render_season_summary(data: dict):
                 h = min(600, (len(df_all) + 1) * 35 + 10)
                 sel_all = st.dataframe(
                     df_all[["Date","Age","Opponent","Score","Venue"]],
-                    hide_index=True, width='stretch', height=h,
+                    hide_index=True, width='content', height=h,
                     selection_mode="single-row", on_select="rerun",
                     key=_all_key,
                     column_config={
-                        "Date":     st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="small"),
+                        "Date":     st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="medium"),
                         "Age":      st.column_config.TextColumn("Age",      width="small"),
                         "Opponent": st.column_config.TextColumn("Opponent", width="medium"),
                         "Score":    st.column_config.TextColumn("Score",    width="small"),
@@ -2214,7 +2214,8 @@ def _render_season_summary(data: dict):
                            f"W{m.get('opp_w',0)} D{m.get('opp_d',0)} L{m.get('opp_l',0)}"
                            if opp_pos else "—")
                 all_fix_rows.append({
-                    "Date":         m["date"],
+                    "Date":         m.get("Date", m.get("date", "")),
+                    "Time":         m.get("Time", ""),
                     "Age":          m["age"],
                     "H/A":          "🏠" if m.get("is_home") else "✈️",
                     "Opponent":     m["opponent"],
@@ -2228,15 +2229,16 @@ def _render_season_summary(data: dict):
                 df_af = pd.DataFrame(all_fix_rows)
                 h = min(400, (len(df_af) + 1) * 35 + 10)
                 st.dataframe(
-                    df_af[["Date","Age","H/A","Opponent","Opp Standing","Venue","When"]],
-                    hide_index=True, width='stretch', height=h,
+                    df_af[["Date","Time","Age","H/A","Opponent","Opp Standing","Venue","When"]],
+                    hide_index=True, width='content', height=h,
                     key=f"season_all_fix_{st.session_state.get('expander_collapse_counter',0)}",
                     column_config={
-                        "Date":         st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="small"),
+                        "Date":         st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="medium"),
+                        "Time":         st.column_config.TextColumn("Time",          width="small"),
                         "Age":          st.column_config.TextColumn("Age",          width="small"),
                         "H/A":          st.column_config.TextColumn("H/A",          width="small"),
                         "Opponent":     st.column_config.TextColumn("Opponent",     width="medium"),
-                        "Opp Standing": st.column_config.TextColumn("Opp Standing", width="large"),
+                        "Opp Standing": st.column_config.TextColumn("Opp Standing", width="medium"),
                         "Venue":        st.column_config.TextColumn("Venue",        width="medium"),
                         "When":         st.column_config.TextColumn("When",         width="small"),
                     }
@@ -2262,7 +2264,7 @@ def _render_season_summary(data: dict):
                     st.caption("👇 Click a team to see their season summary")
                     _lad_key = f"season_lad_{age_grp}_{st.session_state.get('expander_collapse_counter',0)}"
                     sel_lad = st.dataframe(
-                        df_lad, hide_index=True, width='stretch', height=h,
+                        df_lad, hide_index=True, width='content', height=h,
                         selection_mode="single-row", on_select="rerun",
                         key=_lad_key,
                         column_config={
@@ -2314,11 +2316,11 @@ def _render_season_summary(data: dict):
                 h = min(400, (len(df_r) + 1) * 35 + 10)
                 sel_r = st.dataframe(
                     df_r[["Date", "Opponent", "Score", "Venue"]],
-                    hide_index=True, width='stretch', height=h,
+                    hide_index=True, width='content', height=h,
                     selection_mode="single-row", on_select="rerun",
                     key=_res_key,
                     column_config={
-                        "Date":     st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="small"),
+                        "Date":     st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="medium"),
                         "Opponent": st.column_config.TextColumn("Opponent", width="medium"),
                         "Score":    st.column_config.TextColumn("Score",    width="small"),
                         "Venue":    st.column_config.TextColumn("Venue",    width="medium"),
@@ -2352,7 +2354,8 @@ def _render_season_summary(data: dict):
                                f"W{m.get('opp_w',0)} D{m.get('opp_d',0)} L{m.get('opp_l',0)}"
                                if opp_pos else "—")
                     fix_rows.append({
-                        "Date":         m["date"],
+                        "Date":         m.get("Date", m.get("date", "")),
+                        "Time":         m.get("Time", ""),
                         "H/A":          "🏠" if m.get("is_home") else "✈️",
                         "Opponent":     m["opponent"],
                         "Opp Standing": pos_str,
@@ -2362,14 +2365,15 @@ def _render_season_summary(data: dict):
                 df_f = pd.DataFrame(fix_rows)
                 h = min(400, (len(df_f) + 1) * 35 + 10)
                 st.dataframe(
-                    df_f[["Date","H/A","Opponent","Opp Standing","Venue","When"]],
-                    hide_index=True, width='stretch', height=h,
+                    df_f[["Date","Time","H/A","Opponent","Opp Standing","Venue","When"]],
+                    hide_index=True, width='content', height=h,
                     key=f"season_fix_{age_grp}_{st.session_state.get('expander_collapse_counter',0)}",
                     column_config={
-                        "Date":         st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="small"),
+                        "Date":         st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="medium"),
+                        "Time":         st.column_config.TextColumn("Time",          width="small"),
                         "H/A":          st.column_config.TextColumn("H/A",          width="small"),
                         "Opponent":     st.column_config.TextColumn("Opponent",     width="medium"),
-                        "Opp Standing": st.column_config.TextColumn("Opp Standing", width="large"),
+                        "Opp Standing": st.column_config.TextColumn("Opp Standing", width="medium"),
                         "Venue":        st.column_config.TextColumn("Venue",        width="medium"),
                         "When":         st.column_config.TextColumn("When",         width="small"),
                     }
@@ -2394,7 +2398,7 @@ def show_season_page():
                                   placeholder="U16", key="season_age_input")
     with col_go:
         st.markdown("<br>", unsafe_allow_html=True)
-        go = st.button("🔍 Go", key="season_go_btn", type="primary", width='stretch')
+        go = st.button("🔍 Go", key="season_go_btn", type="primary", width='content')
 
     # Auto-load on first open using the user's own club, or when Go is clicked
     if go or st.session_state.get("season_auto_load"):
@@ -2450,7 +2454,7 @@ def main_app():
             </div>
             """, unsafe_allow_html=True)
     with col_right:
-        if st.button("🚪 Logout", key="logout_button", width='stretch'):
+        if st.button("🚪 Logout", key="logout_button", width='content'):
             logout_user()
             st.session_state.clear()
             st.rerun()
@@ -2464,7 +2468,7 @@ def main_app():
             
             col1, col2 = st.columns(2)
             with col1:
-                if st.button("🔄 Refresh Data", width='stretch', help="Reload all data from files"):
+                if st.button("🔄 Refresh Data", width='content', help="Reload all data from files"):
                     force_reload_all_data()
                     st.success("✅ All data refreshed!")
                     st.rerun()
@@ -2482,7 +2486,7 @@ def main_app():
         # Add admin dashboard option in sidebar
         with st.sidebar:
             st.markdown("### Admin Controls")
-            if st.button("📊 View Dashboard", width='stretch'):
+            if st.button("📊 View Dashboard", width='content'):
                 st.session_state["show_admin_dashboard"] = True
     
     # Show admin dashboard if requested
@@ -2496,12 +2500,12 @@ def main_app():
     # ── Season Summary page shortcut ──────────────────────────────────────────
     with st.sidebar:
         st.markdown("---")
-        if st.button("📋 Season Summary", key="sidebar_season_btn", width='stretch'):
+        if st.button("📋 Season Summary", key="sidebar_season_btn", width='content'):
             st.session_state["show_season_page"]      = True
             st.session_state["show_predictions_page"] = False
             st.session_state["season_auto_load"]      = True
             st.rerun()
-        if st.button("🔮 Predictions", key="sidebar_predictions_btn", width='stretch'):
+        if st.button("🔮 Predictions", key="sidebar_predictions_btn", width='content'):
             st.session_state["show_predictions_page"] = True
             st.session_state["show_season_page"]      = False
             st.rerun()
@@ -2844,7 +2848,7 @@ def main_app():
                     df_reg = pd.DataFrame(reg_rows)
                     st.caption("👇 Click a club row to view their squad")
                     sel_reg = st.dataframe(
-                        df_reg, hide_index=True, width='stretch',
+                        df_reg, hide_index=True, width='content',
                         height=(len(reg_rows) + 1) * 35 + 10,
                         selection_mode="single-row", on_select="rerun",
                         key="prof_reg_sel",
@@ -2860,10 +2864,10 @@ def main_app():
                     _cfg = {}
                     if "Date" in df_m.columns:
                         df_m["Date"] = pd.to_datetime(df_m["Date"], errors="coerce").dt.date
-                        _cfg["Date"] = st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="small")
+                        _cfg["Date"] = st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="medium")
                     h = min(600, (len(m_rows) + 1) * 35 + 10)
                     sel_match = st.dataframe(
-                        df_m, hide_index=True, width='stretch',
+                        df_m, hide_index=True, width='content',
                         height=h, column_config=_cfg,
                         selection_mode="single-row", on_select="rerun",
                         key="prof_match_sel",
@@ -2889,7 +2893,7 @@ def main_app():
                     h = 600 if num_rows > 16 else (num_rows + 1) * 35 + 10
                     st.caption("👇 Click a player row to view their stats")
                     sel = st.dataframe(
-                        df, hide_index=True, width='stretch', height=h,
+                        df, hide_index=True, width='content', height=h,
                         selection_mode="single-row", on_select="rerun",
                         key="squad_row_sel",
                     )
@@ -2906,7 +2910,7 @@ def main_app():
                     h = 600 if num_rows > 16 else (num_rows + 1) * 35 + 10
                     st.caption("👇 Click a player row to view their full profile")
                     sel = st.dataframe(
-                        df, hide_index=True, width='stretch', height=h,
+                        df, hide_index=True, width='content', height=h,
                         selection_mode="single-row", on_select="rerun",
                         key="player_list_sel",
                     )
@@ -2921,9 +2925,9 @@ def main_app():
                     st.markdown("**📅 Recent Results**")
                     df_res = pd.DataFrame(results_data)
                     h = min(400, (len(df_res) + 1) * 35 + 10)
-                    st.dataframe(df_res, hide_index=True, width='stretch', height=h,
+                    st.dataframe(df_res, hide_index=True, width='content', height=h,
                                  column_config={
-                                     "Date":     st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="small"),
+                                     "Date":     st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="medium"),
                                      "H/A":      st.column_config.TextColumn("",         width="small"),
                                      "Opponent": st.column_config.TextColumn("Opponent", width="medium"),
                                      "Score":    st.column_config.TextColumn("Score",    width="small"),
@@ -2934,14 +2938,17 @@ def main_app():
                     st.markdown("**📆 Upcoming Fixtures**")
                     df_up = pd.DataFrame(upcoming_data)
                     h = min(400, (len(df_up) + 1) * 35 + 10)
-                    st.dataframe(df_up, hide_index=True, width='stretch', height=h,
+                    cols = ["Date","Time","H/A","Opponent","Venue","When","Opp Standing"]
+                    cols = [c for c in cols if c in df_up.columns]
+                    st.dataframe(df_up[cols], hide_index=True, width='content', height=h,
                                  column_config={
-                                     "Date":         st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="small"),
+                                     "Date":         st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="medium"),
+                                     "Time":         st.column_config.TextColumn("Time",         width="small"),
                                      "H/A":          st.column_config.TextColumn("",             width="small"),
                                      "Opponent":     st.column_config.TextColumn("Opponent",     width="medium"),
                                      "Venue":        st.column_config.TextColumn("Venue",        width="medium"),
                                      "When":         st.column_config.TextColumn("When",         width="small"),
-                                     "Opp Standing": st.column_config.TextColumn("Opp Standing", width="large"),
+                                     "Opp Standing": st.column_config.TextColumn("Opp Standing", width="medium"),
                                  })
             elif answer.get("type") == "cards_this_week":
                 st.markdown(f"### {answer.get('title','🟨🟥 Cards This Week')}")
@@ -2958,10 +2965,10 @@ def main_app():
                         _yk = f"cards_week_y_{st.session_state.get('expander_collapse_counter',0)}"
                         h = min(500, (len(df_y) + 1) * 35 + 10)
                         st.caption("👇 Click a row to view player details")
-                        sel_y = st.dataframe(df_y, hide_index=True, width='stretch', height=h,
+                        sel_y = st.dataframe(df_y, hide_index=True, width='content', height=h,
                             selection_mode="single-row", on_select="rerun", key=_yk,
                             column_config={
-                                "Date":     st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="small"),
+                                "Date":     st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="medium"),
                                 "Player":   st.column_config.TextColumn("Player",   width="medium"),
                                 "Team":     st.column_config.TextColumn("Team",     width="medium"),
                                 "Age":      st.column_config.TextColumn("Age",      width="small"),
@@ -2985,10 +2992,10 @@ def main_app():
                         _rk = f"cards_week_r_{st.session_state.get('expander_collapse_counter',0)}"
                         h = min(500, (len(df_r) + 1) * 35 + 10)
                         st.caption("👇 Click a row to view player details")
-                        sel_r = st.dataframe(df_r, hide_index=True, width='stretch', height=h,
+                        sel_r = st.dataframe(df_r, hide_index=True, width='content', height=h,
                             selection_mode="single-row", on_select="rerun", key=_rk,
                             column_config={
-                                "Date":     st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="small"),
+                                "Date":     st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="medium"),
                                 "Player":   st.column_config.TextColumn("Player",   width="medium"),
                                 "Team":     st.column_config.TextColumn("Team",     width="medium"),
                                 "Age":      st.column_config.TextColumn("Age",      width="small"),
@@ -3020,7 +3027,7 @@ def main_app():
                     if mode == "players":
                         _lbl = "staff member" if staff_only else "player"
                         st.caption(f"👇 Click a {_lbl} to view their profile")
-                        sel = st.dataframe(df, hide_index=True, width='stretch',
+                        sel = st.dataframe(df, hide_index=True, width='content',
                             height=h, selection_mode="single-row", on_select="rerun",
                             key=_cs_key)
                         _cs = sel.selection.get("rows", [])
@@ -3032,7 +3039,7 @@ def main_app():
                     elif mode == "age":
                         _lbl = "age group" if not staff_only else "age group (staff)"
                         st.caption(f"👇 Click an age group to see cards")
-                        sel = st.dataframe(df, hide_index=True, width='stretch',
+                        sel = st.dataframe(df, hide_index=True, width='content',
                             height=h, selection_mode="single-row", on_select="rerun",
                             key=_cs_key)
                         _cs = sel.selection.get("rows", [])
@@ -3044,7 +3051,7 @@ def main_app():
                                 _fire_query(f"card summary {base_club} {_ag}")
                     else:  # club mode
                         st.caption("👇 Click a club to see breakdown by age group")
-                        sel = st.dataframe(df, hide_index=True, width='stretch',
+                        sel = st.dataframe(df, hide_index=True, width='content',
                             height=h, selection_mode="single-row", on_select="rerun",
                             key=_cs_key)
                         _cs = sel.selection.get("rows", [])
@@ -3073,7 +3080,7 @@ def main_app():
                                 if is_clickable:
                                     st.caption("👇 Click a player to view their full profile")
                                     _md_sel = st.dataframe(
-                                        df, hide_index=True, width='stretch', height=h,
+                                        df, hide_index=True, width='content', height=h,
                                         selection_mode="single-row", on_select="rerun",
                                         key=f"match_detail_sel_{_ti}",
                                     )
@@ -3083,7 +3090,7 @@ def main_app():
                                         if not str(_md_name).startswith("─"):
                                             _fire_query(f"stats for {_md_name}")
                                 else:
-                                    st.dataframe(df, hide_index=True, width='stretch', height=h)
+                                    st.dataframe(df, hide_index=True, width='content', height=h)
                             else:
                                 st.info("No lineup data available.")
 
@@ -3101,13 +3108,13 @@ def main_app():
                                 df = pd.DataFrame(data)
                                 h = min(600, (len(df) + 1) * 35 + 10)
                                 st.caption("👇 Click a club to see their matches")
-                                sel = st.dataframe(df, hide_index=True, width='stretch',
+                                sel = st.dataframe(df, hide_index=True, width='content',
                                     height=h, selection_mode="single-row", on_select="rerun",
                                     key=f"ladder_sel_{_ti}_{st.session_state.get('expander_collapse_counter',0)}")
                                 _lr = sel.selection.get("rows", [])
                                 if _lr:
                                     _team = df.iloc[_lr[0]]["Team"]
-                                    _fire_query(f"results for {_team}")
+                                    _fire_query(f"Season {_team}")
                             else:
                                 st.info("No data available.")
             elif answer.get("type") == "multi_table":
@@ -3129,7 +3136,7 @@ def main_app():
                             # Ladder table — click row to view season for that age group
                             if "Age" in df.columns and "League" in df.columns:
                                 st.caption("👇 Click a row to view season summary for that age group")
-                                sel = st.dataframe(df, hide_index=True, width='stretch',
+                                sel = st.dataframe(df, hide_index=True, width='content',
                                     height=h, selection_mode="single-row", on_select="rerun",
                                     key=_mt_key)
                                 _lr = sel.selection.get("rows", [])
@@ -3144,7 +3151,7 @@ def main_app():
                             # Matches table — click row to view match detail
                             elif "Home" in df.columns and "Away" in df.columns:
                                 st.caption("👇 Click a match to view full details")
-                                sel = st.dataframe(df, hide_index=True, width='stretch',
+                                sel = st.dataframe(df, hide_index=True, width='content',
                                     height=h, selection_mode="single-row", on_select="rerun",
                                     key=_mt_key)
                                 _mr = sel.selection.get("rows", [])
@@ -3155,7 +3162,7 @@ def main_app():
                                     _mdate = str(_mrow.get("Date", "")).strip()
                                     _fire_query(f"match details {_home} vs {_away} {_mdate}")
                             else:
-                                st.dataframe(df, hide_index=True, width='stretch', height=h)
+                                st.dataframe(df, hide_index=True, width='content', height=h)
             elif answer.get("type") == "own_goal_list":
                 st.info(answer.get("title", "Own Goals"))
                 data   = answer.get("data", [])
@@ -3165,7 +3172,7 @@ def main_app():
                     h  = min(600, (len(df) + 1) * 35 + 10)
                     st.caption("👇 Click a row to view the full match detail")
                     _og_key = f"og_sel_{st.session_state.get('expander_collapse_counter', 0)}"
-                    sel = st.dataframe(df, hide_index=True, width='stretch',
+                    sel = st.dataframe(df, hide_index=True, width='content',
                         height=h, selection_mode="single-row", on_select="rerun",
                         key=_og_key)
                     _ogr = sel.selection.get("rows", [])
@@ -3188,7 +3195,7 @@ def main_app():
                     h  = min(600, (len(df) + 1) * 35 + 10)
                     st.caption("👇 Click a match to view full details & squad")
                     _ml_key = f"match_list_{st.session_state.get('expander_collapse_counter', 0)}"
-                    sel = st.dataframe(df, hide_index=True, width='stretch',
+                    sel = st.dataframe(df, hide_index=True, width='content',
                         height=h, selection_mode="single-row", on_select="rerun",
                         key=_ml_key)
                     _mr = sel.selection.get("rows", [])
@@ -3207,10 +3214,10 @@ def main_app():
                     _cfg = {}
                     if "Date" in df.columns:
                         df["Date"] = pd.to_datetime(df["Date"], errors="coerce").dt.date
-                        _cfg["Date"] = st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="small")
+                        _cfg["Date"] = st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="medium")
                     if "First @ To" in df.columns:
                         df["First @ To"] = pd.to_datetime(df["First @ To"], errors="coerce").dt.date
-                        _cfg["First @ To"] = st.column_config.DateColumn("First @ To", format="ddd, DD-MMM", width="small")
+                        _cfg["First @ To"] = st.column_config.DateColumn("First @ To", format="ddd, DD-MMM", width="medium")
                     num_rows = len(df)
                     final_height = 600 if num_rows > 16 else (num_rows + 1) * 35
                     # Determine name column and whether table is clickable
@@ -3223,7 +3230,7 @@ def main_app():
                     if _name_col and _has_stats:
                         st.caption("👇 Click a player row to view their profile")
                         sel = st.dataframe(
-                            df, hide_index=True, width='stretch',
+                            df, hide_index=True, width='content',
                             height=final_height, column_config=_cfg,
                             selection_mode="single-row", on_select="rerun",
                             key="top_scorers_sel",
@@ -3232,7 +3239,7 @@ def main_app():
                         if _ts_sel:
                             _fire_query(f"stats for {df.iloc[_ts_sel[0]][_name_col]}")
                     else:
-                        st.dataframe(df, hide_index=True, width='stretch',
+                        st.dataframe(df, hide_index=True, width='content',
                                      height=final_height, column_config=_cfg)
             elif answer.get("type") == "ladder_prediction":
                 if st.session_state.get("role") == "admin":
@@ -3287,10 +3294,10 @@ def main_app():
     # Navigation buttons
     if st.session_state["level"] != "league":
         col1, col2, _ = st.columns([1, 1, 6])
-        if col1.button("⬅️ Back", width='stretch'):
+        if col1.button("⬅️ Back", width='content'):
             back_one_level()
             st.rerun()
-        if col2.button("🔄 Restart", width='stretch'):
+        if col2.button("🔄 Restart", width='content'):
             restart_to_top()
             st.rerun()
 
@@ -3368,7 +3375,7 @@ def main_app():
         for idx, comp_name in enumerate(comps):
             col_idx = idx % 5
             with cols[col_idx]:
-                if st.button(comp_name, key=f"comp_btn_{idx}", width='stretch'):
+                if st.button(comp_name, key=f"comp_btn_{idx}", width='content'):
                     st.session_state["selected_competition"] = comp_name
                     st.session_state["level"] = "ladder_clubs"
                     st.session_state["selected_club"] = None
@@ -3576,7 +3583,7 @@ def main_app():
                         hide_index=True,
                         column_config={
                             "Select": st.column_config.CheckboxColumn("", default=False, width="small"),
-                            "Date": st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="small"),
+                            "Date": st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="medium"),
                             "H/A": st.column_config.TextColumn("", width="small"),
                             "Opponent": st.column_config.TextColumn("Opponent", width="medium"),
                             "Score": st.column_config.TextColumn("Score", width="small")
@@ -3865,7 +3872,7 @@ def main_app():
                             match_rows.append(row)
                         df_player = pd.DataFrame(match_rows)
                         col_cfg = {
-                            "Date":     st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="small"),
+                            "Date":     st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="medium"),
                             "Age":      st.column_config.TextColumn("Age", width="small"),
                             "Started":  st.column_config.TextColumn("", width="small"),
                             "Opponent": st.column_config.TextColumn("Opponent", width="medium"),
