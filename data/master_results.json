@@ -44398,5 +44398,53 @@
                 "href": "https://mc-api.dribl.com/api/results/1K3pvQgeqd"
             }
         }
+    },
+    {
+        "type": "results",
+        "hash_id": "Pmj27aQWQm",
+        "attributes": {
+            "name": "FV54533449 - Brunswick City SC v Werribee City FC",
+            "date": "2026-03-22 00:30:00",
+            "round": "R6",
+            "full_round": "Round 6",
+            "ground_name": "Dunstan Reserve",
+            "field_name": "Pitch 1",
+            "home_team_name": "Brunswick City SC U15",
+            "home_logo": "https://ocean.dribl.com/a9c59ac29c724966999fd327bb5e1f7a",
+            "away_team_name": "Werribee City FC U15",
+            "away_logo": "https://ocean.dribl.com/3a0a89bf994d464e9460ac5cfcf04e9d",
+            "competition_name": "Boys Youth State League North-West",
+            "league_name": "U15 YSL Boys - North-West",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 4,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 5,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": true,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 3,
+            "enable_referees_allocated": true,
+            "match_hash_id": "4KLlzM99GK",
+            "home_team_hash_id": "bd9X95qYK4",
+            "away_team_hash_id": "pmvzPoMomv",
+            "forfeit_team_hash_id": null
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/Pmj27aQWQm"
+            }
+        }
     }
 ]
