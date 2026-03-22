@@ -44254,5 +44254,101 @@
                 "href": "https://mc-api.dribl.com/api/results/ld454n7vGm"
             }
         }
+    },
+    {
+        "type": "results",
+        "hash_id": "2Kp0pZPqqK",
+        "attributes": {
+            "name": "FV54532363 - Eltham Redbacks FC v Ballarat City FC",
+            "date": "2026-03-22 05:00:00",
+            "round": "R8",
+            "full_round": "Round 8",
+            "ground_name": "Eltham North Reserve",
+            "field_name": "Pitch 1 (S)",
+            "home_team_name": "Eltham Redbacks FC U18",
+            "home_logo": "https://ocean.dribl.com/6356104297464d4d8396995821d96c01",
+            "away_team_name": "Ballarat City FC U18",
+            "away_logo": "https://ocean.dribl.com/e7ecf595ac8a4a9ca65340fa3664d974",
+            "competition_name": "Boys Victorian Youth Premier League 2",
+            "league_name": "U18 YPL2 Boys",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 4,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 0,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": true,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 3,
+            "enable_referees_allocated": true,
+            "match_hash_id": "MNGJx1ZXpm",
+            "home_team_hash_id": "8NOD8q1vKZ",
+            "away_team_hash_id": "nmYyQqgpmz",
+            "forfeit_team_hash_id": null
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/2Kp0pZPqqK"
+            }
+        }
+    },
+    {
+        "type": "results",
+        "hash_id": "jdywlJyQbN",
+        "attributes": {
+            "name": "FV54534828 - Nunawading City FC v Boroondara Eagles FC",
+            "date": "2026-03-22 03:00:00",
+            "round": "R6",
+            "full_round": "Round 6",
+            "ground_name": "Mahoneys Reserve",
+            "field_name": "Pitch 1",
+            "home_team_name": "Nunawading City FC U16",
+            "home_logo": "https://ocean.dribl.com/15d710c4a76d4070b9b0426a4b3f3905",
+            "away_team_name": "Boroondara Eagles FC U16",
+            "away_logo": "https://ocean.dribl.com/37b2665ae9dc466e82949117e4d87551",
+            "competition_name": "Boys Youth State League South-East",
+            "league_name": "U16 YSL Boys - South-East",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 3,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 1,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": true,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 3,
+            "enable_referees_allocated": true,
+            "match_hash_id": "gdM6EPO32m",
+            "home_team_hash_id": "1K3YkwDLmQ",
+            "away_team_hash_id": "Ome0RDQPd0",
+            "forfeit_team_hash_id": null
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/jdywlJyQbN"
+            }
+        }
     }
 ]
