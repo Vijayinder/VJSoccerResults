@@ -1269,6 +1269,8 @@ def is_natural_language_query(query):
         "coach", "coaches", "staff", "manager", "managers",
         "today", "todays", "result", "cards this week", "all cards",
         "latest results", "latest result", "recent results",
+        "missing score", "missing scores", "overdue", "no score",
+        "latest missing", "scores not entered",
         # Squad / player list queries
         "show me", "players for", "players in", "list players",
         "squad", "who plays", "players at",
@@ -3993,149 +3995,6 @@ def main():
 if __name__ == "__main__":
     main()
 # Last auto-update: 2026-03-02 10:00:32 AEDT
-
-# Last auto-update: 2026-03-09 20:00:32 AEDT
-# Last auto-update: 2026-03-09 23:00:32 AEDT
-# Last auto-update: 2026-03-10 00:00:33 AEDT
-# Last auto-update: 2026-03-10 04:00:35 AEDT
-# Last auto-update: 2026-03-10 08:00:33 AEDT
-# Last auto-update: 2026-03-10 12:00:32 AEDT
-# Last auto-update: 2026-03-10 16:00:36 AEDT
-# Last auto-update: 2026-03-10 20:00:33 AEDT
-# Last auto-update: 2026-03-11 00:00:33 AEDT
-# Last auto-update: 2026-03-11 04:00:32 AEDT
-# Last auto-update: 2026-03-11 08:00:33 AEDT
-# Last auto-update: 2026-03-11 12:00:32 AEDT
-# Last auto-update: 2026-03-11 16:00:36 AEDT
-# Last auto-update: 2026-03-11 20:00:32 AEDT
-# Last auto-update: 2026-03-12 00:00:32 AEDT
-# Last auto-update: 2026-03-13 14:21:38 AEDT
-# Last auto-update: 2026-03-13 14:28:03 AEDT
-# Last auto-update: 2026-03-13 15:53:37 AEDT
-# Last auto-update: 2026-03-13 16:00:55 AEDT
-# Last auto-update: 2026-03-13 16:03:49 AEDT
-# Last auto-update: 2026-03-13 16:57:18 AEDT
-# Last auto-update: 2026-03-13 17:19:20 AEDT
-# Last auto-update: 2026-03-13 17:40:12 AEDT
-# Last auto-update: 2026-03-13 20:04:00 AEDT
-# Last auto-update: 2026-03-14 00:03:44 AEDT
-# Last auto-update: 2026-03-14 04:03:49 AEDT
-# Last auto-update: 2026-03-14 08:03:57 AEDT
-# Last auto-update: 2026-03-14 12:04:04 AEDT
-# Last auto-update: 2026-03-14 13:41:36 AEDT
-# Last auto-update: 2026-03-14 14:00:07 AEDT
-# Last auto-update: 2026-03-14 14:07:04 AEDT
-# Last auto-update: 2026-03-14 14:14:17 AEDT
-# Last auto-update: 2026-03-14 14:37:34 AEDT
-# Last auto-update: 2026-03-14 14:59:43 AEDT
-# Last auto-update: 2026-03-14 15:14:50 AEDT
-# Last auto-update: 2026-03-14 15:40:30 AEDT
-# Last auto-update: 2026-03-14 15:53:33 AEDT
-# Last auto-update: 2026-03-14 16:02:49 AEDT
-# Last auto-update: 2026-03-14 16:04:18 AEDT
-# Last auto-update: 2026-03-14 16:29:47 AEDT
-# Last auto-update: 2026-03-14 16:39:37 AEDT
-# Last auto-update: 2026-03-14 16:51:52 AEDT
-# Last auto-update: 2026-03-14 17:00:17 AEDT
-# Last auto-update: 2026-03-14 17:19:13 AEDT
-# Last auto-update: 2026-03-14 17:30:54 AEDT
-# Last auto-update: 2026-03-14 17:51:48 AEDT
-# Last auto-update: 2026-03-14 17:58:28 AEDT
-# Last auto-update: 2026-03-14 18:21:04 AEDT
-# Last auto-update: 2026-03-14 18:40:04 AEDT
-# Last auto-update: 2026-03-14 18:46:35 AEDT
-# Last auto-update: 2026-03-14 18:58:53 AEDT
-# Last auto-update: 2026-03-14 19:06:21 AEDT
-# Last auto-update: Sat 14 Mar 20:09:06 AEDT 2026
-# Last auto-update: Sat 14 Mar 20:32:17 AEDT 2026
-# Last auto-update: Sat 14 Mar 20:55:11 AEDT 2026
-# Last auto-update: Sat 14 Mar 21:00:26 AEDT 2026
-# Last auto-update: Sat 14 Mar 21:19:35 AEDT 2026
-# Last auto-update: Sat 14 Mar 22:43:47 AEDT 2026
-# Last auto-update: Sun 15 Mar 00:03:57 AEDT 2026
-# Last auto-update: Sun 15 Mar 01:03:43 AEDT 2026
-# Last auto-update: Sun 15 Mar 02:03:43 AEDT 2026
-# Last auto-update: Sun 15 Mar 03:03:42 AEDT 2026
-# Last auto-update: Sun 15 Mar 04:03:44 AEDT 2026
-# Last auto-update: Sun 15 Mar 05:03:42 AEDT 2026
-# Last auto-update: Sun 15 Mar 06:03:50 AEDT 2026
-# Last auto-update: Sun 15 Mar 07:03:50 AEDT 2026
-# Last auto-update: Sun 15 Mar 08:04:03 AEDT 2026
-# Last auto-update: Sun 15 Mar 09:04:05 AEDT 2026
-# Last auto-update: Sun 15 Mar 09:49:43 AEDT 2026
-# Last auto-update: Sun 15 Mar 10:04:17 AEDT 2026
-# Last auto-update: Sun 15 Mar 11:04:22 AEDT 2026
-# Last auto-update: Sun 15 Mar 12:04:45 AEDT 2026
-# Last auto-update: Sun 15 Mar 12:29:01 AEDT 2026
-# Last auto-update: Sun 15 Mar 13:04:59 AEDT 2026
-# Last auto-update: Sun 15 Mar 13:30:19 AEDT 2026
-# Last auto-update: Sun 15 Mar 14:05:06 AEDT 2026
-# Last auto-update: Sun 15 Mar 15:05:17 AEDT 2026
-# Last auto-update: Sun 15 Mar 15:52:52 AEDT 2026
-# Last auto-update: Sun 15 Mar 16:05:36 AEDT 2026
-# Last auto-update: Sun 15 Mar 16:20:06 AEDT 2026
-# Last auto-update: Sun 15 Mar 17:06:05 AEDT 2026
-# Last auto-update: Sun 15 Mar 17:59:18 AEDT 2026
-# Last auto-update: Sun 15 Mar 18:06:03 AEDT 2026
-# Last auto-update: Sun 15 Mar 19:05:58 AEDT 2026
-# Last auto-update: Sun 15 Mar 19:49:31 AEDT 2026
-# Last auto-update: Sun 15 Mar 20:05:55 AEDT 2026
-# Last auto-update: Sun 15 Mar 21:06:17 AEDT 2026
-# Last auto-update: Mon 16 Mar 00:05:26 AEDT 2026
-# Last auto-update: Mon 16 Mar 01:05:11 AEDT 2026
-# Last auto-update: Mon 16 Mar 02:05:13 AEDT 2026
-# Last auto-update: Mon 16 Mar 03:05:13 AEDT 2026
-# Last auto-update: Mon 16 Mar 05:05:14 AEDT 2026
-# Last auto-update: Mon 16 Mar 06:05:27 AEDT 2026
-# Last auto-update: Mon 16 Mar 07:05:43 AEDT 2026
-# Last auto-update: Mon 16 Mar 08:05:41 AEDT 2026
-# Last auto-update: Mon 16 Mar 10:05:14 AEDT 2026
-# Last auto-update: Mon 16 Mar 12:04:51 AEDT 2026
-# Last auto-update: Mon 16 Mar 14:04:21 AEDT 2026
-# Last auto-update: Mon 16 Mar 16:04:14 AEDT 2026
-# Last auto-update: Mon 16 Mar 18:04:12 AEDT 2026
-# Last auto-update: Mon 16 Mar 20:04:11 AEDT 2026
-# Last auto-update: Mon 16 Mar 22:04:13 AEDT 2026
-# Last auto-update: Tue 17 Mar 00:03:56 AEDT 2026
-# Last auto-update: Tue 17 Mar 04:03:45 AEDT 2026
-# Last auto-update: Tue 17 Mar 07:58:50 AEDT 2026
-# Last auto-update: Tue 17 Mar 12:05:43 AEDT 2026
-# Last auto-update: Tue 17 Mar 13:26:57 AEDT 2026
-# Last auto-update: Tue 17 Mar 14:04:03 AEDT 2026
-# Last auto-update: Tue 17 Mar 16:04:15 AEDT 2026
-# Last auto-update: Tue 17 Mar 20:04:11 AEDT 2026
-# Last auto-update: Wed 18 Mar 00:04:06 AEDT 2026
-# Last auto-update: Wed 18 Mar 04:03:38 AEDT 2026
-# Last auto-update: Wed 18 Mar 12:04:08 AEDT 2026
-# Last auto-update: Wed 18 Mar 16:04:14 AEDT 2026
-# Last auto-update: Wed 18 Mar 20:04:26 AEDT 2026
-# Last auto-update: Thu 19 Mar 00:04:07 AEDT 2026
-# Last auto-update: Thu 19 Mar 04:03:48 AEDT 2026
-# Last auto-update: Thu 19 Mar 08:04:03 AEDT 2026
-# Last auto-update: Thu 19 Mar 12:04:20 AEDT 2026
-# Last auto-update: Thu 19 Mar 16:04:17 AEDT 2026
-# Last auto-update: Thu 19 Mar 20:04:14 AEDT 2026
-# Last auto-update: Fri 20 Mar 00:04:03 AEDT 2026
-# Last auto-update: Fri 20 Mar 04:03:52 AEDT 2026
-# Last auto-update: Fri 20 Mar 08:04:07 AEDT 2026
-# Last auto-update: Fri 20 Mar 09:29:55 AEDT 2026
-# Last auto-update: Fri 20 Mar 09:39:12 AEDT 2026
-# Last auto-update: Fri 20 Mar 10:21:47 AEDT 2026
-# Last auto-update: Fri 20 Mar 12:04:20 AEDT 2026
-# Last auto-update: Fri 20 Mar 13:01:42 AEDT 2026
-# Last auto-update: Fri 20 Mar 16:04:25 AEDT 2026
-# Last auto-update: Fri 20 Mar 20:04:25 AEDT 2026
-# Last auto-update: Sat 21 Mar 04:03:53 AEDT 2026
-# Last auto-update: Sat 21 Mar 08:04:15 AEDT 2026
-# Last auto-update: Sat 21 Mar 12:04:37 AEDT 2026
-# Last auto-update: Sat 21 Mar 16:04:46 AEDT 2026
-# Last auto-update: Sat 21 Mar 20:04:28 AEDT 2026
-# Last auto-update: Sun 22 Mar 00:04:02 AEDT 2026
-# Last auto-update: Sun 22 Mar 01:03:49 AEDT 2026
-# Last auto-update: Sun 22 Mar 02:03:47 AEDT 2026
-# Last auto-update: Sun 22 Mar 03:03:43 AEDT 2026
-# Last auto-update: Sun 22 Mar 04:03:47 AEDT 2026
-# Last auto-update: Sun 22 Mar 06:03:55 AEDT 2026
 # Last auto-update: Sun 22 Mar 07:04:00 AEDT 2026
 # Last auto-update: Sun 22 Mar 08:04:06 AEDT 2026
 # Last auto-update: Sun 22 Mar 09:04:05 AEDT 2026

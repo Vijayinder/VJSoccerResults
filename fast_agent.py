@@ -1002,7 +1002,7 @@ def tool_missing_scores(query: str = "", include_all_leagues: bool = False, toda
     print(f"  query='{query}', today_only={today_only}, last_week={last_week}, round_filter={round_filter}")
 
     # Target leagues if not showing all
-    target_leagues = ["YPL1", "YPL2", "YSL NW", "YSL SE", "VPL"] if not include_all_leagues else []
+    target_leagues = ["YPL1", "YPL2", "YSL NW", "YSL SE", "YSL", "VPL", "VPL Men", "VPL Women"] if not include_all_leagues else []
 
     missing_scores = []
 
@@ -1138,7 +1138,8 @@ def tool_missing_scores(query: str = "", include_all_leagues: bool = False, toda
         # Filter by target leagues if specified
         if target_leagues:
             league_code = extract_league_from_league_name(league)
-            if league_code not in target_leagues:
+            if not any(league_code == tl or league_code.startswith(tl) or tl.startswith(league_code)
+                       for tl in target_leagues):
                 continue
             matches_with_target_leagues += 1
         # Get round info for this match (needed for both round_filter and search blob)
@@ -1194,23 +1195,30 @@ def tool_missing_scores(query: str = "", include_all_leagues: bool = False, toda
         home_score = attrs.get("home_score")
         away_score = attrs.get("away_score")
 
+        # Treat empty string the same as None — score not entered
+        def _score_missing(v):
+            return v is None or str(v).strip() == ""
+
         # Only flag as missing if match has already taken place (past or today)
-        # Future scheduled fixtures should never appear as "missing scores"
         is_past_or_today = match_date <= today
 
         needs_score = (
             is_past_or_today and (
-                status != "complete" or
-                home_score is None or
-                away_score is None
+                status not in ("complete", "completed") or
+                _score_missing(home_score) or
+                _score_missing(away_score)
             )
         )
         
         if needs_score:
+            try:
+                _time_str = _format_time_aest(match_dt, date_str)
+            except Exception:
+                _time_str = "—"
             missing_scores.append({
                 "date":          match_dt.strftime("%d-%b"),
-                "date_raw":      date_str,                    # raw for iso_date_aest
-                "time":          _format_time_aest(match_dt, date_str),
+                "date_raw":      date_str,
+                "time":          _time_str,
                 "time_sort":     match_dt.time(),
                 "datetime_sort": match_dt,
                 "league":        extract_league_from_league_name(league),
@@ -2408,7 +2416,7 @@ def tool_own_goals(query: str = "") -> Any:
     if not rows:
         return f"❌ No own goals found" + (f" for '{query}'" if query else "")
 
-    rows.sort(key=lambda r: r["_date_raw"], reverse=True)
+    rows.sort(key=lambda r: (r.get("_date_raw") or ""), reverse=True)
 
     filters = []
     if ag:   filters.append(ag)
@@ -2419,7 +2427,7 @@ def tool_own_goals(query: str = "") -> Any:
     # Strip internal fields
     display = [{k: v for k, v in r.items() if not k.startswith("_")} for r in rows]
     hashes  = [r["_hash"] for r in rows]
-    dates   = [r["_date_raw"][:10] for r in rows]
+    dates   = [(r.get("_date_raw") or "")[:10] for r in rows]
 
     return {
         "type":    "own_goal_list",
@@ -2472,7 +2480,7 @@ def tool_cards_this_week(query: str = "", last_week: bool = False) -> dict:
             for m in p.get("matches", []):
                 if not _match_in_date_range(m, start_date, end_date):
                     continue
-                m_team = m.get("team_name", "")
+                m_team = m.get("team_name", "") or ""
                 if base_club and base_club.lower() not in m_team.lower():
                     continue
                 if age_group and age_group.lower() not in m_team.lower():
@@ -2541,7 +2549,7 @@ def tool_all_cards(query: str = "") -> dict:
             pname = f"{p.get('first_name','')} {p.get('last_name','')}".strip()
             role  = p.get("role") or (p.get("roles") or [""])[0] or "player"
             for m in p.get("matches", []):
-                m_team = m.get("team_name", "")
+                m_team = m.get("team_name", "") or ""
                 if base_club and base_club.lower() not in m_team.lower():
                     continue
                 if age_group and age_group.lower() not in m_team.lower():
@@ -5821,18 +5829,19 @@ class FastQueryRouter:
             return tool_dual_registration(filter_query, different_clubs_only=is_diff_club_query)
 
         # --- 2. MISSING SCORES ---
-        missing_keywords = ['missing score', 'missing scores', 'no score', 'scores not entered', 'overdue', 'matches without scores', 'todays missing', 'missing scores today']
+        missing_keywords = ['missing score', 'missing scores', 'no score', 'scores not entered', 'overdue', 'matches without scores', 'todays missing', 'missing scores today', 'latest missing']
         if any(keyword in q for keyword in missing_keywords):
-            today_only = 'today' in q or 'todays' in q or "today's" in q
+            # "latest missing" means the most recent match day
+            today_only = ('today' in q or 'todays' in q or "today's" in q or 'latest' in q)
             last_week = 'last week' in q or 'previous week' in q
 
             # Extract round number if present e.g. "round 5" or "r5"
             round_match = re.search(r'\bround\s*(\d+)\b', q)
             round_filter = int(round_match.group(1)) if round_match else None
 
-            # Strip known keywords including round/week words
+            # Strip known keywords including round/week words and "latest"
             filter_query = re.sub(
-                r'\b(missing|score|scores?|no|not|entered|overdue|matches?|without|for|show|list|today|todays|today\'s|last|previous|week|round|\d+)\b',
+                r'\b(missing|score|scores?|no|not|entered|overdue|matches?|without|for|show|list|today|todays|today\'s|last|previous|week|round|latest|recent|\d+)\b',
                 '', q
             ).strip()
 
