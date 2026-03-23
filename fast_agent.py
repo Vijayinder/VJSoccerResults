@@ -4888,15 +4888,25 @@ def tool_club_season(club_query: str = "heidelberg", age_group_filter: str = "")
                 matched_clubs.add(base)
 
     if len(matched_clubs) > 1:
-        # Ambiguous — return options for user to pick from
-        options = sorted(matched_clubs)
-        return {
-            "type":    "ambiguous_club",
-            "query":   club_query,
-            "options": options,
-            "age_grp": age_filter.upper() if age_filter else "",
-            "message": f"Found {len(options)} clubs matching '{club_query}'. Please select one:",
-        }
+        # Check if the raw query already exactly matches one of the options
+        # (e.g. user clicked "Geelong SC" from the picker — don't re-prompt)
+        exact = next((c for c in matched_clubs
+                      if c.lower() == re.sub(r'\s+U\d{2}$', '', club_query, flags=re.IGNORECASE).strip().lower()),
+                     None)
+        if exact:
+            # Narrow to exact match — use full name as token
+            matched_clubs = {exact}
+            club_token    = exact.lower()
+        else:
+            # Genuinely ambiguous — return picker
+            options = sorted(matched_clubs)
+            return {
+                "type":    "ambiguous_club",
+                "query":   club_query,
+                "options": options,
+                "age_grp": age_filter.upper() if age_filter else "",
+                "message": f"Found {len(options)} clubs matching '{club_query}'. Please select one:",
+            }
 
     # ── Resolve display name from actual data (not raw query) ─────────────────
     display_club = club_query  # fallback

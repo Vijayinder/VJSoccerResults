@@ -422,52 +422,33 @@ def show_login_page():
                     break
             
             if selected_person:
-                # 1. Extract data for clarity
-                name = selected_person['name']
-                role = selected_person['role']
-                club = selected_person['club']
-                age = selected_person.get('age_group', 'N/A')
-
-                # 2. Display the success message outside the form for styling
-                st.success(f"✅ Selected: {role} **{name}** from **{club}** in age group **{age}**")
-
-                # 3. Use a form to capture the "Enter" keypress
-                with st.form("confirmation_form", border=False):
-                    submit = st.form_submit_button("Continue as this player", type="primary", width='content')
-                    if submit:
-                        # Login logic
-                        st.session_state["authenticated"] = True
-                        st.session_state["user_type"] = "player"
-                        st.session_state["username"] = selected_person["player_id"]
-                        st.session_state["full_name"] = selected_person["name"]
-                        st.session_state["player_club"] = selected_person["club"]
-                        st.session_state["player_age_group"] = selected_person.get("age_group", "")
-                        st.session_state["player_role"] = selected_person["role"]
-                        st.session_state["role"] = selected_person["role"]
-                        st.session_state["last_activity"] = datetime.now()
-                        
-                        # Save selection
-                        save_player_selection(st.session_state["session_id"], selected_person)
-                        
-                        # Update USER_CONFIG
-                        update_user_config(selected_person["club"], selected_person.get("age_group", ""))
-                        # Look up league and competition from player data
-                        league, competition = get_player_league_info(
-                            selected_person["name"],
-                            selected_person["club"],
-                            selected_person.get("age_group", "")
-                        )
-                        st.session_state["player_league"] = league
-                        st.session_state["player_competition"] = competition
-                        # Log the login
-                        log_login(
-                            username=selected_person["player_id"],
-                            full_name=selected_person["name"],
-                            session_id=st.session_state["session_id"]
-                        )
-                        # ✅ Write their player_id into the URL so their personal link is bookmarkable
-                        st.query_params["uid"] = selected_person["player_id"]
-                        st.rerun()    
+                # Login immediately — no button needed
+                st.session_state["authenticated"] = True
+                st.session_state["user_type"] = "player"
+                st.session_state["username"] = selected_person["player_id"]
+                st.session_state["full_name"] = selected_person["name"]
+                st.session_state["player_club"] = selected_person["club"]
+                st.session_state["player_age_group"] = selected_person.get("age_group", "")
+                st.session_state["player_role"] = selected_person["role"]
+                st.session_state["role"] = selected_person["role"]
+                st.session_state["last_activity"] = datetime.now()
+                
+                save_player_selection(st.session_state["session_id"], selected_person)
+                update_user_config(selected_person["club"], selected_person.get("age_group", ""))
+                league, competition = get_player_league_info(
+                    selected_person["name"],
+                    selected_person["club"],
+                    selected_person.get("age_group", "")
+                )
+                st.session_state["player_league"] = league
+                st.session_state["player_competition"] = competition
+                log_login(
+                    username=selected_person["player_id"],
+                    full_name=selected_person["name"],
+                    session_id=st.session_state["session_id"]
+                )
+                st.query_params["uid"] = selected_person["player_id"]
+                st.rerun()    
         # Admin login section
         st.markdown("---")
         with st.expander("🔐 Admin Login"):
@@ -2499,18 +2480,19 @@ def main_app():
         show_admin_dashboard()
         return
 
-    # ── Season Summary page shortcut ──────────────────────────────────────────
-    with st.sidebar:
-        st.markdown("---")
-        if st.button("📋 Season Summary", key="sidebar_season_btn", width='content'):
-            st.session_state["show_season_page"]      = True
-            st.session_state["show_predictions_page"] = False
-            st.session_state["season_auto_load"]      = True
-            st.rerun()
-        if st.button("🔮 Predictions", key="sidebar_predictions_btn", width='content'):
-            st.session_state["show_predictions_page"] = True
-            st.session_state["show_season_page"]      = False
-            st.rerun()
+    # ── Season Summary and Predictions page shortcuts (admin only) ──────────────
+    if st.session_state.get("role") == "admin":
+        with st.sidebar:
+            st.markdown("---")
+            if st.button("📋 Season Summary", key="sidebar_season_btn", width='content'):
+                st.session_state["show_season_page"]      = True
+                st.session_state["show_predictions_page"] = False
+                st.session_state["season_auto_load"]      = True
+                st.rerun()
+            if st.button("🔮 Predictions", key="sidebar_predictions_btn", width='content'):
+                st.session_state["show_predictions_page"] = True
+                st.session_state["show_season_page"]      = False
+                st.rerun()
 
     if st.session_state.get("show_predictions_page"):
         if st.button("⬅️ Back to App", key="pred_page_back_btn"):
@@ -3145,7 +3127,6 @@ def main_app():
                                 if _lr:
                                     _row     = df.iloc[_lr[0]]
                                     _age     = str(_row.get("Age", "")).strip()
-                                    # Get the first club column (after League/Age/Positions)
                                     _club_cols = [c for c in df.columns if c not in ("League", "Age", "Positions")]
                                     _club_name = _club_cols[0] if _club_cols else ""
                                     if _club_name and _age:
@@ -3165,6 +3146,59 @@ def main_app():
                                     _fire_query(f"match details {_home} vs {_away} {_mdate}")
                             else:
                                 st.dataframe(df, hide_index=True, width='content', height=h)
+
+                # ── Next week fixtures for quick comparison ───────────────────
+                with st.expander("⚔️ Compare upcoming fixture", expanded=False):
+                    try:
+                        import pytz as _pytz
+                        from fast_agent import (
+                            fixtures as _fa_fix, parse_date_utc_to_aest as _parse_dt,
+                            get_match_day_date as _match_day, _strip_age_group as _sag
+                        )
+                        _mel_tz  = _pytz.timezone('Australia/Melbourne')
+                        _now     = __import__('datetime').datetime.now(_mel_tz)
+                        _next_md = _match_day()
+                        # Show fixtures for next upcoming match day (>= today)
+                        _fix_opts = {}   # label -> (home, away, league, sort_key)
+                        import datetime as _dt_mod
+                        for _f in _fa_fix:
+                            _fa      = _f.get("attributes", {})
+                            _raw_date = _fa.get("date", "")
+                            if not _raw_date:
+                                continue
+                            # Try full UTC→AEST parse first, fallback to plain date parse
+                            _fdt = _parse_dt(_raw_date)
+                            if not _fdt:
+                                try:
+                                    _d = _dt_mod.date.fromisoformat(_raw_date[:10])
+                                    _fdt = _dt_mod.datetime(_d.year, _d.month, _d.day,
+                                                            tzinfo=_pytz.timezone('Australia/Melbourne'))
+                                except Exception:
+                                    continue
+                            if _fdt.date() < _now.date():
+                                continue
+                            _fh  = _sag(_fa.get("home_team_name", ""))
+                            _faw = _sag(_fa.get("away_team_name", ""))
+                            if _fh and _faw:
+                                _date_label = _fdt.strftime("%a %d %b")
+                                _label = f"{_date_label}  —  {_fh} vs {_faw}"
+                                _fix_opts[_label] = (_fh, _faw, _fdt)
+                        # Sort by date then home team name
+                        _fix_list = [""] + [k for k, _ in sorted(
+                            _fix_opts.items(), key=lambda x: (x[1][2], x[0])
+                        )]
+                        _sel_fix = st.selectbox(
+                            "Pick a fixture to compare",
+                            _fix_list,
+                            key=f"vs_fixture_pick_{st.session_state.get('expander_collapse_counter',0)}",
+                            label_visibility="collapsed",
+                            placeholder="🔍 Type club name to filter fixtures..."
+                        )
+                        if _sel_fix and _sel_fix in _fix_opts:
+                            _fh, _faw, _fdt = _fix_opts[_sel_fix]
+                            _fire_query(f"{_fh} vs {_faw}")
+                    except Exception as _fe:
+                        st.caption(f"Could not load fixtures: {_fe}")
             elif answer.get("type") == "own_goal_list":
                 st.info(answer.get("title", "Own Goals"))
                 data   = answer.get("data", [])
@@ -3995,21 +4029,19 @@ def main():
 if __name__ == "__main__":
     main()
 # Last auto-update: 2026-03-02 10:00:32 AEDT
-# Last auto-update: Sun 22 Mar 07:04:00 AEDT 2026
-# Last auto-update: Sun 22 Mar 08:04:06 AEDT 2026
-# Last auto-update: Sun 22 Mar 09:04:05 AEDT 2026
-# Last auto-update: Sun 22 Mar 10:04:08 AEDT 2026
-# Last auto-update: Sun 22 Mar 11:25:51 AEDT 2026
-# Last auto-update: Sun 22 Mar 12:04:50 AEDT 2026
-# Last auto-update: Sun 22 Mar 13:05:06 AEDT 2026
-# Last auto-update: Sun 22 Mar 14:05:17 AEDT 2026
-# Last auto-update: Sun 22 Mar 14:55:04 AEDT 2026
-# Last auto-update: Sun 22 Mar 15:05:37 AEDT 2026
-# Last auto-update: Sun 22 Mar 15:30:05 AEDT 2026
-# Last auto-update: Sun 22 Mar 15:43:51 AEDT 2026
-# Last auto-update: Sun 22 Mar 18:30:58 AEDT 2026
-# Last auto-update: Sun 22 Mar 20:06:08 AEDT 2026
-# Last auto-update: Sun 22 Mar 21:06:09 AEDT 2026
-# Last auto-update: Sun 22 Mar 21:31:07 AEDT 2026
-# Last auto-update: Mon 23 Mar 04:05:14 AEDT 2026
-# Last auto-update: Mon 23 Mar 06:05:30 AEDT 2026
+
+# Last auto-update: 2026-03-09 20:00:32 AEDT
+# Last auto-update: 2026-03-09 23:00:32 AEDT
+# Last auto-update: 2026-03-10 00:00:33 AEDT
+# Last auto-update: 2026-03-10 04:00:35 AEDT
+# Last auto-update: 2026-03-10 08:00:33 AEDT
+# Last auto-update: 2026-03-10 12:00:32 AEDT
+# Last auto-update: 2026-03-10 16:00:36 AEDT
+# Last auto-update: 2026-03-10 20:00:33 AEDT
+# Last auto-update: 2026-03-11 00:00:33 AEDT
+# Last auto-update: 2026-03-11 04:00:32 AEDT
+# Last auto-update: 2026-03-11 08:00:33 AEDT
+# Last auto-update: 2026-03-11 12:00:32 AEDT
+# Last auto-update: 2026-03-11 16:00:36 AEDT
+# Last auto-update: 2026-03-11 20:00:32 AEDT
+# Last auto-update: 2026-03-12 00:00:32 AEDT
