@@ -1005,7 +1005,7 @@ def goal_minute_distribution(
         for m in p.get("matches", []):
             if not (m.get("available") or m.get("started")):
                 continue
-            m_team = m.get("team_name", "")
+            m_team = m.get("team_name") or ""
             if club_filter and club_filter.lower() not in m_team.lower():
                 continue
             if age_filter and age_filter.lower() not in m_team.lower():
@@ -1091,7 +1091,7 @@ def card_minute_distribution(
     for pool in (players_summary, staff_summary):
         for p in pool:
             for m in p.get("matches", []):
-                m_team = m.get("team_name", "")
+                m_team = m.get("team_name") or ""
                 if club_filter and club_filter.lower() not in m_team.lower():
                     continue
                 if age_filter and age_filter.lower() not in m_team.lower():
@@ -1150,8 +1150,8 @@ def comeback_analysis(match_centre_data: list, club_filter: str = "", age_filter
 
     for mc in match_centre_data:
         r_attrs = mc.get("result", {}).get("attributes", {})
-        home = r_attrs.get("home_team_name", "")
-        away = r_attrs.get("away_team_name", "")
+        home = r_attrs.get("home_team_name") or ""
+        away = r_attrs.get("away_team_name") or ""
         if club_filter:
             if club_filter.lower() not in home.lower() and club_filter.lower() not in away.lower():
                 continue
@@ -1249,7 +1249,7 @@ def starter_vs_sub_impact(
         for m in p.get("matches", []):
             if not (m.get("available") or m.get("started")):
                 continue
-            m_team = m.get("team_name", "")
+            m_team = m.get("team_name") or ""
             if club_filter and club_filter.lower() not in m_team.lower():
                 continue
             if age_filter and age_filter.lower() not in m_team.lower():
@@ -1317,8 +1317,8 @@ def clean_sheet_rate(results: list, club_filter: str = "", age_filter: str = "")
         a  = r.get("attributes", {})
         if (a.get("status") or "").lower() != "complete":
             continue
-        home = a.get("home_team_name", "")
-        away = a.get("away_team_name", "")
+        home = a.get("home_team_name") or ""
+        away = a.get("away_team_name") or ""
         blob = f"{home} {away}".lower()
         if club_filter and club_filter.lower() not in blob:
             continue
@@ -1371,8 +1371,8 @@ def first_scorer_advantage(match_centre_data: list, club_filter: str = "", age_f
 
     for mc in match_centre_data:
         r_attrs = mc.get("result", {}).get("attributes", {})
-        home = r_attrs.get("home_team_name", "")
-        away = r_attrs.get("away_team_name", "")
+        home = r_attrs.get("home_team_name") or ""
+        away = r_attrs.get("away_team_name") or ""
         if club_filter:
             if club_filter.lower() not in home.lower() and club_filter.lower() not in away.lower():
                 continue
@@ -1483,8 +1483,8 @@ def home_away_split(results: list, club_filter: str = "", age_filter: str = "") 
         a = r.get("attributes", {})
         if (a.get("status") or "").lower() != "complete":
             continue
-        home = a.get("home_team_name", "")
-        away = a.get("away_team_name", "")
+        home = a.get("home_team_name") or ""
+        away = a.get("away_team_name") or ""
         blob = f"{home} {away}".lower()
         if club_filter and club_filter.lower() not in blob:
             continue
@@ -1554,7 +1554,7 @@ def player_form_streaks(
     for p in players_summary:
         name = f"{p.get('first_name','')} {p.get('last_name','')}".strip()
         played = [
-            m for m in sorted(p.get("matches", []), key=lambda x: x.get("date", ""))
+            m for m in sorted(p.get("matches", []), key=lambda x: x.get("date") or "")
             if (m.get("available") or m.get("started"))
             and (not club_filter or club_filter.lower() in (m.get("team_name", "") or "").lower())
             and (not age_filter  or age_filter.lower()  in (m.get("team_name", "") or "").lower())
@@ -1636,10 +1636,21 @@ def show_insights_page():
 
     # ── Page title ─────────────────────────────────────────────────────────
     st.markdown("### 📊 Match & Player Insights")
-    st.caption(
-        "All insights are derived from your existing JSON data files. "
-        "Only metrics that have enough data are shown."
-    )
+
+    st.markdown("""
+    This page analyses your club's data across **8 insight areas**:
+
+    | # | Section | What it tells you |
+    |---|---------|-------------------|
+    | 1 | ⚽ **Goal Timing** | Which 15-min periods your team scores and concedes most — useful for warm-up and in-game focus |
+    | 2 | 🟨🟥 **Discipline** | When yellow and red cards tend to happen — helps identify high-risk periods |
+    | 3 | 📈 **Match Patterns** | First-scorer win rate, home vs away record, clean sheet %, and comeback rate |
+    | 4 | 🎽 **Starters vs Subs** | Whether starters or substitutes are contributing more goals per game |
+    | 5 | 🔥 **Form Streaks** | Players on current scoring streaks, and players in goalless droughts |
+
+    Use the **Club** and **Age group** filters below to narrow results to a specific team, or leave blank to see across all clubs.
+    """)
+    st.markdown("---")
 
     # ── Filters ────────────────────────────────────────────────────────────
     col_club, col_age = st.columns([3, 1])
