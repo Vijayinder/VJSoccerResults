@@ -12,7 +12,7 @@ import uuid
 import plotly.graph_objects as go
 import io
 import random
-
+from insights import show_insights_page
 
 # Import authentication and tracking modules
 from player_config import (
@@ -256,6 +256,9 @@ def init_session_state():
     
     if "player_league" not in st.session_state:
         st.session_state["player_league"] = None
+    
+    if "show_insights_page" not in st.session_state:
+        st.session_state["show_insights_page"] = False    
 
 def check_session_timeout():
     """Check if session has timed out"""
@@ -293,6 +296,7 @@ def logout_user():
     st.session_state.clear()
     st.session_state["authenticated"] = False
     st.session_state["session_id"]    = str(uuid.uuid4())
+    st.session_state["explicitly_logged_out"] = True  # show login screen
 
 # ---------------------------------------------------------
 # Login Page
@@ -2441,12 +2445,10 @@ def main_app():
             logout_user()
             st.session_state.clear()
             st.rerun()
-    # In your sidebar (after logout button or admin controls)
-    with st.sidebar:
-        st.markdown("---")
-        
-        # ✅ Admin-Only Manual Data Refresh Section
-        if st.session_state.get("role") == "admin":
+    # Sidebar — admin only
+    if st.session_state.get("role") == "admin":
+        with st.sidebar:
+            st.markdown("---")
             st.markdown("### 🔄 Admin Controls")
             
             col1, col2 = st.columns(2)
@@ -2457,16 +2459,13 @@ def main_app():
                     st.rerun()
             
             with col2:
-                # Show last update time
                 last_update = get_last_updated_time()
                 st.caption(f"📅 Updated:\n{last_update.split(',')[1] if ',' in last_update else last_update}")
             
             st.markdown("---")
-        
 
     # Check for admin dashboard
     if st.session_state["role"] == "admin":
-        # Add admin dashboard option in sidebar
         with st.sidebar:
             st.markdown("### Admin Controls")
             if st.button("📊 View Dashboard", width='content'):
@@ -2493,6 +2492,18 @@ def main_app():
                 st.session_state["show_predictions_page"] = True
                 st.session_state["show_season_page"]      = False
                 st.rerun()
+            if st.button("📊 Insights", key="sidebar_insights_btn", width='content'):
+                st.session_state["show_insights_page"]    = True
+                st.session_state["show_season_page"]      = False
+                st.session_state["show_predictions_page"] = False
+                st.rerun()    
+
+    if st.session_state.get("show_insights_page"):
+        if st.button("⬅️ Back to App", key="insights_back_btn"):
+            st.session_state["show_insights_page"] = False
+            st.rerun()
+        show_insights_page()
+        return
 
     if st.session_state.get("show_predictions_page"):
         if st.button("⬅️ Back to App", key="pred_page_back_btn"):
@@ -3147,46 +3158,65 @@ def main_app():
                             else:
                                 st.dataframe(df, hide_index=True, width='content', height=h)
 
-                # ── Next week fixtures for quick comparison ───────────────────
+
                 with st.expander("⚔️ Compare upcoming fixture", expanded=False):
                     try:
                         import pytz as _pytz
-                        from fast_agent import (
-                            fixtures as _fa_fix, parse_date_utc_to_aest as _parse_dt,
-                            get_match_day_date as _match_day, _strip_age_group as _sag
-                        )
-                        _mel_tz  = _pytz.timezone('Australia/Melbourne')
-                        _now     = __import__('datetime').datetime.now(_mel_tz)
-                        _next_md = _match_day()
-                        # Show fixtures for next upcoming match day (>= today)
-                        _fix_opts = {}   # label -> (home, away, league, sort_key)
                         import datetime as _dt_mod
+                        from fast_agent import (
+                            fixtures as _fa_fix,
+                            _strip_age_group as _sag
+                        )
+                        _mel_tz = _pytz.timezone('Australia/Melbourne')
+                        _now    = _dt_mod.datetime.now(_mel_tz)
+
+                        # Key = frozenset of the two stripped club names → keep earliest dt only
+                        _earliest: dict = {}   # key → (fh, faw, fdt_full)
+
                         for _f in _fa_fix:
-                            _fa      = _f.get("attributes", {})
-                            _raw_date = _fa.get("date", "")
-                            if not _raw_date:
+                            _fa = _f.get("attributes", {})
+
+                            # Parse date — prefer datetime_aest, fall back to date_aest / raw date
+                            _raw = _fa.get("datetime_aest") or _fa.get("date_aest") or _fa.get("date", "")
+                            if not _raw:
                                 continue
-                            # Try full UTC→AEST parse first, fallback to plain date parse
-                            _fdt = _parse_dt(_raw_date)
-                            if not _fdt:
-                                try:
-                                    _d = _dt_mod.date.fromisoformat(_raw_date[:10])
-                                    _fdt = _dt_mod.datetime(_d.year, _d.month, _d.day,
-                                                            tzinfo=_pytz.timezone('Australia/Melbourne'))
-                                except Exception:
-                                    continue
-                            if _fdt.date() < _now.date():
+                            try:
+                                # datetime_aest / date_aest are already local — parse directly
+                                # raw UTC "2026-02-08 06:30:00" needs conversion
+                                if " " in _raw and "T" not in _raw and _raw.endswith(":00") and len(_raw) > 10:
+                                    # space-separated UTC format — convert to Melbourne
+                                    import pytz as _pz2
+                                    _utc_dt = _dt_mod.datetime.strptime(_raw[:19], "%Y-%m-%d %H:%M:%S")
+                                    _utc_dt = _pz2.utc.localize(_utc_dt)
+                                    _fdt_full = _utc_dt.astimezone(_mel_tz)
+                                else:
+                                    _fdt_full = _dt_mod.datetime.fromisoformat(_raw[:19])
+                                    if _fdt_full.tzinfo is None:
+                                        _fdt_full = _mel_tz.localize(_fdt_full)
+                            except Exception:
                                 continue
+
+                            if _fdt_full.date() < _now.date():
+                                continue
+
                             _fh  = _sag(_fa.get("home_team_name", ""))
                             _faw = _sag(_fa.get("away_team_name", ""))
-                            if _fh and _faw:
-                                _date_label = _fdt.strftime("%a %d %b")
-                                _label = f"{_date_label}  —  {_fh} vs {_faw}"
-                                _fix_opts[_label] = (_fh, _faw, _fdt)
-                        # Sort by date then home team name
-                        _fix_list = [""] + [k for k, _ in sorted(
-                            _fix_opts.items(), key=lambda x: (x[1][2], x[0])
-                        )]
+                            if not _fh or not _faw:
+                                continue
+
+                            # Deduplicate: one entry per club-pair, earliest date wins
+                            _pair_key = frozenset([_fh.lower(), _faw.lower()])
+                            if _pair_key not in _earliest or _fdt_full < _earliest[_pair_key][2]:
+                                _earliest[_pair_key] = (_fh, _faw, _fdt_full)
+
+                        # Build label → (fh, faw, fdt) dict, sorted by date then label
+                        _fix_opts = {}
+                        for _fh, _faw, _fdt_full in sorted(_earliest.values(), key=lambda x: x[2]):
+                            _date_label = _fdt_full.strftime("%a %d %b")
+                            _label = f"{_fh} vs {_faw}  ({_date_label})"
+                            _fix_opts[_label] = (_fh, _faw, _fdt_full)
+
+                        _fix_list = [""] + list(_fix_opts.keys())
                         _sel_fix = st.selectbox(
                             "Pick a fixture to compare",
                             _fix_list,
@@ -3195,7 +3225,7 @@ def main_app():
                             placeholder="🔍 Type club name to filter fixtures..."
                         )
                         if _sel_fix and _sel_fix in _fix_opts:
-                            _fh, _faw, _fdt = _fix_opts[_sel_fix]
+                            _fh, _faw, _fdt_full = _fix_opts[_sel_fix]
                             _fire_query(f"{_fh} vs {_faw}")
                     except Exception as _fe:
                         st.caption(f"Could not load fixtures: {_fe}")
@@ -4013,16 +4043,43 @@ def main():
             )
             st.rerun()
 
-    # Not authenticated and no uid — show login page
+    # Show login page ONLY if user explicitly logged out
     if not st.session_state["authenticated"]:
-        show_login_page()
-        return
+        if st.session_state.get("explicitly_logged_out", False):
+            show_login_page()
+            return
+        else:
+            # Session was reset (tab reload, browser back etc) — auto-create guest session
+            st.session_state["authenticated"]    = True
+            st.session_state["user_type"]        = "guest"
+            st.session_state["username"]         = "guest"
+            st.session_state["full_name"]        = "Guest"
+            st.session_state["player_club"]      = "Heidelberg United FC"
+            st.session_state["player_age_group"] = "U16"
+            st.session_state["player_role"]      = "player"
+            st.session_state["role"]             = "player"
+            st.session_state["last_activity"]    = datetime.now()
+            st.session_state["player_league"]    = "YPL2"
+            st.session_state["player_competition"] = "YPL2"
+            update_user_config("Heidelberg United FC", "U16")
 
     # Authenticated — check timeout then show app
     if not check_session_timeout():
-        show_login_page()
-    else:
-        main_app()
+        # Timeout: restore guest session rather than force login
+        st.session_state["authenticated"]    = True
+        st.session_state["user_type"]        = "guest"
+        st.session_state["username"]         = "guest"
+        st.session_state["full_name"]        = "Guest"
+        st.session_state["player_club"]      = "Heidelberg United FC"
+        st.session_state["player_age_group"] = "U16"
+        st.session_state["player_role"]      = "player"
+        st.session_state["role"]             = "player"
+        st.session_state["last_activity"]    = datetime.now()
+        st.session_state["player_league"]    = "YPL2"
+        st.session_state["player_competition"] = "YPL2"
+        update_user_config("Heidelberg United FC", "U16")
+
+    main_app()
 
 
         

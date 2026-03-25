@@ -435,18 +435,14 @@ def format_date_full_aest(date_str: str) -> str:
     except (ValueError, AttributeError):
         return date_str[:10] if len(date_str) >= 10 else date_str
 
-def iso_date_aest(date_str: str) -> str:
-    """Return YYYY-MM-DD in AEST/AEDT local time (for sortable Streamlit DateColumn)."""
-    if not date_str:
-        return ""
-    try:
-        dt = parse_date_utc_to_aest(date_str)
-        if dt:
-            return dt.strftime("%Y-%m-%d")
-        date_part = date_str.split('T')[0] if 'T' in date_str else date_str
-        return datetime.fromisoformat(date_part).strftime("%Y-%m-%d")
-    except (ValueError, AttributeError):
-        return ""
+def iso_date_aest(date_str: str, attrs: Dict = None) -> str: 
+    """Returns YYYY-MM-DD for sorting."""
+    if attrs and "date_aest" in attrs:
+        return attrs["date_aest"]
+    
+    # Fallback to parsing if the field isn't present
+    dt = parse_date_utc_to_aest(date_str, attrs=attrs)
+    return dt.strftime("%Y-%m-%d") if dt else ""
 
 def parse_date(date_str: str) -> datetime.date:
     """Parse date string to date object"""
@@ -458,49 +454,63 @@ def parse_date(date_str: str) -> datetime.date:
     except (ValueError, AttributeError):
         return datetime.min.date()
 
-def parse_date_utc_to_aest(date_str: str) -> Optional[datetime]:
-    """Parse date string and return as Melbourne local time (AEST/AEDT).
-
-    Timezone handling rules:
-    - Ends with 'Z'              → explicit UTC, convert to Melbourne
-    - Has offset (+HH:MM)        → parse as-is, convert to Melbourne
-    - Space-separated datetime   → results format (e.g. "2026-02-08 06:30:00"), treat as UTC
-    - Has 'T' but no tz info     → fixtures without Z, treat as UTC
-    - Date only (10 chars)       → Melbourne midnight, no time available
-    """
-    if not date_str:
-        return None
+def parse_date_utc_to_aest(date_str: str, attrs: Dict = None) -> Optional[datetime]:
+    # 1. DEFINE TIMEZONES FIRST so they are available to all logic paths
     try:
         melbourne_tz = pytz.timezone('Australia/Melbourne')
         utc_tz = pytz.utc
+    except:
+        return None
 
+    # Priority 1: Use pre-calculated AEST datetime (e.g., "2026-03-24 15:30:00")
+    if attrs and "datetime_aest" in attrs and attrs["datetime_aest"]:
+        try:
+            dt = datetime.fromisoformat(attrs["datetime_aest"])
+            if dt.tzinfo is None:
+                return melbourne_tz.localize(dt) # Make it AWARE
+            return dt
+        except:
+            pass
+        
+    # Priority 2: Use pre-calculated AEST date (e.g., "2026-03-24")
+    if attrs and "date_aest" in attrs and attrs["date_aest"]:
+        try:
+            # fromisoformat on a 10-char date works in Python 3.11+
+            dt = datetime.fromisoformat(attrs["date_aest"][:10])
+            # Ensure it has a time (midnight) and is AWARE
+            dt = dt.replace(hour=0, minute=0, second=0)
+            return melbourne_tz.localize(dt)
+        except: 
+            pass
+
+    # Fallback: Original UTC conversion logic
+    if not date_str: 
+        return None
+
+    try:
         if 'Z' in date_str:
-            # e.g. "2026-01-31T21:30:00.000000Z" — explicit UTC
             utc_dt = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
             return utc_dt.astimezone(melbourne_tz)
 
         elif 'T' in date_str and ('+' in date_str[10:] or date_str.count('-') > 2):
-            # Has explicit timezone offset — parse and convert
             return datetime.fromisoformat(date_str).astimezone(melbourne_tz)
 
         elif ' ' in date_str and len(date_str) > 10:
-            # e.g. "2026-02-08 06:30:00" — results format, stored as UTC
             naive_dt = datetime.strptime(date_str[:19], "%Y-%m-%d %H:%M:%S")
             utc_dt = utc_tz.localize(naive_dt)
             return utc_dt.astimezone(melbourne_tz)
 
         elif 'T' in date_str:
-            # e.g. "2026-01-31T21:30:00" — no tz marker, treat as UTC
             naive_dt = datetime.fromisoformat(date_str)
             utc_dt = utc_tz.localize(naive_dt)
             return utc_dt.astimezone(melbourne_tz)
 
         else:
-            # Date only e.g. "2026-02-08" — no time available, use midnight
+            # Date only e.g. "2026-02-08"
             naive_dt = datetime.fromisoformat(date_str[:10]).replace(hour=0, minute=0, second=0)
             return melbourne_tz.localize(naive_dt)
 
-    except (ValueError, AttributeError, Exception):
+    except:
         return None
 
 
@@ -930,9 +940,7 @@ def tool_fixtures(query: str = "", limit: int = 10, use_user_team: bool = False)
     upcoming = []
     for f in fixtures:
         attrs = f.get("attributes", {})
-        date_str = attrs.get("date", "")
-
-        match_dt = parse_date_utc_to_aest(date_str)
+        match_dt = parse_date_utc_to_aest(attrs.get("date", ""), attrs=attrs)
         if not match_dt:
             continue
 
@@ -958,8 +966,9 @@ def tool_fixtures(query: str = "", limit: int = 10, use_user_team: bool = False)
 
     for i, (m_dt, attrs) in enumerate(upcoming, 1):
         days_until  = (m_dt.date() - now_melbourne.date()).days
-        date_display = m_dt.strftime("%d-%b (%a) %I:%M %p")
-
+        _has_time = bool(attrs.get("datetime_aest")) or m_dt.hour != 0 or m_dt.minute != 0
+        date_display = (m_dt.strftime("%d-%b (%a) %I:%M %p") if _has_time
+                        else m_dt.strftime("%d-%b (%a)"))
         home  = attrs.get("home_team_name") or "Unknown"
         away  = attrs.get("away_team_name") or "Unknown"
         lg    = attrs.get("league_name") or ""
@@ -1002,7 +1011,7 @@ def tool_missing_scores(query: str = "", include_all_leagues: bool = False, toda
     print(f"  query='{query}', today_only={today_only}, last_week={last_week}, round_filter={round_filter}")
 
     # Target leagues if not showing all
-    target_leagues = ["YPL1", "YPL2", "YSL NW", "YSL SE", "YSL", "VPL", "VPL Men", "VPL Women"] if not include_all_leagues else []
+    target_leagues = ["YPL1", "YPL2", "YSL NW", "YSL SE", "VPL"] if not include_all_leagues else []
 
     missing_scores = []
 
@@ -1076,7 +1085,8 @@ def tool_missing_scores(query: str = "", include_all_leagues: bool = False, toda
             continue
         
         # Parse to Melbourne date
-        match_dt = parse_date_utc_to_aest(date_str)
+ #       match_dt = parse_date_utc_to_aest(date_str)
+        match_dt = parse_date_utc_to_aest(attrs.get("date", ""), attrs=attrs)
         if not match_dt:
             continue
         
@@ -1138,8 +1148,7 @@ def tool_missing_scores(query: str = "", include_all_leagues: bool = False, toda
         # Filter by target leagues if specified
         if target_leagues:
             league_code = extract_league_from_league_name(league)
-            if not any(league_code == tl or league_code.startswith(tl) or tl.startswith(league_code)
-                       for tl in target_leagues):
+            if league_code not in target_leagues:
                 continue
             matches_with_target_leagues += 1
         # Get round info for this match (needed for both round_filter and search blob)
@@ -1195,30 +1204,23 @@ def tool_missing_scores(query: str = "", include_all_leagues: bool = False, toda
         home_score = attrs.get("home_score")
         away_score = attrs.get("away_score")
 
-        # Treat empty string the same as None — score not entered
-        def _score_missing(v):
-            return v is None or str(v).strip() == ""
-
         # Only flag as missing if match has already taken place (past or today)
+        # Future scheduled fixtures should never appear as "missing scores"
         is_past_or_today = match_date <= today
 
         needs_score = (
             is_past_or_today and (
-                status not in ("complete", "completed") or
-                _score_missing(home_score) or
-                _score_missing(away_score)
+                status != "complete" or
+                home_score is None or
+                away_score is None
             )
         )
         
         if needs_score:
-            try:
-                _time_str = _format_time_aest(match_dt, date_str)
-            except Exception:
-                _time_str = "—"
             missing_scores.append({
                 "date":          match_dt.strftime("%d-%b"),
-                "date_raw":      date_str,
-                "time":          _time_str,
+                "date_raw":      date_str,                    # raw for iso_date_aest
+                "time":          _format_time_aest(match_dt, date_str),
                 "time_sort":     match_dt.time(),
                 "datetime_sort": match_dt,
                 "league":        extract_league_from_league_name(league),
@@ -1365,7 +1367,8 @@ def tool_todays_results(query: str = "", round_filter: int = None) -> Any:
         if not date_str:
             continue
 
-        match_dt = parse_date_utc_to_aest(date_str)
+   #     match_dt = parse_date_utc_to_aest(date_str)
+        match_dt = parse_date_utc_to_aest(attrs.get("date", ""), attrs=attrs)
         if not match_dt:
             continue
 
@@ -1547,7 +1550,7 @@ def tool_all_results(query: str = "", round_filter: int = None, limit: int = 60)
                 continue
 
         date_str = attrs.get("date", "")
-        match_dt = parse_date_utc_to_aest(date_str)
+        match_dt = parse_date_utc_to_aest(a.get("date", ""), attrs=a)
         date_display = iso_date_aest(date_str) if date_str else ""
         match_round = attrs.get("full_round") or attrs.get("round") or ""
 
@@ -1654,7 +1657,7 @@ def tool_all_results(query: str = "", round_filter: int = None, limit: int = 60)
         if not date_str:
             continue
         
-        match_dt = parse_date_utc_to_aest(date_str)
+        match_dt = parse_date_utc_to_aest(a.get("date", ""), attrs=a)
         if not match_dt:
             continue
         
@@ -1783,7 +1786,7 @@ def tool_teams_lost_today(query: str = "") -> Any:
         if not date_str:
             continue
         
-        match_dt = parse_date_utc_to_aest(date_str)
+        match_dt = parse_date_utc_to_aest(a.get("date", ""), attrs=a)
         if not match_dt:
             continue
         
@@ -2113,7 +2116,7 @@ def tool_yellow_cards(query: str = "", show_details: bool = False,
             filter_team = team_name or (f"{base_club} {age_group}".strip() if base_club and age_group else base_club or "")
             team_card_count = 0
             for m in p.get("matches", []):
-                m_team = m.get("team_name", "")
+                m_team = m.get("team_name") or ""
                 # Match the match to the right team
                 if filter_team and m_team and filter_team.lower() not in m_team.lower():
                     if age_group and age_group.lower() not in m_team.lower():
@@ -2264,7 +2267,7 @@ def tool_red_cards(query: str = "", show_details: bool = False,
             filter_team = team_name or (f"{base_club} {age_group}".strip() if base_club and age_group else base_club or "")
             team_card_count = 0
             for m in p.get("matches", []):
-                m_team = m.get("team_name", "")
+                m_team = m.get("team_name") or ""
                 if filter_team and m_team and filter_team.lower() not in m_team.lower():
                     if age_group and age_group.lower() not in m_team.lower():
                         continue
@@ -2399,7 +2402,7 @@ def tool_own_goals(query: str = "") -> Any:
                 og = sum(1 for e in events if _et(e) == "own_goal" or (_et(e) in ("goal","goal_scored") and e.get("own_goal")))
             if og == 0:
                 continue
-            m_team = m.get("team_name","")
+            m_team = m.get("team_name") or ""
             if ag   and ag.lower()   not in m_team.lower(): continue
             if club and club.lower() not in m_team.lower(): continue
             rows.append({
@@ -2416,7 +2419,7 @@ def tool_own_goals(query: str = "") -> Any:
     if not rows:
         return f"❌ No own goals found" + (f" for '{query}'" if query else "")
 
-    rows.sort(key=lambda r: (r.get("_date_raw") or ""), reverse=True)
+    rows.sort(key=lambda r: r["_date_raw"], reverse=True)
 
     filters = []
     if ag:   filters.append(ag)
@@ -2427,7 +2430,7 @@ def tool_own_goals(query: str = "") -> Any:
     # Strip internal fields
     display = [{k: v for k, v in r.items() if not k.startswith("_")} for r in rows]
     hashes  = [r["_hash"] for r in rows]
-    dates   = [(r.get("_date_raw") or "")[:10] for r in rows]
+    dates   = [r["_date_raw"][:10] for r in rows]
 
     return {
         "type":    "own_goal_list",
@@ -2480,7 +2483,7 @@ def tool_cards_this_week(query: str = "", last_week: bool = False) -> dict:
             for m in p.get("matches", []):
                 if not _match_in_date_range(m, start_date, end_date):
                     continue
-                m_team = m.get("team_name", "") or ""
+                m_team = m.get("team_name") or ""
                 if base_club and base_club.lower() not in m_team.lower():
                     continue
                 if age_group and age_group.lower() not in m_team.lower():
@@ -2503,7 +2506,7 @@ def tool_cards_this_week(query: str = "", last_week: bool = False) -> dict:
                     "Player":   pname,
                     "Team":     re.sub(r'\s+U\d{2}$', '', m_team, flags=re.IGNORECASE).strip(),
                     "Age":      ag_m.group(0).upper() if ag_m else "—",
-                    "Opponent": m.get("opponent_team_name", "?"),
+                    "Opponent": m.get("opponent_team_name") or "?",
                     "Min":      mins or "—",
                     "Role":     role.title() if role.lower() not in ("player","") else "Player",
                     "_pname":   pname,
@@ -2549,7 +2552,7 @@ def tool_all_cards(query: str = "") -> dict:
             pname = f"{p.get('first_name','')} {p.get('last_name','')}".strip()
             role  = p.get("role") or (p.get("roles") or [""])[0] or "player"
             for m in p.get("matches", []):
-                m_team = m.get("team_name", "") or ""
+                m_team = m.get("team_name") or ""
                 if base_club and base_club.lower() not in m_team.lower():
                     continue
                 if age_group and age_group.lower() not in m_team.lower():
@@ -2572,7 +2575,7 @@ def tool_all_cards(query: str = "") -> dict:
                     "Player":   pname,
                     "Team":     re.sub(r'\s+U\d{2}$', '', m_team, flags=re.IGNORECASE).strip(),
                     "Age":      ag_m.group(0).upper() if ag_m else "—",
-                    "Opponent": m.get("opponent_team_name", "?"),
+                    "Opponent": m.get("opponent_team_name") or "?",
                     "Min":      mins or "—",
                     "Role":     role.title() if role.lower() not in ("player","") else "Player",
                     "_pname":   pname,
@@ -2656,7 +2659,7 @@ def tool_card_summary(query: str = "") -> Any:
             _is_player = not p.get("role") or str(p.get("role","")).lower() == "player"
             if _is_player and not (m.get("available", False) or m.get("started", False)):
                 continue
-            m_team = m.get("team_name", "")
+            m_team = m.get("team_name") or ""
             if not m_team:
                 continue
 
@@ -2977,8 +2980,9 @@ def _get_upcoming_for_team(team_name: str) -> list:
         away = a.get("away_team_name", "")
         if team_name.lower() not in home.lower() and team_name.lower() not in away.lower():
             continue
-        match_dt = parse_date_utc_to_aest(a.get("date", ""))
-        if not match_dt or match_dt <= now:
+#        match_dt = parse_date_utc_to_aest(a.get("date", ""))
+        match_dt = parse_date_utc_to_aest(a.get("date", ""), attrs=a)
+        if not match_dt or (match_dt.astimezone(melbourne_tz) if match_dt.tzinfo else melbourne_tz.localize(match_dt)) <= now:
             continue
         is_home  = team_name.lower() in home.lower()
         opponent = _strip_age_group(away if is_home else home)
@@ -2999,9 +3003,10 @@ def _get_upcoming_for_team(team_name: str) -> list:
                 opp_pos = f"{opp_row['Pos']}/{len(table)} · {opp_row['PTS']}pts · W{opp_row['W']} D{opp_row['D']} L{opp_row['L']}"
         except Exception:
             pass
+        _ht = bool(a.get("datetime_aest")) or match_dt.hour != 0 or match_dt.minute != 0
         upcoming.append({
-            "Date":         match_dt.strftime("%Y-%m-%d"),
-            "Time":         match_dt.strftime("%I:%M %p").lstrip("0") if match_dt.hour or match_dt.minute else "TBC",
+            "Date":         match_dt.strftime("%Y-%m-%d") if match_dt else "",
+            "Time":         match_dt.strftime("%I:%M %p").lstrip("0") if (_ht and match_dt) else "",
             "H/A":          "🏠" if is_home else "✈️",
             "Opponent":     opponent,
             "Venue":        (a.get("ground_name") or "TBD")[:20],
@@ -4679,7 +4684,7 @@ def tool_opponent_squad(query: str = "") -> Any:
     for f in fixtures:
         attrs    = f.get("attributes", {})
         date_str = attrs.get("date", "")
-        match_dt = parse_date_utc_to_aest(date_str)
+        match_dt = parse_date_utc_to_aest(a.get("date", ""), attrs=a)
         if not match_dt or match_dt < now_melbourne:
             continue
         home  = attrs.get("home_team_name", "")
@@ -4888,25 +4893,15 @@ def tool_club_season(club_query: str = "heidelberg", age_group_filter: str = "")
                 matched_clubs.add(base)
 
     if len(matched_clubs) > 1:
-        # Check if the raw query already exactly matches one of the options
-        # (e.g. user clicked "Geelong SC" from the picker — don't re-prompt)
-        exact = next((c for c in matched_clubs
-                      if c.lower() == re.sub(r'\s+U\d{2}$', '', club_query, flags=re.IGNORECASE).strip().lower()),
-                     None)
-        if exact:
-            # Narrow to exact match — use full name as token
-            matched_clubs = {exact}
-            club_token    = exact.lower()
-        else:
-            # Genuinely ambiguous — return picker
-            options = sorted(matched_clubs)
-            return {
-                "type":    "ambiguous_club",
-                "query":   club_query,
-                "options": options,
-                "age_grp": age_filter.upper() if age_filter else "",
-                "message": f"Found {len(options)} clubs matching '{club_query}'. Please select one:",
-            }
+        # Ambiguous — return options for user to pick from
+        options = sorted(matched_clubs)
+        return {
+            "type":    "ambiguous_club",
+            "query":   club_query,
+            "options": options,
+            "age_grp": age_filter.upper() if age_filter else "",
+            "message": f"Found {len(options)} clubs matching '{club_query}'. Please select one:",
+        }
 
     # ── Resolve display name from actual data (not raw query) ─────────────────
     display_club = club_query  # fallback
@@ -4931,7 +4926,7 @@ def tool_club_season(club_query: str = "heidelberg", age_group_filter: str = "")
             hs, as_ = int(hs), int(as_)
         except (ValueError, TypeError):
             continue
-        match_dt = parse_date_utc_to_aest(a.get("date", ""))
+        match_dt = parse_date_utc_to_aest(a.get("date", ""), attrs=a)
         if not match_dt:
             continue
         is_home  = club_token in home.lower()
@@ -4970,8 +4965,10 @@ def tool_club_season(club_query: str = "heidelberg", age_group_filter: str = "")
         away = a.get("away_team_name", "")
         if not _matches_club(home, away):
             continue
-        match_dt = parse_date_utc_to_aest(a.get("date", ""))
-        if not match_dt or match_dt <= now:
+#        match_dt = parse_date_utc_to_aest(a.get("date", ""))
+        match_dt = parse_date_utc_to_aest(a.get("date", ""), attrs=a)
+        
+        if not match_dt or (match_dt.astimezone(melbourne_tz) if match_dt.tzinfo else melbourne_tz.localize(match_dt)) <= now:
             continue
         is_home  = club_token in home.lower()
         opponent = away if is_home else home
@@ -4983,16 +4980,15 @@ def tool_club_season(club_query: str = "heidelberg", age_group_filter: str = "")
         when = "TODAY" if days == 0 else ("Tomorrow" if days == 1 else f"In {days}d")
         # Raw opponent team name (with age group) for ladder lookup
         opp_full = away if is_home else home
+        _ht = bool(a.get("datetime_aest")) or match_dt.hour != 0 or match_dt.minute != 0
         upcoming.append({
             "dt":      match_dt,
-            "Date":    match_dt.strftime("%Y-%m-%d"),
-            "Time":    match_dt.strftime("%I:%M %p").lstrip("0") if match_dt.hour or match_dt.minute else "TBC",
-            "date":    match_dt.strftime("%Y-%m-%d"),   # kept for backward compat
-            "age":     age_grp,
-            "opponent": opponent[:18],
+            "Date":    match_dt.strftime("%Y-%m-%d") if match_dt else "",
+            "Time":    match_dt.strftime("%I:%M %p").lstrip("0") if (_ht and match_dt) else "",
+            "date":    match_dt.strftime("%Y-%m-%d") if match_dt else "",  # backward compat
+            "age":     age_grp, "opponent": opponent[:18],
             "venue":   (a.get("ground_name") or "TBD")[:20],
-            "when":    when,
-            "league":  league_name,
+            "when":    when, "league": league_name,
             "is_home": is_home,
             "_opp_full": opp_full,
         })
@@ -5540,8 +5536,9 @@ def tool_predict_ladder(club_query: str = "heidelberg",
         ln = a.get("league_name", "") or a.get("competition_name", "")
         if extract_league_from_league_name(ln).lower() != comp_code:
             continue
-        match_dt = parse_date_utc_to_aest(a.get("date", ""))
-        if not match_dt or match_dt <= now:
+#        match_dt = parse_date_utc_to_aest(a.get("date", ""))
+        match_dt = parse_date_utc_to_aest(a.get("date", ""), attrs=a)
+        if not match_dt or (match_dt.astimezone(melbourne_tz) if match_dt.tzinfo else melbourne_tz.localize(match_dt)) <= now:
             continue
         remaining.append((match_dt, home, away))
 
@@ -5839,19 +5836,18 @@ class FastQueryRouter:
             return tool_dual_registration(filter_query, different_clubs_only=is_diff_club_query)
 
         # --- 2. MISSING SCORES ---
-        missing_keywords = ['missing score', 'missing scores', 'no score', 'scores not entered', 'overdue', 'matches without scores', 'todays missing', 'missing scores today', 'latest missing']
+        missing_keywords = ['missing score', 'missing scores', 'no score', 'scores not entered', 'overdue', 'matches without scores', 'todays missing', 'missing scores today']
         if any(keyword in q for keyword in missing_keywords):
-            # "latest missing" means the most recent match day
-            today_only = ('today' in q or 'todays' in q or "today's" in q or 'latest' in q)
+            today_only = 'today' in q or 'todays' in q or "today's" in q
             last_week = 'last week' in q or 'previous week' in q
 
             # Extract round number if present e.g. "round 5" or "r5"
             round_match = re.search(r'\bround\s*(\d+)\b', q)
             round_filter = int(round_match.group(1)) if round_match else None
 
-            # Strip known keywords including round/week words and "latest"
+            # Strip known keywords including round/week words
             filter_query = re.sub(
-                r'\b(missing|score|scores?|no|not|entered|overdue|matches?|without|for|show|list|today|todays|today\'s|last|previous|week|round|latest|recent|\d+)\b',
+                r'\b(missing|score|scores?|no|not|entered|overdue|matches?|without|for|show|list|today|todays|today\'s|last|previous|week|round|\d+)\b',
                 '', q
             ).strip()
 
