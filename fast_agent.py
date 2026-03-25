@@ -155,6 +155,10 @@ CLUB_ALIASES = {
     # Werribee
     "werribee city": "Werribee City FC",
     # Preston
+    "brimbank": "Brimbank Stallions FC",
+    "brimbank stallions": "Brimbank Stallions FC",
+    "brimbank stallions fc": "Brimbank Stallions FC",
+    "stallions": "Brimbank Stallions FC",
     "preston": "Preston Lions FC",
     "preston lions": "Preston Lions FC",
 
@@ -1059,7 +1063,13 @@ def tool_missing_scores(query: str = "", include_all_leagues: bool = False, toda
 
     # Use fixtures as single source — merge result data in where it exists
     # This prevents every match appearing twice (once from fixture, once from result)
+    # Build deduplicated match list from BOTH fixtures and results.
+    # Fixtures-only covers future/unscored games; results covers played games
+    # that may have already been removed from fixtures.json.
     all_matches = []
+    seen_mids = set()
+
+    # First pass: fixtures (merge result data where available)
     for fixture in fixtures:
         f_attrs = fixture.get("attributes", {})
         mid = f_attrs.get("match_hash_id")
@@ -1071,6 +1081,18 @@ def tool_missing_scores(query: str = "", include_all_leagues: bool = False, toda
             merged = dict(f_attrs)
             merged["source"] = "fixture_only"
         all_matches.append(merged)
+        if mid:
+            seen_mids.add(mid)
+
+    # Second pass: results that have NO matching fixture entry
+    for result in results:
+        r_attrs = result.get("attributes", {})
+        mid = r_attrs.get("match_hash_id")
+        if mid and mid not in seen_mids:
+            merged = dict(r_attrs)
+            merged["source"] = "result_only"
+            all_matches.append(merged)
+            seen_mids.add(mid)
 
     print(f"    Total unique matches: {len(all_matches)} ({len(result_lookup)} have results)")
     
@@ -4468,20 +4490,35 @@ def tool_club_vs_club(query: str) -> Any:
     token_b = re.sub(noise, '', vs_parts[1].strip()).strip()
 
     def _resolve(token):
-        # Try exact substring first (alias in token)
+        token = token.strip()
+        token_words = set(re.split(r'\W+', token)) - {''}
+
+        # Pass 1: every word in alias must be a whole word in the token
+        # Prevents 'lions' matching 'stallions', 'magic' matching 'manningham' etc.
         for alias in sorted(CLUB_ALIASES.keys(), key=len, reverse=True):
-            if alias in token:
+            alias_words = set(re.split(r'\W+', alias)) - {''}
+            if alias_words and alias_words.issubset(token_words):
                 return alias, CLUB_ALIASES[alias]
-        # Then try reverse (token in alias) — handles "pascoe" matching "pascoe vale"
+
+        # Pass 2: token words subset of alias (short queries like 'pascoe')
         for alias in sorted(CLUB_ALIASES.keys(), key=len, reverse=True):
-            if token in alias and len(token) >= 4:
+            alias_words = set(re.split(r'\W+', alias)) - {''}
+            if token_words and token_words.issubset(alias_words) and len(token) >= 5:
                 return alias, CLUB_ALIASES[alias]
-        return token, token
+
+        # No alias match - title-case for display
+        return token, token.title()
 
     alias_a, canon_a = _resolve(token_a)
     alias_b, canon_b = _resolve(token_b)
-    short_a = canon_a.split()[0] if canon_a else alias_a.title()
-    short_b = canon_b.split()[0] if canon_b else alias_b.title()
+
+    def _short(canon):
+        s = re.sub(r'(FC|SC|AFC|FK|AC|BFC)', '', canon).strip()
+        words = s.split()
+        return ' '.join(words[:2]) if len(words) >= 2 else (words[0] if words else canon)
+
+    short_a = _short(canon_a)
+    short_b = _short(canon_b)
 
     # Discover shared (comp, age_group) by scanning BOTH fixtures AND results
     comp_ag_clubs: dict = {}
@@ -4524,11 +4561,14 @@ def tool_club_vs_club(query: str) -> Any:
         pos_b = pts_b = gd_b = None
         for entry in ladder:
             team_base = _strip_age_group(entry["Team"]).lower()
-            if alias_a in team_base and pos_a is None:
+            team_words = set(re.split(r'\W+', team_base)) - {''}
+            alias_a_words = set(re.split(r'\W+', alias_a)) - {''}
+            alias_b_words = set(re.split(r'\W+', alias_b)) - {''}
+            if alias_a_words and alias_a_words.issubset(team_words) and pos_a is None:
                 pos_a = entry["Pos"]
                 pts_a = entry["PTS"]
                 gd_a  = entry["GD"]
-            if alias_b in team_base and pos_b is None:
+            if alias_b_words and alias_b_words.issubset(team_words) and pos_b is None:
                 pos_b = entry["Pos"]
                 pts_b = entry["PTS"]
                 gd_b  = entry["GD"]
@@ -4571,7 +4611,15 @@ def tool_club_vs_club(query: str) -> Any:
         away = a.get("away_team_name", "")
         hb   = _strip_age_group(home).lower()
         ab   = _strip_age_group(away).lower()
-        if not ((alias_a in hb and alias_b in ab) or (alias_b in hb and alias_a in ab)):
+        hb_words = set(re.split(r'\W+', hb)) - {''}
+        ab_words = set(re.split(r'\W+', ab)) - {''}
+        _aw = set(re.split(r'\W+', alias_a)) - {''}
+        _bw = set(re.split(r'\W+', alias_b)) - {''}
+        _a_in_h = _aw.issubset(hb_words)
+        _a_in_a = _aw.issubset(ab_words)
+        _b_in_h = _bw.issubset(hb_words)
+        _b_in_a = _bw.issubset(ab_words)
+        if not ((_a_in_h and _b_in_a) or (_b_in_h and _a_in_a)):
             continue
         hs  = a.get("home_score")
         as_ = a.get("away_score")
