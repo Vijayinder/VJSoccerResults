@@ -1228,17 +1228,17 @@ def header():
     last_updated = get_last_updated_time()
     # Main Title and Subtitle
     st.markdown(f"""
-        <div class="main-header" style="text-align: center;">
-        <h3 style='margin:0; padding:0;'>⚽ Junior Pro Football Intelligence</h3>
-        <p style='margin:0.5rem 0 0 0; font-size:16px; opacity:0.9;'>
-            {st.session_state.get('player_club') or 'League'} 
-            → {st.session_state.get('player_age_group') or 'Competition'} 
-            → Players
-        </p>
-        <span style="font-size: 12px; color: #000000; text-transform: uppercase; letter-spacing: 1px;">
-                📅 Data Updated: {last_updated}
-            </span>
-    </div>
+        <div class="main-header" style="text-align: center; position: relative;">
+            <h3 style='margin:0; padding:0;'>⚽ Junior Pro Football Intelligence</h3>
+            <p style='margin:0.5rem 0 0 0; font-size:16px; opacity:0.9;'>
+                {st.session_state.get('player_club') or 'League'} 
+                → {st.session_state.get('player_age_group') or 'Competition'} 
+                → Players
+            </p>
+            <span style="font-size: 12px; color: #000000; text-transform: uppercase; letter-spacing: 1px;">
+                    📅 Data Updated: {last_updated}
+                </span>
+        </div>
     """, unsafe_allow_html=True)
 
 
@@ -2422,8 +2422,8 @@ def main_app():
     
     
     
-    col_left, col_mid, col_right = st.columns([2, 6, 2])
-    
+    col_left, col_mid, col_right = st.columns([3, 4, 2])
+
     with col_left:
         if st.session_state.get("user_type") == "admin":
             st.markdown(f"""
@@ -2432,19 +2432,142 @@ def main_app():
                 </div>
             """, unsafe_allow_html=True)
         else:
-            st.markdown(f"""
-            <div style="padding: 10px 0;">
-                <div style=" display: inline-block;box-shadow: 0 2px 4px rgba(0,0,0,0.1)">
-                    <span style="font-size: 18px;  font-weight: 500;">👤 {st.session_state.get('full_name')}</span>
-                    <p><span style="font-size: 15px; ">⚽ {club} {age}</span></p>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+            # Player switcher — inline dropdown next to name
+            people = get_players_and_coaches_list(DATA_DIR)
+            current_name = st.session_state.get('full_name', 'Guest')
+            options_display = [f"👤 {current_name}  ▾"] + [format_player_display(p) for p in people]
+
+            # Find index of current user in list
+            current_uid = st.session_state.get("username", "")
+            current_idx = 0
+            for i, p in enumerate(people):
+                if p.get("player_id") == current_uid:
+                    current_idx = i + 1  # offset by 1 for the first "current" option
+                    break
+
+            selected_display = st.selectbox(
+                "Switch player",
+                options=options_display,
+                index=current_idx,
+                label_visibility="collapsed",
+                key="player_switcher_dropdown",
+                help="Switch to a different player profile"
+            )
+
+            # If user picked a real player (not the placeholder)
+            if selected_display and selected_display != options_display[0]:
+                selected_person = next(
+                    (p for p in people if format_player_display(p) == selected_display), None
+                )
+                if selected_person and selected_person.get("player_id") != current_uid:
+                    league, competition = get_player_league_info(
+                        selected_person["name"],
+                        selected_person["club"],
+                        selected_person.get("age_group", "")
+                    )
+                    st.session_state["authenticated"]      = True
+                    st.session_state["user_type"]          = "player"
+                    st.session_state["username"]           = selected_person["player_id"]
+                    st.session_state["full_name"]          = selected_person["name"]
+                    st.session_state["player_club"]        = selected_person["club"]
+                    st.session_state["player_age_group"]   = selected_person.get("age_group", "")
+                    st.session_state["player_role"]        = selected_person["role"]
+                    st.session_state["role"]               = selected_person["role"]
+                    st.session_state["last_activity"]      = datetime.now()
+                    st.session_state["player_league"]      = league
+                    st.session_state["player_competition"] = competition
+                    save_player_selection(st.session_state["session_id"], selected_person)
+                    update_user_config(selected_person["club"], selected_person.get("age_group", ""))
+                    log_login(
+                        username=selected_person["player_id"],
+                        full_name=selected_person["name"],
+                        session_id=st.session_state["session_id"]
+                    )
+                    st.query_params["uid"] = selected_person["player_id"]
+                    st.rerun()
+
+            st.caption(f"⚽ {club} {age}")
+
     with col_right:
-        if st.button("🚪 Logout", key="logout_button", width='content'):
-            logout_user()
-            st.session_state.clear()
-            st.rerun()
+        if "show_admin_login" not in st.session_state:
+            st.session_state["show_admin_login"] = False
+        if st.session_state.get("user_type") == "admin":
+            if st.button("🚪 Logout", key="admin_logout_button", width='content'):
+                logout_user()
+                st.rerun()
+        else:
+            if st.button("🔐", key="admin_button", help="Admin login", width='content'):
+                st.session_state["show_admin_login"] = not st.session_state["show_admin_login"]
+                st.rerun()
+
+    # Pin the admin icon button to the far right, small and subtle
+    st.markdown("""
+        <style>
+        div[data-testid="stColumn"]:last-child {
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-start;
+        }
+        div[data-testid="stColumn"]:last-child button[kind="secondary"] {
+            background: transparent !important;
+            border: 1px solid rgba(180,180,180,0.35) !important;
+            color: #bbb !important;
+            font-size: 14px !important;
+            padding: 1px 7px !important;
+            min-height: 26px !important;
+            height: 26px !important;
+            line-height: 1 !important;
+            border-radius: 5px !important;
+        }
+        div[data-testid="stColumn"]:last-child button[kind="secondary"]:hover {
+            border-color: #999 !important;
+            color: #666 !important;
+            background: rgba(0,0,0,0.04) !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+    # ── Inline Admin Login Panel (renders outside columns so it spans full width) ──
+    if st.session_state.get("show_admin_login") and st.session_state.get("user_type") != "admin":
+        with st.container(border=True):
+            st.markdown("#### 🔐 Admin Login")
+            col_u, col_p, col_btn, col_close = st.columns([2, 2, 1, 1])
+            with col_u:
+                admin_username = st.text_input("Username", key="inline_admin_user", label_visibility="collapsed", placeholder="Username")
+            with col_p:
+                admin_password = st.text_input("Password", type="password", key="inline_admin_pass", label_visibility="collapsed", placeholder="Password")
+            with col_btn:
+                if st.button("Login", key="inline_admin_submit", type="primary", width='content'):
+                    if admin_username and admin_password:
+                        admin = verify_admin(admin_username, admin_password)
+                        if admin:
+                            st.session_state["authenticated"]      = True
+                            st.session_state["user_type"]          = "admin"
+                            st.session_state["username"]           = admin["username"]
+                            st.session_state["full_name"]          = admin["full_name"]
+                            st.session_state["role"]               = "admin"
+                            st.session_state["last_activity"]      = datetime.now()
+                            st.session_state["player_club"]        = "Heidelberg United"
+                            st.session_state["player_age_group"]   = "U16"
+                            st.session_state["player_role"]        = "player"
+                            admin_league, admin_comp = get_player_league_info("Shaurya", "Heidelberg United", "U16")
+                            st.session_state["player_league"]      = admin_league
+                            st.session_state["player_competition"] = admin_comp
+                            st.session_state["show_admin_login"]   = False
+                            log_login(
+                                username=admin["username"],
+                                full_name=admin["full_name"],
+                                session_id=st.session_state["session_id"]
+                            )
+                            st.rerun()
+                        else:
+                            st.error("❌ Invalid credentials")
+                    else:
+                        st.warning("Enter username and password")
+            with col_close:
+                if st.button("✕", key="inline_admin_close", width='content'):
+                    st.session_state["show_admin_login"] = False
+                    st.rerun()
     # Sidebar — admin only
     if st.session_state.get("role") == "admin":
         with st.sidebar:

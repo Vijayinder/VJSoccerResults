@@ -1015,7 +1015,7 @@ def tool_missing_scores(query: str = "", include_all_leagues: bool = False, toda
     print(f"  query='{query}', today_only={today_only}, last_week={last_week}, round_filter={round_filter}")
 
     # Target leagues if not showing all
-    target_leagues = ["YPL1", "YPL2", "YSL NW", "YSL SE", "VPL"] if not include_all_leagues else []
+    target_leagues = ["YPL1", "YPL2", "YSL NW", "YSL SE", "YSL", "VPL Men", "VPL Women"] if not include_all_leagues else []
 
     missing_scores = []
 
