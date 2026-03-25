@@ -732,22 +732,8 @@ def show_insights_page():
         return
 
     # ── Page title ─────────────────────────────────────────────────────────
-    st.markdown("### 📊 Match & Player Insights")
-
-    st.markdown("""
-    This page analyses your club's data across **8 insight areas**:
-
-    | # | Section | What it tells you |
-    |---|---------|-------------------|
-    | 1 | ⚽ **Goal Timing** | Which 15-min periods your team scores and concedes most — useful for warm-up and in-game focus |
-    | 2 | 🟨🟥 **Discipline** | When yellow and red cards tend to happen — helps identify high-risk periods |
-    | 3 | 📈 **Match Patterns** | First-scorer win rate, home vs away record, clean sheet %, and comeback rate |
-    | 4 | 🎽 **Starters vs Subs** | Whether starters or substitutes are contributing more goals per game |
-    | 5 | 🔥 **Form Streaks** | Players on current scoring streaks, and players in goalless droughts |
-
-    Use the **Club** and **Age group** filters below to narrow results to a specific team, or leave blank to see across all clubs.
-    """)
-    st.markdown("---")
+    st.markdown("### 📊 Season Insights Briefing")
+    st.caption("A conversational read-out of your team's patterns, trends, and player form — all drawn from match data.")
 
     # ── Filters ────────────────────────────────────────────────────────────
     col_club, col_age = st.columns([3, 1])
@@ -788,125 +774,262 @@ def show_insights_page():
         )
         return
 
-    # ─────────────────────────────────────────────────────────────────────
-    # Section 1 — Goal timing
-    # ─────────────────────────────────────────────────────────────────────
-    with st.expander("⚽ Goal Timing — When do goals happen?", expanded=True):
-        if goal_dist["has_data"]:
-            st.markdown(goal_dist["narrative"])
-            df_goals = pd.DataFrame({
-                "Period":     list(goal_dist["bands"].keys()),
-                "Goals":      list(goal_dist["bands"].values()),
-            })
-            # percentage column
-            df_goals["%"] = (df_goals["Goals"] / goal_dist["total"] * 100).round(1)
+    # ── Build the briefing label ────────────────────────────────────────────
+    subject = club_filter or "All Clubs"
+    if age_filter:
+        subject += f" ({age_filter})"
 
-            col_tbl, col_txt = st.columns([2, 1])
-            with col_tbl:
-                st.dataframe(
-                    df_goals,
-                    hide_index=True,
-                    column_config={
-                        "Period": st.column_config.TextColumn("Period",  width="small"),
-                        "Goals":  st.column_config.NumberColumn("Goals", width="small"),
-                        "%":      st.column_config.NumberColumn("%",     width="small"),
-                    },
-                    height=(len(df_goals) + 1) * 35 + 10,
-                )
-            with col_txt:
-                h1 = goal_dist["half_split"].get("1H", 0)
-                h2 = goal_dist["half_split"].get("2H", 0)
-                st.metric("1st Half Goals", h1)
-                st.metric("2nd Half Goals", h2)
-                st.metric("Total Goals (with minute)", goal_dist["total"])
+    st.markdown(f"#### 📋 Briefing — {subject}")
+
+    # ─────────────────────────────────────────────────────────────────────
+    # PARAGRAPH 1 — Goals & Timing
+    # ─────────────────────────────────────────────────────────────────────
+    if goal_dist["has_data"]:
+        peak   = max(goal_dist["bands"], key=goal_dist["bands"].get)
+        total  = goal_dist["total"]
+        peak_n = goal_dist["bands"][peak]
+        peak_pct = round(peak_n / total * 100)
+        h1 = goal_dist["half_split"].get("1H", 0)
+        h2 = goal_dist["half_split"].get("2H", 0)
+        h1_pct = round(h1 / total * 100) if total else 0
+
+        if h1_pct >= 60:
+            half_sentence = f"The first half is considerably more productive, accounting for {h1_pct}% of goals ({h1} vs {h2})."
+        elif h1_pct <= 40:
+            half_sentence = f"Goals tend to come later — {100 - h1_pct}% arrive in the second half ({h2} vs {h1} in the first)."
         else:
-            st.info("No goal-minute data found. Events may not carry a `minute` field in your JSON.")
+            half_sentence = f"Goals are spread fairly evenly: {h1} in the first half and {h2} in the second."
+
+        st.markdown(f"""
+**⚽ Attacking Pattern**
+
+Looking at {total} goals where minute data was recorded, the most dangerous 15-minute window is the **{peak}** period,
+which accounts for {peak_n} goals — {peak_pct}% of the total. {half_sentence}
+This is worth keeping in mind for warm-up routines and how the team sets up mentally at the start of each half.
+        """)
+
+        df_goals = pd.DataFrame({
+            "Period": list(goal_dist["bands"].keys()),
+            "Goals":  list(goal_dist["bands"].values()),
+        })
+        df_goals["%"] = (df_goals["Goals"] / total * 100).round(1)
+        col_tbl, col_txt = st.columns([2, 1])
+        with col_tbl:
+            st.dataframe(df_goals, hide_index=True,
+                column_config={
+                    "Period": st.column_config.TextColumn("Period", width="small"),
+                    "Goals":  st.column_config.NumberColumn("Goals", width="small"),
+                    "%":      st.column_config.NumberColumn("%",     width="small"),
+                },
+                height=(len(df_goals) + 1) * 35 + 10)
+        with col_txt:
+            st.metric("1st Half", h1)
+            st.metric("2nd Half", h2)
+            st.metric("Total Goals", total)
+        st.markdown("---")
 
     # ─────────────────────────────────────────────────────────────────────
-    # Section 2 — Card timing
+    # PARAGRAPH 2 — Discipline
     # ─────────────────────────────────────────────────────────────────────
-    with st.expander("🟨🟥 Discipline — When do cards happen?", expanded=True):
-        if card_dist["has_data"]:
-            for n in card_dist["narratives"]:
-                st.markdown(n)
+    if card_dist["has_data"]:
+        yc_total = card_dist["yc_total"]
+        rc_total = card_dist["rc_total"]
+        yc       = card_dist["yellow"]
+        rc       = card_dist["red"]
 
-            col_y, col_r = st.columns(2)
-            with col_y:
-                st.markdown("**Yellow Card Distribution**")
-                yc_df = pd.DataFrame({
-                    "Period":  BANDS,
-                    "Yellow":  [card_dist["yellow"][b] for b in BANDS],
+        late_yc  = sum(yc[b] for b in ["61–75", "76–90+"])
+        late_pct = round(late_yc / yc_total * 100) if yc_total else 0
+        peak_yc  = max(yc, key=yc.get) if yc_total else None
+
+        if late_pct >= 50:
+            yc_sentence = (f"Over half of all yellow cards ({late_pct}%) come in the last 30 minutes — "
+                           f"a pattern that usually reflects fatigue or mounting frustration late in games.")
+        elif peak_yc:
+            yc_sentence = (f"Yellow cards cluster around the **{peak_yc}** window "
+                           f"({yc[peak_yc]} of {yc_total}), which is the highest-risk period for discipline.")
+        else:
+            yc_sentence = f"There have been {yc_total} yellow cards across the season."
+
+        rc_sentence = ""
+        if rc_total > 0:
+            peak_rc = max(rc, key=rc.get)
+            rc_sentence = (f" Red cards are rare but have occurred {rc_total} time{'s' if rc_total > 1 else ''}, "
+                           f"most commonly in the **{peak_rc}** period.")
+
+        st.markdown(f"""
+**🟨 Discipline**
+
+{yc_sentence}{rc_sentence}
+Teams that maintain composure in the final quarter often hold results — this is an area worth addressing
+in training if the pattern is consistent across multiple age groups.
+        """)
+
+        col_y, col_r = st.columns(2)
+        with col_y:
+            st.caption("Yellow Card Distribution")
+            yc_df = pd.DataFrame({"Period": BANDS, "Yellow": [yc[b] for b in BANDS]})
+            st.dataframe(yc_df, hide_index=True, height=(len(yc_df)+1)*35+10)
+        with col_r:
+            st.caption("Red Card Distribution")
+            rc_df = pd.DataFrame({"Period": BANDS, "Red": [rc[b] for b in BANDS]})
+            st.dataframe(rc_df, hide_index=True, height=(len(rc_df)+1)*35+10)
+        st.markdown("---")
+
+    # ─────────────────────────────────────────────────────────────────────
+    # PARAGRAPH 3 — Match patterns
+    # ─────────────────────────────────────────────────────────────────────
+    pattern_parts = []
+
+    if fs_adv["has_data"]:
+        wp = fs_adv["win_pct"]
+        if wp >= 70:
+            fs_line = f"Scoring first is nearly decisive — the opening goal leads to a win {wp}% of the time. Getting on the board early should be a clear game plan priority."
+        elif wp >= 55:
+            fs_line = f"The first goal carries real weight: the team that scores first wins {wp}% of matches. There's a strong case for pressing high and looking to open the scoring quickly."
+        else:
+            fs_line = f"Interestingly, the first goal isn't as decisive as you might expect — the opening scorer wins only {wp}% of the time, meaning matches stay open and comebacks are common."
+        pattern_parts.append(fs_line)
+
+    if ha_split["has_data"]:
+        hgpg = ha_split["home_gpg"]
+        agpg = ha_split["away_gpg"]
+        hm   = ha_split["home_matches"]
+        am   = ha_split["away_matches"]
+        if hgpg > agpg + 0.3:
+            ha_line = f"There's a notable home advantage — averaging {hgpg} goals per home game vs {agpg} away, across {hm} home and {am} away matches."
+        elif agpg > hgpg + 0.3:
+            ha_line = f"Unusually, the team actually scores more away from home ({agpg}/game) than at home ({hgpg}/game) — suggesting strong performances when travelling."
+        else:
+            ha_line = f"Home and away output is consistent ({hgpg} vs {agpg} goals/game), which suggests the team's style doesn't depend heavily on the venue."
+        pattern_parts.append(ha_line)
+
+    if cs_rate["has_data"]:
+        rate   = cs_rate["rate_pct"]
+        played = cs_rate["played"]
+        cs     = cs_rate["clean_sheets"]
+        if rate >= 50:
+            cs_line = f"Defensively, this is an impressive unit — {cs} clean sheets from {played} games ({rate}%), keeping opponents off the scoresheet more often than not."
+        elif rate >= 30:
+            cs_line = f"The defence has been solid in patches, posting {cs} clean sheets from {played} games ({rate}%)."
+        else:
+            cs_line = f"Conceding is a concern — only {cs} clean sheets from {played} games ({rate}%), meaning the team rarely keeps a shut-out."
+        pattern_parts.append(cs_line)
+
+    if comeback["has_data"]:
+        went = comeback["went_behind"]
+        came = comeback["came_back"]
+        rate = comeback["rate_pct"]
+        if rate >= 60:
+            cb_line = f"Perhaps most tellingly, the team shows excellent mental resilience — coming from behind to salvage a result in {came} of {went} occasions ({rate}%). That's a squad that doesn't give up."
+        elif rate >= 40:
+            cb_line = f"When behind, the team has shown the ability to fight back, recovering points in {came} of {went} deficits ({rate}%)."
+        else:
+            cb_line = f"Conceding the first goal tends to be costly — the team has come back in only {came} of {went} situations ({rate}%), so avoiding falling behind is crucial."
+        pattern_parts.append(cb_line)
+
+    if pattern_parts:
+        st.markdown("**📈 Match Patterns**\n\n" + " ".join(pattern_parts))
+
+        # Summary table
+        pattern_rows = []
+        if fs_adv["has_data"]:
+            pattern_rows.append({"Metric": "First scorer wins", "Value": f"{fs_adv['win_pct']}%", "Sample": f"{fs_adv['total']} matches"})
+        if ha_split["has_data"]:
+            pattern_rows.append({"Metric": "Home goals/game",  "Value": str(ha_split["home_gpg"]), "Sample": f"{ha_split['home_matches']} home games"})
+            pattern_rows.append({"Metric": "Away goals/game",  "Value": str(ha_split["away_gpg"]), "Sample": f"{ha_split['away_matches']} away games"})
+        if cs_rate["has_data"]:
+            pattern_rows.append({"Metric": "Clean sheet rate", "Value": f"{cs_rate['rate_pct']}%", "Sample": f"{cs_rate['played']} games"})
+        if comeback["has_data"]:
+            pattern_rows.append({"Metric": "Comeback rate",    "Value": f"{comeback['rate_pct']}%", "Sample": f"{comeback['went_behind']} deficits"})
+        if pattern_rows:
+            st.dataframe(pd.DataFrame(pattern_rows), hide_index=True,
+                height=(len(pattern_rows)+1)*35+10,
+                column_config={
+                    "Metric": st.column_config.TextColumn("Metric", width="medium"),
+                    "Value":  st.column_config.TextColumn("Value",  width="small"),
+                    "Sample": st.column_config.TextColumn("Based on", width="medium"),
                 })
-                st.dataframe(yc_df, hide_index=True, height=(len(yc_df)+1)*35+10)
-            with col_r:
-                st.markdown("**Red Card Distribution**")
-                rc_df = pd.DataFrame({
-                    "Period": BANDS,
-                    "Red":    [card_dist["red"][b] for b in BANDS],
-                })
-                st.dataframe(rc_df, hide_index=True, height=(len(rc_df)+1)*35+10)
+        st.markdown("---")
+
+    # ─────────────────────────────────────────────────────────────────────
+    # PARAGRAPH 4 — Starters vs Subs
+    # ─────────────────────────────────────────────────────────────────────
+    if starter["has_data"]:
+        sm    = starter["starter_matches"]
+        sg    = starter["starter_goals"]
+        sgpg  = starter["starter_gpg"]
+        subm  = starter.get("sub_matches", 0)
+        subg  = starter.get("sub_goals", 0)
+        subgpg = starter.get("sub_gpg") or 0
+
+        if subm:
+            if sgpg > subgpg * 1.2:
+                bench_line = (f"Starting players are clearly the primary source of goals — {sg} goals across {sm} appearances "
+                              f"({sgpg:.2f}/game) compared to {subg} from bench players across {subm} appearances ({subgpg:.2f}/game). "
+                              f"The starting XI is doing the heavy lifting.")
+            elif subgpg and subgpg > sgpg * 1.2:
+                bench_line = (f"Interestingly, substitutes are punching above their weight — {subgpg:.2f} goals per appearance "
+                              f"vs {sgpg:.2f} for starters. Bringing on fresh legs seems to unlock something.")
+            else:
+                bench_line = (f"Goal contribution is well balanced across starters and subs — starters averaging {sgpg:.2f}/game "
+                              f"and bench players {subgpg:.2f}/game across {sm} and {subm} appearances respectively.")
         else:
-            st.info("No card-minute data found.")
+            bench_line = f"Starters have recorded {sg} goals across {sm} appearances ({sgpg:.2f}/game). No sub appearance data available."
+
+        st.markdown(f"**🎽 Starters vs Substitutes**\n\n{bench_line}")
+
+        rows = [{"Role": "Starter", "Matches": sm, "Goals": sg, "Goals/Match": sgpg}]
+        if subm:
+            rows.append({"Role": "Sub/Bench", "Matches": subm, "Goals": subg, "Goals/Match": subgpg})
+        st.dataframe(pd.DataFrame(rows), hide_index=True, height=(len(rows)+1)*35+10)
+        st.markdown("---")
 
     # ─────────────────────────────────────────────────────────────────────
-    # Section 3 — First scorer, Home/Away, Clean sheets, Comebacks
+    # PARAGRAPH 5 — Form streaks
     # ─────────────────────────────────────────────────────────────────────
-    with st.expander("📈 Match Patterns", expanded=True):
-        sections = [
-            (fs_adv,  "First scorer wins"),
-            (ha_split, "Home vs Away"),
-            (cs_rate,  "Clean sheets"),
-            (comeback, "Comeback rate"),
-        ]
-        for data, _label in sections:
-            if data.get("has_data"):
-                st.markdown(data["narrative"])
-                st.markdown("---")
+    if streaks["has_data"]:
+        streak_list  = streaks.get("streaks", [])
+        drought_list = streaks.get("droughts", [])
 
-        if not any(d.get("has_data") for d, _ in sections):
-            st.info("Insufficient match-centre data for pattern analysis.")
+        streak_text = drought_text = ""
 
-    # ─────────────────────────────────────────────────────────────────────
-    # Section 4 — Starters vs Subs
-    # ─────────────────────────────────────────────────────────────────────
-    with st.expander("🎽 Starters vs Substitutes", expanded=False):
-        if starter["has_data"]:
-            st.markdown(starter["narrative"])
-            rows = [
-                {"Role": "Starter", "Matches": starter["starter_matches"],
-                 "Goals": starter["starter_goals"], "Goals/Match": starter["starter_gpg"]},
-            ]
-            if starter["sub_matches"]:
-                rows.append(
-                    {"Role": "Sub/Bench", "Matches": starter["sub_matches"],
-                     "Goals": starter["sub_goals"],   "Goals/Match": starter["sub_gpg"]},
-                )
-            st.dataframe(pd.DataFrame(rows), hide_index=True,
-                         height=(len(rows)+1)*35+10)
-        else:
-            st.info("No starter/sub data available.")
+        if streak_list:
+            top    = streak_list[0]
+            others = streak_list[1:3]
+            streak_text = (f"**{top['Player']}** is the standout in-form scorer right now, "
+                           f"netting in {top['Streak']} consecutive games.")
+            if others:
+                names = " and ".join(f"**{p['Player']}** ({p['Streak']} games)" for p in others)
+                streak_text += f" {names} are also on scoring runs worth watching."
 
-    # ─────────────────────────────────────────────────────────────────────
-    # Section 5 — Form streaks
-    # ─────────────────────────────────────────────────────────────────────
-    with st.expander("🔥 Player Form — Streaks & Droughts", expanded=False):
-        if streaks["has_data"]:
-            col_s, col_d = st.columns(2)
-            with col_s:
-                st.markdown("**🔥 Current Scoring Streaks** (consecutive games with a goal)")
-                if streaks["streaks"]:
-                    st.dataframe(pd.DataFrame(streaks["streaks"]),
-                                 hide_index=True,
-                                 height=(len(streaks["streaks"])+1)*35+10)
-                else:
-                    st.caption("No active streaks of 2+ games.")
-            with col_d:
-                st.markdown("**❄️ Goalless Droughts** (games without scoring, minimum 3)")
-                if streaks["droughts"]:
-                    st.dataframe(pd.DataFrame(streaks["droughts"]),
-                                 hide_index=True,
-                                 height=(len(streaks["droughts"])+1)*35+10)
-                else:
-                    st.caption("No significant goalless runs found.")
-        else:
-            st.info("Not enough match data to compute streaks (minimum 3 matches per player).")
+        if drought_list:
+            top    = drought_list[0]
+            others = drought_list[1:3]
+            drought_text = (f"At the other end, **{top['Player']}** has gone {top['Drought']} games without a goal "
+                            f"despite {top['Total G']} for the season — a player who may need a confidence boost or a tactical role change.")
+            if others:
+                names = " and ".join(f"**{p['Player']}** ({p['Drought']} games)" for p in others)
+                drought_text += f" {names} are also experiencing lean patches."
+
+        body = "\n\n".join(filter(None, [streak_text, drought_text]))
+        if body:
+            st.markdown(f"**🔥 Player Form**\n\n{body}")
+
+        col_s, col_d = st.columns(2)
+        with col_s:
+            st.caption("🔥 Current Scoring Streaks (2+ games)")
+            if streak_list:
+                st.dataframe(pd.DataFrame(streak_list), hide_index=True,
+                             height=(len(streak_list)+1)*35+10)
+            else:
+                st.caption("No active streaks of 2+ games.")
+        with col_d:
+            st.caption("❄️ Goalless Droughts (3+ games)")
+            if drought_list:
+                st.dataframe(pd.DataFrame(drought_list), hide_index=True,
+                             height=(len(drought_list)+1)*35+10)
+            else:
+                st.caption("No significant goalless runs found.")
+        st.markdown("---")
+
+    st.caption("All figures are based on match records in the loaded JSON data files. Only events with recorded minutes are included in timing breakdowns.")
