@@ -1031,5 +1031,5 @@ in training if the pattern is consistent across multiple age groups.
             else:
                 st.caption("No significant goalless runs found.")
         st.markdown("---")
-
+ 
     st.caption("All figures are based on match records in the loaded JSON data files. Only events with recorded minutes are included in timing breakdowns.")
