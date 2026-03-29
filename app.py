@@ -2500,32 +2500,7 @@ def main_app():
                 st.session_state["show_admin_login"] = not st.session_state["show_admin_login"]
                 st.rerun()
 
-    # Pin the admin icon button to the far right, small and subtle
-##    st.markdown("""
-##        <style>
-##        div[data-testid="stColumn"]:last-child {
-##            display: flex;
-##            justify-content: flex-end;
-##            align-items: flex-start;
-##        }
-##        div[data-testid="stColumn"]:last-child button[kind="secondary"] {
-##            background: transparent !important;
-##            border: 1px solid rgba(180,180,180,0.35) !important;
-##            color: #bbb !important;
-##            font-size: 14px !important;
-##            padding: 1px 7px !important;
-##            min-height: 26px !important;
-##           height: 26px !important;
-##            line-height: 1 !important;
-##            border-radius: 5px !important;
-##        }
-##        div[data-testid="stColumn"]:last-child button[kind="secondary"]:hover {
-##            border-color: #999 !important;
-##            color: #666 !important;
-##            background: rgba(0,0,0,0.04) !important;
-##        }
-##        </style>
-##    """, unsafe_allow_html=True)
+
 
     # ── Inline Admin Login Panel (renders outside columns so it spans full width) ──
     if st.session_state.get("show_admin_login") and st.session_state.get("user_type") != "admin":
@@ -2931,6 +2906,7 @@ def main_app():
         # Always clear the previous answer first so stale results never show
         st.session_state["search_answer"]      = None
         st.session_state["search_answer_time"] = 0.0
+        st.session_state["player_list_page"]   = 1  # reset pagination on new search
         if is_natural_language_query(search):
             log_search(
                 username=st.session_state["username"],
@@ -3027,16 +3003,47 @@ def main_app():
                 if data:
                     df = pd.DataFrame(data)
                     num_rows = len(df)
-                    h = 600 if num_rows > 16 else (num_rows + 1) * 35 + 10
-                    st.caption("👇 Click a player row to view their full profile")
+                    PAGE_SIZE = 25
+
+                    if num_rows > PAGE_SIZE:
+                        total_pages = (num_rows + PAGE_SIZE - 1) // PAGE_SIZE
+                        # Persist page in session state, reset when new search comes in
+                        _pg_key = "player_list_page"
+                        if _pg_key not in st.session_state:
+                            st.session_state[_pg_key] = 1
+                        page = st.session_state[_pg_key]
+
+                        # Prev / Next buttons
+                        col_prev, col_info, col_next = st.columns([1, 3, 1])
+                        with col_prev:
+                            if st.button("◀ Prev", key="pl_prev", disabled=(page <= 1), width='content'):
+                                st.session_state[_pg_key] = page - 1
+                                st.rerun()
+                        with col_info:
+                            start = (page - 1) * PAGE_SIZE
+                            st.caption(f"Page {page} of {total_pages}  •  Showing {start+1}–{min(start+PAGE_SIZE, num_rows)} of {num_rows} players  •  👇 Click a row to view profile")
+                        with col_next:
+                            if st.button("Next ▶", key="pl_next", disabled=(page >= total_pages), width='content'):
+                                st.session_state[_pg_key] = page + 1
+                                st.rerun()
+
+                        df_page = df.iloc[start:start + PAGE_SIZE].reset_index(drop=True)
+                    else:
+                        df_page = df
+                        page = 1
+                        start = 0
+                        st.caption("👇 Click a player row to view their full profile")
+
+                    h = (len(df_page) + 1) * 35 + 10
                     sel = st.dataframe(
-                        df, hide_index=True, width='content', height=h,
+                        df_page, hide_index=True, width='content', height=h,
                         selection_mode="single-row", on_select="rerun",
-                        key="player_list_sel",
+                        key=f"player_list_sel_{page}",
                     )
                     _pl_sel = sel.selection.get("rows", [])
                     if _pl_sel:
-                        _fire_query(f"stats for {df.iloc[_pl_sel[0]]['Player']}")
+                        st.session_state["player_list_page"] = 1  # reset page on profile click
+                        _fire_query(f"stats for {df_page.iloc[_pl_sel[0]]['Player']}")
 
             elif answer.get("type") == "team_stats":
                 st.markdown(answer.get("summary", ""))
@@ -3082,10 +3089,38 @@ def main_app():
                     if yellow_rows:
                         df_y = pd.DataFrame([{k: v for k, v in r.items() if not k.startswith("_")}
                                              for r in yellow_rows])
-                        _yk = f"cards_week_y_{st.session_state.get('expander_collapse_counter',0)}"
-                        h = min(500, (len(df_y) + 1) * 35 + 10)
-                        st.caption("👇 Click a row to view player details")
-                        sel_y = st.dataframe(df_y, hide_index=True, width='content', height=h,
+                        PAGE_SIZE_C = 20
+                        _ypage_key = f"cards_y_page_{st.session_state.get('expander_collapse_counter',0)}"
+                        if _ypage_key not in st.session_state:
+                            st.session_state[_ypage_key] = 1
+                        ypage = st.session_state[_ypage_key]
+                        total_y = len(df_y)
+                        total_ypages = (total_y + PAGE_SIZE_C - 1) // PAGE_SIZE_C
+
+                        if total_y > PAGE_SIZE_C:
+                            cy_prev, cy_info, cy_next = st.columns([1, 3, 1])
+                            with cy_prev:
+                                if st.button("◀", key="yc_prev", disabled=(ypage<=1), width='content'):
+                                    st.session_state[_ypage_key] = ypage - 1
+                                    st.rerun()
+                            with cy_info:
+                                ystart = (ypage-1)*PAGE_SIZE_C
+                                st.caption(f"Page {ypage}/{total_ypages}  •  {ystart+1}–{min(ystart+PAGE_SIZE_C,total_y)} of {total_y}  •  👇 Click row for profile")
+                            with cy_next:
+                                if st.button("▶", key="yc_next", disabled=(ypage>=total_ypages), width='content'):
+                                    st.session_state[_ypage_key] = ypage + 1
+                                    st.rerun()
+                            df_y_page = df_y.iloc[ystart:ystart+PAGE_SIZE_C].reset_index(drop=True)
+                            yellow_rows_page = yellow_rows[ystart:ystart+PAGE_SIZE_C]
+                        else:
+                            df_y_page = df_y
+                            yellow_rows_page = yellow_rows
+                            ypage = 1
+                            st.caption("👇 Click a row to view player details")
+
+                        _yk = f"cards_week_y_{st.session_state.get('expander_collapse_counter',0)}_{ypage}"
+                        h = (len(df_y_page) + 1) * 35 + 10
+                        sel_y = st.dataframe(df_y_page, hide_index=True, width='content', height=h,
                             selection_mode="single-row", on_select="rerun", key=_yk,
                             column_config={
                                 "Date":     st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="medium"),
@@ -3095,10 +3130,12 @@ def main_app():
                                 "Opponent": st.column_config.TextColumn("Opponent", width="medium"),
                                 "Min":      st.column_config.TextColumn("Min",      width="small"),
                                 "Role":     st.column_config.TextColumn("Role",     width="small"),
+                                "Tot 🟨":   st.column_config.NumberColumn("Tot 🟨", width="small", help="Season total yellow cards"),
+                                "Tot 🟥":   st.column_config.NumberColumn("Tot 🟥", width="small", help="Season total red cards"),
                             })
                         _ysel = sel_y.selection.get("rows", [])
                         if _ysel:
-                            _pname = yellow_rows[_ysel[0]].get("_pname", "")
+                            _pname = yellow_rows_page[_ysel[0]].get("_pname", "")
                             if _pname:
                                 _fire_query(f"stats for {_pname}")
                     else:
@@ -3109,10 +3146,38 @@ def main_app():
                     if red_rows:
                         df_r = pd.DataFrame([{k: v for k, v in r.items() if not k.startswith("_")}
                                              for r in red_rows])
-                        _rk = f"cards_week_r_{st.session_state.get('expander_collapse_counter',0)}"
-                        h = min(500, (len(df_r) + 1) * 35 + 10)
-                        st.caption("👇 Click a row to view player details")
-                        sel_r = st.dataframe(df_r, hide_index=True, width='content', height=h,
+                        PAGE_SIZE_C = 20
+                        _rpage_key = f"cards_r_page_{st.session_state.get('expander_collapse_counter',0)}"
+                        if _rpage_key not in st.session_state:
+                            st.session_state[_rpage_key] = 1
+                        rpage = st.session_state[_rpage_key]
+                        total_r = len(df_r)
+                        total_rpages = (total_r + PAGE_SIZE_C - 1) // PAGE_SIZE_C
+
+                        if total_r > PAGE_SIZE_C:
+                            cr_prev, cr_info, cr_next = st.columns([1, 3, 1])
+                            with cr_prev:
+                                if st.button("◀", key="rc_prev", disabled=(rpage<=1), width='content'):
+                                    st.session_state[_rpage_key] = rpage - 1
+                                    st.rerun()
+                            with cr_info:
+                                rstart = (rpage-1)*PAGE_SIZE_C
+                                st.caption(f"Page {rpage}/{total_rpages}  •  {rstart+1}–{min(rstart+PAGE_SIZE_C,total_r)} of {total_r}  •  👇 Click row for profile")
+                            with cr_next:
+                                if st.button("▶", key="rc_next", disabled=(rpage>=total_rpages), width='content'):
+                                    st.session_state[_rpage_key] = rpage + 1
+                                    st.rerun()
+                            df_r_page = df_r.iloc[rstart:rstart+PAGE_SIZE_C].reset_index(drop=True)
+                            red_rows_page = red_rows[rstart:rstart+PAGE_SIZE_C]
+                        else:
+                            df_r_page = df_r
+                            red_rows_page = red_rows
+                            rpage = 1
+                            st.caption("👇 Click a row to view player details")
+
+                        _rk = f"cards_week_r_{st.session_state.get('expander_collapse_counter',0)}_{rpage}"
+                        h = (len(df_r_page) + 1) * 35 + 10
+                        sel_r = st.dataframe(df_r_page, hide_index=True, width='content', height=h,
                             selection_mode="single-row", on_select="rerun", key=_rk,
                             column_config={
                                 "Date":     st.column_config.DateColumn("Date", format="ddd, DD-MMM", width="medium"),
@@ -3122,10 +3187,12 @@ def main_app():
                                 "Opponent": st.column_config.TextColumn("Opponent", width="medium"),
                                 "Min":      st.column_config.TextColumn("Min",      width="small"),
                                 "Role":     st.column_config.TextColumn("Role",     width="small"),
+                                "Tot 🟨":   st.column_config.NumberColumn("Tot 🟨", width="small", help="Season total yellow cards"),
+                                "Tot 🟥":   st.column_config.NumberColumn("Tot 🟥", width="small", help="Season total red cards"),
                             })
                         _rsel = sel_r.selection.get("rows", [])
                         if _rsel:
-                            _pname = red_rows[_rsel[0]].get("_pname", "")
+                            _pname = red_rows_page[_rsel[0]].get("_pname", "")
                             if _pname:
                                 _fire_query(f"stats for {_pname}")
                     else:
