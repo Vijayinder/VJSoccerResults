@@ -48648,5 +48648,55 @@
                 "href": "https://mc-api.dribl.com/api/results/nmYnZXRMbN"
             }
         }
+    },
+    {
+        "type": "results",
+        "hash_id": "pmvvwqEz8m",
+        "attributes": {
+            "name": "FV54532767 - Geelong SC v North Geelong Warriors FC",
+            "date": "2026-03-28 23:30:00",
+            "round": "R9",
+            "full_round": "Round 9",
+            "ground_name": "Stead Park",
+            "field_name": "Pitch 2",
+            "home_team_name": "Geelong SC U14",
+            "home_logo": "https://ocean.dribl.com/be70bafbe9ac4da887edd6723c35e495",
+            "away_team_name": "North Geelong Warriors FC U14",
+            "away_logo": "https://ocean.dribl.com/c2410d9ee11e4428802e11533c882d4d",
+            "competition_name": "Boys Victorian Youth Premier League 2",
+            "league_name": "U14 YPL2 Boys",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 3,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 1,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": true,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 3,
+            "enable_referees_allocated": true,
+            "match_hash_id": "8NO5XMLw7d",
+            "home_team_hash_id": "emA1jX48mB",
+            "away_team_hash_id": "4KLnPbgDmq",
+            "forfeit_team_hash_id": null,
+            "datetime_aest": "2026-03-29T10:30:00",
+            "date_aest": "2026-03-29"
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/pmvvwqEz8m"
+            }
+        }
     }
 ]
