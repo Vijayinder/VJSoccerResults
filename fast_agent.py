@@ -1318,9 +1318,10 @@ def tool_missing_scores(query: str = "", include_all_leagues: bool = False, toda
     }
     
 
-def tool_todays_results(query: str = "", round_filter: int = None) -> Any:
+def tool_todays_results(query: str = "", round_filter: int = None, last_week: bool = False) -> Any:
     """
     Show results from today (if Sunday) or last Sunday.
+    Pass last_week=True to show the Sunday before that.
     Supports filtering by league, age group, club, or round number.
     Properly deduplicates by match_hash_id (result takes priority over fixture).
     """
@@ -1338,7 +1339,12 @@ def tool_todays_results(query: str = "", round_filter: int = None) -> Any:
     else:
         match_day = get_match_day_date()
 
-    if match_day == today:
+    # last_week shifts back one more Sunday
+    if last_week:
+        from datetime import timedelta
+        match_day = match_day - timedelta(days=7)
+        date_display = f"📅 **LAST WEEK ({match_day.strftime('%A, %d %B %Y')})**"
+    elif match_day == today:
         date_display = f"📅 **TODAY ({today.strftime('%A, %d %B %Y')})**"
     else:
         date_display = f"📅 **LAST SUNDAY ({match_day.strftime('%A, %d %B %Y')})**"
@@ -1572,7 +1578,7 @@ def tool_all_results(query: str = "", round_filter: int = None, limit: int = 60)
                 continue
 
         date_str = attrs.get("date", "")
-        match_dt = parse_date_utc_to_aest(a.get("date", ""), attrs=a)
+        match_dt = parse_date_utc_to_aest(attrs.get("date", ""), attrs=attrs)
         date_display = iso_date_aest(date_str) if date_str else ""
         match_round = attrs.get("full_round") or attrs.get("round") or ""
 
@@ -1679,7 +1685,7 @@ def tool_all_results(query: str = "", round_filter: int = None, limit: int = 60)
         if not date_str:
             continue
         
-        match_dt = parse_date_utc_to_aest(a.get("date", ""), attrs=a)
+        match_dt = parse_date_utc_to_aest(attrs.get("date", ""), attrs=attrs)
         if not match_dt:
             continue
         
@@ -1808,7 +1814,7 @@ def tool_teams_lost_today(query: str = "") -> Any:
         if not date_str:
             continue
         
-        match_dt = parse_date_utc_to_aest(a.get("date", ""), attrs=a)
+        match_dt = parse_date_utc_to_aest(attrs.get("date", ""), attrs=attrs)
         if not match_dt:
             continue
         
@@ -2502,6 +2508,9 @@ def tool_cards_this_week(query: str = "", last_week: bool = False) -> dict:
         for p in pool:
             pname = f"{p.get('first_name','')} {p.get('last_name','')}".strip()
             role  = p.get("role") or (p.get("roles") or [""])[0] or "player"
+            # Season totals across all matches for this player
+            season_yc = sum(m.get("yellow_cards", 0) or 0 for m in p.get("matches", []))
+            season_rc = sum(m.get("red_cards", 0) or 0 for m in p.get("matches", []))
             for m in p.get("matches", []):
                 if not _match_in_date_range(m, start_date, end_date):
                     continue
@@ -2524,14 +2533,16 @@ def tool_cards_this_week(query: str = "", last_week: bool = False) -> dict:
                 mins = _card_minutes(m, card_type_lower)
                 ag_m = re.search(r'U\d{2}', m_team, re.IGNORECASE)
                 rows.append({
-                    "Date":     iso_date_aest(m.get("date", "")),
-                    "Player":   pname,
-                    "Team":     re.sub(r'\s+U\d{2}$', '', m_team, flags=re.IGNORECASE).strip(),
-                    "Age":      ag_m.group(0).upper() if ag_m else "—",
-                    "Opponent": m.get("opponent_team_name") or "?",
-                    "Min":      mins or "—",
-                    "Role":     role.title() if role.lower() not in ("player","") else "Player",
-                    "_pname":   pname,
+                    "Date":       iso_date_aest(m.get("date", "")),
+                    "Player":     pname,
+                    "Team":       re.sub(r'\s+U\d{2}$', '', m_team, flags=re.IGNORECASE).strip(),
+                    "Age":        ag_m.group(0).upper() if ag_m else "—",
+                    "Opponent":   m.get("opponent_team_name") or "?",
+                    "Min":        mins or "—",
+                    "Role":       role.title() if role.lower() not in ("player","") else "Player",
+                    "Tot 🟨":     season_yc,
+                    "Tot 🟥":     season_rc,
+                    "_pname":     pname,
                 })
         rows.sort(key=lambda x: (x["Team"], x["Player"]))
         return rows
@@ -4732,7 +4743,7 @@ def tool_opponent_squad(query: str = "") -> Any:
     for f in fixtures:
         attrs    = f.get("attributes", {})
         date_str = attrs.get("date", "")
-        match_dt = parse_date_utc_to_aest(a.get("date", ""), attrs=a)
+        match_dt = parse_date_utc_to_aest(attrs.get("date", ""), attrs=attrs)
         if not match_dt or match_dt < now_melbourne:
             continue
         home  = attrs.get("home_team_name", "")
@@ -5917,6 +5928,24 @@ class FastQueryRouter:
             )       
 
         # --- 2B. TODAY'S RESULTS ---
+        # Last week results
+        last_week_results_keywords = [
+            'last week results', 'results last week', 'previous week results',
+            'results previous week', 'last sunday results', 'results last sunday',
+        ]
+        is_last_week_results = any(keyword in q for keyword in last_week_results_keywords)
+        if is_last_week_results:
+            filter_query = re.sub(
+                r'\b(last|previous|week|sunday|results?|for|show|list|me)\b', '', q
+            ).strip()
+            round_m = re.search(r'\bround\s*(\d+)\b', q)
+            r_num = int(round_m.group(1)) if round_m else None
+            filter_query = re.sub(r'\bround\s*\d+\b', '', filter_query).strip()
+            import fast_agent as _fa_mod
+            _fa_mod._last_debug = {'query': query, 'fn': 'tool_todays_results', 'args': 'filter_query, last_week=True'}
+            print(f"\n🔧 TOOL: tool_todays_results()  query={query!r}  last_week=True")
+            return tool_todays_results(filter_query, round_filter=r_num, last_week=True)
+
         todays_results_keywords = [
             'today results', 'todays results', 'results today',
             'results for today', "today's results", 'today s results',
