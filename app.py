@@ -2864,21 +2864,8 @@ def main_app():
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
-            st.markdown("**👔 Coaches & Staff**")
-            q16 = f"coaches for {user_club}"
-            if st.button(q16, key="ex16", width='content'):
-                st.session_state["clicked_query"] = q16
-                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-                st.rerun()
-
-            q_staff_cards = f"red card staff {user_club}"
-            if st.button(q_staff_cards, key="ex_staff_rc", width='content'):
-                st.session_state["clicked_query"] = q_staff_cards
-                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-                st.rerun()
-
         with col3:
-            st.markdown("**🟨🟥 Discipline & Results**")
+            st.markdown("**🟨🟥 Discipline**")
 
             q10b = f"cards this week {user_competition} {user_age}"
             if st.button(f"cards this week {user_competition} {user_age}", key="ex10b", width='content'):
@@ -2904,15 +2891,30 @@ def main_app():
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
-            q14 = "latest results"
+            st.markdown("**📰 Results & Scores**")
+
+            q14 = f"latest results {user_competition}"
             if st.button("Latest Results", key="q14", width='content'):
                 st.session_state["clicked_query"] = q14
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
 
             q15 = "latest missing scores"
-            if st.button("Latest Missing Scores", key="q15", width='content'):
+            if st.button("Missing Scores", key="q15", width='content'):
                 st.session_state["clicked_query"] = q15
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
+
+            st.markdown("**👔 Coaches & Staff**")
+            q16 = f"coaches for {user_club}"
+            if st.button(q16, key="ex16", width='content'):
+                st.session_state["clicked_query"] = q16
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
+
+            q_staff_cards = f"red card staff {user_club}"
+            if st.button(q_staff_cards, key="ex_staff_rc", width='content'):
+                st.session_state["clicked_query"] = q_staff_cards
                 st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                 st.rerun()
     # ── Process: fires when version advances (typed Enter or button click) ──
@@ -4208,109 +4210,3 @@ def main():
         
 if __name__ == "__main__":
     main()
-# Last auto-update: 2026-03-02 10:00:32 AEDT
-<<<<<<< HEAD
-# Last auto-update: Sun 22 Mar 07:04:00 AEDT 2026
-# Last auto-update: Sun 22 Mar 08:04:06 AEDT 2026
-# Last auto-update: Sun 22 Mar 09:04:05 AEDT 2026
-# Last auto-update: Sun 22 Mar 10:04:08 AEDT 2026
-# Last auto-update: Sun 22 Mar 11:25:51 AEDT 2026
-# Last auto-update: Sun 22 Mar 12:04:50 AEDT 2026
-# Last auto-update: Sun 22 Mar 13:05:06 AEDT 2026
-# Last auto-update: Sun 22 Mar 14:05:17 AEDT 2026
-# Last auto-update: Sun 22 Mar 14:55:04 AEDT 2026
-# Last auto-update: Sun 22 Mar 15:05:37 AEDT 2026
-# Last auto-update: Sun 22 Mar 15:30:05 AEDT 2026
-# Last auto-update: Sun 22 Mar 15:43:51 AEDT 2026
-# Last auto-update: Sun 22 Mar 18:30:58 AEDT 2026
-# Last auto-update: Sun 22 Mar 20:06:08 AEDT 2026
-# Last auto-update: Sun 22 Mar 21:06:09 AEDT 2026
-# Last auto-update: Sun 22 Mar 21:31:07 AEDT 2026
-# Last auto-update: Mon 23 Mar 04:05:14 AEDT 2026
-# Last auto-update: Mon 23 Mar 06:05:30 AEDT 2026
-# Last auto-update: Mon 23 Mar 08:05:46 AEDT 2026
-# Last auto-update: Mon 23 Mar 10:05:24 AEDT 2026
-# Last auto-update: Mon 23 Mar 12:05:01 AEDT 2026
-# Last auto-update: Mon 23 Mar 14:04:41 AEDT 2026
-# Last auto-update: Mon 23 Mar 16:04:37 AEDT 2026
-=======
-
-<<<<<<< HEAD
-# Last auto-update: 2026-03-09 20:00:32 AEDT
-# Last auto-update: 2026-03-09 23:00:32 AEDT
-# Last auto-update: 2026-03-10 00:00:33 AEDT
-# Last auto-update: 2026-03-10 04:00:35 AEDT
-# Last auto-update: 2026-03-10 08:00:33 AEDT
-# Last auto-update: 2026-03-10 12:00:32 AEDT
-# Last auto-update: 2026-03-10 16:00:36 AEDT
-# Last auto-update: 2026-03-10 20:00:33 AEDT
-# Last auto-update: 2026-03-11 00:00:33 AEDT
-# Last auto-update: 2026-03-11 04:00:32 AEDT
-# Last auto-update: 2026-03-11 08:00:33 AEDT
-# Last auto-update: 2026-03-11 12:00:32 AEDT
-# Last auto-update: 2026-03-11 16:00:36 AEDT
-# Last auto-update: 2026-03-11 20:00:32 AEDT
-# Last auto-update: 2026-03-12 00:00:32 AEDT
->>>>>>> 2b4dc2403554a40c8ee77f52a53dc9946053db3f
-# Last auto-update: Mon 23 Mar 18:05:26 AEDT 2026
-# Last auto-update: Mon 23 Mar 20:04:21 AEDT 2026
-# Last auto-update: Mon 23 Mar 22:04:22 AEDT 2026
-# Last auto-update: Tue 24 Mar 00:04:02 AEDT 2026
-# Last auto-update: Tue 24 Mar 04:03:50 AEDT 2026
-# Last auto-update: Tue 24 Mar 08:04:11 AEDT 2026
-# Last auto-update: Tue 24 Mar 12:04:26 AEDT 2026
-# Last auto-update: Tue 24 Mar 13:25:23 AEDT 2026
-# Last auto-update: Tue 24 Mar 16:04:35 AEDT 2026
-# Last auto-update: Tue 24 Mar 16:44:20 AEDT 2026
-# Last auto-update: Tue 24 Mar 20:04:25 AEDT 2026
-# Last auto-update: Wed 25 Mar 00:04:06 AEDT 2026
-# Last auto-update: Wed 25 Mar 04:03:51 AEDT 2026
-# Last auto-update: Wed 25 Mar 08:04:05 AEDT 2026
-# Last auto-update: Wed 25 Mar 12:04:21 AEDT 2026
-# Last auto-update: Wed 25 Mar 13:04:54 AEDT 2026
-# Last auto-update: Wed 25 Mar 13:16:49 AEDT 2026
-# Last auto-update: Wed 25 Mar 16:04:55 AEDT 2026
-# Last auto-update: Wed 25 Mar 20:04:30 AEDT 2026
-# Last auto-update: Thu 26 Mar 00:04:03 AEDT 2026
-# Last auto-update: Thu 26 Mar 04:03:53 AEDT 2026
-# Last auto-update: Thu 26 Mar 08:04:07 AEDT 2026
-# Last auto-update: Thu 26 Mar 12:04:19 AEDT 2026
-# Last auto-update: Thu 26 Mar 16:04:21 AEDT 2026
-# Last auto-update: Thu 26 Mar 20:04:43 AEDT 2026
-# Last auto-update: Fri 27 Mar 00:04:13 AEDT 2026
-# Last auto-update: Fri 27 Mar 04:03:54 AEDT 2026
-# Last auto-update: Fri 27 Mar 08:04:15 AEDT 2026
-# Last auto-update: Fri 27 Mar 12:04:23 AEDT 2026
-# Last auto-update: Fri 27 Mar 16:04:43 AEDT 2026
-# Last auto-update: Fri 27 Mar 20:04:37 AEDT 2026
-# Last auto-update: Sat 28 Mar 00:04:17 AEDT 2026
-# Last auto-update: Sat 28 Mar 04:03:57 AEDT 2026
-# Last auto-update: Sat 28 Mar 08:04:24 AEDT 2026
-# Last auto-update: Sat 28 Mar 12:04:55 AEDT 2026
-# Last auto-update: Sat 28 Mar 16:05:04 AEDT 2026
-# Last auto-update: Sat 28 Mar 20:04:37 AEDT 2026
-# Last auto-update: Sun 29 Mar 00:04:21 AEDT 2026
-# Last auto-update: Sun 29 Mar 01:04:15 AEDT 2026
-# Last auto-update: Sun 29 Mar 02:03:58 AEDT 2026
-# Last auto-update: Sun 29 Mar 03:04:02 AEDT 2026
-# Last auto-update: Sun 29 Mar 04:03:53 AEDT 2026
-# Last auto-update: Sun 29 Mar 05:04:02 AEDT 2026
-# Last auto-update: Sun 29 Mar 06:04:08 AEDT 2026
-# Last auto-update: Sun 29 Mar 07:04:10 AEDT 2026
-# Last auto-update: Sun 29 Mar 08:04:18 AEDT 2026
-# Last auto-update: Sun 29 Mar 09:04:23 AEDT 2026
-# Last auto-update: Sun 29 Mar 10:04:30 AEDT 2026
-# Last auto-update: Sun 29 Mar 10:23:23 AEDT 2026
-# Last auto-update: Sun 29 Mar 11:04:46 AEDT 2026
-# Last auto-update: Sun 29 Mar 12:04:55 AEDT 2026
-# Last auto-update: Sun 29 Mar 12:27:07 AEDT 2026
-# Last auto-update: Sun 29 Mar 13:04:58 AEDT 2026
-# Last auto-update: Sun 29 Mar 13:52:58 AEDT 2026
-# Last auto-update: Sun 29 Mar 14:05:07 AEDT 2026
-=======
->>>>>>> d8936794795cf608d5e889dfa6d9d4a8823bf23c
-# Last auto-update: Sun 29 Mar 14:40:34 AEDT 2026
-# Last auto-update: Sun 29 Mar 15:05:40 AEDT 2026
-# Last auto-update: Sun 29 Mar 16:05:30 AEDT 2026
-# Last auto-update: Sun 29 Mar 17:05:53 AEDT 2026
-# Last auto-update: Sun 29 Mar 17:34:48 AEDT 2026
