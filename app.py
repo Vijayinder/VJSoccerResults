@@ -2501,31 +2501,31 @@ def main_app():
                 st.rerun()
 
     # Pin the admin icon button to the far right, small and subtle
-    st.markdown("""
-        <style>
-        div[data-testid="stColumn"]:last-child {
-            display: flex;
-            justify-content: flex-end;
-            align-items: flex-start;
-        }
-        div[data-testid="stColumn"]:last-child button[kind="secondary"] {
-            background: transparent !important;
-            border: 1px solid rgba(180,180,180,0.35) !important;
-            color: #bbb !important;
-            font-size: 14px !important;
-            padding: 1px 7px !important;
-            min-height: 26px !important;
-            height: 26px !important;
-            line-height: 1 !important;
-            border-radius: 5px !important;
-        }
-        div[data-testid="stColumn"]:last-child button[kind="secondary"]:hover {
-            border-color: #999 !important;
-            color: #666 !important;
-            background: rgba(0,0,0,0.04) !important;
-        }
-        </style>
-    """, unsafe_allow_html=True)
+##    st.markdown("""
+##        <style>
+##        div[data-testid="stColumn"]:last-child {
+##            display: flex;
+##            justify-content: flex-end;
+##            align-items: flex-start;
+##        }
+##        div[data-testid="stColumn"]:last-child button[kind="secondary"] {
+##            background: transparent !important;
+##            border: 1px solid rgba(180,180,180,0.35) !important;
+##            color: #bbb !important;
+##            font-size: 14px !important;
+##            padding: 1px 7px !important;
+##            min-height: 26px !important;
+##           height: 26px !important;
+##            line-height: 1 !important;
+##            border-radius: 5px !important;
+##        }
+##        div[data-testid="stColumn"]:last-child button[kind="secondary"]:hover {
+##            border-color: #999 !important;
+##            color: #666 !important;
+##            background: rgba(0,0,0,0.04) !important;
+##        }
+##        </style>
+##    """, unsafe_allow_html=True)
 
     # ── Inline Admin Login Panel (renders outside columns so it spans full width) ──
     if st.session_state.get("show_admin_login") and st.session_state.get("user_type") != "admin":
