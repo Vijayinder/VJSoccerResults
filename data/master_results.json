@@ -52798,5 +52798,55 @@
                 "href": "https://mc-api.dribl.com/api/results/am14QJJw6d"
             }
         }
+    },
+    {
+        "type": "results",
+        "hash_id": "nmYnZXRwpN",
+        "attributes": {
+            "name": "Murray United FC U18  vs Eltham Redbacks FC U18 ",
+            "date": "2026-03-29 04:00:00",
+            "round": "R9",
+            "full_round": "Round 9",
+            "ground_name": "South Wangaratta Reserve",
+            "field_name": "Field 1",
+            "home_team_name": "Murray United FC U18",
+            "home_logo": "https://ocean.dribl.com/adde126b93f04d9e929255b95afcd4ff",
+            "away_team_name": "Eltham Redbacks FC U18",
+            "away_logo": "https://ocean.dribl.com/6356104297464d4d8396995821d96c01",
+            "competition_name": "Boys Victorian Youth Premier League 2",
+            "league_name": "U18 YPL2 Boys",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 0,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 1,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": false,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 2,
+            "enable_referees_allocated": true,
+            "match_hash_id": "OmepX4ZMGd",
+            "home_team_hash_id": "am1qvakjmw",
+            "away_team_hash_id": "8NOD8q1vKZ",
+            "forfeit_team_hash_id": null,
+            "datetime_aest": "2026-03-29T15:00:00",
+            "date_aest": "2026-03-29"
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/nmYnZXRwpN"
+            }
+        }
     }
 ]
