@@ -1075,7 +1075,12 @@ def tool_missing_scores(query: str = "", include_all_leagues: bool = False, toda
         mid = f_attrs.get("match_hash_id")
         if mid and mid in result_lookup:
             merged = dict(f_attrs)
-            merged.update(result_lookup[mid])  # result overwrites score/status fields
+            r = result_lookup[mid]
+            merged.update(r)  # result overwrites score/status fields
+            # Restore fixture-only fields that result may have overwritten with None
+            for _fk in ("home_team_hash_id", "away_team_hash_id", "datetime_aest", "date_aest"):
+                if merged.get(_fk) is None and f_attrs.get(_fk) is not None:
+                    merged[_fk] = f_attrs[_fk]
             merged["source"] = "result"
         else:
             merged = dict(f_attrs)
@@ -1096,20 +1101,28 @@ def tool_missing_scores(query: str = "", include_all_leagues: bool = False, toda
 
     print(f"    Total unique matches: {len(all_matches)} ({len(result_lookup)} have results)")
     
+    skipped_no_date = 0
+    skipped_no_parse = 0
+    skipped_date_window = 0
+    skipped_bye = 0
+    skipped_league = 0
+    skipped_query = 0
+    flagged_complete = 0
     matches_on_target_date = 0
     matches_with_target_leagues = 0
     matches_after_query_filter = 0
-    date_sample = []  # Sample of dates we're seeing
-    
+    date_sample = []
+
     for attrs in all_matches:
         date_str = attrs.get("date", "")
         if not date_str:
+            skipped_no_date += 1
             continue
         
-        # Parse to Melbourne date
- #       match_dt = parse_date_utc_to_aest(date_str)
-        match_dt = parse_date_utc_to_aest(attrs.get("date", ""), attrs=attrs)
+        # Parse to Melbourne date — priority: datetime_aest > date_aest > UTC date
+        match_dt = parse_date_utc_to_aest(date_str, attrs=attrs)
         if not match_dt:
+            skipped_no_parse += 1
             continue
         
         match_date = match_dt.date()
@@ -1129,48 +1142,35 @@ def tool_missing_scores(query: str = "", include_all_leagues: bool = False, toda
             if match_date != match_day:
                 continue
             matches_on_target_date += 1
-            
-            # Debug first 3 matches on target date
-            if matches_on_target_date <= 3:
-                print(f"\n  MATCH #{matches_on_target_date} ON TARGET DATE:")
-                print(f"    UTC: {date_str}")
-                print(f"    AEST: {match_dt.strftime('%Y-%m-%d %H:%M')}")
-                print(f"    Home: {attrs.get('home_team_name', 'Unknown')}")
-                print(f"    Away: {attrs.get('away_team_name', 'Unknown')}")
-                print(f"    League: {attrs.get('league_name', 'Unknown')}")
-                print(f"    Status: {attrs.get('status', 'Unknown')}")
-                print(f"    Home Score: {attrs.get('home_score')}")
-                print(f"    Away Score: {attrs.get('away_score')}")
-                print(f"    Source: {attrs.get('source')}")
         
-        # If not today_only, skip matches that are too far in the future or past
         # --- Date window filtering ---
         if round_filter is not None:
-            # Round mode: skip date window entirely, filter by round number below
             pass
-
         elif match_day is not None:
-            # today_only or last_week: must be exactly that Sunday
             if match_date != match_day:
+                skipped_date_window += 1
                 continue
-
         else:
             # Default: show past full season (180 days), exclude future matches
             days_diff = (match_date - today).days
             if days_diff > 0 or days_diff < -180:
+                skipped_date_window += 1
                 continue
         
         home_team = attrs.get("home_team_name", "Unknown")
         away_team = attrs.get("away_team_name", "Unknown")
         league = attrs.get("league_name", "")
 
-        # Skip bye matches — identified by missing team hash IDs
-        if not attrs.get("home_team_hash_id") or not attrs.get("away_team_hash_id"):
-            continue
+        # Skip bye matches — true byes have no home OR away team name
+        if not home_team or home_team == "Unknown" or not away_team or away_team == "Unknown":
+            if not attrs.get("home_team_hash_id") and not attrs.get("away_team_hash_id"):
+                skipped_bye += 1
+                continue
         # Filter by target leagues if specified
         if target_leagues:
             league_code = extract_league_from_league_name(league)
             if league_code not in target_leagues:
+                skipped_league += 1
                 continue
             matches_with_target_leagues += 1
         # Get round info for this match (needed for both round_filter and search blob)
@@ -1217,6 +1217,7 @@ def tool_missing_scores(query: str = "", include_all_leagues: bool = False, toda
             # Fallback: if no specific filters, do basic substring match
             if not age_group and not canonical_club and not query_league_code:
                 if q_lower not in search_blob:
+                    skipped_query += 1
                     continue
         
         matches_after_query_filter += 1
@@ -1226,8 +1227,6 @@ def tool_missing_scores(query: str = "", include_all_leagues: bool = False, toda
         home_score = attrs.get("home_score")
         away_score = attrs.get("away_score")
 
-        # Only flag as missing if match has already taken place (past or today)
-        # Future scheduled fixtures should never appear as "missing scores"
         is_past_or_today = match_date <= today
 
         needs_score = (
@@ -1237,6 +1236,8 @@ def tool_missing_scores(query: str = "", include_all_leagues: bool = False, toda
                 away_score is None
             )
         )
+        if not needs_score:
+            flagged_complete += 1
         
         if needs_score:
             missing_scores.append({
@@ -1257,17 +1258,16 @@ def tool_missing_scores(query: str = "", include_all_leagues: bool = False, toda
             })
     
     print(f"\n  FILTERING SUMMARY:")
-    if date_sample:
-        print(f"    Sample dates in data:")
-        for i, sample in enumerate(date_sample, 1):
-            print(f"      {i}. {sample['utc'][:10]} UTC -> {sample['aest'][:10]} AEST: {sample['home']} vs {sample['away']}")
-    
-    if today_only:
-        print(f"    Matches on target date ({match_day}): {matches_on_target_date}")
-    if target_leagues:
-        print(f"    Matches in target leagues: {matches_with_target_leagues}")
-    print(f"    Matches after all filters: {matches_after_query_filter}")
-    print(f"    Matches with missing scores: {len(missing_scores)}")
+    print(f"    Total matches:          {len(all_matches)}")
+    print(f"    Skipped no date:        {skipped_no_date}")
+    print(f"    Skipped parse fail:     {skipped_no_parse}")
+    print(f"    Skipped date window:    {skipped_date_window}")
+    print(f"    Skipped bye:            {skipped_bye}")
+    print(f"    Skipped league filter:  {skipped_league}")
+    print(f"    Skipped query filter:   {skipped_query}")
+    print(f"    Passed all filters:     {matches_after_query_filter}")
+    print(f"    Complete (not missing): {flagged_complete}")
+    print(f"    Missing scores:         {len(missing_scores)}")
     
     if len(missing_scores) > 0:
         print(f"\n  MISSING SCORES DETAILS:")
@@ -3635,16 +3635,51 @@ def tool_ladder(query: str) -> str:
             tables.append({
                 "title": f"{ag.upper()} — {competition_to_use.upper()}",
                 "data":  data,
+                "_ag":   ag.upper(),
+                "_comp": competition_to_use,
             })
 
     if not tables:
         return f"❌ No completed matches found for {competition_to_use.upper()}."
 
+    # ── Overall tab: aggregate all age groups, merging by base club name ──
+    # Track which age groups each club appears in
+    club_age_groups = defaultdict(list)
+    overall_table = defaultdict(lambda: {"P": 0, "W": 0, "D": 0, "L": 0, "GF": 0, "GA": 0, "PTS": 0})
+    for ag in sorted_age_groups:
+        for row in (_build_ladder_table(results, comp_lower, ag) or []):
+            base = re.sub(r'\s+U\d{2}$', '', row["Team"], flags=re.IGNORECASE).strip()
+            overall_table[base]["P"]   += row["P"]
+            overall_table[base]["W"]   += row["W"]
+            overall_table[base]["D"]   += row["D"]
+            overall_table[base]["L"]   += row["L"]
+            overall_table[base]["GF"]  += row["GF"]
+            overall_table[base]["GA"]  += row["GA"]
+            overall_table[base]["PTS"] += row["PTS"]
+            if ag.upper() not in club_age_groups[base]:
+                club_age_groups[base].append(ag.upper())
+
+    overall_sorted = sorted(
+        overall_table.items(),
+        key=lambda kv: (-kv[1]["PTS"], -(kv[1]["GF"] - kv[1]["GA"]), -kv[1]["GF"])
+    )
+    overall_data = [
+        {"Pos": pos, "Club": club, "P": r["P"], "W": r["W"], "D": r["D"],
+         "L": r["L"], "GF": r["GF"], "GA": r["GA"], "GD": r["GF"] - r["GA"], "PTS": r["PTS"],
+         "_age_groups": club_age_groups[club]}
+        for pos, (club, r) in enumerate(overall_sorted, 1)
+    ]
+
+    # Prepend Overall as first tab
+    if overall_data:
+        tables = [{"title": f"📊 Overall — {competition_to_use.upper()}", "data": overall_data,
+                   "_overall": True, "_comp": competition_to_use}] + tables
+
     return {
-        "type":       "ladder",
-        "title":      f"📊 {competition_to_use.upper()} — All Age Groups ({len(tables)} divisions)",
+        "type":        "ladder",
+        "title":       f"📊 {competition_to_use.upper()} — All Age Groups ({len(tables) - 1} divisions)",
         "competition": competition_to_use,
-        "tables":     tables,
+        "tables":      tables,
     }
     
 def tool_form(query: str) -> str:
@@ -4926,7 +4961,11 @@ def tool_club_season(club_query: str = "heidelberg", age_group_filter: str = "")
     if len(club_token) < 5:
         club_token = canonical.lower()
 
-    age_filter = (age_group_filter or extract_age_group(club_query) or "").lower()
+    # Use age_group_filter if provided; only fall back to extracting from club_query if not
+    age_filter = (age_group_filter or "").lower()
+    if not age_filter:
+        _ag_extracted = extract_age_group(club_query)
+        age_filter = _ag_extracted.lower() if _ag_extracted else ""
 
     def _matches_club(home: str, away: str) -> bool:
         blob = f"{home} {away}".lower()
@@ -4952,15 +4991,23 @@ def tool_club_season(club_query: str = "heidelberg", age_group_filter: str = "")
                 matched_clubs.add(base)
 
     if len(matched_clubs) > 1:
-        # Ambiguous — return options for user to pick from
-        options = sorted(matched_clubs)
-        return {
-            "type":    "ambiguous_club",
-            "query":   club_query,
-            "options": options,
-            "age_grp": age_filter.upper() if age_filter else "",
-            "message": f"Found {len(options)} clubs matching '{club_query}'. Please select one:",
-        }
+        # Try exact match first — if query is the exact club name, don't treat as ambiguous
+        _query_base = re.sub(r'\s+U\d{2}$', '', club_query, flags=re.IGNORECASE).strip()
+        _exact = [c for c in matched_clubs if c.lower() == _query_base.lower()]
+        if len(_exact) == 1:
+            matched_clubs = set(_exact)
+            # Tighten club_token to the exact matched name to prevent substring bleeding
+            club_token = _exact[0].lower()
+        else:
+            # Ambiguous — return options for user to pick from
+            options = sorted(matched_clubs)
+            return {
+                "type":    "ambiguous_club",
+                "query":   club_query,
+                "options": options,
+                "age_grp": age_filter.upper() if age_filter else "",
+                "message": f"Found {len(options)} clubs matching '{club_query}'. Please select one:",
+            }
 
     # ── Resolve display name from actual data (not raw query) ─────────────────
     display_club = club_query  # fallback
@@ -5827,6 +5874,7 @@ class FastQueryRouter:
                 '', q
             ).strip()
             age_grp = extract_age_group(clean) or ""
+            # Strip age group from club query so it doesn't get passed twice
             club_q  = re.sub(r'\bu\d{2}\b', '', clean, flags=re.IGNORECASE).strip()
             if not club_q:
                 club_q = USER_CONFIG.get("club", "heidelberg")
