@@ -2045,7 +2045,15 @@ def _render_season_summary(data: dict):
     latest_match = data.get("latest_match")
 
     title_suffix = f" {age_filter}" if age_filter else " — All Age Groups"
-    st.markdown(f"### 📋 Season Summary: **{club}**{title_suffix}")
+    col_title, col_squad = st.columns([4, 1])
+    with col_title:
+        st.markdown(f"### 📋 Season Summary: **{club}**{title_suffix}")
+    with col_squad:
+        if age_filter:
+            if st.button(f"👥 Our Squad", key=f"season_squad_btn_{club}_{age_filter}", width='content'):
+                st.session_state["clicked_query"] = f"squad for {club} {age_filter}"
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.rerun()
 
     if not past and not upcoming and not ladder:
         st.warning(f"No season data found for {club}{title_suffix}.")
@@ -2236,6 +2244,13 @@ def _render_season_summary(data: dict):
             age_past     = [m for m in past     if m["age"] == age_grp]
             age_upcoming = [m for m in upcoming if m["age"] == age_grp]
 
+            # ── Squad button for this age group ───────────────────────────────
+            if st.button(f"👥 View {club} {age_grp} Squad", key=f"squad_btn_{club}_{age_grp}", width='content'):
+                st.session_state["clicked_query"] = f"squad for {club} {age_grp}"
+                st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                st.session_state["show_season_page"] = False
+                st.rerun()
+
             # Find this age group's ladder section
             ladder_section = next((s for s in ladder if age_grp.lower() in s["label"].lower()), None)
 
@@ -2317,15 +2332,24 @@ def _render_season_summary(data: dict):
                 if _rr:
                     _row  = res_rows[_rr[0]]
                     _hash = _row.get("_hash", "")
-                    if _hash:
-                        st.session_state["clicked_query"] = f"match details {_hash}"
-                    else:
-                        st.session_state["clicked_query"] = (
-                            f"match details {_row['_home']} vs {_row['_away']} {_row['_iso']}"
-                        )
-                    st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
-                    st.session_state["show_season_page"] = False
-                    st.rerun()
+                    _opp  = _row.get("Opponent", "")
+                    _match_query = (
+                        f"match details {_hash}" if _hash
+                        else f"match details {_row['_home']} vs {_row['_away']} {_row['_iso']}"
+                    )
+                    _btn_col1, _btn_col2 = st.columns(2)
+                    with _btn_col1:
+                        if st.button(f"📊 Full Match Details", key=f"season_match_det_{age_grp}_{_rr[0]}", width='content'):
+                            st.session_state["clicked_query"] = _match_query
+                            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                            st.session_state["show_season_page"] = False
+                            st.rerun()
+                    with _btn_col2:
+                        if _opp and st.button(f"👥 {_opp} Squad", key=f"season_opp_squad_{age_grp}_{_rr[0]}", width='content'):
+                            st.session_state["clicked_query"] = f"squad for {_opp} {age_grp}"
+                            st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
+                            st.session_state["show_season_page"] = False
+                            st.rerun()
             else:
                 st.info("No results yet.")
 
@@ -3291,17 +3315,68 @@ def main_app():
                     for _ti, (tab, tbl) in enumerate(zip(tabs, tables)):
                         with tab:
                             data = tbl.get("data", [])
+                            _is_overall = tbl.get("_overall", False)
+                            _ag   = tbl.get("_ag", "")
+                            _comp = tbl.get("_comp", competition)
                             if data:
                                 df = pd.DataFrame(data)
-                                h = min(600, (len(df) + 1) * 35 + 10)
-                                st.caption("👇 Click a club to see their matches")
-                                sel = st.dataframe(df, hide_index=True, width='content',
-                                    height=h, selection_mode="single-row", on_select="rerun",
-                                    key=f"ladder_sel_{_ti}_{st.session_state.get('expander_collapse_counter',0)}")
-                                _lr = sel.selection.get("rows", [])
-                                if _lr:
-                                    _team = df.iloc[_lr[0]]["Team"]
-                                    _fire_query(f"Season {_team}")
+                                # Drop internal fields before display
+                                _display_cols = [c for c in df.columns if not c.startswith("_")]
+                                df_display = df[_display_cols]
+                                h = min(600, (len(df_display) + 1) * 35 + 10)
+
+                                if _is_overall:
+                                    st.caption("Combined points across all age groups — W=3pts, D=1pt, L=0pts  •  👇 Click a club for their season")
+                                    _ok = f"ladder_overall_{st.session_state.get('expander_collapse_counter',0)}"
+                                    sel_o = st.dataframe(df_display, hide_index=True, width='content',
+                                        height=h, selection_mode="single-row", on_select="rerun",
+                                        key=_ok,
+                                        column_config={
+                                            "Pos": st.column_config.NumberColumn("Pos", width="small"),
+                                            "Club": st.column_config.TextColumn("Club", width="medium"),
+                                            "P":   st.column_config.NumberColumn("P",   width="small"),
+                                            "W":   st.column_config.NumberColumn("W",   width="small"),
+                                            "D":   st.column_config.NumberColumn("D",   width="small"),
+                                            "L":   st.column_config.NumberColumn("L",   width="small"),
+                                            "GF":  st.column_config.NumberColumn("GF",  width="small"),
+                                            "GA":  st.column_config.NumberColumn("GA",  width="small"),
+                                            "GD":  st.column_config.NumberColumn("GD",  width="small"),
+                                            "PTS": st.column_config.NumberColumn("PTS", width="small"),
+                                        })
+                                    _or = sel_o.selection.get("rows", [])
+                                    if _or:
+                                        _row = data[_or[0]]
+                                        _club = _row["Club"]
+                                        _age_groups = _row.get("_age_groups", [])
+                                        # Season button
+                                        if st.button(f"📋 Season — {_club}", key=f"ov_season_{_club}", width='content'):
+                                            _fire_query(f"Season {_club}")
+                                        # Squad links per age group
+                                        if _age_groups:
+                                            st.caption("View squad:")
+                                            _sq_cols = st.columns(len(_age_groups))
+                                            for _sci, _ag_btn in enumerate(_age_groups):
+                                                with _sq_cols[_sci]:
+                                                    if st.button(f"👥 {_ag_btn}", key=f"ov_squad_{_club}_{_ag_btn}", width='content'):
+                                                        _fire_query(f"squad for {_club} {_ag_btn}")
+                                else:
+                                    st.caption("👇 Click a club to see their season  •  Use buttons below for squad")
+                                    _lk = f"ladder_sel_{_ti}_{st.session_state.get('expander_collapse_counter',0)}"
+                                    sel = st.dataframe(df_display, hide_index=True, width='content',
+                                        height=h, selection_mode="single-row", on_select="rerun",
+                                        key=_lk)
+                                    _lr = sel.selection.get("rows", [])
+                                    if _lr:
+                                        _team = df_display.iloc[_lr[0]]["Team"]
+                                        _base_team = re.sub(r'\s+U\d{2}$', '', _team, flags=re.IGNORECASE).strip()
+                                        col_s, col_sq = st.columns(2)
+                                        with col_s:
+                                            if st.button(f"📋 Season — {_team}", key=f"ag_season_{_ti}_{_team}", width='content'):
+                                                _fire_query(f"Season {_team}")
+                                        with col_sq:
+                                            _sq_label = f"👥 Squad — {_base_team} {_ag}" if _ag else f"👥 Squad — {_team}"
+                                            if st.button(_sq_label, key=f"ag_squad_{_ti}_{_team}", width='content'):
+                                                _fire_query(f"squad for {_base_team} {_ag}" if _ag else f"squad for {_team}")
                             else:
                                 st.info("No data available.")
             elif answer.get("type") == "multi_table":
@@ -3518,10 +3593,11 @@ def main_app():
                 age_q   = answer.get("age_grp", "")
                 st.markdown("**Select a club:**")
                 for opt in options:
-                    btn_label = f"📋 {opt}"
+                    btn_label = f"📋 {opt}{' ' + age_q if age_q else ''}"
                     if st.button(btn_label, key=f"amb_{opt.replace(' ','_')}"):
-                        q = f"season {opt} {age_q}".strip()
-                        st.session_state["clicked_query"] = q
+                        # Pass exact club name directly to tool_club_season to avoid re-matching
+                        _exact_q = f"{opt} {age_q}".strip()
+                        st.session_state["clicked_query"] = f"season {_exact_q}"
                         st.session_state["expander_collapse_counter"] = st.session_state.get("expander_collapse_counter", 0) + 1
                         st.rerun()
 
