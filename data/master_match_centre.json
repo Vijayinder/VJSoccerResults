@@ -326544,7 +326544,7 @@
                 "type": "fixtures",
                 "hash_id": "nmYnZlg83N",
                 "attributes": {
-                    "fixture_updated_at": "2026-04-01 23:52:52",
+                    "fixture_updated_at": "2026-04-07 07:55:09",
                     "event_updated_at": null,
                     "matchsheet_updated_at": null,
                     "field_updated_at": null,
@@ -326797,20 +326797,6 @@
                             "game_section": "ft-second-half",
                             "name": "Leonidas Grouzis",
                             "jersey": "25"
-                        },
-                        {
-                            "type": "card",
-                            "final_card_type": "Yellow Card",
-                            "final_card_code": "Y2",
-                            "first_card_type": "Yellow Card",
-                            "first_card_code": "Y2",
-                            "final_card_override_color": null,
-                            "first_card_override_color": null,
-                            "team_id": "Ome0RZwjd0",
-                            "minute": 67,
-                            "game_section": "ft-second-half",
-                            "name": "Giovanni Batticciotto",
-                            "jersey": "22"
                         },
                         {
                             "type": "goal",
@@ -351803,7 +351789,7 @@
                 "type": "fixtures",
                 "hash_id": "1K3pvVbXOd",
                 "attributes": {
-                    "fixture_updated_at": "2026-03-30 03:30:50",
+                    "fixture_updated_at": "2026-04-07 07:21:56",
                     "event_updated_at": null,
                     "matchsheet_updated_at": null,
                     "field_updated_at": null,
@@ -351967,8 +351953,8 @@
                             "team_id": "vmZwn4eBNq",
                             "minute": 31,
                             "game_section": "ft-first-half",
-                            "name": "William Omthang",
-                            "jersey": "36"
+                            "name": "Oscar Watson",
+                            "jersey": "38"
                         },
                         {
                             "type": "goal",
