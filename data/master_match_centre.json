@@ -367833,7 +367833,7 @@
                     "enable_half_time_scores": false,
                     "enable_matchsheet_penalties": false,
                     "enable_votes_public_display": false,
-                    "matchsheet_status": "completed",
+                    "matchsheet_status": "pending",
                     "matchsheet_home_team_submitted": true,
                     "matchsheet_away_team_submitted": true,
                     "matchsheet_home_team_confirmed": true,
@@ -379123,7 +379123,7 @@
                 "type": "fixtures",
                 "hash_id": "8NO5XMLyzd",
                 "attributes": {
-                    "fixture_updated_at": "2026-04-19 06:58:15",
+                    "fixture_updated_at": "2026-04-20 00:58:01",
                     "event_updated_at": null,
                     "matchsheet_updated_at": null,
                     "field_updated_at": null,
