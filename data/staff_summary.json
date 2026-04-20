@@ -112511,7 +112511,7 @@
           "red_cards": 0
         },
         "Preston Lions FC U18": {
-          "matches_played": 7,
+          "matches_played": 8,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -112552,7 +112552,7 @@
         }
       },
       "stats": {
-        "matches_attended": 40,
+        "matches_attended": 41,
         "yellow_cards": 1,
         "red_cards": 0
       },
@@ -113121,6 +113121,20 @@
           "opponent_team_name": "St Albans Saints Dinamo SC U16",
           "opponent_team_id": "emA1jwG8mB",
           "events": []
+        },
+        {
+          "match_hash_id": "BdDb9aOZxN",
+          "date": "2026-04-19T05:15:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T15:15:00",
+          "team_name": "Preston Lions FC U18",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U18 YSL Boys - North-West",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "St Albans Saints Dinamo SC U18",
+          "opponent_team_id": "ld4OlwDBKW",
+          "events": []
         }
       ]
     },
@@ -113451,7 +113465,7 @@
       },
       "team_stats": {
         "Preston Lions FC U18": {
-          "matches_played": 7,
+          "matches_played": 8,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -113462,7 +113476,7 @@
         }
       },
       "stats": {
-        "matches_attended": 7,
+        "matches_attended": 8,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -113563,6 +113577,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Brimbank Stallions FC U18",
           "opponent_team_id": "BdD1B2jgmb",
+          "events": []
+        },
+        {
+          "match_hash_id": "BdDb9aOZxN",
+          "date": "2026-04-19T05:15:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T15:15:00",
+          "team_name": "Preston Lions FC U18",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U18 YSL Boys - North-West",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "St Albans Saints Dinamo SC U18",
+          "opponent_team_id": "ld4OlwDBKW",
           "events": []
         }
       ]
@@ -113586,7 +113614,7 @@
       },
       "team_stats": {
         "Preston Lions FC U18": {
-          "matches_played": 7,
+          "matches_played": 8,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -113597,7 +113625,7 @@
         }
       },
       "stats": {
-        "matches_attended": 7,
+        "matches_attended": 8,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -113698,6 +113726,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Brimbank Stallions FC U18",
           "opponent_team_id": "BdD1B2jgmb",
+          "events": []
+        },
+        {
+          "match_hash_id": "BdDb9aOZxN",
+          "date": "2026-04-19T05:15:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T15:15:00",
+          "team_name": "Preston Lions FC U18",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U18 YSL Boys - North-West",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "St Albans Saints Dinamo SC U18",
+          "opponent_team_id": "ld4OlwDBKW",
           "events": []
         }
       ]
@@ -113998,7 +114040,7 @@
       },
       "team_stats": {
         "St Albans Saints Dinamo SC U18": {
-          "matches_played": 7,
+          "matches_played": 8,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -114009,7 +114051,7 @@
         }
       },
       "stats": {
-        "matches_attended": 7,
+        "matches_attended": 8,
         "yellow_cards": 1,
         "red_cards": 0
       },
@@ -114116,6 +114158,20 @@
               "minute": "66"
             }
           ]
+        },
+        {
+          "match_hash_id": "BdDb9aOZxN",
+          "date": "2026-04-19T05:15:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T15:15:00",
+          "team_name": "St Albans Saints Dinamo SC U18",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U18 YSL Boys - North-West",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Preston Lions FC U18",
+          "opponent_team_id": "MNGog2j0NA",
+          "events": []
         }
       ]
     },
@@ -114138,19 +114194,19 @@
       },
       "team_stats": {
         "St Albans Saints Dinamo SC U18": {
-          "matches_played": 7,
+          "matches_played": 8,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
           "own_goals": 0,
           "penalties": 0,
-          "yellow_cards": 0,
+          "yellow_cards": 1,
           "red_cards": 0
         }
       },
       "stats": {
-        "matches_attended": 8,
-        "yellow_cards": 0,
+        "matches_attended": 9,
+        "yellow_cards": 1,
         "red_cards": 0
       },
       "matches": [
@@ -114265,6 +114321,25 @@
           "opponent_team_name": "Werribee City FC U18",
           "opponent_team_id": "vmZwn2XDNq",
           "events": []
+        },
+        {
+          "match_hash_id": "BdDb9aOZxN",
+          "date": "2026-04-19T05:15:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T15:15:00",
+          "team_name": "St Albans Saints Dinamo SC U18",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U18 YSL Boys - North-West",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Preston Lions FC U18",
+          "opponent_team_id": "MNGog2j0NA",
+          "events": [
+            {
+              "type": "yellow_card",
+              "minute": "68"
+            }
+          ]
         }
       ]
     },
@@ -124177,7 +124252,7 @@
       },
       "team_stats": {
         "Kingston City FC U16": {
-          "matches_played": 7,
+          "matches_played": 8,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -124188,7 +124263,7 @@
         }
       },
       "stats": {
-        "matches_attended": 7,
+        "matches_attended": 8,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -124289,6 +124364,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Port Melbourne SC U16",
           "opponent_team_id": "jdye8b9Dd5",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld454npz2m",
+          "date": "2026-04-19T03:50:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T13:50:00",
+          "team_name": "Kingston City FC U16",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U16 YSL Boys - South-East",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Ringwood City FC U16",
+          "opponent_team_id": "am1qvwWjmw",
           "events": []
         }
       ]
@@ -124312,7 +124401,7 @@
       },
       "team_stats": {
         "Kingston City FC U16": {
-          "matches_played": 7,
+          "matches_played": 8,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -124323,7 +124412,7 @@
         }
       },
       "stats": {
-        "matches_attended": 7,
+        "matches_attended": 8,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -124425,6 +124514,20 @@
           "opponent_team_name": "Port Melbourne SC U16",
           "opponent_team_id": "jdye8b9Dd5",
           "events": []
+        },
+        {
+          "match_hash_id": "ld454npz2m",
+          "date": "2026-04-19T03:50:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T13:50:00",
+          "team_name": "Kingston City FC U16",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U16 YSL Boys - South-East",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Ringwood City FC U16",
+          "opponent_team_id": "am1qvwWjmw",
+          "events": []
         }
       ]
     },
@@ -124447,19 +124550,19 @@
       },
       "team_stats": {
         "Kingston City FC U16": {
-          "matches_played": 7,
+          "matches_played": 8,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
           "own_goals": 0,
           "penalties": 0,
-          "yellow_cards": 1,
+          "yellow_cards": 2,
           "red_cards": 0
         }
       },
       "stats": {
-        "matches_attended": 7,
-        "yellow_cards": 1,
+        "matches_attended": 8,
+        "yellow_cards": 2,
         "red_cards": 0
       },
       "matches": [
@@ -124565,6 +124668,25 @@
           "opponent_team_name": "Port Melbourne SC U16",
           "opponent_team_id": "jdye8b9Dd5",
           "events": []
+        },
+        {
+          "match_hash_id": "ld454npz2m",
+          "date": "2026-04-19T03:50:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T13:50:00",
+          "team_name": "Kingston City FC U16",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U16 YSL Boys - South-East",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Ringwood City FC U16",
+          "opponent_team_id": "am1qvwWjmw",
+          "events": [
+            {
+              "type": "yellow_card",
+              "minute": "78"
+            }
+          ]
         }
       ]
     },
@@ -151810,7 +151932,7 @@
       },
       "team_stats": {
         "Ringwood City FC U16": {
-          "matches_played": 7,
+          "matches_played": 8,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -151821,7 +151943,7 @@
         }
       },
       "stats": {
-        "matches_attended": 7,
+        "matches_attended": 8,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -151922,6 +152044,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Gippsland United FC U16",
           "opponent_team_id": "4KLnP2gpmq",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld454npz2m",
+          "date": "2026-04-19T03:50:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T13:50:00",
+          "team_name": "Ringwood City FC U16",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U16 YSL Boys - South-East",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Kingston City FC U16",
+          "opponent_team_id": "2KpvA9WPmY",
           "events": []
         }
       ]
@@ -151945,7 +152081,7 @@
       },
       "team_stats": {
         "Ringwood City FC U16": {
-          "matches_played": 7,
+          "matches_played": 8,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -151956,7 +152092,7 @@
         }
       },
       "stats": {
-        "matches_attended": 7,
+        "matches_attended": 8,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -152057,6 +152193,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Gippsland United FC U16",
           "opponent_team_id": "4KLnP2gpmq",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld454npz2m",
+          "date": "2026-04-19T03:50:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T13:50:00",
+          "team_name": "Ringwood City FC U16",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U16 YSL Boys - South-East",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Kingston City FC U16",
+          "opponent_team_id": "2KpvA9WPmY",
           "events": []
         }
       ]
@@ -161849,7 +161999,7 @@
           "red_cards": 0
         },
         "Preston Lions FC U18": {
-          "matches_played": 5,
+          "matches_played": 6,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -161870,7 +162020,7 @@
         }
       },
       "stats": {
-        "matches_attended": 35,
+        "matches_attended": 36,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -162363,6 +162513,20 @@
           "home_or_away": "home",
           "opponent_team_name": "St Albans Saints Dinamo SC U16",
           "opponent_team_id": "emA1jwG8mB",
+          "events": []
+        },
+        {
+          "match_hash_id": "BdDb9aOZxN",
+          "date": "2026-04-19T05:15:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T15:15:00",
+          "team_name": "Preston Lions FC U18",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U18 YSL Boys - North-West",
+          "role_in_match": "Technical Director",
+          "home_or_away": "home",
+          "opponent_team_name": "St Albans Saints Dinamo SC U18",
+          "opponent_team_id": "ld4OlwDBKW",
           "events": []
         }
       ]
@@ -167121,7 +167285,7 @@
       },
       "team_stats": {
         "Preston Lions FC U18": {
-          "matches_played": 6,
+          "matches_played": 7,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -167132,7 +167296,7 @@
         }
       },
       "stats": {
-        "matches_attended": 6,
+        "matches_attended": 7,
         "yellow_cards": 1,
         "red_cards": 0
       },
@@ -167224,6 +167388,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Brimbank Stallions FC U18",
           "opponent_team_id": "BdD1B2jgmb",
+          "events": []
+        },
+        {
+          "match_hash_id": "BdDb9aOZxN",
+          "date": "2026-04-19T05:15:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T15:15:00",
+          "team_name": "Preston Lions FC U18",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U18 YSL Boys - North-West",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "St Albans Saints Dinamo SC U18",
+          "opponent_team_id": "ld4OlwDBKW",
           "events": []
         }
       ]
@@ -171925,7 +172103,7 @@
           "red_cards": 0
         },
         "Ringwood City FC U16": {
-          "matches_played": 3,
+          "matches_played": 4,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -171956,7 +172134,7 @@
         }
       },
       "stats": {
-        "matches_attended": 17,
+        "matches_attended": 18,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -172197,6 +172375,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Kingston City FC U15",
           "opponent_team_id": "vmZwn2gRNq",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld454npz2m",
+          "date": "2026-04-19T03:50:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T13:50:00",
+          "team_name": "Ringwood City FC U16",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U16 YSL Boys - South-East",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Kingston City FC U16",
+          "opponent_team_id": "2KpvA9WPmY",
           "events": []
         }
       ]
@@ -172993,7 +173185,7 @@
       },
       "team_stats": {
         "Ringwood City FC U16": {
-          "matches_played": 3,
+          "matches_played": 4,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -173004,7 +173196,7 @@
         }
       },
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -173049,6 +173241,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Gippsland United FC U16",
           "opponent_team_id": "4KLnP2gpmq",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld454npz2m",
+          "date": "2026-04-19T03:50:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T13:50:00",
+          "team_name": "Ringwood City FC U16",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U16 YSL Boys - South-East",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Kingston City FC U16",
+          "opponent_team_id": "2KpvA9WPmY",
           "events": []
         }
       ]
@@ -173072,7 +173278,7 @@
       },
       "team_stats": {
         "Ringwood City FC U16": {
-          "matches_played": 3,
+          "matches_played": 4,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -173083,7 +173289,7 @@
         }
       },
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -173128,6 +173334,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Gippsland United FC U16",
           "opponent_team_id": "4KLnP2gpmq",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld454npz2m",
+          "date": "2026-04-19T03:50:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T13:50:00",
+          "team_name": "Ringwood City FC U16",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U16 YSL Boys - South-East",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Kingston City FC U16",
+          "opponent_team_id": "2KpvA9WPmY",
           "events": []
         }
       ]
@@ -194104,5 +194324,5 @@
       ]
     }
   ],
-  "_last_updated": "2026-04-20T14:02:50.151406"
+  "_last_updated": "2026-04-20T16:02:49.904884"
 }
