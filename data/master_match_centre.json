@@ -373596,6 +373596,33 @@
                             "game_section": "ft-second-half",
                             "name": "Jamie Damianos",
                             "jersey": "63"
+                        },
+                        {
+                            "type": "card",
+                            "final_card_type": "Yellow Card",
+                            "final_card_code": "Y1",
+                            "first_card_type": "Yellow Card",
+                            "first_card_code": "Y1",
+                            "final_card_override_color": null,
+                            "first_card_override_color": null,
+                            "team_id": "pN6OY8kQK0",
+                            "minute": 61,
+                            "game_section": "ft-second-half",
+                            "name": "Patrick Alvarez",
+                            "jersey": "49"
+                        },
+                        {
+                            "type": "goal",
+                            "home_score": 2,
+                            "away_score": 1,
+                            "team_id": "pN6OY8kQK0",
+                            "minute": 69,
+                            "own_goal": false,
+                            "penalty_kick": false,
+                            "penalty_scored": false,
+                            "game_section": "ft-second-half",
+                            "name": "Patrick Alvarez",
+                            "jersey": "49"
                         }
                     ],
                     "goals": [
@@ -373620,6 +373647,17 @@
                             "game_section": "ft-first-half",
                             "first_name": "Ymer",
                             "last_name": "Abili"
+                        },
+                        {
+                            "type": "goal",
+                            "team_id": "pN6OY8kQK0",
+                            "member_id": "PmjqE6kV5d",
+                            "minute": 69,
+                            "own_goal": false,
+                            "penalty_kick": false,
+                            "game_section": "ft-second-half",
+                            "first_name": "Patrick",
+                            "last_name": "Alvarez"
                         }
                     ],
                     "penalties": [],
