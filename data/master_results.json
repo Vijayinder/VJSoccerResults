@@ -58598,5 +58598,55 @@
                 "href": "https://mc-api.dribl.com/api/results/jmazBrPq3N"
             }
         }
+    },
+    {
+        "type": "results",
+        "hash_id": "jmazBrb1qN",
+        "attributes": {
+            "name": "Doreen United SC U15  vs Werribee City FC U15 ",
+            "date": "2026-04-21 09:15:00",
+            "round": "R8",
+            "full_round": "Round 8",
+            "ground_name": "Painted Hills Recreation Reserve",
+            "field_name": "Pitch 1",
+            "home_team_name": "Doreen United SC U15",
+            "home_logo": "https://ocean.dribl.com/1147cfb5cfae4c359ea05fde3287b930",
+            "away_team_name": "Werribee City FC U15",
+            "away_logo": "https://ocean.dribl.com/3a0a89bf994d464e9460ac5cfcf04e9d",
+            "competition_name": "Boys Youth State League North-West",
+            "league_name": "U15 YSL Boys - North-West",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 1,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 3,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": false,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 2,
+            "enable_referees_allocated": true,
+            "match_hash_id": "EN2pnX6ned",
+            "home_team_hash_id": "1K3Ykw29mQ",
+            "away_team_hash_id": "pmvzPoMomv",
+            "forfeit_team_hash_id": null,
+            "datetime_aest": "2026-04-21T19:15:00",
+            "date_aest": "2026-04-21"
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/jmazBrb1qN"
+            }
+        }
     }
 ]
