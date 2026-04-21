@@ -1757,20 +1757,20 @@
             "points": 17
           },
           "U16": {
-            "position": 2,
-            "played": 9,
-            "wins": 7,
+            "position": 1,
+            "played": 10,
+            "wins": 8,
             "draws": 1,
             "losses": 1,
-            "gf": 37,
-            "ga": 6,
-            "gd": 31,
-            "points": 22
+            "gf": 39,
+            "ga": 7,
+            "gd": 32,
+            "points": 25
           }
         },
-        "total_position_points": 17,
-        "total_gf": 135,
-        "total_ga": 44,
+        "total_position_points": 16,
+        "total_gf": 137,
+        "total_ga": 45,
         "age_group_count": 5,
         "overall_rank": 1
       },
@@ -1905,71 +1905,6 @@
         "overall_rank": 3
       },
       {
-        "club": "Berwick City SC",
-        "age_groups": {
-          "U14": {
-            "position": 9,
-            "played": 10,
-            "wins": 4,
-            "draws": 2,
-            "losses": 4,
-            "gf": 16,
-            "ga": 12,
-            "gd": 4,
-            "points": 14
-          },
-          "U13": {
-            "position": 13,
-            "played": 10,
-            "wins": 3,
-            "draws": 0,
-            "losses": 7,
-            "gf": 8,
-            "ga": 17,
-            "gd": -9,
-            "points": 9
-          },
-          "U18": {
-            "position": 7,
-            "played": 10,
-            "wins": 4,
-            "draws": 4,
-            "losses": 2,
-            "gf": 22,
-            "ga": 17,
-            "gd": 5,
-            "points": 16
-          },
-          "U15": {
-            "position": 6,
-            "played": 10,
-            "wins": 5,
-            "draws": 2,
-            "losses": 3,
-            "gf": 21,
-            "ga": 16,
-            "gd": 5,
-            "points": 17
-          },
-          "U16": {
-            "position": 1,
-            "played": 9,
-            "wins": 7,
-            "draws": 2,
-            "losses": 0,
-            "gf": 21,
-            "ga": 11,
-            "gd": 10,
-            "points": 23
-          }
-        },
-        "total_position_points": 36,
-        "total_gf": 88,
-        "total_ga": 73,
-        "age_group_count": 5,
-        "overall_rank": 4
-      },
-      {
         "club": "Northcote City FC",
         "age_groups": {
           "U14": {
@@ -2031,6 +1966,71 @@
         "total_position_points": 37,
         "total_gf": 117,
         "total_ga": 87,
+        "age_group_count": 5,
+        "overall_rank": 4
+      },
+      {
+        "club": "Berwick City SC",
+        "age_groups": {
+          "U14": {
+            "position": 9,
+            "played": 10,
+            "wins": 4,
+            "draws": 2,
+            "losses": 4,
+            "gf": 16,
+            "ga": 12,
+            "gd": 4,
+            "points": 14
+          },
+          "U13": {
+            "position": 13,
+            "played": 10,
+            "wins": 3,
+            "draws": 0,
+            "losses": 7,
+            "gf": 8,
+            "ga": 17,
+            "gd": -9,
+            "points": 9
+          },
+          "U18": {
+            "position": 7,
+            "played": 10,
+            "wins": 4,
+            "draws": 4,
+            "losses": 2,
+            "gf": 22,
+            "ga": 17,
+            "gd": 5,
+            "points": 16
+          },
+          "U15": {
+            "position": 6,
+            "played": 10,
+            "wins": 5,
+            "draws": 2,
+            "losses": 3,
+            "gf": 21,
+            "ga": 16,
+            "gd": 5,
+            "points": 17
+          },
+          "U16": {
+            "position": 2,
+            "played": 10,
+            "wins": 7,
+            "draws": 2,
+            "losses": 1,
+            "gf": 22,
+            "ga": 13,
+            "gd": 9,
+            "points": 23
+          }
+        },
+        "total_position_points": 37,
+        "total_gf": 89,
+        "total_ga": 75,
         "age_group_count": 5,
         "overall_rank": 5
       },
@@ -3412,5 +3412,5 @@
       }
     ]
   },
-  "_last_updated": "2026-04-21T16:02:45.014485"
+  "_last_updated": "2026-04-21T20:02:44.313800"
 }
