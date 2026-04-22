@@ -368445,7 +368445,7 @@
                 "type": "fixtures",
                 "hash_id": "ld4549870m",
                 "attributes": {
-                    "fixture_updated_at": "2026-04-19 09:28:34",
+                    "fixture_updated_at": "2026-04-22 04:04:35",
                     "event_updated_at": null,
                     "matchsheet_updated_at": null,
                     "field_updated_at": null,
@@ -368614,8 +368614,8 @@
                             "penalty_kick": true,
                             "penalty_scored": false,
                             "game_section": "ft-second-half",
-                            "name": "Ryder Hester-Taylor",
-                            "jersey": "55"
+                            "name": "Boris Ilic",
+                            "jersey": "44"
                         },
                         {
                             "type": "card",
@@ -368715,13 +368715,13 @@
                         {
                             "type": "goal",
                             "team_id": "bd9X9ae8K4",
-                            "member_id": "ld4AMqYY2m",
+                            "member_id": "vdWxeRDaDm",
                             "minute": 52,
                             "own_goal": false,
                             "penalty_kick": true,
                             "game_section": "ft-second-half",
-                            "first_name": "Ryder",
-                            "last_name": "Hester-Taylor"
+                            "first_name": "Boris",
+                            "last_name": "Ilic"
                         },
                         {
                             "type": "goal",
