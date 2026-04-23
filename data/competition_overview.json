@@ -557,12 +557,12 @@
             "position": 5,
             "played": 10,
             "wins": 5,
-            "draws": 3,
-            "losses": 2,
+            "draws": 2,
+            "losses": 3,
             "gf": 27,
-            "ga": 12,
-            "gd": 15,
-            "points": 18
+            "ga": 13,
+            "gd": 14,
+            "points": 17
           },
           "U15": {
             "position": 11,
@@ -589,7 +589,7 @@
         },
         "total_position_points": 41,
         "total_gf": 97,
-        "total_ga": 86,
+        "total_ga": 87,
         "age_group_count": 5,
         "overall_rank": 9
       },
@@ -881,13 +881,13 @@
           "U18": {
             "position": 7,
             "played": 10,
-            "wins": 3,
-            "draws": 5,
+            "wins": 4,
+            "draws": 4,
             "losses": 2,
-            "gf": 12,
+            "gf": 13,
             "ga": 11,
-            "gd": 1,
-            "points": 14
+            "gd": 2,
+            "points": 16
           },
           "U15": {
             "position": 15,
@@ -913,7 +913,7 @@
           }
         },
         "total_position_points": 61,
-        "total_gf": 47,
+        "total_gf": 48,
         "total_ga": 102,
         "age_group_count": 5,
         "overall_rank": 14
@@ -3412,5 +3412,5 @@
       }
     ]
   },
-  "_last_updated": "2026-04-23T16:02:38.870818"
+  "_last_updated": "2026-04-23T20:02:48.589892"
 }
