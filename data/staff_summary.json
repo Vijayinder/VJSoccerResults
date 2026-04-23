@@ -105199,7 +105199,7 @@
       },
       "team_stats": {
         "Essendon Royals SC U13": {
-          "matches_played": 9,
+          "matches_played": 10,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -105210,7 +105210,7 @@
         }
       },
       "stats": {
-        "matches_attended": 9,
+        "matches_attended": 10,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -105339,6 +105339,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Avondale FC U13",
           "opponent_team_id": "4KLnPbagmq",
+          "events": []
+        },
+        {
+          "match_hash_id": "2Kp0pZV2BK",
+          "date": "2026-04-15T08:20:00.000000Z",
+          "date_aest": "2026-04-15",
+          "datetime_aest": "2026-04-15T18:20:00",
+          "team_name": "Essendon Royals SC U13",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U13 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Western United FC U13",
+          "opponent_team_id": "EN2O48W7Kq",
           "events": []
         }
       ]
@@ -105362,7 +105376,7 @@
       },
       "team_stats": {
         "Essendon Royals SC U13": {
-          "matches_played": 9,
+          "matches_played": 10,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -105373,7 +105387,7 @@
         }
       },
       "stats": {
-        "matches_attended": 9,
+        "matches_attended": 10,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -105502,6 +105516,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Avondale FC U13",
           "opponent_team_id": "4KLnPbagmq",
+          "events": []
+        },
+        {
+          "match_hash_id": "2Kp0pZV2BK",
+          "date": "2026-04-15T08:20:00.000000Z",
+          "date_aest": "2026-04-15",
+          "datetime_aest": "2026-04-15T18:20:00",
+          "team_name": "Essendon Royals SC U13",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U13 YPL1 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Western United FC U13",
+          "opponent_team_id": "EN2O48W7Kq",
           "events": []
         }
       ]
@@ -139681,7 +139709,7 @@
           "red_cards": 0
         },
         "Doreen United SC U13": {
-          "matches_played": 2,
+          "matches_played": 3,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -139692,7 +139720,7 @@
         }
       },
       "stats": {
-        "matches_attended": 20,
+        "matches_attended": 21,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -139975,6 +140003,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Werribee City FC U15",
           "opponent_team_id": "pmvzPoMomv",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld454njz2m",
+          "date": "2026-04-18T23:00:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T09:00:00",
+          "team_name": "Doreen United SC U13",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U13 YSL Boys - North-West",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Werribee City FC U13",
+          "opponent_team_id": "pmvzPo1ymv",
           "events": []
         }
       ]
@@ -148577,7 +148619,7 @@
       },
       "team_stats": {
         "Werribee City FC U13": {
-          "matches_played": 7,
+          "matches_played": 8,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -148588,7 +148630,7 @@
         }
       },
       "stats": {
-        "matches_attended": 7,
+        "matches_attended": 8,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -148689,6 +148731,20 @@
           "home_or_away": "home",
           "opponent_team_name": "St Albans Saints Dinamo SC U13",
           "opponent_team_id": "jmaVX2q3NR",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld454njz2m",
+          "date": "2026-04-18T23:00:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T09:00:00",
+          "team_name": "Werribee City FC U13",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U13 YSL Boys - North-West",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Doreen United SC U13",
+          "opponent_team_id": "ld4OlwJAKW",
           "events": []
         }
       ]
@@ -148712,7 +148768,7 @@
       },
       "team_stats": {
         "Werribee City FC U13": {
-          "matches_played": 7,
+          "matches_played": 8,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -148723,7 +148779,7 @@
         }
       },
       "stats": {
-        "matches_attended": 7,
+        "matches_attended": 8,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -148824,6 +148880,20 @@
           "home_or_away": "home",
           "opponent_team_name": "St Albans Saints Dinamo SC U13",
           "opponent_team_id": "jmaVX2q3NR",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld454njz2m",
+          "date": "2026-04-18T23:00:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T09:00:00",
+          "team_name": "Werribee City FC U13",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U13 YSL Boys - North-West",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Doreen United SC U13",
+          "opponent_team_id": "ld4OlwJAKW",
           "events": []
         }
       ]
@@ -148860,7 +148930,7 @@
       },
       "team_stats": {
         "Werribee City FC U13": {
-          "matches_played": 7,
+          "matches_played": 8,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -148911,7 +148981,7 @@
         }
       },
       "stats": {
-        "matches_attended": 39,
+        "matches_attended": 40,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -149460,6 +149530,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Doreen United SC U15",
           "opponent_team_id": "1K3Ykw29mQ",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld454njz2m",
+          "date": "2026-04-18T23:00:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T09:00:00",
+          "team_name": "Werribee City FC U13",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U13 YSL Boys - North-West",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "away",
+          "opponent_team_name": "Doreen United SC U13",
+          "opponent_team_id": "ld4OlwJAKW",
           "events": []
         }
       ]
@@ -149496,7 +149580,7 @@
       },
       "team_stats": {
         "Werribee City FC U13": {
-          "matches_played": 7,
+          "matches_played": 8,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -149547,7 +149631,7 @@
         }
       },
       "stats": {
-        "matches_attended": 39,
+        "matches_attended": 40,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -150096,6 +150180,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Doreen United SC U15",
           "opponent_team_id": "1K3Ykw29mQ",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld454njz2m",
+          "date": "2026-04-18T23:00:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T09:00:00",
+          "team_name": "Werribee City FC U13",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U13 YSL Boys - North-West",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "away",
+          "opponent_team_name": "Doreen United SC U13",
+          "opponent_team_id": "ld4OlwJAKW",
           "events": []
         }
       ]
@@ -155804,7 +155902,7 @@
       },
       "team_stats": {
         "Doreen United SC U13": {
-          "matches_played": 12,
+          "matches_played": 13,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -155855,7 +155953,7 @@
         }
       },
       "stats": {
-        "matches_attended": 24,
+        "matches_attended": 25,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -156195,6 +156293,20 @@
           "opponent_team_name": "Werribee City FC U15",
           "opponent_team_id": "pmvzPoMomv",
           "events": []
+        },
+        {
+          "match_hash_id": "ld454njz2m",
+          "date": "2026-04-18T23:00:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T09:00:00",
+          "team_name": "Doreen United SC U13",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U13 YSL Boys - North-West",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Werribee City FC U13",
+          "opponent_team_id": "pmvzPo1ymv",
+          "events": []
         }
       ]
     },
@@ -156217,7 +156329,7 @@
       },
       "team_stats": {
         "Doreen United SC U13": {
-          "matches_played": 7,
+          "matches_played": 8,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -156228,7 +156340,7 @@
         }
       },
       "stats": {
-        "matches_attended": 7,
+        "matches_attended": 8,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -156329,6 +156441,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Brunswick City SC U13",
           "opponent_team_id": "MNGog2XzNA",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld454njz2m",
+          "date": "2026-04-18T23:00:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T09:00:00",
+          "team_name": "Doreen United SC U13",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U13 YSL Boys - North-West",
+          "role_in_match": "Head Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Werribee City FC U13",
+          "opponent_team_id": "pmvzPo1ymv",
           "events": []
         }
       ]
@@ -156352,7 +156478,7 @@
       },
       "team_stats": {
         "Doreen United SC U13": {
-          "matches_played": 7,
+          "matches_played": 8,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -156363,7 +156489,7 @@
         }
       },
       "stats": {
-        "matches_attended": 7,
+        "matches_attended": 8,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -156464,6 +156590,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Brunswick City SC U13",
           "opponent_team_id": "MNGog2XzNA",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld454njz2m",
+          "date": "2026-04-18T23:00:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T09:00:00",
+          "team_name": "Doreen United SC U13",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U13 YSL Boys - North-West",
+          "role_in_match": "Team Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Werribee City FC U13",
+          "opponent_team_id": "pmvzPo1ymv",
           "events": []
         }
       ]
@@ -168649,13 +168789,16 @@
         "Coach"
       ],
       "teams": [
-        "Western United FC U14"
+        "Western United FC U14",
+        "Western United FC U13"
       ],
       "leagues": [
-        "U14 YPL1 Boys"
+        "U14 YPL1 Boys",
+        "U13 YPL1 Boys"
       ],
       "jerseys": {
-        "Western United FC U14": ""
+        "Western United FC U14": "",
+        "Western United FC U13": ""
       },
       "team_stats": {
         "Western United FC U14": {
@@ -168667,10 +168810,20 @@
           "penalties": 0,
           "yellow_cards": 0,
           "red_cards": 0
+        },
+        "Western United FC U13": {
+          "matches_played": 1,
+          "matches_started": 0,
+          "bench_appearances": 0,
+          "goals": 0,
+          "own_goals": 0,
+          "penalties": 0,
+          "yellow_cards": 0,
+          "red_cards": 0
         }
       },
       "stats": {
-        "matches_attended": 7,
+        "matches_attended": 8,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -168771,6 +168924,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Essendon Royals SC U14",
           "opponent_team_id": "EN2O48D3Kq",
+          "events": []
+        },
+        {
+          "match_hash_id": "2Kp0pZV2BK",
+          "date": "2026-04-15T08:20:00.000000Z",
+          "date_aest": "2026-04-15",
+          "datetime_aest": "2026-04-15T18:20:00",
+          "team_name": "Western United FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U13 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Essendon Royals SC U13",
+          "opponent_team_id": "1K3Yk8r9mQ",
           "events": []
         }
       ]
@@ -191764,7 +191931,7 @@
       },
       "team_stats": {
         "Werribee City FC U13": {
-          "matches_played": 2,
+          "matches_played": 3,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -191785,7 +191952,7 @@
         }
       },
       "stats": {
-        "matches_attended": 5,
+        "matches_attended": 6,
         "yellow_cards": 2,
         "red_cards": 1
       },
@@ -191872,6 +192039,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Doreen United SC U16",
           "opponent_team_id": "jmaVX2eANR",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld454njz2m",
+          "date": "2026-04-18T23:00:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T09:00:00",
+          "team_name": "Werribee City FC U13",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U13 YSL Boys - North-West",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Doreen United SC U13",
+          "opponent_team_id": "ld4OlwJAKW",
           "events": []
         }
       ]
@@ -192175,19 +192356,22 @@
         "Doreen United SC U15",
         "Doreen United SC U16",
         "Doreen United SC U18",
-        "Doreen United SC U14"
+        "Doreen United SC U14",
+        "Doreen United SC U13"
       ],
       "leagues": [
         "U15 YSL Boys - North-West",
         "U16 YSL Boys - North-West",
         "U18 YSL Boys - North-West",
-        "U14 YSL Boys - North-West"
+        "U14 YSL Boys - North-West",
+        "U13 YSL Boys - North-West"
       ],
       "jerseys": {
         "Doreen United SC U15": "",
         "Doreen United SC U16": "",
         "Doreen United SC U18": "",
-        "Doreen United SC U14": ""
+        "Doreen United SC U14": "",
+        "Doreen United SC U13": ""
       },
       "team_stats": {
         "Doreen United SC U15": {
@@ -192229,10 +192413,20 @@
           "penalties": 0,
           "yellow_cards": 0,
           "red_cards": 0
+        },
+        "Doreen United SC U13": {
+          "matches_played": 1,
+          "matches_started": 0,
+          "bench_appearances": 0,
+          "goals": 0,
+          "own_goals": 0,
+          "penalties": 0,
+          "yellow_cards": 0,
+          "red_cards": 0
         }
       },
       "stats": {
-        "matches_attended": 12,
+        "matches_attended": 13,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -192403,6 +192597,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Werribee City FC U15",
           "opponent_team_id": "pmvzPoMomv",
+          "events": []
+        },
+        {
+          "match_hash_id": "ld454njz2m",
+          "date": "2026-04-18T23:00:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T09:00:00",
+          "team_name": "Doreen United SC U13",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U13 YSL Boys - North-West",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Werribee City FC U13",
+          "opponent_team_id": "pmvzPo1ymv",
           "events": []
         }
       ]
@@ -193298,7 +193506,7 @@
           "red_cards": 0
         },
         "Doreen United SC U13": {
-          "matches_played": 2,
+          "matches_played": 3,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -193309,7 +193517,7 @@
         }
       },
       "stats": {
-        "matches_attended": 11,
+        "matches_attended": 12,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -193467,6 +193675,20 @@
           "opponent_team_name": "Werribee City FC U16",
           "opponent_team_id": "Pmrk7RWRNo",
           "events": []
+        },
+        {
+          "match_hash_id": "ld454njz2m",
+          "date": "2026-04-18T23:00:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T09:00:00",
+          "team_name": "Doreen United SC U13",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U13 YSL Boys - North-West",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Werribee City FC U13",
+          "opponent_team_id": "pmvzPo1ymv",
+          "events": []
         }
       ]
     },
@@ -193568,7 +193790,7 @@
       },
       "team_stats": {
         "Western United FC U13": {
-          "matches_played": 1,
+          "matches_played": 2,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -193579,7 +193801,7 @@
         }
       },
       "stats": {
-        "matches_attended": 1,
+        "matches_attended": 2,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -193596,6 +193818,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Hume City FC U13",
           "opponent_team_id": "ld4Ol8q2KW",
+          "events": []
+        },
+        {
+          "match_hash_id": "2Kp0pZV2BK",
+          "date": "2026-04-15T08:20:00.000000Z",
+          "date_aest": "2026-04-15",
+          "datetime_aest": "2026-04-15T18:20:00",
+          "team_name": "Western United FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U13 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Essendon Royals SC U13",
+          "opponent_team_id": "1K3Yk8r9mQ",
           "events": []
         }
       ]
@@ -194936,7 +195172,58 @@
           "events": []
         }
       ]
+    },
+    {
+      "person_id": "ydoRP1a4oK",
+      "first_name": "Luciano",
+      "last_name": "Vacirca",
+      "role_slug": "staff",
+      "roles": [
+        "Coach"
+      ],
+      "teams": [
+        "Essendon Royals SC U13"
+      ],
+      "leagues": [
+        "U13 YPL1 Boys"
+      ],
+      "jerseys": {
+        "Essendon Royals SC U13": ""
+      },
+      "team_stats": {
+        "Essendon Royals SC U13": {
+          "matches_played": 1,
+          "matches_started": 0,
+          "bench_appearances": 0,
+          "goals": 0,
+          "own_goals": 0,
+          "penalties": 0,
+          "yellow_cards": 0,
+          "red_cards": 0
+        }
+      },
+      "stats": {
+        "matches_attended": 1,
+        "yellow_cards": 0,
+        "red_cards": 0
+      },
+      "matches": [
+        {
+          "match_hash_id": "2Kp0pZV2BK",
+          "date": "2026-04-15T08:20:00.000000Z",
+          "date_aest": "2026-04-15",
+          "datetime_aest": "2026-04-15T18:20:00",
+          "team_name": "Essendon Royals SC U13",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U13 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Western United FC U13",
+          "opponent_team_id": "EN2O48W7Kq",
+          "events": []
+        }
+      ]
     }
   ],
-  "_last_updated": "2026-04-23T12:03:01.159904"
+  "_last_updated": "2026-04-23T16:02:49.700153"
 }

@@ -77,15 +77,15 @@
         "club": "Western United FC",
         "age_groups": {
           "U13": {
-            "position": 3,
-            "played": 9,
-            "wins": 6,
+            "position": 2,
+            "played": 10,
+            "wins": 7,
             "draws": 1,
             "losses": 2,
-            "gf": 27,
-            "ga": 10,
-            "gd": 17,
-            "points": 19
+            "gf": 29,
+            "ga": 11,
+            "gd": 18,
+            "points": 22
           },
           "U16": {
             "position": 4,
@@ -132,9 +132,9 @@
             "points": 22
           }
         },
-        "total_position_points": 20,
-        "total_gf": 137,
-        "total_ga": 56,
+        "total_position_points": 19,
+        "total_gf": 139,
+        "total_ga": 57,
         "age_group_count": 5,
         "overall_rank": 2
       },
@@ -272,7 +272,7 @@
         "club": "Green Gully SC",
         "age_groups": {
           "U13": {
-            "position": 2,
+            "position": 3,
             "played": 10,
             "wins": 7,
             "draws": 0,
@@ -327,7 +327,7 @@
             "points": 18
           }
         },
-        "total_position_points": 32,
+        "total_position_points": 33,
         "total_gf": 95,
         "total_ga": 78,
         "age_group_count": 5,
@@ -403,13 +403,13 @@
         "age_groups": {
           "U13": {
             "position": 13,
-            "played": 9,
+            "played": 10,
             "wins": 2,
             "draws": 2,
-            "losses": 5,
-            "gf": 13,
-            "ga": 15,
-            "gd": -2,
+            "losses": 6,
+            "gf": 14,
+            "ga": 17,
+            "gd": -3,
             "points": 8
           },
           "U16": {
@@ -458,8 +458,8 @@
           }
         },
         "total_position_points": 40,
-        "total_gf": 96,
-        "total_ga": 85,
+        "total_gf": 97,
+        "total_ga": 87,
         "age_group_count": 5,
         "overall_rank": 7
       },
@@ -2776,13 +2776,13 @@
           },
           "U13": {
             "position": 1,
-            "played": 7,
+            "played": 8,
             "wins": 6,
             "draws": 1,
-            "losses": 0,
-            "gf": 27,
-            "ga": 5,
-            "gd": 22,
+            "losses": 1,
+            "gf": 28,
+            "ga": 7,
+            "gd": 21,
             "points": 19
           },
           "U14": {
@@ -2820,8 +2820,8 @@
           }
         },
         "total_position_points": 6,
-        "total_gf": 152,
-        "total_ga": 46,
+        "total_gf": 153,
+        "total_ga": 48,
         "age_group_count": 5,
         "overall_rank": 1
       },
@@ -2970,7 +2970,7 @@
             "points": 9
           },
           "U13": {
-            "position": 2,
+            "position": 3,
             "played": 8,
             "wins": 6,
             "draws": 1,
@@ -3014,7 +3014,7 @@
             "points": 9
           }
         },
-        "total_position_points": 21,
+        "total_position_points": 22,
         "total_gf": 78,
         "total_ga": 57,
         "age_group_count": 5,
@@ -3230,15 +3230,15 @@
             "points": 8
           },
           "U13": {
-            "position": 3,
-            "played": 7,
-            "wins": 5,
+            "position": 2,
+            "played": 8,
+            "wins": 6,
             "draws": 1,
             "losses": 1,
-            "gf": 20,
-            "ga": 6,
-            "gd": 14,
-            "points": 16
+            "gf": 22,
+            "ga": 7,
+            "gd": 15,
+            "points": 19
           },
           "U14": {
             "position": 8,
@@ -3274,9 +3274,9 @@
             "points": 7
           }
         },
-        "total_position_points": 37,
-        "total_gf": 60,
-        "total_ga": 72,
+        "total_position_points": 36,
+        "total_gf": 62,
+        "total_ga": 73,
         "age_group_count": 5,
         "overall_rank": 8
       },
@@ -3412,5 +3412,5 @@
       }
     ]
   },
-  "_last_updated": "2026-04-23T12:02:50.278754"
+  "_last_updated": "2026-04-23T16:02:38.870818"
 }

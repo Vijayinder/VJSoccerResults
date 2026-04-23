@@ -58748,5 +58748,105 @@
                 "href": "https://mc-api.dribl.com/api/results/gdM6EBVkOm"
             }
         }
+    },
+    {
+        "type": "results",
+        "hash_id": "BdDb9zPO8N",
+        "attributes": {
+            "name": "Doreen United SC U13  vs Werribee City FC U13 ",
+            "date": "2026-04-22 09:15:00",
+            "round": "R8",
+            "full_round": "Round 8",
+            "ground_name": "Painted Hills Recreation Reserve",
+            "field_name": "Pitch 1A",
+            "home_team_name": "Doreen United SC U13",
+            "home_logo": "https://ocean.dribl.com/1147cfb5cfae4c359ea05fde3287b930",
+            "away_team_name": "Werribee City FC U13",
+            "away_logo": "https://ocean.dribl.com/3a0a89bf994d464e9460ac5cfcf04e9d",
+            "competition_name": "Boys Youth State League North-West",
+            "league_name": "U13 YSL Boys - North-West",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 2,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 1,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": false,
+            "allocated_assistant_referee_2": false,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 1,
+            "enable_referees_allocated": true,
+            "match_hash_id": "ld454njz2m",
+            "home_team_hash_id": "ld4OlwJAKW",
+            "away_team_hash_id": "pmvzPo1ymv",
+            "forfeit_team_hash_id": null,
+            "datetime_aest": "2026-04-22T19:15:00",
+            "date_aest": "2026-04-22"
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/BdDb9zPO8N"
+            }
+        }
+    },
+    {
+        "type": "results",
+        "hash_id": "PmrGqEy1AN",
+        "attributes": {
+            "name": "Western United FC U13  vs Essendon Royals SC U13 ",
+            "date": "2026-04-15 08:20:00",
+            "round": "R10",
+            "full_round": "Round 10",
+            "ground_name": "Ironbark Fields",
+            "field_name": "Pitch 3 (S) - Half Field A",
+            "home_team_name": "Western United FC U13",
+            "home_logo": "https://ocean.dribl.com/b76c38e7edf04307b1742b682d19203a",
+            "away_team_name": "Essendon Royals SC U13",
+            "away_logo": "https://ocean.dribl.com/aeae5452dfeb45aaa2eca9cc9f4a3755",
+            "competition_name": "Boys Victorian Youth Premier League 1",
+            "league_name": "U13 YPL1 Boys",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 2,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 1,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": false,
+            "allocated_assistant_referee_2": false,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 1,
+            "enable_referees_allocated": true,
+            "match_hash_id": "2Kp0pZV2BK",
+            "home_team_hash_id": "EN2O48W7Kq",
+            "away_team_hash_id": "1K3Yk8r9mQ",
+            "forfeit_team_hash_id": null,
+            "datetime_aest": "2026-04-15T18:20:00",
+            "date_aest": "2026-04-15"
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/PmrGqEy1AN"
+            }
+        }
     }
 ]
