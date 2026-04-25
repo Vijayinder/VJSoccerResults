@@ -36299,14 +36299,14 @@
       },
       "team_stats": {
         "Eltham Redbacks FC U18": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
           "own_goals": 0,
           "penalties": 0,
           "yellow_cards": 0,
-          "red_cards": 0
+          "red_cards": 1
         },
         "Eltham Redbacks FC U15": {
           "matches_played": 1,
@@ -36320,9 +36320,9 @@
         }
       },
       "stats": {
-        "matches_attended": 11,
+        "matches_attended": 12,
         "yellow_cards": 0,
-        "red_cards": 0
+        "red_cards": 1
       },
       "matches": [
         {
@@ -36478,6 +36478,25 @@
           "opponent_team_name": "Geelong SC U15",
           "opponent_team_id": "ld4OlakrKW",
           "events": []
+        },
+        {
+          "match_hash_id": "pmvvw7nARm",
+          "date": "2026-04-25T02:00:00.000000Z",
+          "date_aest": "2026-04-25",
+          "datetime_aest": "2026-04-25T12:00:00",
+          "team_name": "Eltham Redbacks FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Assistant Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Brunswick Juventus FC U18",
+          "opponent_team_id": "Pmrk7xrVNo",
+          "events": [
+            {
+              "type": "red_card",
+              "minute": "90"
+            }
+          ]
         }
       ]
     },
@@ -36504,7 +36523,7 @@
       },
       "team_stats": {
         "Eltham Redbacks FC U18": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -36525,7 +36544,7 @@
         }
       },
       "stats": {
-        "matches_attended": 11,
+        "matches_attended": 12,
         "yellow_cards": 1,
         "red_cards": 0
       },
@@ -36688,6 +36707,20 @@
           "opponent_team_name": "Geelong SC U15",
           "opponent_team_id": "ld4OlakrKW",
           "events": []
+        },
+        {
+          "match_hash_id": "pmvvw7nARm",
+          "date": "2026-04-25T02:00:00.000000Z",
+          "date_aest": "2026-04-25",
+          "datetime_aest": "2026-04-25T12:00:00",
+          "team_name": "Eltham Redbacks FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Head Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Brunswick Juventus FC U18",
+          "opponent_team_id": "Pmrk7xrVNo",
+          "events": []
         }
       ]
     },
@@ -36710,7 +36743,7 @@
       },
       "team_stats": {
         "Eltham Redbacks FC U18": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -36721,7 +36754,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -36865,6 +36898,20 @@
           "opponent_team_name": "Geelong SC U18",
           "opponent_team_id": "BdD1Bq04mb",
           "events": []
+        },
+        {
+          "match_hash_id": "pmvvw7nARm",
+          "date": "2026-04-25T02:00:00.000000Z",
+          "date_aest": "2026-04-25",
+          "datetime_aest": "2026-04-25T12:00:00",
+          "team_name": "Eltham Redbacks FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Brunswick Juventus FC U18",
+          "opponent_team_id": "Pmrk7xrVNo",
+          "events": []
         }
       ]
     },
@@ -36899,7 +36946,7 @@
       },
       "team_stats": {
         "Eltham Redbacks FC U18": {
-          "matches_played": 9,
+          "matches_played": 10,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -36950,7 +36997,7 @@
         }
       },
       "stats": {
-        "matches_attended": 45,
+        "matches_attended": 46,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -37583,6 +37630,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Geelong SC U14",
           "opponent_team_id": "emA1jX48mB",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw7nARm",
+          "date": "2026-04-25T02:00:00.000000Z",
+          "date_aest": "2026-04-25",
+          "datetime_aest": "2026-04-25T12:00:00",
+          "team_name": "Eltham Redbacks FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "away",
+          "opponent_team_name": "Brunswick Juventus FC U18",
+          "opponent_team_id": "Pmrk7xrVNo",
           "events": []
         }
       ]
@@ -37619,7 +37680,7 @@
       },
       "team_stats": {
         "Eltham Redbacks FC U18": {
-          "matches_played": 9,
+          "matches_played": 10,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -37670,7 +37731,7 @@
         }
       },
       "stats": {
-        "matches_attended": 45,
+        "matches_attended": 46,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -38303,6 +38364,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Geelong SC U14",
           "opponent_team_id": "emA1jX48mB",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw7nARm",
+          "date": "2026-04-25T02:00:00.000000Z",
+          "date_aest": "2026-04-25",
+          "datetime_aest": "2026-04-25T12:00:00",
+          "team_name": "Eltham Redbacks FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "away",
+          "opponent_team_name": "Brunswick Juventus FC U18",
+          "opponent_team_id": "Pmrk7xrVNo",
           "events": []
         }
       ]
@@ -53045,7 +53120,7 @@
           "red_cards": 0
         },
         "Eltham Redbacks FC U18": {
-          "matches_played": 7,
+          "matches_played": 8,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -53086,7 +53161,7 @@
         }
       },
       "stats": {
-        "matches_attended": 37,
+        "matches_attended": 38,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -53607,6 +53682,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Geelong SC U14",
           "opponent_team_id": "emA1jX48mB",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw7nARm",
+          "date": "2026-04-25T02:00:00.000000Z",
+          "date_aest": "2026-04-25",
+          "datetime_aest": "2026-04-25T12:00:00",
+          "team_name": "Eltham Redbacks FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "away",
+          "opponent_team_name": "Brunswick Juventus FC U18",
+          "opponent_team_id": "Pmrk7xrVNo",
           "events": []
         }
       ]
@@ -55131,7 +55220,7 @@
           "red_cards": 0
         },
         "Brunswick Juventus FC U18": {
-          "matches_played": 18,
+          "matches_played": 20,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -55162,7 +55251,7 @@
         }
       },
       "stats": {
-        "matches_attended": 54,
+        "matches_attended": 56,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -55921,6 +56010,34 @@
           "home_or_away": "home",
           "opponent_team_name": "Melbourne Knights FC U16",
           "opponent_team_id": "MNGogqxLNA",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw7nARm",
+          "date": "2026-04-25T02:00:00.000000Z",
+          "date_aest": "2026-04-25",
+          "datetime_aest": "2026-04-25T12:00:00",
+          "team_name": "Brunswick Juventus FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Eltham Redbacks FC U18",
+          "opponent_team_id": "8NOD8q1vKZ",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw7nARm",
+          "date": "2026-04-25T02:00:00.000000Z",
+          "date_aest": "2026-04-25",
+          "datetime_aest": "2026-04-25T12:00:00",
+          "team_name": "Brunswick Juventus FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Eltham Redbacks FC U18",
+          "opponent_team_id": "8NOD8q1vKZ",
           "events": []
         }
       ]
@@ -55978,7 +56095,7 @@
           "red_cards": 0
         },
         "Brunswick Juventus FC U18": {
-          "matches_played": 18,
+          "matches_played": 20,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -56009,7 +56126,7 @@
         }
       },
       "stats": {
-        "matches_attended": 65,
+        "matches_attended": 67,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -56922,6 +57039,34 @@
           "home_or_away": "home",
           "opponent_team_name": "Melbourne Knights FC U16",
           "opponent_team_id": "MNGogqxLNA",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw7nARm",
+          "date": "2026-04-25T02:00:00.000000Z",
+          "date_aest": "2026-04-25",
+          "datetime_aest": "2026-04-25T12:00:00",
+          "team_name": "Brunswick Juventus FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Eltham Redbacks FC U18",
+          "opponent_team_id": "8NOD8q1vKZ",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw7nARm",
+          "date": "2026-04-25T02:00:00.000000Z",
+          "date_aest": "2026-04-25",
+          "datetime_aest": "2026-04-25T12:00:00",
+          "team_name": "Brunswick Juventus FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Eltham Redbacks FC U18",
+          "opponent_team_id": "8NOD8q1vKZ",
           "events": []
         }
       ]
@@ -56979,7 +57124,7 @@
           "red_cards": 0
         },
         "Brunswick Juventus FC U18": {
-          "matches_played": 18,
+          "matches_played": 20,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -57010,7 +57155,7 @@
         }
       },
       "stats": {
-        "matches_attended": 72,
+        "matches_attended": 74,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -58021,6 +58166,34 @@
           "home_or_away": "home",
           "opponent_team_name": "Melbourne Knights FC U16",
           "opponent_team_id": "MNGogqxLNA",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw7nARm",
+          "date": "2026-04-25T02:00:00.000000Z",
+          "date_aest": "2026-04-25",
+          "datetime_aest": "2026-04-25T12:00:00",
+          "team_name": "Brunswick Juventus FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Eltham Redbacks FC U18",
+          "opponent_team_id": "8NOD8q1vKZ",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw7nARm",
+          "date": "2026-04-25T02:00:00.000000Z",
+          "date_aest": "2026-04-25",
+          "datetime_aest": "2026-04-25T12:00:00",
+          "team_name": "Brunswick Juventus FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Eltham Redbacks FC U18",
+          "opponent_team_id": "8NOD8q1vKZ",
           "events": []
         }
       ]
@@ -76929,7 +77102,7 @@
       },
       "team_stats": {
         "Brunswick Juventus FC U18": {
-          "matches_played": 9,
+          "matches_played": 10,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -76940,7 +77113,7 @@
         }
       },
       "stats": {
-        "matches_attended": 9,
+        "matches_attended": 10,
         "yellow_cards": 1,
         "red_cards": 0
       },
@@ -77075,6 +77248,20 @@
           "opponent_team_name": "Melbourne Knights FC U18",
           "opponent_team_id": "jdye8g5Dd5",
           "events": []
+        },
+        {
+          "match_hash_id": "pmvvw7nARm",
+          "date": "2026-04-25T02:00:00.000000Z",
+          "date_aest": "2026-04-25",
+          "datetime_aest": "2026-04-25T12:00:00",
+          "team_name": "Brunswick Juventus FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Assistant Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Eltham Redbacks FC U18",
+          "opponent_team_id": "8NOD8q1vKZ",
+          "events": []
         }
       ]
     },
@@ -77097,7 +77284,7 @@
       },
       "team_stats": {
         "Brunswick Juventus FC U18": {
-          "matches_played": 9,
+          "matches_played": 10,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -77108,7 +77295,7 @@
         }
       },
       "stats": {
-        "matches_attended": 9,
+        "matches_attended": 10,
         "yellow_cards": 0,
         "red_cards": 1
       },
@@ -77243,6 +77430,20 @@
           "opponent_team_name": "Melbourne Knights FC U18",
           "opponent_team_id": "jdye8g5Dd5",
           "events": []
+        },
+        {
+          "match_hash_id": "pmvvw7nARm",
+          "date": "2026-04-25T02:00:00.000000Z",
+          "date_aest": "2026-04-25",
+          "datetime_aest": "2026-04-25T12:00:00",
+          "team_name": "Brunswick Juventus FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Head Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Eltham Redbacks FC U18",
+          "opponent_team_id": "8NOD8q1vKZ",
+          "events": []
         }
       ]
     },
@@ -77265,7 +77466,7 @@
       },
       "team_stats": {
         "Brunswick Juventus FC U18": {
-          "matches_played": 9,
+          "matches_played": 10,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -77276,7 +77477,7 @@
         }
       },
       "stats": {
-        "matches_attended": 9,
+        "matches_attended": 10,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -77406,6 +77607,20 @@
           "opponent_team_name": "Melbourne Knights FC U18",
           "opponent_team_id": "jdye8g5Dd5",
           "events": []
+        },
+        {
+          "match_hash_id": "pmvvw7nARm",
+          "date": "2026-04-25T02:00:00.000000Z",
+          "date_aest": "2026-04-25",
+          "datetime_aest": "2026-04-25T12:00:00",
+          "team_name": "Brunswick Juventus FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Team Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Eltham Redbacks FC U18",
+          "opponent_team_id": "8NOD8q1vKZ",
+          "events": []
         }
       ]
     },
@@ -77431,7 +77646,7 @@
       },
       "team_stats": {
         "Brunswick Juventus FC U18": {
-          "matches_played": 9,
+          "matches_played": 10,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -77452,7 +77667,7 @@
         }
       },
       "stats": {
-        "matches_attended": 18,
+        "matches_attended": 19,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -77708,6 +77923,20 @@
           "opponent_team_name": "Melbourne Knights FC U14",
           "opponent_team_id": "8NOD8LzaKZ",
           "events": []
+        },
+        {
+          "match_hash_id": "pmvvw7nARm",
+          "date": "2026-04-25T02:00:00.000000Z",
+          "date_aest": "2026-04-25",
+          "datetime_aest": "2026-04-25T12:00:00",
+          "team_name": "Brunswick Juventus FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Eltham Redbacks FC U18",
+          "opponent_team_id": "8NOD8q1vKZ",
+          "events": []
         }
       ]
     },
@@ -77730,7 +77959,7 @@
       },
       "team_stats": {
         "Brunswick Juventus FC U18": {
-          "matches_played": 8,
+          "matches_played": 9,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -77741,7 +77970,7 @@
         }
       },
       "stats": {
-        "matches_attended": 8,
+        "matches_attended": 9,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -77856,6 +78085,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Melbourne Knights FC U18",
           "opponent_team_id": "jdye8g5Dd5",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw7nARm",
+          "date": "2026-04-25T02:00:00.000000Z",
+          "date_aest": "2026-04-25",
+          "datetime_aest": "2026-04-25T12:00:00",
+          "team_name": "Brunswick Juventus FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Eltham Redbacks FC U18",
+          "opponent_team_id": "8NOD8q1vKZ",
           "events": []
         }
       ]
@@ -108291,7 +108534,7 @@
           "red_cards": 0
         },
         "Brunswick City SC U15": {
-          "matches_played": 7,
+          "matches_played": 8,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -108302,7 +108545,7 @@
         }
       },
       "stats": {
-        "matches_attended": 15,
+        "matches_attended": 16,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -108516,6 +108759,20 @@
           "opponent_team_name": "Bendigo City FC U13",
           "opponent_team_id": "2KpvA96PmY",
           "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMxXnd",
+          "date": "2026-04-19T00:00:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T10:00:00",
+          "team_name": "Brunswick City SC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Bendigo City FC U15",
+          "opponent_team_id": "2KpvA9abmY",
+          "events": []
         }
       ]
     },
@@ -108581,7 +108838,7 @@
           "red_cards": 0
         },
         "Brunswick City SC U15": {
-          "matches_played": 7,
+          "matches_played": 8,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -108602,7 +108859,7 @@
         }
       },
       "stats": {
-        "matches_attended": 39,
+        "matches_attended": 40,
         "yellow_cards": 1,
         "red_cards": 0
       },
@@ -109156,6 +109413,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Bendigo City FC U16",
           "opponent_team_id": "vmZwn2kLNq",
+          "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMxXnd",
+          "date": "2026-04-19T00:00:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T10:00:00",
+          "team_name": "Brunswick City SC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "away",
+          "opponent_team_name": "Bendigo City FC U15",
+          "opponent_team_id": "2KpvA9abmY",
           "events": []
         }
       ]
@@ -117026,7 +117297,7 @@
       },
       "team_stats": {
         "Eltham Redbacks FC U18": {
-          "matches_played": 8,
+          "matches_played": 9,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -117077,7 +117348,7 @@
         }
       },
       "stats": {
-        "matches_attended": 40,
+        "matches_attended": 41,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -117640,6 +117911,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Geelong SC U14",
           "opponent_team_id": "emA1jX48mB",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw7nARm",
+          "date": "2026-04-25T02:00:00.000000Z",
+          "date_aest": "2026-04-25",
+          "datetime_aest": "2026-04-25T12:00:00",
+          "team_name": "Eltham Redbacks FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Brunswick Juventus FC U18",
+          "opponent_team_id": "Pmrk7xrVNo",
           "events": []
         }
       ]
@@ -117675,7 +117960,7 @@
       },
       "team_stats": {
         "Eltham Redbacks FC U18": {
-          "matches_played": 8,
+          "matches_played": 9,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -117726,7 +118011,7 @@
         }
       },
       "stats": {
-        "matches_attended": 40,
+        "matches_attended": 41,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -118289,6 +118574,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Geelong SC U14",
           "opponent_team_id": "emA1jX48mB",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw7nARm",
+          "date": "2026-04-25T02:00:00.000000Z",
+          "date_aest": "2026-04-25",
+          "datetime_aest": "2026-04-25T12:00:00",
+          "team_name": "Eltham Redbacks FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "away",
+          "opponent_team_name": "Brunswick Juventus FC U18",
+          "opponent_team_id": "Pmrk7xrVNo",
           "events": []
         }
       ]
@@ -135141,7 +135440,7 @@
       },
       "team_stats": {
         "Brunswick City SC U15": {
-          "matches_played": 7,
+          "matches_played": 8,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -135152,7 +135451,7 @@
         }
       },
       "stats": {
-        "matches_attended": 7,
+        "matches_attended": 8,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -135254,6 +135553,20 @@
           "opponent_team_name": "Doreen United SC U15",
           "opponent_team_id": "1K3Ykw29mQ",
           "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMxXnd",
+          "date": "2026-04-19T00:00:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T10:00:00",
+          "team_name": "Brunswick City SC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Bendigo City FC U15",
+          "opponent_team_id": "2KpvA9abmY",
+          "events": []
         }
       ]
     },
@@ -135276,7 +135589,7 @@
       },
       "team_stats": {
         "Brunswick City SC U15": {
-          "matches_played": 7,
+          "matches_played": 8,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -135287,7 +135600,7 @@
         }
       },
       "stats": {
-        "matches_attended": 7,
+        "matches_attended": 8,
         "yellow_cards": 1,
         "red_cards": 1
       },
@@ -135397,6 +135710,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Doreen United SC U15",
           "opponent_team_id": "1K3Ykw29mQ",
+          "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMxXnd",
+          "date": "2026-04-19T00:00:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T10:00:00",
+          "team_name": "Brunswick City SC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Bendigo City FC U15",
+          "opponent_team_id": "2KpvA9abmY",
           "events": []
         }
       ]
@@ -146047,7 +146374,7 @@
           "red_cards": 0
         },
         "Bendigo City FC U15": {
-          "matches_played": 9,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -146058,7 +146385,7 @@
         }
       },
       "stats": {
-        "matches_attended": 49,
+        "matches_attended": 51,
         "yellow_cards": 1,
         "red_cards": 0
       },
@@ -146753,6 +147080,34 @@
           "opponent_team_name": "Brunswick City SC U16",
           "opponent_team_id": "gdMvM2rDmE",
           "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMxXnd",
+          "date": "2026-04-19T00:00:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T10:00:00",
+          "team_name": "Bendigo City FC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Brunswick City SC U15",
+          "opponent_team_id": "bd9X95qYK4",
+          "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMxXnd",
+          "date": "2026-04-19T00:00:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T10:00:00",
+          "team_name": "Bendigo City FC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Brunswick City SC U15",
+          "opponent_team_id": "bd9X95qYK4",
+          "events": []
         }
       ]
     },
@@ -146829,7 +147184,7 @@
           "red_cards": 0
         },
         "Bendigo City FC U15": {
-          "matches_played": 7,
+          "matches_played": 8,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -146840,7 +147195,7 @@
         }
       },
       "stats": {
-        "matches_attended": 47,
+        "matches_attended": 48,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -147502,6 +147857,20 @@
           "opponent_team_name": "Brunswick City SC U16",
           "opponent_team_id": "gdMvM2rDmE",
           "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMxXnd",
+          "date": "2026-04-19T00:00:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T10:00:00",
+          "team_name": "Bendigo City FC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Brunswick City SC U15",
+          "opponent_team_id": "bd9X95qYK4",
+          "events": []
         }
       ]
     },
@@ -147511,7 +147880,8 @@
       "last_name": "Priest",
       "role_slug": "staff",
       "roles": [
-        "Teamstaff"
+        "Teamstaff",
+        "Team Manager"
       ],
       "teams": [
         "Bendigo City FC U13",
@@ -147576,7 +147946,7 @@
           "red_cards": 0
         },
         "Bendigo City FC U15": {
-          "matches_played": 7,
+          "matches_played": 9,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -147587,7 +147957,7 @@
         }
       },
       "stats": {
-        "matches_attended": 39,
+        "matches_attended": 41,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -148136,6 +148506,34 @@
           "home_or_away": "home",
           "opponent_team_name": "Brunswick City SC U16",
           "opponent_team_id": "gdMvM2rDmE",
+          "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMxXnd",
+          "date": "2026-04-19T00:00:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T10:00:00",
+          "team_name": "Bendigo City FC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Brunswick City SC U15",
+          "opponent_team_id": "bd9X95qYK4",
+          "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMxXnd",
+          "date": "2026-04-19T00:00:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T10:00:00",
+          "team_name": "Bendigo City FC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Team Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Brunswick City SC U15",
+          "opponent_team_id": "bd9X95qYK4",
           "events": []
         }
       ]
@@ -159203,7 +159601,7 @@
       },
       "team_stats": {
         "Bendigo City FC U15": {
-          "matches_played": 7,
+          "matches_played": 8,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -159214,7 +159612,7 @@
         }
       },
       "stats": {
-        "matches_attended": 7,
+        "matches_attended": 8,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -159315,6 +159713,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Moreland City SC U15",
           "opponent_team_id": "am1qvwoqmw",
+          "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMxXnd",
+          "date": "2026-04-19T00:00:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T10:00:00",
+          "team_name": "Bendigo City FC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Team Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Brunswick City SC U15",
+          "opponent_team_id": "bd9X95qYK4",
           "events": []
         }
       ]
@@ -159338,7 +159750,7 @@
       },
       "team_stats": {
         "Bendigo City FC U15": {
-          "matches_played": 7,
+          "matches_played": 8,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -159349,7 +159761,7 @@
         }
       },
       "stats": {
-        "matches_attended": 7,
+        "matches_attended": 8,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -159450,6 +159862,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Moreland City SC U15",
           "opponent_team_id": "am1qvwoqmw",
+          "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMxXnd",
+          "date": "2026-04-19T00:00:00.000000Z",
+          "date_aest": "2026-04-19",
+          "datetime_aest": "2026-04-19T10:00:00",
+          "team_name": "Bendigo City FC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Brunswick City SC U15",
+          "opponent_team_id": "bd9X95qYK4",
           "events": []
         }
       ]
@@ -195309,5 +195735,5 @@
       ]
     }
   ],
-  "_last_updated": "2026-04-25T12:03:08.186420"
+  "_last_updated": "2026-04-25T16:03:13.085905"
 }
