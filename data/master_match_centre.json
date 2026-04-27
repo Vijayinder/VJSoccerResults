@@ -415272,14 +415272,7 @@
                     "is_bye": false,
                     "knockout_league_hash_id": "njdyYknAd5",
                     "win_status": "away-win",
-                    "referees": [
-                        {
-                            "name": "Simon Spinks",
-                            "role": "cr",
-                            "order": 1,
-                            "image": "https://ocean.dribl.com/ff0fc9b5bdbb44b392b244f2b9851935"
-                        }
-                    ],
+                    "referees": [],
                     "match_events": [
                         {
                             "type": "goal",
@@ -420900,7 +420893,7 @@
                 "type": "fixtures",
                 "hash_id": "OmepX4ZzPd",
                 "attributes": {
-                    "fixture_updated_at": "2026-04-26 08:43:41",
+                    "fixture_updated_at": "2026-04-27 00:49:38",
                     "event_updated_at": null,
                     "matchsheet_updated_at": null,
                     "field_updated_at": null,
@@ -420930,7 +420923,7 @@
                     "enable_half_time_scores": false,
                     "enable_matchsheet_penalties": false,
                     "enable_votes_public_display": false,
-                    "matchsheet_status": "pending",
+                    "matchsheet_status": "completed",
                     "matchsheet_home_team_submitted": true,
                     "matchsheet_away_team_submitted": true,
                     "matchsheet_home_team_confirmed": false,
