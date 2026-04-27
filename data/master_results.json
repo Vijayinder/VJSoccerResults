@@ -64648,5 +64648,55 @@
                 "href": "https://mc-api.dribl.com/api/results/pN6R94AGAN"
             }
         }
+    },
+    {
+        "type": "results",
+        "hash_id": "gdM6EPQGBm",
+        "attributes": {
+            "name": "FV54531908 - Heidelberg United v North Geelong Warriors FC",
+            "date": "2026-04-25 23:00:00",
+            "round": "R11",
+            "full_round": "Round 11",
+            "ground_name": "Olympic Village",
+            "field_name": "Pitch 2 West",
+            "home_team_name": "Heidelberg United FC U15",
+            "home_logo": "https://ocean.dribl.com/1c4939061b4b4893802e7574043749bc",
+            "away_team_name": "North Geelong Warriors FC U15",
+            "away_logo": "https://ocean.dribl.com/c2410d9ee11e4428802e11533c882d4d",
+            "competition_name": "Boys Victorian Youth Premier League 2",
+            "league_name": "U15 YPL2 Boys",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 1,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 2,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": true,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 3,
+            "enable_referees_allocated": true,
+            "match_hash_id": "PmrGqg6OEN",
+            "home_team_hash_id": "vmZwnqlMNq",
+            "away_team_hash_id": "pmvzPBQ8mv",
+            "forfeit_team_hash_id": null,
+            "datetime_aest": "2026-04-26T09:00:00",
+            "date_aest": "2026-04-26"
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/gdM6EPQGBm"
+            }
+        }
     }
 ]
