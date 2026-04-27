@@ -64748,5 +64748,55 @@
                 "href": "https://mc-api.dribl.com/api/results/pN6R9JDMQN"
             }
         }
+    },
+    {
+        "type": "results",
+        "hash_id": "gdM6EPQrDm",
+        "attributes": {
+            "name": "FV54532789 - Langwarrin SC v Altona Magic SC",
+            "date": "2026-04-26 00:45:00",
+            "round": "R11",
+            "full_round": "Round 11",
+            "ground_name": "Lawton Park Reserve",
+            "field_name": "Pitch 2",
+            "home_team_name": "Langwarrin SC U14",
+            "home_logo": "https://ocean.dribl.com/e895f078d0894566a9e7ded5fd256155",
+            "away_team_name": "Altona Magic SC U14",
+            "away_logo": "https://ocean.dribl.com/25c5cffeb68544f29b1777f8a45b215c",
+            "competition_name": "Boys Victorian Youth Premier League 2",
+            "league_name": "U14 YPL2 Boys",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 1,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 2,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": false,
+            "allocated_assistant_referee_1": false,
+            "allocated_assistant_referee_2": false,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 0,
+            "enable_referees_allocated": true,
+            "match_hash_id": "vmZp9zqXDK",
+            "home_team_hash_id": "EN2O4863Kq",
+            "away_team_hash_id": "gdMvMWxbmE",
+            "forfeit_team_hash_id": null,
+            "datetime_aest": "2026-04-26T10:45:00",
+            "date_aest": "2026-04-26"
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/gdM6EPQrDm"
+            }
+        }
     }
 ]

@@ -78764,7 +78764,7 @@
       },
       "team_stats": {
         "Altona Magic SC U14": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -78775,7 +78775,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -78918,6 +78918,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Dandenong Thunder FC U14",
           "opponent_team_id": "nmYyQv6ymz",
+          "events": []
+        },
+        {
+          "match_hash_id": "vmZp9zqXDK",
+          "date": "2026-04-26T00:45:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T10:45:00",
+          "team_name": "Altona Magic SC U14",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U14 YPL2 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Langwarrin SC U14",
+          "opponent_team_id": "EN2O4863Kq",
           "events": []
         }
       ]
@@ -84849,7 +84863,7 @@
       },
       "team_stats": {
         "Langwarrin SC U14": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -84860,7 +84874,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -85003,6 +85017,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Ballarat City FC U14",
           "opponent_team_id": "jmaVX9nGNR",
+          "events": []
+        },
+        {
+          "match_hash_id": "vmZp9zqXDK",
+          "date": "2026-04-26T00:45:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T10:45:00",
+          "team_name": "Langwarrin SC U14",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U14 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Altona Magic SC U14",
+          "opponent_team_id": "gdMvMWxbmE",
           "events": []
         }
       ]
@@ -85026,7 +85054,7 @@
       },
       "team_stats": {
         "Langwarrin SC U14": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -85037,7 +85065,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -85180,6 +85208,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Ballarat City FC U14",
           "opponent_team_id": "jmaVX9nGNR",
+          "events": []
+        },
+        {
+          "match_hash_id": "vmZp9zqXDK",
+          "date": "2026-04-26T00:45:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T10:45:00",
+          "team_name": "Langwarrin SC U14",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U14 YPL2 Boys",
+          "role_in_match": "Team Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Altona Magic SC U14",
+          "opponent_team_id": "gdMvMWxbmE",
           "events": []
         }
       ]
@@ -210717,12 +210759,13 @@
       ]
     },
     {
-      "person_id": "ZKRylaq4BN",
+      "person_id": "ydoRXWp3aK",
       "first_name": "Frank",
       "last_name": "McGrellis",
       "role_slug": "staff",
       "roles": [
-        "Technical Director"
+        "Technical Director",
+        "Teamstaff"
       ],
       "teams": [
         "Pascoe Vale FC U18"
@@ -210735,7 +210778,7 @@
       },
       "team_stats": {
         "Pascoe Vale FC U18": {
-          "matches_played": 1,
+          "matches_played": 2,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -210746,7 +210789,7 @@
         }
       },
       "stats": {
-        "matches_attended": 1,
+        "matches_attended": 2,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -210764,44 +210807,7 @@
           "opponent_team_name": "Geelong SC U18",
           "opponent_team_id": "BdD1Bq04mb",
           "events": []
-        }
-      ]
-    },
-    {
-      "person_id": "ydoRXWp3aK",
-      "first_name": "Frank",
-      "last_name": "McGrellis",
-      "role_slug": "staff",
-      "roles": [
-        "Teamstaff"
-      ],
-      "teams": [
-        "Pascoe Vale FC U18"
-      ],
-      "leagues": [
-        "U18 YPL2 Boys"
-      ],
-      "jerseys": {
-        "Pascoe Vale FC U18": ""
-      },
-      "team_stats": {
-        "Pascoe Vale FC U18": {
-          "matches_played": 1,
-          "matches_started": 0,
-          "bench_appearances": 0,
-          "goals": 0,
-          "own_goals": 0,
-          "penalties": 0,
-          "yellow_cards": 0,
-          "red_cards": 0
-        }
-      },
-      "stats": {
-        "matches_attended": 1,
-        "yellow_cards": 0,
-        "red_cards": 0
-      },
-      "matches": [
+        },
         {
           "match_hash_id": "EN2pnXaaOd",
           "date": "2026-04-26T02:30:00.000000Z",
@@ -210921,5 +210927,5 @@
       ]
     }
   ],
-  "_last_updated": "2026-04-27T20:04:47.420734"
+  "_last_updated": "2026-04-27T22:04:37.846819"
 }
