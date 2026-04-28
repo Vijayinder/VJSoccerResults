@@ -38719,7 +38719,7 @@
           "own_goals": 0,
           "penalties": 0,
           "yellow_cards": 0,
-          "red_cards": 1
+          "red_cards": 0
         },
         "Eltham Redbacks FC U15": {
           "matches_played": 2,
@@ -38735,7 +38735,7 @@
       "stats": {
         "matches_attended": 13,
         "yellow_cards": 0,
-        "red_cards": 1
+        "red_cards": 0
       },
       "matches": [
         {
@@ -38904,12 +38904,7 @@
           "home_or_away": "away",
           "opponent_team_name": "Brunswick Juventus FC U18",
           "opponent_team_id": "Pmrk7xrVNo",
-          "events": [
-            {
-              "type": "red_card",
-              "minute": "90"
-            }
-          ]
+          "events": []
         },
         {
           "match_hash_id": "8NO5XMqqBd",
@@ -39191,13 +39186,13 @@
           "own_goals": 0,
           "penalties": 0,
           "yellow_cards": 0,
-          "red_cards": 0
+          "red_cards": 1
         }
       },
       "stats": {
         "matches_attended": 11,
         "yellow_cards": 0,
-        "red_cards": 0
+        "red_cards": 1
       },
       "matches": [
         {
@@ -39352,7 +39347,12 @@
           "home_or_away": "away",
           "opponent_team_name": "Brunswick Juventus FC U18",
           "opponent_team_id": "Pmrk7xrVNo",
-          "events": []
+          "events": [
+            {
+              "type": "red_card",
+              "minute": "90"
+            }
+          ]
         }
       ]
     },
@@ -47875,7 +47875,7 @@
       },
       "team_stats": {
         "North Geelong Warriors FC U16": {
-          "matches_played": 9,
+          "matches_played": 10,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -47886,7 +47886,7 @@
         }
       },
       "stats": {
-        "matches_attended": 9,
+        "matches_attended": 10,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -48015,6 +48015,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Geelong SC U16",
           "opponent_team_id": "am1qvalAmw",
+          "events": []
+        },
+        {
+          "match_hash_id": "gdM6EJqg7m",
+          "date": "2026-04-26T01:00:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T11:00:00",
+          "team_name": "North Geelong Warriors FC U16",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Heidelberg United FC U16",
+          "opponent_team_id": "MNGogqW2NA",
           "events": []
         }
       ]
@@ -48038,7 +48052,7 @@
       },
       "team_stats": {
         "North Geelong Warriors FC U16": {
-          "matches_played": 9,
+          "matches_played": 10,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -48049,7 +48063,7 @@
         }
       },
       "stats": {
-        "matches_attended": 9,
+        "matches_attended": 10,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -48178,6 +48192,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Geelong SC U16",
           "opponent_team_id": "am1qvalAmw",
+          "events": []
+        },
+        {
+          "match_hash_id": "gdM6EJqg7m",
+          "date": "2026-04-26T01:00:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T11:00:00",
+          "team_name": "North Geelong Warriors FC U16",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Heidelberg United FC U16",
+          "opponent_team_id": "MNGogqW2NA",
           "events": []
         }
       ]
@@ -48201,7 +48229,7 @@
       },
       "team_stats": {
         "North Geelong Warriors FC U16": {
-          "matches_played": 9,
+          "matches_played": 10,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -48212,7 +48240,7 @@
         }
       },
       "stats": {
-        "matches_attended": 9,
+        "matches_attended": 10,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -48341,6 +48369,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Geelong SC U16",
           "opponent_team_id": "am1qvalAmw",
+          "events": []
+        },
+        {
+          "match_hash_id": "gdM6EJqg7m",
+          "date": "2026-04-26T01:00:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T11:00:00",
+          "team_name": "North Geelong Warriors FC U16",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Heidelberg United FC U16",
+          "opponent_team_id": "MNGogqW2NA",
           "events": []
         }
       ]
@@ -57935,7 +57977,7 @@
           "red_cards": 0
         },
         "Heidelberg United FC U16": {
-          "matches_played": 9,
+          "matches_played": 10,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -57976,7 +58018,7 @@
         }
       },
       "stats": {
-        "matches_attended": 36,
+        "matches_attended": 37,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -58483,6 +58525,20 @@
           "home_or_away": "home",
           "opponent_team_name": "North Geelong Warriors FC U13",
           "opponent_team_id": "MNGogZGXNA",
+          "events": []
+        },
+        {
+          "match_hash_id": "gdM6EJqg7m",
+          "date": "2026-04-26T01:00:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T11:00:00",
+          "team_name": "Heidelberg United FC U16",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "North Geelong Warriors FC U16",
+          "opponent_team_id": "vmZwnq9RNq",
           "events": []
         }
       ]
@@ -80968,7 +81024,7 @@
       },
       "team_stats": {
         "Heidelberg United FC U16": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -80979,7 +81035,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -81122,6 +81178,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Melbourne Knights FC U16",
           "opponent_team_id": "MNGogqxLNA",
+          "events": []
+        },
+        {
+          "match_hash_id": "gdM6EJqg7m",
+          "date": "2026-04-26T01:00:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T11:00:00",
+          "team_name": "Heidelberg United FC U16",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Head Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "North Geelong Warriors FC U16",
+          "opponent_team_id": "vmZwnq9RNq",
           "events": []
         }
       ]
@@ -81145,7 +81215,7 @@
       },
       "team_stats": {
         "Heidelberg United FC U16": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -81156,7 +81226,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -81299,6 +81369,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Melbourne Knights FC U16",
           "opponent_team_id": "MNGogqxLNA",
+          "events": []
+        },
+        {
+          "match_hash_id": "gdM6EJqg7m",
+          "date": "2026-04-26T01:00:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T11:00:00",
+          "team_name": "Heidelberg United FC U16",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "North Geelong Warriors FC U16",
+          "opponent_team_id": "vmZwnq9RNq",
           "events": []
         }
       ]
@@ -127457,7 +127541,7 @@
           "red_cards": 0
         },
         "Heidelberg United FC U16": {
-          "matches_played": 8,
+          "matches_played": 9,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -127468,7 +127552,7 @@
         }
       },
       "stats": {
-        "matches_attended": 29,
+        "matches_attended": 30,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -127877,6 +127961,20 @@
           "home_or_away": "home",
           "opponent_team_name": "North Geelong Warriors FC U13",
           "opponent_team_id": "MNGogZGXNA",
+          "events": []
+        },
+        {
+          "match_hash_id": "gdM6EJqg7m",
+          "date": "2026-04-26T01:00:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T11:00:00",
+          "team_name": "Heidelberg United FC U16",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "North Geelong Warriors FC U16",
+          "opponent_team_id": "vmZwnq9RNq",
           "events": []
         }
       ]
@@ -148648,7 +148746,7 @@
           "red_cards": 0
         },
         "Heidelberg United FC U16": {
-          "matches_played": 6,
+          "matches_played": 7,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -148659,7 +148757,7 @@
         }
       },
       "stats": {
-        "matches_attended": 15,
+        "matches_attended": 16,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -148872,6 +148970,20 @@
           "home_or_away": "home",
           "opponent_team_name": "North Geelong Warriors FC U14",
           "opponent_team_id": "4KLnPbgDmq",
+          "events": []
+        },
+        {
+          "match_hash_id": "gdM6EJqg7m",
+          "date": "2026-04-26T01:00:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T11:00:00",
+          "team_name": "Heidelberg United FC U16",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "North Geelong Warriors FC U16",
+          "opponent_team_id": "vmZwnq9RNq",
           "events": []
         }
       ]
@@ -207437,7 +207549,7 @@
       },
       "team_stats": {
         "Heidelberg United FC U16": {
-          "matches_played": 3,
+          "matches_played": 4,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -207448,7 +207560,7 @@
         }
       },
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -207493,6 +207605,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Melbourne Knights FC U16",
           "opponent_team_id": "MNGogqxLNA",
+          "events": []
+        },
+        {
+          "match_hash_id": "gdM6EJqg7m",
+          "date": "2026-04-26T01:00:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T11:00:00",
+          "team_name": "Heidelberg United FC U16",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "North Geelong Warriors FC U16",
+          "opponent_team_id": "vmZwnq9RNq",
           "events": []
         }
       ]
@@ -207516,7 +207642,7 @@
       },
       "team_stats": {
         "Heidelberg United FC U16": {
-          "matches_played": 3,
+          "matches_played": 4,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -207527,7 +207653,7 @@
         }
       },
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -207572,6 +207698,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Melbourne Knights FC U16",
           "opponent_team_id": "MNGogqxLNA",
+          "events": []
+        },
+        {
+          "match_hash_id": "gdM6EJqg7m",
+          "date": "2026-04-26T01:00:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T11:00:00",
+          "team_name": "Heidelberg United FC U16",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "North Geelong Warriors FC U16",
+          "opponent_team_id": "vmZwnq9RNq",
           "events": []
         }
       ]
@@ -210927,5 +211067,5 @@
       ]
     }
   ],
-  "_last_updated": "2026-04-28T08:04:33.114830"
+  "_last_updated": "2026-04-28T12:04:33.843462"
 }
