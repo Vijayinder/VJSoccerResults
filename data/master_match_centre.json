@@ -38330,7 +38330,7 @@
                     "event_status": "complete",
                     "status": "complete",
                     "event_name": "FV54538747 - South Melbourne FC v Eastern Lions SC",
-                    "date": "2026-04-26 01:00:00",
+                    "date": null,
                     "round_number": 1,
                     "competition_ladder_display": null,
                     "ground_name": null,
@@ -375141,7 +375141,7 @@
                 "type": "fixtures",
                 "hash_id": "lNbJjQqaEN",
                 "attributes": {
-                    "fixture_updated_at": "2026-04-19 02:46:31",
+                    "fixture_updated_at": "2026-04-28 04:01:23",
                     "event_updated_at": null,
                     "matchsheet_updated_at": null,
                     "field_updated_at": null,
@@ -375171,7 +375171,7 @@
                     "enable_half_time_scores": false,
                     "enable_matchsheet_penalties": false,
                     "enable_votes_public_display": false,
-                    "matchsheet_status": "pending",
+                    "matchsheet_status": "completed",
                     "matchsheet_home_team_submitted": true,
                     "matchsheet_away_team_submitted": true,
                     "matchsheet_home_team_confirmed": true,
@@ -376622,7 +376622,7 @@
                             "image": "https://ocean.dribl.com/5d604115bc9341bbbaf2a1bf46d69678"
                         },
                         {
-                            "name": "CRAIG LYALL",
+                            "name": "Craig Lyall",
                             "role": "ar1",
                             "order": 2,
                             "image": "https://ocean.dribl.com/e8751d2fa92541ac83242841e9e60c31"
@@ -383625,7 +383625,7 @@
                     "win_status": "home-win",
                     "referees": [
                         {
-                            "name": "CRAIG LYALL",
+                            "name": "Craig Lyall",
                             "role": "cr",
                             "order": 1,
                             "image": "https://ocean.dribl.com/e8751d2fa92541ac83242841e9e60c31"
@@ -403882,7 +403882,7 @@
                 "type": "fixtures",
                 "hash_id": "OmepX4Jk0d",
                 "attributes": {
-                    "fixture_updated_at": "2026-04-26 03:04:17",
+                    "fixture_updated_at": "2026-04-28 03:14:58",
                     "event_updated_at": null,
                     "matchsheet_updated_at": null,
                     "field_updated_at": null,
@@ -404044,8 +404044,8 @@
                             "team_id": "Pmrk76zANo",
                             "minute": 69,
                             "game_section": "ft-second-half",
-                            "name": "Ishaan Anand",
-                            "jersey": "3"
+                            "name": "Oscar Tran",
+                            "jersey": "2"
                         }
                     ],
                     "goals": [
@@ -407613,7 +407613,7 @@
                             "image": "https://ocean.dribl.com/a1cb623e93194652b599378dfe719167"
                         },
                         {
-                            "name": "CRAIG LYALL",
+                            "name": "Craig Lyall",
                             "role": "ar1",
                             "order": 2,
                             "image": "https://ocean.dribl.com/e8751d2fa92541ac83242841e9e60c31"
@@ -410735,7 +410735,7 @@
                     "win_status": "home-win",
                     "referees": [
                         {
-                            "name": "CRAIG LYALL",
+                            "name": "Craig Lyall",
                             "role": "cr",
                             "order": 1,
                             "image": "https://ocean.dribl.com/e8751d2fa92541ac83242841e9e60c31"
@@ -418255,7 +418255,7 @@
                             "image": "https://ocean.dribl.com/fa4efe0ad86942c19ebcd5f07ea5a51b"
                         },
                         {
-                            "name": "CRAIG LYALL",
+                            "name": "Craig Lyall",
                             "role": "ar1",
                             "order": 2,
                             "image": "https://ocean.dribl.com/e8751d2fa92541ac83242841e9e60c31"
