@@ -393025,7 +393025,7 @@
                 "type": "fixtures",
                 "hash_id": "nmYnZlMvzN",
                 "attributes": {
-                    "fixture_updated_at": "2026-04-26 01:16:25",
+                    "fixture_updated_at": "2026-04-29 05:08:30",
                     "event_updated_at": null,
                     "matchsheet_updated_at": null,
                     "field_updated_at": null,
@@ -393154,8 +393154,8 @@
                             "penalty_kick": true,
                             "penalty_scored": false,
                             "game_section": "ft-second-half",
-                            "name": "Max Silva",
-                            "jersey": "9"
+                            "name": "Giuliano Brancatella",
+                            "jersey": "19"
                         }
                     ],
                     "goals": [
@@ -393173,13 +393173,13 @@
                         {
                             "type": "goal",
                             "team_id": "EN2O48D3Kq",
-                            "member_id": "BdDGJvL71K",
+                            "member_id": "ZNQeA0zaJN",
                             "minute": 59,
                             "own_goal": false,
                             "penalty_kick": true,
                             "game_section": "ft-second-half",
-                            "first_name": "Max",
-                            "last_name": "Silva"
+                            "first_name": "Giuliano",
+                            "last_name": "Brancatella"
                         }
                     ],
                     "penalties": [],
@@ -407018,7 +407018,7 @@
                 "type": "fixtures",
                 "hash_id": "vmZp9zb20K",
                 "attributes": {
-                    "fixture_updated_at": "2026-04-26 20:14:25",
+                    "fixture_updated_at": "2026-04-29 05:56:35",
                     "event_updated_at": null,
                     "matchsheet_updated_at": null,
                     "field_updated_at": null,
@@ -407139,8 +407139,8 @@
                             "penalty_kick": false,
                             "penalty_scored": false,
                             "game_section": "ft-first-half",
-                            "name": "Akira Seno",
-                            "jersey": "54"
+                            "name": "Mitchel Giss",
+                            "jersey": "14"
                         }
                     ],
                     "goals": [
@@ -407158,13 +407158,13 @@
                         {
                             "type": "goal",
                             "team_id": "Pmrk76ZRNo",
-                            "member_id": "RmwXYgQWJN",
+                            "member_id": "xm86Qap4LK",
                             "minute": 19,
                             "own_goal": false,
                             "penalty_kick": false,
                             "game_section": "ft-first-half",
-                            "first_name": "Akira",
-                            "last_name": "Seno"
+                            "first_name": "Mitchel",
+                            "last_name": "Giss"
                         }
                     ],
                     "penalties": [],
