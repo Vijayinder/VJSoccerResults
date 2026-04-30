@@ -402189,7 +402189,7 @@
                 "type": "fixtures",
                 "hash_id": "ld4549yDDm",
                 "attributes": {
-                    "fixture_updated_at": "2026-04-30 00:19:38",
+                    "fixture_updated_at": "2026-04-30 08:15:28",
                     "event_updated_at": null,
                     "matchsheet_updated_at": null,
                     "field_updated_at": null,
@@ -402304,8 +402304,8 @@
                             "penalty_kick": false,
                             "penalty_scored": false,
                             "game_section": "ft-first-half",
-                            "name": "Harry Savage",
-                            "jersey": "55"
+                            "name": "Sam Torcasio",
+                            "jersey": "56"
                         },
                         {
                             "type": "goal",
@@ -402349,13 +402349,13 @@
                         {
                             "type": "goal",
                             "team_id": "ld4Ol80BKW",
-                            "member_id": "emAqJ3e8Qm",
+                            "member_id": "xm86MOG42K",
                             "minute": 18,
                             "own_goal": false,
                             "penalty_kick": false,
                             "game_section": "ft-first-half",
-                            "first_name": "Harry",
-                            "last_name": "Savage"
+                            "first_name": "Sam",
+                            "last_name": "Torcasio"
                         },
                         {
                             "type": "goal",
@@ -406756,7 +406756,7 @@
                 "home_score_penalty": null,
                 "home_score_half": null,
                 "home_score_extra_half": null,
-                "away_score": 1,
+                "away_score": 4,
                 "away_score_extra": null,
                 "away_score_penalty": null,
                 "away_score_half": null,
@@ -406786,7 +406786,7 @@
                 "type": "fixtures",
                 "hash_id": "bd9pWO14lK",
                 "attributes": {
-                    "fixture_updated_at": "2026-04-26 04:43:53",
+                    "fixture_updated_at": "2026-04-30 08:01:07",
                     "event_updated_at": null,
                     "matchsheet_updated_at": null,
                     "field_updated_at": null,
@@ -406816,7 +406816,7 @@
                     "enable_half_time_scores": false,
                     "enable_matchsheet_penalties": false,
                     "enable_votes_public_display": false,
-                    "matchsheet_status": "pending",
+                    "matchsheet_status": "completed",
                     "matchsheet_home_team_submitted": true,
                     "matchsheet_away_team_submitted": true,
                     "matchsheet_home_team_confirmed": true,
@@ -406859,7 +406859,7 @@
                     "home_score_et_ht": null,
                     "home_score_ht": null,
                     "home_score_penalty": null,
-                    "away_score": 1,
+                    "away_score": 4,
                     "away_score_et": null,
                     "away_score_extra": null,
                     "away_score_et_ht": null,
@@ -415202,7 +415202,7 @@
                 "bye_flag": 0,
                 "is_unstructured": false,
                 "league_result_access": "public",
-                "home_score": 1,
+                "home_score": 2,
                 "home_score_extra": null,
                 "home_score_penalty": null,
                 "home_score_half": null,
@@ -415237,7 +415237,7 @@
                 "type": "fixtures",
                 "hash_id": "2Kp0pZRboK",
                 "attributes": {
-                    "fixture_updated_at": "2026-04-29 00:23:05",
+                    "fixture_updated_at": "2026-04-30 08:03:03",
                     "event_updated_at": null,
                     "matchsheet_updated_at": null,
                     "field_updated_at": null,
@@ -415304,7 +415304,7 @@
                     "ft_second_half_duration": 45,
                     "et_first_half_duration": 15,
                     "et_second_half_duration": 15,
-                    "home_score": 1,
+                    "home_score": 2,
                     "home_score_et": null,
                     "home_score_extra": null,
                     "home_score_et_ht": null,
@@ -415324,7 +415324,20 @@
                     "match_events": [
                         {
                             "type": "goal",
-                            "home_score": 0,
+                            "home_score": 1,
+                            "away_score": 0,
+                            "team_id": "BdD1B2lwmb",
+                            "minute": 5,
+                            "own_goal": false,
+                            "penalty_kick": false,
+                            "penalty_scored": false,
+                            "game_section": "ft-first-half",
+                            "name": "Max Fader",
+                            "jersey": "87"
+                        },
+                        {
+                            "type": "goal",
+                            "home_score": 1,
                             "away_score": 1,
                             "team_id": "pmvzPeQ5mv",
                             "minute": 7,
@@ -415337,7 +415350,7 @@
                         },
                         {
                             "type": "goal",
-                            "home_score": 1,
+                            "home_score": 2,
                             "away_score": 1,
                             "team_id": "pmvzPeQ5mv",
                             "minute": 28,
@@ -415350,7 +415363,7 @@
                         },
                         {
                             "type": "goal",
-                            "home_score": 1,
+                            "home_score": 2,
                             "away_score": 2,
                             "team_id": "pmvzPeQ5mv",
                             "minute": 51,
@@ -415363,7 +415376,7 @@
                         },
                         {
                             "type": "goal",
-                            "home_score": 1,
+                            "home_score": 2,
                             "away_score": 3,
                             "team_id": "pmvzPeQ5mv",
                             "minute": 65,
@@ -415390,6 +415403,17 @@
                         }
                     ],
                     "goals": [
+                        {
+                            "type": "goal",
+                            "team_id": "BdD1B2lwmb",
+                            "member_id": "NG5JVRb7bd",
+                            "minute": 5,
+                            "own_goal": false,
+                            "penalty_kick": false,
+                            "game_section": "ft-first-half",
+                            "first_name": "Max",
+                            "last_name": "Fader"
+                        },
                         {
                             "type": "goal",
                             "team_id": "pmvzPeQ5mv",

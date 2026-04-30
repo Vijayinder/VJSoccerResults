@@ -1198,9 +1198,9 @@
             "wins": 8,
             "draws": 1,
             "losses": 0,
-            "gf": 25,
+            "gf": 28,
             "ga": 6,
-            "gd": 19,
+            "gd": 22,
             "points": 25
           },
           "U14": {
@@ -1232,8 +1232,8 @@
             "draws": 0,
             "losses": 2,
             "gf": 18,
-            "ga": 12,
-            "gd": 6,
+            "ga": 13,
+            "gd": 5,
             "points": 18
           },
           "U16": {
@@ -1249,8 +1249,8 @@
           }
         },
         "total_position_points": 15,
-        "total_gf": 101,
-        "total_ga": 59,
+        "total_gf": 104,
+        "total_ga": 60,
         "age_group_count": 5,
         "overall_rank": 3
       },
@@ -1453,7 +1453,7 @@
         "club": "Goulburn Valley Suns FC",
         "age_groups": {
           "U15": {
-            "position": 9,
+            "position": 8,
             "played": 9,
             "wins": 1,
             "draws": 2,
@@ -1497,7 +1497,7 @@
             "points": 9
           }
         },
-        "total_position_points": 33,
+        "total_position_points": 32,
         "total_gf": 41,
         "total_ga": 68,
         "age_group_count": 4,
@@ -1637,14 +1637,14 @@
         "club": "Boroondara Eagles FC",
         "age_groups": {
           "U15": {
-            "position": 8,
+            "position": 9,
             "played": 9,
             "wins": 1,
             "draws": 2,
             "losses": 6,
             "gf": 4,
-            "ga": 15,
-            "gd": -11,
+            "ga": 18,
+            "gd": -14,
             "points": 5
           },
           "U14": {
@@ -1675,9 +1675,9 @@
             "wins": 2,
             "draws": 2,
             "losses": 4,
-            "gf": 12,
+            "gf": 13,
             "ga": 18,
-            "gd": -6,
+            "gd": -5,
             "points": 8
           },
           "U16": {
@@ -1692,9 +1692,9 @@
             "points": 0
           }
         },
-        "total_position_points": 40,
-        "total_gf": 39,
-        "total_ga": 139,
+        "total_position_points": 41,
+        "total_gf": 40,
+        "total_ga": 142,
         "age_group_count": 5,
         "overall_rank": 10
       }
@@ -3412,5 +3412,5 @@
       }
     ]
   },
-  "_last_updated": "2026-04-30T16:04:28.751990"
+  "_last_updated": "2026-04-30T20:04:37.795129"
 }
