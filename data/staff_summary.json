@@ -31939,7 +31939,7 @@
           "red_cards": 0
         },
         "Box Hill United Pythagoras FC U13": {
-          "matches_played": 11,
+          "matches_played": 13,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -31970,7 +31970,7 @@
         }
       },
       "stats": {
-        "matches_attended": 47,
+        "matches_attended": 49,
         "yellow_cards": 0,
         "red_cards": 1
       },
@@ -32636,6 +32636,34 @@
           "home_or_away": "away",
           "opponent_team_name": "Avondale FC U18",
           "opponent_team_id": "4KLnPbGpmq",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvwq3BDm",
+          "date": "2026-04-25T23:00:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T09:00:00",
+          "team_name": "Box Hill United Pythagoras FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U13 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Avondale FC U13",
+          "opponent_team_id": "4KLnPbagmq",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvwq3BDm",
+          "date": "2026-04-25T23:00:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T09:00:00",
+          "team_name": "Box Hill United Pythagoras FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U13 YPL1 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "away",
+          "opponent_team_name": "Avondale FC U13",
+          "opponent_team_id": "4KLnPbagmq",
           "events": []
         }
       ]
@@ -110775,7 +110803,7 @@
       },
       "team_stats": {
         "Box Hill United Pythagoras FC U13": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -110786,7 +110814,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -110930,6 +110958,20 @@
           "opponent_team_name": "Malvern City FC U13",
           "opponent_team_id": "pmvzPnjomv",
           "events": []
+        },
+        {
+          "match_hash_id": "pmvvwq3BDm",
+          "date": "2026-04-25T23:00:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T09:00:00",
+          "team_name": "Box Hill United Pythagoras FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U13 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Avondale FC U13",
+          "opponent_team_id": "4KLnPbagmq",
+          "events": []
         }
       ]
     },
@@ -110953,7 +110995,7 @@
       },
       "team_stats": {
         "Box Hill United Pythagoras FC U13": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -110964,7 +111006,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -111107,6 +111149,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Malvern City FC U13",
           "opponent_team_id": "pmvzPnjomv",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvwq3BDm",
+          "date": "2026-04-25T23:00:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T09:00:00",
+          "team_name": "Box Hill United Pythagoras FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U13 YPL1 Boys",
+          "role_in_match": "Team Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Avondale FC U13",
+          "opponent_team_id": "4KLnPbagmq",
           "events": []
         }
       ]
@@ -114457,7 +114513,7 @@
       },
       "team_stats": {
         "Avondale FC U13": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -114468,7 +114524,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -114611,6 +114667,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Glen Eira FC U13",
           "opponent_team_id": "am1qv80qmw",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvwq3BDm",
+          "date": "2026-04-25T23:00:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T09:00:00",
+          "team_name": "Avondale FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U13 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Box Hill United Pythagoras FC U13",
+          "opponent_team_id": "pN6OY8EpK0",
           "events": []
         }
       ]
@@ -114798,7 +114868,7 @@
       },
       "team_stats": {
         "Avondale FC U13": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -114809,7 +114879,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -114952,6 +115022,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Glen Eira FC U13",
           "opponent_team_id": "am1qv80qmw",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvwq3BDm",
+          "date": "2026-04-25T23:00:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T09:00:00",
+          "team_name": "Avondale FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U13 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Box Hill United Pythagoras FC U13",
+          "opponent_team_id": "pN6OY8EpK0",
           "events": []
         }
       ]
@@ -143783,7 +143867,7 @@
       },
       "team_stats": {
         "Doreen United SC U15": {
-          "matches_played": 8,
+          "matches_played": 9,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -143794,7 +143878,7 @@
         }
       },
       "stats": {
-        "matches_attended": 8,
+        "matches_attended": 9,
         "yellow_cards": 1,
         "red_cards": 0
       },
@@ -143915,6 +143999,20 @@
           "opponent_team_name": "Werribee City FC U15",
           "opponent_team_id": "pmvzPoMomv",
           "events": []
+        },
+        {
+          "match_hash_id": "OmepX4Q2ed",
+          "date": "2026-04-26T00:00:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T10:00:00",
+          "team_name": "Doreen United SC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Head Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Bendigo City FC U15",
+          "opponent_team_id": "2KpvA9abmY",
+          "events": []
         }
       ]
     },
@@ -143938,7 +144036,7 @@
       },
       "team_stats": {
         "Doreen United SC U15": {
-          "matches_played": 8,
+          "matches_played": 9,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -143949,7 +144047,7 @@
         }
       },
       "stats": {
-        "matches_attended": 8,
+        "matches_attended": 9,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -144064,6 +144162,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Werribee City FC U15",
           "opponent_team_id": "pmvzPoMomv",
+          "events": []
+        },
+        {
+          "match_hash_id": "OmepX4Q2ed",
+          "date": "2026-04-26T00:00:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T10:00:00",
+          "team_name": "Doreen United SC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Assistant Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Bendigo City FC U15",
+          "opponent_team_id": "2KpvA9abmY",
           "events": []
         }
       ]
@@ -144087,7 +144199,7 @@
       },
       "team_stats": {
         "Doreen United SC U15": {
-          "matches_played": 8,
+          "matches_played": 9,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -144098,7 +144210,7 @@
         }
       },
       "stats": {
-        "matches_attended": 8,
+        "matches_attended": 9,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -144213,6 +144325,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Werribee City FC U15",
           "opponent_team_id": "pmvzPoMomv",
+          "events": []
+        },
+        {
+          "match_hash_id": "OmepX4Q2ed",
+          "date": "2026-04-26T00:00:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T10:00:00",
+          "team_name": "Doreen United SC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Bendigo City FC U15",
+          "opponent_team_id": "2KpvA9abmY",
           "events": []
         }
       ]
@@ -150428,7 +150554,7 @@
           "red_cards": 0
         },
         "Doreen United SC U15": {
-          "matches_played": 3,
+          "matches_played": 4,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -150459,7 +150585,7 @@
         }
       },
       "stats": {
-        "matches_attended": 25,
+        "matches_attended": 26,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -150812,6 +150938,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Bendigo City FC U18",
           "opponent_team_id": "8NOD82naKZ",
+          "events": []
+        },
+        {
+          "match_hash_id": "OmepX4Q2ed",
+          "date": "2026-04-26T00:00:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T10:00:00",
+          "team_name": "Doreen United SC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "away",
+          "opponent_team_name": "Bendigo City FC U15",
+          "opponent_team_id": "2KpvA9abmY",
           "events": []
         }
       ]
@@ -157295,7 +157435,7 @@
           "red_cards": 0
         },
         "Bendigo City FC U15": {
-          "matches_played": 11,
+          "matches_played": 13,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -157306,7 +157446,7 @@
         }
       },
       "stats": {
-        "matches_attended": 56,
+        "matches_attended": 58,
         "yellow_cards": 1,
         "red_cards": 0
       },
@@ -158099,6 +158239,34 @@
           "opponent_team_name": "Doreen United SC U18",
           "opponent_team_id": "1K3Ykwn7mQ",
           "events": []
+        },
+        {
+          "match_hash_id": "OmepX4Q2ed",
+          "date": "2026-04-26T00:00:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T10:00:00",
+          "team_name": "Bendigo City FC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Doreen United SC U15",
+          "opponent_team_id": "1K3Ykw29mQ",
+          "events": []
+        },
+        {
+          "match_hash_id": "OmepX4Q2ed",
+          "date": "2026-04-26T00:00:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T10:00:00",
+          "team_name": "Bendigo City FC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Doreen United SC U15",
+          "opponent_team_id": "1K3Ykw29mQ",
+          "events": []
         }
       ]
     },
@@ -158175,7 +158343,7 @@
           "red_cards": 0
         },
         "Bendigo City FC U15": {
-          "matches_played": 8,
+          "matches_played": 9,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -158186,7 +158354,7 @@
         }
       },
       "stats": {
-        "matches_attended": 53,
+        "matches_attended": 54,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -158932,6 +159100,20 @@
           "opponent_team_name": "Doreen United SC U18",
           "opponent_team_id": "1K3Ykwn7mQ",
           "events": []
+        },
+        {
+          "match_hash_id": "OmepX4Q2ed",
+          "date": "2026-04-26T00:00:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T10:00:00",
+          "team_name": "Bendigo City FC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Doreen United SC U15",
+          "opponent_team_id": "1K3Ykw29mQ",
+          "events": []
         }
       ]
     },
@@ -158942,7 +159124,8 @@
       "role_slug": "staff",
       "roles": [
         "Teamstaff",
-        "Team Manager"
+        "Team Manager",
+        "Manager"
       ],
       "teams": [
         "Bendigo City FC U13",
@@ -159007,7 +159190,7 @@
           "red_cards": 0
         },
         "Bendigo City FC U15": {
-          "matches_played": 9,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -159018,7 +159201,7 @@
         }
       },
       "stats": {
-        "matches_attended": 45,
+        "matches_attended": 47,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -159651,6 +159834,34 @@
           "home_or_away": "home",
           "opponent_team_name": "Doreen United SC U18",
           "opponent_team_id": "1K3Ykwn7mQ",
+          "events": []
+        },
+        {
+          "match_hash_id": "OmepX4Q2ed",
+          "date": "2026-04-26T00:00:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T10:00:00",
+          "team_name": "Bendigo City FC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Doreen United SC U15",
+          "opponent_team_id": "1K3Ykw29mQ",
+          "events": []
+        },
+        {
+          "match_hash_id": "OmepX4Q2ed",
+          "date": "2026-04-26T00:00:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T10:00:00",
+          "team_name": "Bendigo City FC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Doreen United SC U15",
+          "opponent_team_id": "1K3Ykw29mQ",
           "events": []
         }
       ]
@@ -163103,7 +163314,7 @@
           "red_cards": 0
         },
         "Bendigo City FC U15": {
-          "matches_played": 7,
+          "matches_played": 8,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -163114,7 +163325,7 @@
         }
       },
       "stats": {
-        "matches_attended": 14,
+        "matches_attended": 15,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -163313,6 +163524,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Moreland City SC U15",
           "opponent_team_id": "am1qvwoqmw",
+          "events": []
+        },
+        {
+          "match_hash_id": "OmepX4Q2ed",
+          "date": "2026-04-26T00:00:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T10:00:00",
+          "team_name": "Bendigo City FC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Doreen United SC U15",
+          "opponent_team_id": "1K3Ykw29mQ",
           "events": []
         }
       ]
@@ -168113,7 +168338,7 @@
           "red_cards": 0
         },
         "Doreen United SC U15": {
-          "matches_played": 3,
+          "matches_played": 4,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -168154,7 +168379,7 @@
         }
       },
       "stats": {
-        "matches_attended": 29,
+        "matches_attended": 30,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -168563,6 +168788,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Bendigo City FC U18",
           "opponent_team_id": "8NOD82naKZ",
+          "events": []
+        },
+        {
+          "match_hash_id": "OmepX4Q2ed",
+          "date": "2026-04-26T00:00:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T10:00:00",
+          "team_name": "Doreen United SC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "away",
+          "opponent_team_name": "Bendigo City FC U15",
+          "opponent_team_id": "2KpvA9abmY",
           "events": []
         }
       ]
@@ -171712,7 +171951,7 @@
       },
       "team_stats": {
         "Bendigo City FC U15": {
-          "matches_played": 8,
+          "matches_played": 9,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -171723,7 +171962,7 @@
         }
       },
       "stats": {
-        "matches_attended": 8,
+        "matches_attended": 9,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -171838,6 +172077,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Brunswick City SC U15",
           "opponent_team_id": "bd9X95qYK4",
+          "events": []
+        },
+        {
+          "match_hash_id": "OmepX4Q2ed",
+          "date": "2026-04-26T00:00:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T10:00:00",
+          "team_name": "Bendigo City FC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Team Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Doreen United SC U15",
+          "opponent_team_id": "1K3Ykw29mQ",
           "events": []
         }
       ]
@@ -171861,7 +172114,7 @@
       },
       "team_stats": {
         "Bendigo City FC U15": {
-          "matches_played": 8,
+          "matches_played": 9,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -171872,7 +172125,7 @@
         }
       },
       "stats": {
-        "matches_attended": 8,
+        "matches_attended": 9,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -171987,6 +172240,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Brunswick City SC U15",
           "opponent_team_id": "bd9X95qYK4",
+          "events": []
+        },
+        {
+          "match_hash_id": "OmepX4Q2ed",
+          "date": "2026-04-26T00:00:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T10:00:00",
+          "team_name": "Bendigo City FC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Doreen United SC U15",
+          "opponent_team_id": "1K3Ykw29mQ",
           "events": []
         }
       ]
@@ -206955,7 +207222,7 @@
       },
       "team_stats": {
         "Doreen United SC U15": {
-          "matches_played": 3,
+          "matches_played": 4,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -207006,7 +207273,7 @@
         }
       },
       "stats": {
-        "matches_attended": 17,
+        "matches_attended": 18,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -207247,6 +207514,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Bendigo City FC U18",
           "opponent_team_id": "8NOD82naKZ",
+          "events": []
+        },
+        {
+          "match_hash_id": "OmepX4Q2ed",
+          "date": "2026-04-26T00:00:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T10:00:00",
+          "team_name": "Doreen United SC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "away",
+          "opponent_team_name": "Bendigo City FC U15",
+          "opponent_team_id": "2KpvA9abmY",
           "events": []
         }
       ]
@@ -209165,7 +209446,7 @@
       },
       "team_stats": {
         "Doreen United SC U15": {
-          "matches_played": 2,
+          "matches_played": 3,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -209176,7 +209457,7 @@
         }
       },
       "stats": {
-        "matches_attended": 2,
+        "matches_attended": 3,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -209208,6 +209489,20 @@
           "opponent_team_name": "Werribee City FC U15",
           "opponent_team_id": "pmvzPoMomv",
           "events": []
+        },
+        {
+          "match_hash_id": "OmepX4Q2ed",
+          "date": "2026-04-26T00:00:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T10:00:00",
+          "team_name": "Doreen United SC U15",
+          "competition_name": "Boys Youth State League North-West",
+          "league_name": "U15 YSL Boys - North-West",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Bendigo City FC U15",
+          "opponent_team_id": "2KpvA9abmY",
+          "events": []
         }
       ]
     },
@@ -209230,7 +209525,7 @@
       },
       "team_stats": {
         "Avondale FC U13": {
-          "matches_played": 1,
+          "matches_played": 2,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -209241,7 +209536,7 @@
         }
       },
       "stats": {
-        "matches_attended": 1,
+        "matches_attended": 2,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -209258,6 +209553,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Glen Eira FC U13",
           "opponent_team_id": "am1qv80qmw",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvwq3BDm",
+          "date": "2026-04-25T23:00:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T09:00:00",
+          "team_name": "Avondale FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U13 YPL1 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Box Hill United Pythagoras FC U13",
+          "opponent_team_id": "pN6OY8EpK0",
           "events": []
         }
       ]
@@ -211067,5 +211376,5 @@
       ]
     }
   ],
-  "_last_updated": "2026-04-30T12:04:54.466117"
+  "_last_updated": "2026-04-30T16:04:40.265696"
 }
