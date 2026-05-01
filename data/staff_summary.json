@@ -26755,7 +26755,7 @@
           "red_cards": 0
         },
         "Melbourne Knights FC U13": {
-          "matches_played": 20,
+          "matches_played": 22,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -26766,7 +26766,7 @@
         }
       },
       "stats": {
-        "matches_attended": 106,
+        "matches_attended": 108,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -28253,6 +28253,34 @@
           "home_or_away": "away",
           "opponent_team_name": "Oakleigh Cannons FC U18",
           "opponent_team_id": "bd9X9ae8K4",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlJAqqN",
+          "date": "2026-04-26T02:15:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T12:15:00",
+          "team_name": "Melbourne Knights FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U13 YPL2 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "away",
+          "opponent_team_name": "Oakleigh Cannons FC U13",
+          "opponent_team_id": "vmZwn4x2Nq",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlJAqqN",
+          "date": "2026-04-26T02:15:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T12:15:00",
+          "team_name": "Melbourne Knights FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U13 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Oakleigh Cannons FC U13",
+          "opponent_team_id": "vmZwn4x2Nq",
           "events": []
         }
       ]
@@ -96881,7 +96909,7 @@
       },
       "team_stats": {
         "Oakleigh Cannons FC U13": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -96892,7 +96920,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -97036,6 +97064,20 @@
           "opponent_team_name": "Northcote City FC U13",
           "opponent_team_id": "ld4Ol8Z2KW",
           "events": []
+        },
+        {
+          "match_hash_id": "jdywlJAqqN",
+          "date": "2026-04-26T02:15:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T12:15:00",
+          "team_name": "Oakleigh Cannons FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U13 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Melbourne Knights FC U13",
+          "opponent_team_id": "jdye8k0vd5",
+          "events": []
         }
       ]
     },
@@ -97058,7 +97100,7 @@
       },
       "team_stats": {
         "Oakleigh Cannons FC U13": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -97069,7 +97111,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 1,
         "red_cards": 0
       },
@@ -97218,6 +97260,20 @@
           "opponent_team_name": "Northcote City FC U13",
           "opponent_team_id": "ld4Ol8Z2KW",
           "events": []
+        },
+        {
+          "match_hash_id": "jdywlJAqqN",
+          "date": "2026-04-26T02:15:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T12:15:00",
+          "team_name": "Oakleigh Cannons FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U13 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Melbourne Knights FC U13",
+          "opponent_team_id": "jdye8k0vd5",
+          "events": []
         }
       ]
     },
@@ -97240,7 +97296,7 @@
       },
       "team_stats": {
         "Oakleigh Cannons FC U13": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -97251,7 +97307,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -97394,6 +97450,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Northcote City FC U13",
           "opponent_team_id": "ld4Ol8Z2KW",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlJAqqN",
+          "date": "2026-04-26T02:15:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T12:15:00",
+          "team_name": "Oakleigh Cannons FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U13 YPL2 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Melbourne Knights FC U13",
+          "opponent_team_id": "jdye8k0vd5",
           "events": []
         }
       ]
@@ -97417,7 +97487,7 @@
       },
       "team_stats": {
         "Oakleigh Cannons FC U13": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -97428,7 +97498,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -97571,6 +97641,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Northcote City FC U13",
           "opponent_team_id": "ld4Ol8Z2KW",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlJAqqN",
+          "date": "2026-04-26T02:15:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T12:15:00",
+          "team_name": "Oakleigh Cannons FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U13 YPL2 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Melbourne Knights FC U13",
+          "opponent_team_id": "jdye8k0vd5",
           "events": []
         }
       ]
@@ -97594,7 +97678,7 @@
       },
       "team_stats": {
         "Oakleigh Cannons FC U13": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -97605,7 +97689,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -97748,6 +97832,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Northcote City FC U13",
           "opponent_team_id": "ld4Ol8Z2KW",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlJAqqN",
+          "date": "2026-04-26T02:15:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T12:15:00",
+          "team_name": "Oakleigh Cannons FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U13 YPL2 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Melbourne Knights FC U13",
+          "opponent_team_id": "jdye8k0vd5",
           "events": []
         }
       ]
@@ -97771,7 +97869,7 @@
       },
       "team_stats": {
         "Oakleigh Cannons FC U13": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -97782,7 +97880,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -97925,6 +98023,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Northcote City FC U13",
           "opponent_team_id": "ld4Ol8Z2KW",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlJAqqN",
+          "date": "2026-04-26T02:15:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T12:15:00",
+          "team_name": "Oakleigh Cannons FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U13 YPL2 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Melbourne Knights FC U13",
+          "opponent_team_id": "jdye8k0vd5",
           "events": []
         }
       ]
@@ -97948,7 +98060,7 @@
       },
       "team_stats": {
         "Oakleigh Cannons FC U13": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -97959,7 +98071,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -98102,6 +98214,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Northcote City FC U13",
           "opponent_team_id": "ld4Ol8Z2KW",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlJAqqN",
+          "date": "2026-04-26T02:15:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T12:15:00",
+          "team_name": "Oakleigh Cannons FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U13 YPL2 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Melbourne Knights FC U13",
+          "opponent_team_id": "jdye8k0vd5",
           "events": []
         }
       ]
@@ -103683,7 +103809,7 @@
       },
       "team_stats": {
         "Melbourne Knights FC U13": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -103704,7 +103830,7 @@
         }
       },
       "stats": {
-        "matches_attended": 18,
+        "matches_attended": 19,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -103960,6 +104086,20 @@
           "opponent_team_name": "Oakleigh Cannons FC U16",
           "opponent_team_id": "gdMvMqLOmE",
           "events": []
+        },
+        {
+          "match_hash_id": "jdywlJAqqN",
+          "date": "2026-04-26T02:15:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T12:15:00",
+          "team_name": "Melbourne Knights FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U13 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Oakleigh Cannons FC U13",
+          "opponent_team_id": "vmZwn4x2Nq",
+          "events": []
         }
       ]
     },
@@ -103982,7 +104122,7 @@
       },
       "team_stats": {
         "Melbourne Knights FC U13": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -103993,7 +104133,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -104136,6 +104276,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Heidelberg United FC U13",
           "opponent_team_id": "bd9X9QMYK4",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlJAqqN",
+          "date": "2026-04-26T02:15:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T12:15:00",
+          "team_name": "Melbourne Knights FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U13 YPL2 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Oakleigh Cannons FC U13",
+          "opponent_team_id": "vmZwn4x2Nq",
           "events": []
         }
       ]
@@ -141854,7 +142008,7 @@
           "goals": 0,
           "own_goals": 0,
           "penalties": 0,
-          "yellow_cards": 1,
+          "yellow_cards": 0,
           "red_cards": 0
         },
         "Kingston City FC U13": {
@@ -141870,7 +142024,7 @@
       },
       "stats": {
         "matches_attended": 13,
-        "yellow_cards": 1,
+        "yellow_cards": 0,
         "red_cards": 0
       },
       "matches": [
@@ -142054,12 +142208,7 @@
           "home_or_away": "away",
           "opponent_team_name": "Gippsland United FC U15",
           "opponent_team_id": "MNGog2lLNA",
-          "events": [
-            {
-              "type": "yellow_card",
-              "minute": "20"
-            }
-          ]
+          "events": []
         }
       ]
     },
@@ -142088,13 +142237,13 @@
           "goals": 0,
           "own_goals": 0,
           "penalties": 0,
-          "yellow_cards": 0,
+          "yellow_cards": 1,
           "red_cards": 0
         }
       },
       "stats": {
         "matches_attended": 9,
-        "yellow_cards": 0,
+        "yellow_cards": 1,
         "red_cards": 0
       },
       "matches": [
@@ -142222,7 +142371,12 @@
           "home_or_away": "away",
           "opponent_team_name": "Gippsland United FC U15",
           "opponent_team_id": "MNGog2lLNA",
-          "events": []
+          "events": [
+            {
+              "type": "yellow_card",
+              "minute": "20"
+            }
+          ]
         }
       ]
     },
@@ -166116,7 +166270,7 @@
       },
       "team_stats": {
         "Melbourne Knights FC U13": {
-          "matches_played": 8,
+          "matches_played": 9,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -166127,7 +166281,7 @@
         }
       },
       "stats": {
-        "matches_attended": 8,
+        "matches_attended": 9,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -166242,6 +166396,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Heidelberg United FC U13",
           "opponent_team_id": "bd9X9QMYK4",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlJAqqN",
+          "date": "2026-04-26T02:15:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T12:15:00",
+          "team_name": "Melbourne Knights FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U13 YPL2 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Oakleigh Cannons FC U13",
+          "opponent_team_id": "vmZwn4x2Nq",
           "events": []
         }
       ]
@@ -209939,7 +210107,7 @@
           "red_cards": 0
         },
         "Melbourne Knights FC U13": {
-          "matches_played": 1,
+          "matches_played": 2,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -209950,7 +210118,7 @@
         }
       },
       "stats": {
-        "matches_attended": 8,
+        "matches_attended": 9,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -210065,6 +210233,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Oakleigh Cannons FC U18",
           "opponent_team_id": "bd9X9ae8K4",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlJAqqN",
+          "date": "2026-04-26T02:15:00.000000Z",
+          "date_aest": "2026-04-26",
+          "datetime_aest": "2026-04-26T12:15:00",
+          "team_name": "Melbourne Knights FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U13 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Oakleigh Cannons FC U13",
+          "opponent_team_id": "vmZwn4x2Nq",
           "events": []
         }
       ]
@@ -211376,5 +211558,5 @@
       ]
     }
   ],
-  "_last_updated": "2026-05-01T08:04:49.062872"
+  "_last_updated": "2026-05-01T12:04:48.284406"
 }

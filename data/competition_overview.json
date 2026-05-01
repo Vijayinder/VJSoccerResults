@@ -1789,15 +1789,15 @@
             "points": 19
           },
           "U13": {
-            "position": 8,
-            "played": 10,
-            "wins": 5,
+            "position": 5,
+            "played": 11,
+            "wins": 6,
             "draws": 2,
             "losses": 3,
-            "gf": 13,
+            "gf": 16,
             "ga": 7,
-            "gd": 6,
-            "points": 17
+            "gd": 9,
+            "points": 20
           },
           "U18": {
             "position": 6,
@@ -1833,8 +1833,8 @@
             "points": 18
           }
         },
-        "total_position_points": 25,
-        "total_gf": 120,
+        "total_position_points": 22,
+        "total_gf": 123,
         "total_ga": 68,
         "age_group_count": 5,
         "overall_rank": 2
@@ -2179,7 +2179,7 @@
             "points": 19
           },
           "U13": {
-            "position": 7,
+            "position": 8,
             "played": 11,
             "wins": 5,
             "draws": 3,
@@ -2223,76 +2223,11 @@
             "points": 22
           }
         },
-        "total_position_points": 41,
+        "total_position_points": 42,
         "total_gf": 105,
         "total_ga": 91,
         "age_group_count": 5,
         "overall_rank": 8
-      },
-      {
-        "club": "Ballarat City FC",
-        "age_groups": {
-          "U14": {
-            "position": 10,
-            "played": 11,
-            "wins": 4,
-            "draws": 1,
-            "losses": 6,
-            "gf": 12,
-            "ga": 16,
-            "gd": -4,
-            "points": 13
-          },
-          "U13": {
-            "position": 5,
-            "played": 11,
-            "wins": 6,
-            "draws": 1,
-            "losses": 4,
-            "gf": 27,
-            "ga": 17,
-            "gd": 10,
-            "points": 19
-          },
-          "U18": {
-            "position": 13,
-            "played": 11,
-            "wins": 3,
-            "draws": 0,
-            "losses": 8,
-            "gf": 16,
-            "ga": 33,
-            "gd": -17,
-            "points": 9
-          },
-          "U15": {
-            "position": 8,
-            "played": 11,
-            "wins": 5,
-            "draws": 3,
-            "losses": 3,
-            "gf": 35,
-            "ga": 22,
-            "gd": 13,
-            "points": 18
-          },
-          "U16": {
-            "position": 10,
-            "played": 11,
-            "wins": 3,
-            "draws": 2,
-            "losses": 6,
-            "gf": 17,
-            "ga": 22,
-            "gd": -5,
-            "points": 11
-          }
-        },
-        "total_position_points": 46,
-        "total_gf": 107,
-        "total_ga": 110,
-        "age_group_count": 5,
-        "overall_rank": 9
       },
       {
         "club": "Geelong SC",
@@ -2357,72 +2292,7 @@
         "total_gf": 100,
         "total_ga": 107,
         "age_group_count": 5,
-        "overall_rank": 10
-      },
-      {
-        "club": "Melbourne Knights FC",
-        "age_groups": {
-          "U14": {
-            "position": 7,
-            "played": 10,
-            "wins": 6,
-            "draws": 0,
-            "losses": 4,
-            "gf": 18,
-            "ga": 16,
-            "gd": 2,
-            "points": 18
-          },
-          "U13": {
-            "position": 12,
-            "played": 10,
-            "wins": 4,
-            "draws": 1,
-            "losses": 5,
-            "gf": 19,
-            "ga": 20,
-            "gd": -1,
-            "points": 13
-          },
-          "U18": {
-            "position": 5,
-            "played": 11,
-            "wins": 7,
-            "draws": 1,
-            "losses": 3,
-            "gf": 37,
-            "ga": 25,
-            "gd": 12,
-            "points": 22
-          },
-          "U15": {
-            "position": 7,
-            "played": 11,
-            "wins": 5,
-            "draws": 4,
-            "losses": 2,
-            "gf": 18,
-            "ga": 13,
-            "gd": 5,
-            "points": 19
-          },
-          "U16": {
-            "position": 16,
-            "played": 11,
-            "wins": 0,
-            "draws": 4,
-            "losses": 7,
-            "gf": 14,
-            "ga": 29,
-            "gd": -15,
-            "points": 4
-          }
-        },
-        "total_position_points": 47,
-        "total_gf": 106,
-        "total_ga": 103,
-        "age_group_count": 5,
-        "overall_rank": 11
+        "overall_rank": 9
       },
       {
         "club": "Pascoe Vale FC",
@@ -2486,6 +2356,136 @@
         "total_position_points": 47,
         "total_gf": 97,
         "total_ga": 95,
+        "age_group_count": 5,
+        "overall_rank": 10
+      },
+      {
+        "club": "Melbourne Knights FC",
+        "age_groups": {
+          "U14": {
+            "position": 7,
+            "played": 10,
+            "wins": 6,
+            "draws": 0,
+            "losses": 4,
+            "gf": 18,
+            "ga": 16,
+            "gd": 2,
+            "points": 18
+          },
+          "U13": {
+            "position": 12,
+            "played": 11,
+            "wins": 4,
+            "draws": 1,
+            "losses": 6,
+            "gf": 19,
+            "ga": 23,
+            "gd": -4,
+            "points": 13
+          },
+          "U18": {
+            "position": 5,
+            "played": 11,
+            "wins": 7,
+            "draws": 1,
+            "losses": 3,
+            "gf": 37,
+            "ga": 25,
+            "gd": 12,
+            "points": 22
+          },
+          "U15": {
+            "position": 7,
+            "played": 11,
+            "wins": 5,
+            "draws": 4,
+            "losses": 2,
+            "gf": 18,
+            "ga": 13,
+            "gd": 5,
+            "points": 19
+          },
+          "U16": {
+            "position": 16,
+            "played": 11,
+            "wins": 0,
+            "draws": 4,
+            "losses": 7,
+            "gf": 14,
+            "ga": 29,
+            "gd": -15,
+            "points": 4
+          }
+        },
+        "total_position_points": 47,
+        "total_gf": 106,
+        "total_ga": 106,
+        "age_group_count": 5,
+        "overall_rank": 11
+      },
+      {
+        "club": "Ballarat City FC",
+        "age_groups": {
+          "U14": {
+            "position": 10,
+            "played": 11,
+            "wins": 4,
+            "draws": 1,
+            "losses": 6,
+            "gf": 12,
+            "ga": 16,
+            "gd": -4,
+            "points": 13
+          },
+          "U13": {
+            "position": 6,
+            "played": 11,
+            "wins": 6,
+            "draws": 1,
+            "losses": 4,
+            "gf": 27,
+            "ga": 17,
+            "gd": 10,
+            "points": 19
+          },
+          "U18": {
+            "position": 13,
+            "played": 11,
+            "wins": 3,
+            "draws": 0,
+            "losses": 8,
+            "gf": 16,
+            "ga": 33,
+            "gd": -17,
+            "points": 9
+          },
+          "U15": {
+            "position": 8,
+            "played": 11,
+            "wins": 5,
+            "draws": 3,
+            "losses": 3,
+            "gf": 35,
+            "ga": 22,
+            "gd": 13,
+            "points": 18
+          },
+          "U16": {
+            "position": 10,
+            "played": 11,
+            "wins": 3,
+            "draws": 2,
+            "losses": 6,
+            "gf": 17,
+            "ga": 22,
+            "gd": -5,
+            "points": 11
+          }
+        },
+        "total_position_points": 47,
+        "total_gf": 107,
+        "total_ga": 110,
         "age_group_count": 5,
         "overall_rank": 12
       },
@@ -2569,7 +2569,7 @@
             "points": 6
           },
           "U13": {
-            "position": 6,
+            "position": 7,
             "played": 10,
             "wins": 5,
             "draws": 3,
@@ -2613,7 +2613,7 @@
             "points": 9
           }
         },
-        "total_position_points": 49,
+        "total_position_points": 50,
         "total_gf": 98,
         "total_ga": 103,
         "age_group_count": 5,
@@ -3412,5 +3412,5 @@
       }
     ]
   },
-  "_last_updated": "2026-05-01T08:04:37.673422"
+  "_last_updated": "2026-05-01T12:04:36.591963"
 }
