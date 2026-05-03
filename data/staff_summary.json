@@ -28601,7 +28601,7 @@
       },
       "team_stats": {
         "Melbourne Knights FC U18": {
-          "matches_played": 22,
+          "matches_played": 24,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -28652,7 +28652,7 @@
         }
       },
       "stats": {
-        "matches_attended": 110,
+        "matches_attended": 112,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -30196,6 +30196,34 @@
           "opponent_team_name": "Bentleigh Greens SC U14",
           "opponent_team_id": "MNGogZlBNA",
           "events": []
+        },
+        {
+          "match_hash_id": "pmvvw7BPRm",
+          "date": "2026-05-03T05:00:00.000000Z",
+          "date_aest": "2026-05-03",
+          "datetime_aest": "2026-05-03T15:00:00",
+          "team_name": "Melbourne Knights FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Bentleigh Greens SC U18",
+          "opponent_team_id": "PmjnxVzkmZ",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw7BPRm",
+          "date": "2026-05-03T05:00:00.000000Z",
+          "date_aest": "2026-05-03",
+          "datetime_aest": "2026-05-03T15:00:00",
+          "team_name": "Melbourne Knights FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Bentleigh Greens SC U18",
+          "opponent_team_id": "PmjnxVzkmZ",
+          "events": []
         }
       ]
     },
@@ -30218,7 +30246,7 @@
       },
       "team_stats": {
         "Melbourne Knights FC U18": {
-          "matches_played": 11,
+          "matches_played": 12,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -30229,7 +30257,7 @@
         }
       },
       "stats": {
-        "matches_attended": 11,
+        "matches_attended": 12,
         "yellow_cards": 1,
         "red_cards": 0
       },
@@ -30391,6 +30419,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Oakleigh Cannons FC U18",
           "opponent_team_id": "bd9X9ae8K4",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw7BPRm",
+          "date": "2026-05-03T05:00:00.000000Z",
+          "date_aest": "2026-05-03",
+          "datetime_aest": "2026-05-03T15:00:00",
+          "team_name": "Melbourne Knights FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Bentleigh Greens SC U18",
+          "opponent_team_id": "PmjnxVzkmZ",
           "events": []
         }
       ]
@@ -62907,7 +62949,7 @@
           "red_cards": 0
         },
         "Brunswick Juventus FC U16": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -62948,7 +62990,7 @@
         }
       },
       "stats": {
-        "matches_attended": 65,
+        "matches_attended": 66,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -63861,6 +63903,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Pascoe Vale FC U18",
           "opponent_team_id": "1K3YkaWOmQ",
+          "events": []
+        },
+        {
+          "match_hash_id": "gdM6EJqMZm",
+          "date": "2026-05-03T04:30:00.000000Z",
+          "date_aest": "2026-05-03",
+          "datetime_aest": "2026-05-03T14:30:00",
+          "team_name": "Brunswick Juventus FC U16",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Pascoe Vale FC U16",
+          "opponent_team_id": "jmaVXQJVNR",
           "events": []
         }
       ]
@@ -63908,7 +63964,7 @@
           "red_cards": 0
         },
         "Brunswick Juventus FC U16": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -63949,7 +64005,7 @@
         }
       },
       "stats": {
-        "matches_attended": 82,
+        "matches_attended": 83,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -65100,6 +65156,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Pascoe Vale FC U18",
           "opponent_team_id": "1K3YkaWOmQ",
+          "events": []
+        },
+        {
+          "match_hash_id": "gdM6EJqMZm",
+          "date": "2026-05-03T04:30:00.000000Z",
+          "date_aest": "2026-05-03",
+          "datetime_aest": "2026-05-03T14:30:00",
+          "team_name": "Brunswick Juventus FC U16",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Team Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Pascoe Vale FC U16",
+          "opponent_team_id": "jmaVXQJVNR",
           "events": []
         }
       ]
@@ -65147,7 +65217,7 @@
           "red_cards": 0
         },
         "Brunswick Juventus FC U16": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -65188,7 +65258,7 @@
         }
       },
       "stats": {
-        "matches_attended": 87,
+        "matches_attended": 88,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -66409,6 +66479,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Pascoe Vale FC U18",
           "opponent_team_id": "1K3YkaWOmQ",
+          "events": []
+        },
+        {
+          "match_hash_id": "gdM6EJqMZm",
+          "date": "2026-05-03T04:30:00.000000Z",
+          "date_aest": "2026-05-03",
+          "datetime_aest": "2026-05-03T14:30:00",
+          "team_name": "Brunswick Juventus FC U16",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Team Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Pascoe Vale FC U16",
+          "opponent_team_id": "jmaVXQJVNR",
           "events": []
         }
       ]
@@ -80557,7 +80641,7 @@
       },
       "team_stats": {
         "Bentleigh Greens SC U18": {
-          "matches_played": 11,
+          "matches_played": 12,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -80568,7 +80652,7 @@
         }
       },
       "stats": {
-        "matches_attended": 11,
+        "matches_attended": 12,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -80725,6 +80809,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Northcote City FC U18",
           "opponent_team_id": "ld4OlaGDKW",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw7BPRm",
+          "date": "2026-05-03T05:00:00.000000Z",
+          "date_aest": "2026-05-03",
+          "datetime_aest": "2026-05-03T15:00:00",
+          "team_name": "Bentleigh Greens SC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Melbourne Knights FC U18",
+          "opponent_team_id": "jdye8g5Dd5",
           "events": []
         }
       ]
@@ -80748,7 +80846,7 @@
       },
       "team_stats": {
         "Bentleigh Greens SC U18": {
-          "matches_played": 11,
+          "matches_played": 12,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -80759,7 +80857,7 @@
         }
       },
       "stats": {
-        "matches_attended": 11,
+        "matches_attended": 12,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -80916,6 +81014,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Northcote City FC U18",
           "opponent_team_id": "ld4OlaGDKW",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw7BPRm",
+          "date": "2026-05-03T05:00:00.000000Z",
+          "date_aest": "2026-05-03",
+          "datetime_aest": "2026-05-03T15:00:00",
+          "team_name": "Bentleigh Greens SC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Melbourne Knights FC U18",
+          "opponent_team_id": "jdye8g5Dd5",
           "events": []
         }
       ]
@@ -80939,7 +81051,7 @@
       },
       "team_stats": {
         "Bentleigh Greens SC U18": {
-          "matches_played": 11,
+          "matches_played": 12,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -80950,7 +81062,7 @@
         }
       },
       "stats": {
-        "matches_attended": 11,
+        "matches_attended": 12,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -81107,6 +81219,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Northcote City FC U18",
           "opponent_team_id": "ld4OlaGDKW",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw7BPRm",
+          "date": "2026-05-03T05:00:00.000000Z",
+          "date_aest": "2026-05-03",
+          "datetime_aest": "2026-05-03T15:00:00",
+          "team_name": "Bentleigh Greens SC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Melbourne Knights FC U18",
+          "opponent_team_id": "jdye8g5Dd5",
           "events": []
         }
       ]
@@ -85929,7 +86055,7 @@
       },
       "team_stats": {
         "Pascoe Vale FC U16": {
-          "matches_played": 11,
+          "matches_played": 12,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -85940,7 +86066,7 @@
         }
       },
       "stats": {
-        "matches_attended": 11,
+        "matches_attended": 12,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -86098,6 +86224,20 @@
           "opponent_team_name": "Geelong SC U16",
           "opponent_team_id": "am1qvalAmw",
           "events": []
+        },
+        {
+          "match_hash_id": "gdM6EJqMZm",
+          "date": "2026-05-03T04:30:00.000000Z",
+          "date_aest": "2026-05-03",
+          "datetime_aest": "2026-05-03T14:30:00",
+          "team_name": "Pascoe Vale FC U16",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Team Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Brunswick Juventus FC U16",
+          "opponent_team_id": "bd9X9azRK4",
+          "events": []
         }
       ]
     },
@@ -86121,7 +86261,7 @@
       },
       "team_stats": {
         "Pascoe Vale FC U16": {
-          "matches_played": 11,
+          "matches_played": 12,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -86132,7 +86272,7 @@
         }
       },
       "stats": {
-        "matches_attended": 11,
+        "matches_attended": 12,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -86290,6 +86430,20 @@
           "opponent_team_name": "Geelong SC U16",
           "opponent_team_id": "am1qvalAmw",
           "events": []
+        },
+        {
+          "match_hash_id": "gdM6EJqMZm",
+          "date": "2026-05-03T04:30:00.000000Z",
+          "date_aest": "2026-05-03",
+          "datetime_aest": "2026-05-03T14:30:00",
+          "team_name": "Pascoe Vale FC U16",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Head Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Brunswick Juventus FC U16",
+          "opponent_team_id": "bd9X9azRK4",
+          "events": []
         }
       ]
     },
@@ -86312,7 +86466,7 @@
       },
       "team_stats": {
         "Pascoe Vale FC U16": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -86323,7 +86477,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -86466,6 +86620,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Geelong SC U16",
           "opponent_team_id": "am1qvalAmw",
+          "events": []
+        },
+        {
+          "match_hash_id": "gdM6EJqMZm",
+          "date": "2026-05-03T04:30:00.000000Z",
+          "date_aest": "2026-05-03",
+          "datetime_aest": "2026-05-03T14:30:00",
+          "team_name": "Pascoe Vale FC U16",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Team Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Brunswick Juventus FC U16",
+          "opponent_team_id": "bd9X9azRK4",
           "events": []
         }
       ]
@@ -86899,7 +87067,7 @@
       },
       "team_stats": {
         "Brunswick Juventus FC U16": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -86910,7 +87078,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -87054,6 +87222,20 @@
           "opponent_team_name": "Eltham Redbacks FC U16",
           "opponent_team_id": "jdye8go6d5",
           "events": []
+        },
+        {
+          "match_hash_id": "gdM6EJqMZm",
+          "date": "2026-05-03T04:30:00.000000Z",
+          "date_aest": "2026-05-03",
+          "datetime_aest": "2026-05-03T14:30:00",
+          "team_name": "Brunswick Juventus FC U16",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Pascoe Vale FC U16",
+          "opponent_team_id": "jmaVXQJVNR",
+          "events": []
         }
       ]
     },
@@ -87076,19 +87258,19 @@
       },
       "team_stats": {
         "Brunswick Juventus FC U16": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
           "own_goals": 0,
           "penalties": 0,
-          "yellow_cards": 2,
+          "yellow_cards": 3,
           "red_cards": 0
         }
       },
       "stats": {
-        "matches_attended": 10,
-        "yellow_cards": 2,
+        "matches_attended": 11,
+        "yellow_cards": 3,
         "red_cards": 0
       },
       "matches": [
@@ -87241,6 +87423,25 @@
           "opponent_team_name": "Eltham Redbacks FC U16",
           "opponent_team_id": "jdye8go6d5",
           "events": []
+        },
+        {
+          "match_hash_id": "gdM6EJqMZm",
+          "date": "2026-05-03T04:30:00.000000Z",
+          "date_aest": "2026-05-03",
+          "datetime_aest": "2026-05-03T14:30:00",
+          "team_name": "Brunswick Juventus FC U16",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Pascoe Vale FC U16",
+          "opponent_team_id": "jmaVXQJVNR",
+          "events": [
+            {
+              "type": "yellow_card",
+              "minute": "51"
+            }
+          ]
         }
       ]
     },
@@ -87263,7 +87464,7 @@
       },
       "team_stats": {
         "Brunswick Juventus FC U16": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -87274,7 +87475,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -87417,6 +87618,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Eltham Redbacks FC U16",
           "opponent_team_id": "jdye8go6d5",
+          "events": []
+        },
+        {
+          "match_hash_id": "gdM6EJqMZm",
+          "date": "2026-05-03T04:30:00.000000Z",
+          "date_aest": "2026-05-03",
+          "datetime_aest": "2026-05-03T14:30:00",
+          "team_name": "Brunswick Juventus FC U16",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U16 YPL2 Boys",
+          "role_in_match": "Team Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Pascoe Vale FC U16",
+          "opponent_team_id": "jmaVXQJVNR",
           "events": []
         }
       ]
@@ -224534,7 +224749,7 @@
           "red_cards": 0
         },
         "Melbourne Knights FC U18": {
-          "matches_played": 2,
+          "matches_played": 3,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -224565,7 +224780,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -224708,6 +224923,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Bentleigh Greens SC U14",
           "opponent_team_id": "MNGogZlBNA",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw7BPRm",
+          "date": "2026-05-03T05:00:00.000000Z",
+          "date_aest": "2026-05-03",
+          "datetime_aest": "2026-05-03T15:00:00",
+          "team_name": "Melbourne Knights FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Bentleigh Greens SC U18",
+          "opponent_team_id": "PmjnxVzkmZ",
           "events": []
         }
       ]
@@ -227056,7 +227285,73 @@
           "events": []
         }
       ]
+    },
+    {
+      "person_id": "yKJJG2XwWK",
+      "first_name": "Mark",
+      "last_name": "Tokic",
+      "role_slug": "staff",
+      "roles": [
+        "Manager",
+        "Teamstaff"
+      ],
+      "teams": [
+        "Melbourne Knights FC U18"
+      ],
+      "leagues": [
+        "U18 YPL2 Boys"
+      ],
+      "jerseys": {
+        "Melbourne Knights FC U18": ""
+      },
+      "team_stats": {
+        "Melbourne Knights FC U18": {
+          "matches_played": 2,
+          "matches_started": 0,
+          "bench_appearances": 0,
+          "goals": 0,
+          "own_goals": 0,
+          "penalties": 0,
+          "yellow_cards": 0,
+          "red_cards": 0
+        }
+      },
+      "stats": {
+        "matches_attended": 2,
+        "yellow_cards": 0,
+        "red_cards": 0
+      },
+      "matches": [
+        {
+          "match_hash_id": "pmvvw7BPRm",
+          "date": "2026-05-03T05:00:00.000000Z",
+          "date_aest": "2026-05-03",
+          "datetime_aest": "2026-05-03T15:00:00",
+          "team_name": "Melbourne Knights FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Bentleigh Greens SC U18",
+          "opponent_team_id": "PmjnxVzkmZ",
+          "events": []
+        },
+        {
+          "match_hash_id": "pmvvw7BPRm",
+          "date": "2026-05-03T05:00:00.000000Z",
+          "date_aest": "2026-05-03",
+          "datetime_aest": "2026-05-03T15:00:00",
+          "team_name": "Melbourne Knights FC U18",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U18 YPL2 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Bentleigh Greens SC U18",
+          "opponent_team_id": "PmjnxVzkmZ",
+          "events": []
+        }
+      ]
     }
   ],
-  "_last_updated": "2026-05-03T20:20:02.408824"
+  "_last_updated": "2026-05-03T21:07:14.229427"
 }
