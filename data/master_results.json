@@ -67924,7 +67924,7 @@
             "home_score_penalty": null,
             "home_score_half": null,
             "home_score_extra_half": null,
-            "away_score": 3,
+            "away_score": 5,
             "away_score_extra": null,
             "away_score_penalty": null,
             "away_score_half": null,
@@ -70846,6 +70846,106 @@
         "links": {
             "self": {
                 "href": "https://mc-api.dribl.com/api/results/OmepXrGA1d"
+            }
+        }
+    },
+    {
+        "type": "results",
+        "hash_id": "OmepX4Rz0d",
+        "attributes": {
+            "name": "FV54539549 - Box Hill United FC v Glen Eira FC",
+            "date": "2026-05-03 05:45:00",
+            "round": "R12",
+            "full_round": "Round 12",
+            "ground_name": "Wembley Park",
+            "field_name": "Main Pitch",
+            "home_team_name": "Box Hill United Pythagoras FC U18",
+            "home_logo": "https://ocean.dribl.com/521e7a2a60b2459ca8d65e846dc0ab57",
+            "away_team_name": "Glen Eira FC U18",
+            "away_logo": "https://ocean.dribl.com/7b63ee224797482cabf0aad493008f40",
+            "competition_name": "Boys Victorian Youth Premier League 1",
+            "league_name": "U18 YPL1 Boys",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 1,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 1,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": true,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 3,
+            "enable_referees_allocated": true,
+            "match_hash_id": "1K3pvVOlYd",
+            "home_team_hash_id": "pN6OY8kQK0",
+            "away_team_hash_id": "am1qv8rjmw",
+            "forfeit_team_hash_id": null,
+            "datetime_aest": "2026-05-03T15:45:00",
+            "date_aest": "2026-05-03"
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/OmepX4Rz0d"
+            }
+        }
+    },
+    {
+        "type": "results",
+        "hash_id": "8NO5XM8q2d",
+        "attributes": {
+            "name": "FV54539309 - Box Hill United FC v Glen Eira FC",
+            "date": "2026-05-03 03:45:00",
+            "round": "R12",
+            "full_round": "Round 12",
+            "ground_name": "Wembley Park",
+            "field_name": "Main Pitch",
+            "home_team_name": "Box Hill United Pythagoras FC U16",
+            "home_logo": "https://ocean.dribl.com/521e7a2a60b2459ca8d65e846dc0ab57",
+            "away_team_name": "Glen Eira FC U16",
+            "away_logo": "https://ocean.dribl.com/7b63ee224797482cabf0aad493008f40",
+            "competition_name": "Boys Victorian Youth Premier League 1",
+            "league_name": "U16 YPL1 Boys",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 1,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 9,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": true,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 3,
+            "enable_referees_allocated": true,
+            "match_hash_id": "bd9pW3Dy5K",
+            "home_team_hash_id": "ld4Ol8bOKW",
+            "away_team_hash_id": "nmYyQvG1mz",
+            "forfeit_team_hash_id": null,
+            "datetime_aest": "2026-05-03T13:45:00",
+            "date_aest": "2026-05-03"
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/8NO5XM8q2d"
             }
         }
     }

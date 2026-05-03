@@ -105,8 +105,8 @@
             "draws": 2,
             "losses": 1,
             "gf": 40,
-            "ga": 13,
-            "gd": 27,
+            "ga": 15,
+            "gd": 25,
             "points": 29
           },
           "U15": {
@@ -134,7 +134,7 @@
         },
         "total_position_points": 20,
         "total_gf": 149,
-        "total_ga": 66,
+        "total_ga": 68,
         "age_group_count": 5,
         "overall_rank": 2
       },
@@ -164,14 +164,14 @@
             "points": 23
           },
           "U18": {
-            "position": 7,
+            "position": 8,
             "played": 12,
             "wins": 6,
             "draws": 1,
             "losses": 5,
-            "gf": 24,
+            "gf": 26,
             "ga": 20,
-            "gd": 4,
+            "gd": 6,
             "points": 19
           },
           "U15": {
@@ -197,8 +197,8 @@
             "points": 21
           }
         },
-        "total_position_points": 26,
-        "total_gf": 127,
+        "total_position_points": 27,
+        "total_gf": 129,
         "total_ga": 85,
         "age_group_count": 5,
         "overall_rank": 3
@@ -283,7 +283,7 @@
             "points": 22
           },
           "U16": {
-            "position": 6,
+            "position": 7,
             "played": 10,
             "wins": 7,
             "draws": 0,
@@ -327,7 +327,7 @@
             "points": 9
           }
         },
-        "total_position_points": 28,
+        "total_position_points": 29,
         "total_gf": 131,
         "total_ga": 71,
         "age_group_count": 5,
@@ -529,6 +529,71 @@
         "overall_rank": 8
       },
       {
+        "club": "Glen Eira FC",
+        "age_groups": {
+          "U13": {
+            "position": 8,
+            "played": 12,
+            "wins": 5,
+            "draws": 2,
+            "losses": 5,
+            "gf": 21,
+            "ga": 17,
+            "gd": 4,
+            "points": 17
+          },
+          "U16": {
+            "position": 6,
+            "played": 12,
+            "wins": 7,
+            "draws": 2,
+            "losses": 3,
+            "gf": 38,
+            "ga": 26,
+            "gd": 12,
+            "points": 23
+          },
+          "U18": {
+            "position": 11,
+            "played": 12,
+            "wins": 3,
+            "draws": 3,
+            "losses": 6,
+            "gf": 17,
+            "ga": 32,
+            "gd": -15,
+            "points": 12
+          },
+          "U15": {
+            "position": 11,
+            "played": 12,
+            "wins": 5,
+            "draws": 1,
+            "losses": 6,
+            "gf": 13,
+            "ga": 13,
+            "gd": 0,
+            "points": 16
+          },
+          "U14": {
+            "position": 11,
+            "played": 12,
+            "wins": 2,
+            "draws": 4,
+            "losses": 6,
+            "gf": 15,
+            "ga": 24,
+            "gd": -9,
+            "points": 10
+          }
+        },
+        "total_position_points": 47,
+        "total_gf": 104,
+        "total_ga": 112,
+        "age_group_count": 5,
+        "overall_rank": 9
+      },
+      {
         "club": "Manningham United Blues FC",
         "age_groups": {
           "U13": {
@@ -590,71 +655,6 @@
         "total_position_points": 48,
         "total_gf": 100,
         "total_ga": 101,
-        "age_group_count": 5,
-        "overall_rank": 9
-      },
-      {
-        "club": "Glen Eira FC",
-        "age_groups": {
-          "U13": {
-            "position": 8,
-            "played": 12,
-            "wins": 5,
-            "draws": 2,
-            "losses": 5,
-            "gf": 21,
-            "ga": 17,
-            "gd": 4,
-            "points": 17
-          },
-          "U16": {
-            "position": 7,
-            "played": 11,
-            "wins": 6,
-            "draws": 2,
-            "losses": 3,
-            "gf": 29,
-            "ga": 25,
-            "gd": 4,
-            "points": 20
-          },
-          "U18": {
-            "position": 11,
-            "played": 11,
-            "wins": 3,
-            "draws": 2,
-            "losses": 6,
-            "gf": 16,
-            "ga": 31,
-            "gd": -15,
-            "points": 11
-          },
-          "U15": {
-            "position": 11,
-            "played": 12,
-            "wins": 5,
-            "draws": 1,
-            "losses": 6,
-            "gf": 13,
-            "ga": 13,
-            "gd": 0,
-            "points": 16
-          },
-          "U14": {
-            "position": 11,
-            "played": 12,
-            "wins": 2,
-            "draws": 4,
-            "losses": 6,
-            "gf": 15,
-            "ga": 24,
-            "gd": -9,
-            "points": 10
-          }
-        },
-        "total_position_points": 48,
-        "total_gf": 94,
-        "total_ga": 110,
         "age_group_count": 5,
         "overall_rank": 10
       },
@@ -869,25 +869,25 @@
           },
           "U16": {
             "position": 13,
-            "played": 11,
+            "played": 12,
             "wins": 2,
             "draws": 2,
-            "losses": 7,
-            "gf": 13,
-            "ga": 28,
-            "gd": -15,
+            "losses": 8,
+            "gf": 14,
+            "ga": 37,
+            "gd": -23,
             "points": 8
           },
           "U18": {
-            "position": 8,
-            "played": 11,
+            "position": 7,
+            "played": 12,
             "wins": 5,
-            "draws": 4,
+            "draws": 5,
             "losses": 2,
-            "gf": 14,
-            "ga": 11,
+            "gf": 15,
+            "ga": 12,
             "gd": 3,
-            "points": 19
+            "points": 20
           },
           "U15": {
             "position": 13,
@@ -912,9 +912,9 @@
             "points": 9
           }
         },
-        "total_position_points": 56,
-        "total_gf": 67,
-        "total_ga": 111,
+        "total_position_points": 55,
+        "total_gf": 69,
+        "total_ga": 121,
         "age_group_count": 5,
         "overall_rank": 14
       },
@@ -3412,5 +3412,5 @@
       }
     ]
   },
-  "_last_updated": "2026-05-03T22:06:49.769240"
+  "_last_updated": "2026-05-03T23:06:14.801951"
 }
