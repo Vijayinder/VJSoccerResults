@@ -71198,5 +71198,55 @@
                 "href": "https://mc-api.dribl.com/api/results/jdywlJE3zN"
             }
         }
+    },
+    {
+        "type": "results",
+        "hash_id": "gdM6EB5GOm",
+        "attributes": {
+            "name": "FV54538593 - Caroline Springs George Cross FC v Dandenong City SC",
+            "date": "2026-05-02 23:00:00",
+            "round": "R12",
+            "full_round": "Round 12",
+            "ground_name": "City Vista Pavilion & Sports Field",
+            "field_name": "Pitch 2 - Half Field (A)",
+            "home_team_name": "Caroline Springs George Cross FC U13",
+            "home_logo": "https://ocean.dribl.com/3532cecf8a87412ea102902cfce8a70d",
+            "away_team_name": "Dandenong City SC U13",
+            "away_logo": "https://ocean.dribl.com/7b8f319694ff4296aa9877ba5ba825f6",
+            "competition_name": "Boys Victorian Youth Premier League 1",
+            "league_name": "U13 YPL1 Boys",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 1,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 0,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": false,
+            "allocated_assistant_referee_2": false,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 1,
+            "enable_referees_allocated": true,
+            "match_hash_id": "PmrGqZzO5N",
+            "home_team_hash_id": "2KpvA7rbmY",
+            "away_team_hash_id": "BdD1BeZJmb",
+            "forfeit_team_hash_id": null,
+            "datetime_aest": "2026-05-03T09:00:00",
+            "date_aest": "2026-05-03"
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/gdM6EB5GOm"
+            }
+        }
     }
 ]
