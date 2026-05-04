@@ -1085,7 +1085,7 @@
             "points": 30
           },
           "U13": {
-            "position": 1,
+            "position": 2,
             "played": 10,
             "wins": 7,
             "draws": 1,
@@ -1118,11 +1118,76 @@
             "points": 30
           }
         },
-        "total_position_points": 8,
+        "total_position_points": 9,
         "total_gf": 155,
         "total_ga": 49,
         "age_group_count": 5,
         "overall_rank": 1
+      },
+      {
+        "club": "Gippsland United FC",
+        "age_groups": {
+          "U15": {
+            "position": 4,
+            "played": 10,
+            "wins": 5,
+            "draws": 1,
+            "losses": 4,
+            "gf": 20,
+            "ga": 9,
+            "gd": 11,
+            "points": 16
+          },
+          "U14": {
+            "position": 2,
+            "played": 10,
+            "wins": 7,
+            "draws": 2,
+            "losses": 1,
+            "gf": 25,
+            "ga": 12,
+            "gd": 13,
+            "points": 23
+          },
+          "U13": {
+            "position": 1,
+            "played": 10,
+            "wins": 7,
+            "draws": 1,
+            "losses": 2,
+            "gf": 34,
+            "ga": 17,
+            "gd": 17,
+            "points": 22
+          },
+          "U18": {
+            "position": 1,
+            "played": 9,
+            "wins": 7,
+            "draws": 1,
+            "losses": 1,
+            "gf": 36,
+            "ga": 13,
+            "gd": 23,
+            "points": 22
+          },
+          "U16": {
+            "position": 7,
+            "played": 10,
+            "wins": 4,
+            "draws": 0,
+            "losses": 6,
+            "gf": 20,
+            "ga": 24,
+            "gd": -4,
+            "points": 12
+          }
+        },
+        "total_position_points": 15,
+        "total_gf": 135,
+        "total_ga": 75,
+        "age_group_count": 5,
+        "overall_rank": 2
       },
       {
         "club": "Port Melbourne SC",
@@ -1187,71 +1252,6 @@
         "total_gf": 113,
         "total_ga": 69,
         "age_group_count": 5,
-        "overall_rank": 2
-      },
-      {
-        "club": "Gippsland United FC",
-        "age_groups": {
-          "U15": {
-            "position": 4,
-            "played": 10,
-            "wins": 5,
-            "draws": 1,
-            "losses": 4,
-            "gf": 20,
-            "ga": 9,
-            "gd": 11,
-            "points": 16
-          },
-          "U14": {
-            "position": 2,
-            "played": 10,
-            "wins": 7,
-            "draws": 2,
-            "losses": 1,
-            "gf": 25,
-            "ga": 12,
-            "gd": 13,
-            "points": 23
-          },
-          "U13": {
-            "position": 3,
-            "played": 9,
-            "wins": 6,
-            "draws": 1,
-            "losses": 2,
-            "gf": 29,
-            "ga": 16,
-            "gd": 13,
-            "points": 19
-          },
-          "U18": {
-            "position": 1,
-            "played": 9,
-            "wins": 7,
-            "draws": 1,
-            "losses": 1,
-            "gf": 36,
-            "ga": 13,
-            "gd": 23,
-            "points": 22
-          },
-          "U16": {
-            "position": 7,
-            "played": 10,
-            "wins": 4,
-            "draws": 0,
-            "losses": 6,
-            "gf": 20,
-            "ga": 24,
-            "gd": -4,
-            "points": 12
-          }
-        },
-        "total_position_points": 17,
-        "total_gf": 130,
-        "total_ga": 74,
-        "age_group_count": 5,
         "overall_rank": 3
       },
       {
@@ -1280,14 +1280,14 @@
             "points": 11
           },
           "U13": {
-            "position": 2,
-            "played": 9,
+            "position": 3,
+            "played": 10,
             "wins": 7,
             "draws": 0,
-            "losses": 2,
-            "gf": 25,
-            "ga": 7,
-            "gd": 18,
+            "losses": 3,
+            "gf": 26,
+            "ga": 12,
+            "gd": 14,
             "points": 21
           },
           "U18": {
@@ -1313,9 +1313,9 @@
             "points": 19
           }
         },
-        "total_position_points": 21,
-        "total_gf": 103,
-        "total_ga": 66,
+        "total_position_points": 22,
+        "total_gf": 104,
+        "total_ga": 71,
         "age_group_count": 5,
         "overall_rank": 4
       },
@@ -3412,5 +3412,5 @@
       }
     ]
   },
-  "_last_updated": "2026-05-05T00:04:27.100555"
+  "_last_updated": "2026-05-05T04:04:23.209427"
 }

@@ -71248,5 +71248,55 @@
                 "href": "https://mc-api.dribl.com/api/results/gdM6EB5GOm"
             }
         }
+    },
+    {
+        "type": "results",
+        "hash_id": "PmrGqEElrN",
+        "attributes": {
+            "name": "FV54534443 - Mornington SC v Gippsland United FC",
+            "date": "2026-05-03 00:00:00",
+            "round": "R10",
+            "full_round": "Round 10",
+            "ground_name": "Peninsula Grammar School",
+            "field_name": "The Detmold - Half Field - Pitch 1A",
+            "home_team_name": "Mornington SC U13",
+            "home_logo": "https://ocean.dribl.com/1659b80dbf89427f8e46c076c8d4e3d4",
+            "away_team_name": "Gippsland United FC U13",
+            "away_logo": "https://ocean.dribl.com/66df697ae133474998deb5d50dfa401a",
+            "competition_name": "Boys Youth State League South-East",
+            "league_name": "U13 YSL Boys - South-East",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 1,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 5,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": false,
+            "allocated_assistant_referee_1": false,
+            "allocated_assistant_referee_2": false,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 0,
+            "enable_referees_allocated": true,
+            "match_hash_id": "Pmj27aRZBm",
+            "home_team_hash_id": "PmjnxkDjmZ",
+            "away_team_hash_id": "MNGog22ENA",
+            "forfeit_team_hash_id": null,
+            "datetime_aest": "2026-05-03T10:00:00",
+            "date_aest": "2026-05-03"
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/PmrGqEElrN"
+            }
+        }
     }
 ]
