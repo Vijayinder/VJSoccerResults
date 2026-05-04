@@ -77,15 +77,15 @@
         "club": "Western United FC",
         "age_groups": {
           "U13": {
-            "position": 3,
-            "played": 10,
-            "wins": 7,
+            "position": 2,
+            "played": 11,
+            "wins": 8,
             "draws": 1,
             "losses": 2,
-            "gf": 29,
-            "ga": 11,
-            "gd": 18,
-            "points": 22
+            "gf": 34,
+            "ga": 13,
+            "gd": 21,
+            "points": 25
           },
           "U16": {
             "position": 3,
@@ -121,87 +121,22 @@
             "points": 17
           },
           "U14": {
-            "position": 4,
-            "played": 11,
+            "position": 5,
+            "played": 12,
             "wins": 8,
             "draws": 1,
-            "losses": 2,
+            "losses": 3,
             "gf": 26,
-            "ga": 12,
-            "gd": 14,
+            "ga": 13,
+            "gd": 13,
             "points": 25
           }
         },
         "total_position_points": 20,
-        "total_gf": 149,
-        "total_ga": 68,
+        "total_gf": 154,
+        "total_ga": 71,
         "age_group_count": 5,
         "overall_rank": 2
-      },
-      {
-        "club": "Green Gully SC",
-        "age_groups": {
-          "U13": {
-            "position": 2,
-            "played": 11,
-            "wins": 8,
-            "draws": 0,
-            "losses": 3,
-            "gf": 30,
-            "ga": 16,
-            "gd": 14,
-            "points": 24
-          },
-          "U16": {
-            "position": 5,
-            "played": 12,
-            "wins": 7,
-            "draws": 2,
-            "losses": 3,
-            "gf": 24,
-            "ga": 11,
-            "gd": 13,
-            "points": 23
-          },
-          "U18": {
-            "position": 8,
-            "played": 12,
-            "wins": 6,
-            "draws": 1,
-            "losses": 5,
-            "gf": 26,
-            "ga": 20,
-            "gd": 6,
-            "points": 19
-          },
-          "U15": {
-            "position": 5,
-            "played": 12,
-            "wins": 7,
-            "draws": 2,
-            "losses": 3,
-            "gf": 22,
-            "ga": 19,
-            "gd": 3,
-            "points": 23
-          },
-          "U14": {
-            "position": 7,
-            "played": 12,
-            "wins": 6,
-            "draws": 3,
-            "losses": 3,
-            "gf": 27,
-            "ga": 19,
-            "gd": 8,
-            "points": 21
-          }
-        },
-        "total_position_points": 27,
-        "total_gf": 129,
-        "total_ga": 85,
-        "age_group_count": 5,
-        "overall_rank": 3
       },
       {
         "club": "FC Bulleen Lions",
@@ -265,6 +200,71 @@
         "total_position_points": 27,
         "total_gf": 111,
         "total_ga": 86,
+        "age_group_count": 5,
+        "overall_rank": 3
+      },
+      {
+        "club": "Green Gully SC",
+        "age_groups": {
+          "U13": {
+            "position": 3,
+            "played": 11,
+            "wins": 8,
+            "draws": 0,
+            "losses": 3,
+            "gf": 30,
+            "ga": 16,
+            "gd": 14,
+            "points": 24
+          },
+          "U16": {
+            "position": 5,
+            "played": 12,
+            "wins": 7,
+            "draws": 2,
+            "losses": 3,
+            "gf": 24,
+            "ga": 11,
+            "gd": 13,
+            "points": 23
+          },
+          "U18": {
+            "position": 8,
+            "played": 12,
+            "wins": 6,
+            "draws": 1,
+            "losses": 5,
+            "gf": 26,
+            "ga": 20,
+            "gd": 6,
+            "points": 19
+          },
+          "U15": {
+            "position": 5,
+            "played": 12,
+            "wins": 7,
+            "draws": 2,
+            "losses": 3,
+            "gf": 22,
+            "ga": 19,
+            "gd": 3,
+            "points": 23
+          },
+          "U14": {
+            "position": 7,
+            "played": 12,
+            "wins": 6,
+            "draws": 3,
+            "losses": 3,
+            "gf": 27,
+            "ga": 19,
+            "gd": 8,
+            "points": 21
+          }
+        },
+        "total_position_points": 28,
+        "total_gf": 129,
+        "total_ga": 85,
         "age_group_count": 5,
         "overall_rank": 4
       },
@@ -381,7 +381,7 @@
             "points": 16
           },
           "U14": {
-            "position": 5,
+            "position": 6,
             "played": 12,
             "wins": 7,
             "draws": 4,
@@ -392,7 +392,7 @@
             "points": 25
           }
         },
-        "total_position_points": 35,
+        "total_position_points": 36,
         "total_gf": 120,
         "total_ga": 98,
         "age_group_count": 5,
@@ -533,13 +533,13 @@
         "age_groups": {
           "U13": {
             "position": 10,
-            "played": 11,
+            "played": 12,
             "wins": 5,
             "draws": 1,
-            "losses": 5,
-            "gf": 15,
-            "ga": 15,
-            "gd": 0,
+            "losses": 6,
+            "gf": 17,
+            "ga": 20,
+            "gd": -3,
             "points": 16
           },
           "U16": {
@@ -576,20 +576,20 @@
             "points": 20
           },
           "U14": {
-            "position": 6,
-            "played": 11,
-            "wins": 7,
+            "position": 4,
+            "played": 12,
+            "wins": 8,
             "draws": 2,
             "losses": 2,
-            "gf": 29,
+            "gf": 30,
             "ga": 15,
-            "gd": 14,
-            "points": 23
+            "gd": 15,
+            "points": 26
           }
         },
-        "total_position_points": 47,
-        "total_gf": 101,
-        "total_ga": 101,
+        "total_position_points": 45,
+        "total_gf": 104,
+        "total_ga": 106,
         "age_group_count": 5,
         "overall_rank": 9
       },
@@ -3412,5 +3412,5 @@
       }
     ]
   },
-  "_last_updated": "2026-05-04T14:04:55.048231"
+  "_last_updated": "2026-05-04T16:05:02.157311"
 }
