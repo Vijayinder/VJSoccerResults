@@ -71298,5 +71298,55 @@
                 "href": "https://mc-api.dribl.com/api/results/PmrGqEElrN"
             }
         }
+    },
+    {
+        "type": "results",
+        "hash_id": "4KLlzMP40K",
+        "attributes": {
+            "name": "FV54539548 - Eastern Lions SC v Avondale FC",
+            "date": "2026-05-03 06:15:00",
+            "round": "R12",
+            "full_round": "Round 12",
+            "ground_name": "Gardiners Creek Reserve",
+            "field_name": "Pitch 2 (S)",
+            "home_team_name": "Eastern Lions SC U18",
+            "home_logo": "https://ocean.dribl.com/fcf4a862a8cc46e4bce017fcda5d55c0",
+            "away_team_name": "Avondale FC U18",
+            "away_logo": "https://ocean.dribl.com/aa620c163b524970beec05f0b0d95879",
+            "competition_name": "Boys Victorian Youth Premier League 1",
+            "league_name": "U18 YPL1 Boys",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 4,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 1,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": true,
+            "allocated_assistant_referee_2": false,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 2,
+            "enable_referees_allocated": true,
+            "match_hash_id": "jdywlp5o6N",
+            "home_team_hash_id": "bd9X9QYwK4",
+            "away_team_hash_id": "4KLnPbGpmq",
+            "forfeit_team_hash_id": null,
+            "datetime_aest": "2026-05-03T16:15:00",
+            "date_aest": "2026-05-03"
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/4KLlzMP40K"
+            }
+        }
     }
 ]

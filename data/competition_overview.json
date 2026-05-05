@@ -619,7 +619,7 @@
             "points": 23
           },
           "U18": {
-            "position": 11,
+            "position": 12,
             "played": 12,
             "wins": 3,
             "draws": 3,
@@ -652,7 +652,7 @@
             "points": 10
           }
         },
-        "total_position_points": 47,
+        "total_position_points": 48,
         "total_gf": 104,
         "total_ga": 112,
         "age_group_count": 5,
@@ -684,15 +684,15 @@
             "points": 7
           },
           "U18": {
-            "position": 12,
-            "played": 11,
-            "wins": 2,
+            "position": 11,
+            "played": 12,
+            "wins": 3,
             "draws": 4,
             "losses": 5,
-            "gf": 13,
-            "ga": 20,
-            "gd": -7,
-            "points": 10
+            "gf": 17,
+            "ga": 21,
+            "gd": -4,
+            "points": 13
           },
           "U15": {
             "position": 14,
@@ -717,9 +717,9 @@
             "points": 16
           }
         },
-        "total_position_points": 53,
-        "total_gf": 74,
-        "total_ga": 110,
+        "total_position_points": 52,
+        "total_gf": 78,
+        "total_ga": 111,
         "age_group_count": 5,
         "overall_rank": 11
       },
@@ -1010,13 +1010,13 @@
           },
           "U18": {
             "position": 13,
-            "played": 11,
+            "played": 12,
             "wins": 3,
             "draws": 1,
-            "losses": 7,
-            "gf": 11,
-            "ga": 23,
-            "gd": -12,
+            "losses": 8,
+            "gf": 12,
+            "ga": 27,
+            "gd": -15,
             "points": 10
           },
           "U15": {
@@ -1043,8 +1043,8 @@
           }
         },
         "total_position_points": 73,
-        "total_gf": 57,
-        "total_ga": 155,
+        "total_gf": 58,
+        "total_ga": 159,
         "age_group_count": 5,
         "overall_rank": 16
       }
@@ -3412,5 +3412,5 @@
       }
     ]
   },
-  "_last_updated": "2026-05-05T12:04:47.303497"
+  "_last_updated": "2026-05-05T20:04:58.647363"
 }
