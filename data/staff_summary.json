@@ -17463,7 +17463,7 @@
           "red_cards": 0
         },
         "Essendon Royals SC U16": {
-          "matches_played": 11,
+          "matches_played": 12,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -17474,7 +17474,7 @@
         }
       },
       "stats": {
-        "matches_attended": 14,
+        "matches_attended": 15,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -17673,6 +17673,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Manningham United Blues FC U16",
           "opponent_team_id": "jmaVX94VNR",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlp55DN",
+          "date": "2026-05-10T03:15:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T13:15:00",
+          "team_name": "Essendon Royals SC U16",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U16 YPL1 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Box Hill United Pythagoras FC U16",
+          "opponent_team_id": "ld4Ol8bOKW",
           "events": []
         }
       ]
@@ -36102,7 +36116,7 @@
       },
       "team_stats": {
         "Box Hill United Pythagoras FC U16": {
-          "matches_played": 11,
+          "matches_played": 12,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -36113,7 +36127,7 @@
         }
       },
       "stats": {
-        "matches_attended": 11,
+        "matches_attended": 12,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -36270,6 +36284,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Glen Eira FC U16",
           "opponent_team_id": "nmYyQvG1mz",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlp55DN",
+          "date": "2026-05-10T03:15:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T13:15:00",
+          "team_name": "Box Hill United Pythagoras FC U16",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U16 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Essendon Royals SC U16",
+          "opponent_team_id": "jmaVX9j7NR",
           "events": []
         }
       ]
@@ -36712,7 +36740,7 @@
       },
       "team_stats": {
         "Box Hill United Pythagoras FC U16": {
-          "matches_played": 15,
+          "matches_played": 17,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -36763,7 +36791,7 @@
         }
       },
       "stats": {
-        "matches_attended": 63,
+        "matches_attended": 65,
         "yellow_cards": 1,
         "red_cards": 1
       },
@@ -37658,6 +37686,34 @@
           "home_or_away": "away",
           "opponent_team_name": "Essendon Royals SC U18",
           "opponent_team_id": "1K3Yk8nLmQ",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlp55DN",
+          "date": "2026-05-10T03:15:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T13:15:00",
+          "team_name": "Box Hill United Pythagoras FC U16",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U16 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Essendon Royals SC U16",
+          "opponent_team_id": "jmaVX9j7NR",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlp55DN",
+          "date": "2026-05-10T03:15:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T13:15:00",
+          "team_name": "Box Hill United Pythagoras FC U16",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U16 YPL1 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "away",
+          "opponent_team_name": "Essendon Royals SC U16",
+          "opponent_team_id": "jmaVX9j7NR",
           "events": []
         }
       ]
@@ -50966,7 +51022,7 @@
       },
       "team_stats": {
         "Essendon Royals SC U16": {
-          "matches_played": 11,
+          "matches_played": 12,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -50977,7 +51033,7 @@
         }
       },
       "stats": {
-        "matches_attended": 11,
+        "matches_attended": 12,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -51134,6 +51190,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Manningham United Blues FC U16",
           "opponent_team_id": "jmaVX94VNR",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlp55DN",
+          "date": "2026-05-10T03:15:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T13:15:00",
+          "team_name": "Essendon Royals SC U16",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U16 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Box Hill United Pythagoras FC U16",
+          "opponent_team_id": "ld4Ol8bOKW",
           "events": []
         }
       ]
@@ -197027,7 +197097,7 @@
           "red_cards": 0
         },
         "Box Hill United Pythagoras FC U16": {
-          "matches_played": 4,
+          "matches_played": 5,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -197038,7 +197108,7 @@
         }
       },
       "stats": {
-        "matches_attended": 6,
+        "matches_attended": 7,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -197125,6 +197195,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Glen Eira FC U16",
           "opponent_team_id": "nmYyQvG1mz",
+          "events": []
+        },
+        {
+          "match_hash_id": "jdywlp55DN",
+          "date": "2026-05-10T03:15:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T13:15:00",
+          "team_name": "Box Hill United Pythagoras FC U16",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U16 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Essendon Royals SC U16",
+          "opponent_team_id": "jmaVX9j7NR",
           "events": []
         }
       ]
@@ -245073,5 +245157,5 @@
       ]
     }
   ],
-  "_last_updated": "2026-05-10T21:07:17.781379"
+  "_last_updated": "2026-05-10T22:07:13.669506"
 }
