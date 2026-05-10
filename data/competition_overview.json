@@ -1357,13 +1357,13 @@
           },
           "U18": {
             "position": 8,
-            "played": 9,
+            "played": 10,
             "wins": 2,
             "draws": 0,
-            "losses": 7,
+            "losses": 8,
             "gf": 11,
-            "ga": 30,
-            "gd": -19,
+            "ga": 36,
+            "gd": -25,
             "points": 6
           },
           "U16": {
@@ -1380,7 +1380,7 @@
         },
         "total_position_points": 26,
         "total_gf": 106,
-        "total_ga": 100,
+        "total_ga": 106,
         "age_group_count": 5,
         "overall_rank": 5
       },
@@ -1541,14 +1541,14 @@
           },
           "U18": {
             "position": 5,
-            "played": 9,
-            "wins": 4,
+            "played": 10,
+            "wins": 5,
             "draws": 1,
             "losses": 4,
-            "gf": 18,
+            "gf": 24,
             "ga": 14,
-            "gd": 4,
-            "points": 13
+            "gd": 10,
+            "points": 16
           },
           "U16": {
             "position": 9,
@@ -1563,7 +1563,7 @@
           }
         },
         "total_position_points": 35,
-        "total_gf": 84,
+        "total_gf": 90,
         "total_ga": 112,
         "age_group_count": 5,
         "overall_rank": 8
@@ -1888,19 +1888,19 @@
           },
           "U16": {
             "position": 2,
-            "played": 12,
+            "played": 13,
             "wins": 9,
             "draws": 2,
-            "losses": 1,
+            "losses": 2,
             "gf": 25,
-            "ga": 14,
-            "gd": 11,
+            "ga": 19,
+            "gd": 6,
             "points": 29
           }
         },
         "total_position_points": 31,
         "total_gf": 121,
-        "total_ga": 85,
+        "total_ga": 90,
         "age_group_count": 5,
         "overall_rank": 3
       },
@@ -2083,18 +2083,18 @@
           },
           "U16": {
             "position": 4,
-            "played": 12,
-            "wins": 7,
+            "played": 13,
+            "wins": 8,
             "draws": 4,
             "losses": 1,
-            "gf": 38,
+            "gf": 43,
             "ga": 9,
-            "gd": 29,
-            "points": 25
+            "gd": 34,
+            "points": 28
           }
         },
         "total_position_points": 39,
-        "total_gf": 119,
+        "total_gf": 124,
         "total_ga": 103,
         "age_group_count": 5,
         "overall_rank": 6
@@ -2191,14 +2191,14 @@
           },
           "U18": {
             "position": 2,
-            "played": 12,
-            "wins": 9,
+            "played": 13,
+            "wins": 10,
             "draws": 3,
             "losses": 0,
-            "gf": 29,
-            "ga": 10,
-            "gd": 19,
-            "points": 30
+            "gf": 33,
+            "ga": 12,
+            "gd": 21,
+            "points": 33
           },
           "U15": {
             "position": 9,
@@ -2224,8 +2224,8 @@
           }
         },
         "total_position_points": 42,
-        "total_gf": 109,
-        "total_ga": 135,
+        "total_gf": 113,
+        "total_ga": 137,
         "age_group_count": 5,
         "overall_rank": 8
       },
@@ -2386,13 +2386,13 @@
           },
           "U18": {
             "position": 5,
-            "played": 12,
+            "played": 13,
             "wins": 7,
             "draws": 1,
-            "losses": 4,
-            "gf": 37,
-            "ga": 31,
-            "gd": 6,
+            "losses": 5,
+            "gf": 39,
+            "ga": 35,
+            "gd": 4,
             "points": 22
           },
           "U15": {
@@ -2419,8 +2419,8 @@
           }
         },
         "total_position_points": 46,
-        "total_gf": 114,
-        "total_ga": 128,
+        "total_gf": 116,
+        "total_ga": 132,
         "age_group_count": 5,
         "overall_rank": 11
       },
@@ -3412,5 +3412,5 @@
       }
     ]
   },
-  "_last_updated": "2026-05-10T18:07:12.563528"
+  "_last_updated": "2026-05-10T19:07:09.946819"
 }
