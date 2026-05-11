@@ -156737,7 +156737,7 @@
       },
       "team_stats": {
         "Port Melbourne SC U16": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -156758,7 +156758,7 @@
         }
       },
       "stats": {
-        "matches_attended": 11,
+        "matches_attended": 12,
         "yellow_cards": 0,
         "red_cards": 1
       },
@@ -156921,6 +156921,20 @@
           "opponent_team_name": "Nunawading City FC U16",
           "opponent_team_id": "1K3YkwDLmQ",
           "events": []
+        },
+        {
+          "match_hash_id": "BdDb9Px74N",
+          "date": "2026-05-10T03:30:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T13:30:00",
+          "team_name": "Port Melbourne SC U16",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U16 YSL Boys - South-East",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Ashburton United SC U16",
+          "opponent_team_id": "8NOD82x2KZ",
+          "events": []
         }
       ]
     },
@@ -156955,7 +156969,7 @@
       },
       "team_stats": {
         "Port Melbourne SC U16": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -156965,7 +156979,7 @@
           "red_cards": 0
         },
         "Port Melbourne SC U15": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -157006,7 +157020,7 @@
         }
       },
       "stats": {
-        "matches_attended": 51,
+        "matches_attended": 53,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -157724,6 +157738,34 @@
           "opponent_team_name": "Ashburton United SC U14",
           "opponent_team_id": "8NOD82lzKZ",
           "events": []
+        },
+        {
+          "match_hash_id": "4KLlzJx87K",
+          "date": "2026-05-10T01:30:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T11:30:00",
+          "team_name": "Port Melbourne SC U15",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U15 YSL Boys - South-East",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Ashburton United SC U15",
+          "opponent_team_id": "jdye8bRPd5",
+          "events": []
+        },
+        {
+          "match_hash_id": "BdDb9Px74N",
+          "date": "2026-05-10T03:30:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T13:30:00",
+          "team_name": "Port Melbourne SC U16",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U16 YSL Boys - South-East",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Ashburton United SC U16",
+          "opponent_team_id": "8NOD82x2KZ",
+          "events": []
         }
       ]
     },
@@ -157759,7 +157801,7 @@
       },
       "team_stats": {
         "Port Melbourne SC U16": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -157769,7 +157811,7 @@
           "red_cards": 0
         },
         "Port Melbourne SC U15": {
-          "matches_played": 20,
+          "matches_played": 22,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -157810,7 +157852,7 @@
         }
       },
       "stats": {
-        "matches_attended": 73,
+        "matches_attended": 76,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -158835,6 +158877,48 @@
           "home_or_away": "home",
           "opponent_team_name": "Ashburton United SC U14",
           "opponent_team_id": "8NOD82lzKZ",
+          "events": []
+        },
+        {
+          "match_hash_id": "4KLlzJx87K",
+          "date": "2026-05-10T01:30:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T11:30:00",
+          "team_name": "Port Melbourne SC U15",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U15 YSL Boys - South-East",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Ashburton United SC U15",
+          "opponent_team_id": "jdye8bRPd5",
+          "events": []
+        },
+        {
+          "match_hash_id": "4KLlzJx87K",
+          "date": "2026-05-10T01:30:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T11:30:00",
+          "team_name": "Port Melbourne SC U15",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U15 YSL Boys - South-East",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Ashburton United SC U15",
+          "opponent_team_id": "jdye8bRPd5",
+          "events": []
+        },
+        {
+          "match_hash_id": "BdDb9Px74N",
+          "date": "2026-05-10T03:30:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T13:30:00",
+          "team_name": "Port Melbourne SC U16",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U16 YSL Boys - South-East",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Ashburton United SC U16",
+          "opponent_team_id": "8NOD82x2KZ",
           "events": []
         }
       ]
@@ -167231,7 +167315,7 @@
       },
       "team_stats": {
         "Ashburton United SC U15": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -167242,7 +167326,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -167385,6 +167469,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Monash City Villarreal FC U15",
           "opponent_team_id": "lNb3V28gKx",
+          "events": []
+        },
+        {
+          "match_hash_id": "4KLlzJx87K",
+          "date": "2026-05-10T01:30:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T11:30:00",
+          "team_name": "Ashburton United SC U15",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U15 YSL Boys - South-East",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Port Melbourne SC U15",
+          "opponent_team_id": "pmvzPox6mv",
           "events": []
         }
       ]
@@ -167408,7 +167506,7 @@
       },
       "team_stats": {
         "Ashburton United SC U15": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -167419,7 +167517,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -167562,6 +167660,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Monash City Villarreal FC U15",
           "opponent_team_id": "lNb3V28gKx",
+          "events": []
+        },
+        {
+          "match_hash_id": "4KLlzJx87K",
+          "date": "2026-05-10T01:30:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T11:30:00",
+          "team_name": "Ashburton United SC U15",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U15 YSL Boys - South-East",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Port Melbourne SC U15",
+          "opponent_team_id": "pmvzPox6mv",
           "events": []
         }
       ]
@@ -167585,7 +167697,7 @@
       },
       "team_stats": {
         "Ashburton United SC U15": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -167596,7 +167708,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -167739,6 +167851,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Monash City Villarreal FC U15",
           "opponent_team_id": "lNb3V28gKx",
+          "events": []
+        },
+        {
+          "match_hash_id": "4KLlzJx87K",
+          "date": "2026-05-10T01:30:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T11:30:00",
+          "team_name": "Ashburton United SC U15",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U15 YSL Boys - South-East",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Port Melbourne SC U15",
+          "opponent_team_id": "pmvzPox6mv",
           "events": []
         }
       ]
@@ -167762,7 +167888,7 @@
       },
       "team_stats": {
         "Ashburton United SC U15": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -167773,7 +167899,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -167916,6 +168042,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Monash City Villarreal FC U15",
           "opponent_team_id": "lNb3V28gKx",
+          "events": []
+        },
+        {
+          "match_hash_id": "4KLlzJx87K",
+          "date": "2026-05-10T01:30:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T11:30:00",
+          "team_name": "Ashburton United SC U15",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U15 YSL Boys - South-East",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Port Melbourne SC U15",
+          "opponent_team_id": "pmvzPox6mv",
           "events": []
         }
       ]
@@ -169796,7 +169936,7 @@
       },
       "team_stats": {
         "Port Melbourne SC U15": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -169807,7 +169947,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -169950,6 +170090,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Nunawading City FC U15",
           "opponent_team_id": "jmaVX2aVNR",
+          "events": []
+        },
+        {
+          "match_hash_id": "4KLlzJx87K",
+          "date": "2026-05-10T01:30:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T11:30:00",
+          "team_name": "Port Melbourne SC U15",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U15 YSL Boys - South-East",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Ashburton United SC U15",
+          "opponent_team_id": "jdye8bRPd5",
           "events": []
         }
       ]
@@ -169973,7 +170127,7 @@
       },
       "team_stats": {
         "Port Melbourne SC U15": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -169984,7 +170138,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -170127,6 +170281,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Nunawading City FC U15",
           "opponent_team_id": "jmaVX2aVNR",
+          "events": []
+        },
+        {
+          "match_hash_id": "4KLlzJx87K",
+          "date": "2026-05-10T01:30:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T11:30:00",
+          "team_name": "Port Melbourne SC U15",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U15 YSL Boys - South-East",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Ashburton United SC U15",
+          "opponent_team_id": "jdye8bRPd5",
           "events": []
         }
       ]
@@ -170156,7 +170324,7 @@
       },
       "team_stats": {
         "Port Melbourne SC U15": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -170187,7 +170355,7 @@
         }
       },
       "stats": {
-        "matches_attended": 12,
+        "matches_attended": 13,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -170358,6 +170526,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Nunawading City FC U15",
           "opponent_team_id": "jmaVX2aVNR",
+          "events": []
+        },
+        {
+          "match_hash_id": "4KLlzJx87K",
+          "date": "2026-05-10T01:30:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T11:30:00",
+          "team_name": "Port Melbourne SC U15",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U15 YSL Boys - South-East",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Ashburton United SC U15",
+          "opponent_team_id": "jdye8bRPd5",
           "events": []
         }
       ]
@@ -198076,7 +198258,7 @@
       },
       "team_stats": {
         "Ashburton United SC U16": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -198087,7 +198269,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -198230,6 +198412,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Monash City Villarreal FC U16",
           "opponent_team_id": "BdD1B2o4mb",
+          "events": []
+        },
+        {
+          "match_hash_id": "BdDb9Px74N",
+          "date": "2026-05-10T03:30:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T13:30:00",
+          "team_name": "Ashburton United SC U16",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U16 YSL Boys - South-East",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Port Melbourne SC U16",
+          "opponent_team_id": "jdye8b9Dd5",
           "events": []
         }
       ]
@@ -198253,7 +198449,7 @@
       },
       "team_stats": {
         "Ashburton United SC U16": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -198264,7 +198460,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -198407,6 +198603,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Monash City Villarreal FC U16",
           "opponent_team_id": "BdD1B2o4mb",
+          "events": []
+        },
+        {
+          "match_hash_id": "BdDb9Px74N",
+          "date": "2026-05-10T03:30:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T13:30:00",
+          "team_name": "Ashburton United SC U16",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U16 YSL Boys - South-East",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Port Melbourne SC U16",
+          "opponent_team_id": "jdye8b9Dd5",
           "events": []
         }
       ]
@@ -198430,7 +198640,7 @@
       },
       "team_stats": {
         "Ashburton United SC U16": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -198441,7 +198651,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -198584,6 +198794,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Monash City Villarreal FC U16",
           "opponent_team_id": "BdD1B2o4mb",
+          "events": []
+        },
+        {
+          "match_hash_id": "BdDb9Px74N",
+          "date": "2026-05-10T03:30:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T13:30:00",
+          "team_name": "Ashburton United SC U16",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U16 YSL Boys - South-East",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Port Melbourne SC U16",
+          "opponent_team_id": "jdye8b9Dd5",
           "events": []
         }
       ]
@@ -207675,7 +207899,7 @@
       },
       "team_stats": {
         "Port Melbourne SC U16": {
-          "matches_played": 9,
+          "matches_played": 10,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -207686,7 +207910,7 @@
         }
       },
       "stats": {
-        "matches_attended": 9,
+        "matches_attended": 10,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -207815,6 +208039,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Nunawading City FC U16",
           "opponent_team_id": "1K3YkwDLmQ",
+          "events": []
+        },
+        {
+          "match_hash_id": "BdDb9Px74N",
+          "date": "2026-05-10T03:30:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T13:30:00",
+          "team_name": "Port Melbourne SC U16",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U16 YSL Boys - South-East",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Ashburton United SC U16",
+          "opponent_team_id": "8NOD82x2KZ",
           "events": []
         }
       ]
@@ -213219,7 +213457,7 @@
       },
       "team_stats": {
         "Ashburton United SC U15": {
-          "matches_played": 8,
+          "matches_played": 9,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -213230,7 +213468,7 @@
         }
       },
       "stats": {
-        "matches_attended": 8,
+        "matches_attended": 9,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -213345,6 +213583,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Monash City Villarreal FC U15",
           "opponent_team_id": "lNb3V28gKx",
+          "events": []
+        },
+        {
+          "match_hash_id": "4KLlzJx87K",
+          "date": "2026-05-10T01:30:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T11:30:00",
+          "team_name": "Ashburton United SC U15",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U15 YSL Boys - South-East",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Port Melbourne SC U15",
+          "opponent_team_id": "pmvzPox6mv",
           "events": []
         }
       ]
@@ -245520,5 +245772,5 @@
       ]
     }
   ],
-  "_last_updated": "2026-05-11T10:05:24.864782"
+  "_last_updated": "2026-05-11T12:05:29.972083"
 }
