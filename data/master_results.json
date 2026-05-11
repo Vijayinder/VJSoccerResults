@@ -69769,12 +69769,12 @@
             "bye_flag": 0,
             "is_unstructured": false,
             "league_result_access": "public",
-            "home_score": 2,
+            "home_score": 0,
             "home_score_extra": null,
             "home_score_penalty": null,
             "home_score_half": null,
             "home_score_extra_half": null,
-            "away_score": 4,
+            "away_score": 3,
             "away_score_extra": null,
             "away_score_penalty": null,
             "away_score_half": null,
@@ -77396,6 +77396,56 @@
         "links": {
             "self": {
                 "href": "https://mc-api.dribl.com/api/results/nmYnZXo7DN"
+            }
+        }
+    },
+    {
+        "type": "results",
+        "hash_id": "Pmj27a4o3m",
+        "attributes": {
+            "name": "Ballarat City FC U15  vs Geelong SC U15 ",
+            "date": "2026-05-03 01:30:00",
+            "round": "R12",
+            "full_round": "Round 12",
+            "ground_name": "Ballarat Regional Soccer Facility - Morshead Park",
+            "field_name": "Pitch 2",
+            "home_team_name": "Ballarat City FC U15",
+            "home_logo": "https://ocean.dribl.com/e7ecf595ac8a4a9ca65340fa3664d974",
+            "away_team_name": "Geelong SC U15",
+            "away_logo": "https://ocean.dribl.com/be70bafbe9ac4da887edd6723c35e495",
+            "competition_name": "Boys Victorian Youth Premier League 2",
+            "league_name": "U15 YPL2 Boys",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 1,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 1,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": false,
+            "allocated_assistant_referee_1": false,
+            "allocated_assistant_referee_2": false,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 0,
+            "enable_referees_allocated": true,
+            "match_hash_id": "4KLlzMqk7K",
+            "home_team_hash_id": "ld4Ol8ABKW",
+            "away_team_hash_id": "ld4OlakrKW",
+            "forfeit_team_hash_id": null,
+            "datetime_aest": "2026-05-03T11:30:00",
+            "date_aest": "2026-05-03"
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/Pmj27a4o3m"
             }
         }
     }

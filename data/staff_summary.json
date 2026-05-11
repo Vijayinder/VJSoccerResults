@@ -20153,7 +20153,7 @@
           "red_cards": 0
         },
         "Geelong SC U15": {
-          "matches_played": 12,
+          "matches_played": 13,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -20164,7 +20164,7 @@
         }
       },
       "stats": {
-        "matches_attended": 13,
+        "matches_attended": 14,
         "yellow_cards": 1,
         "red_cards": 0
       },
@@ -20354,6 +20354,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Murray United FC U15",
           "opponent_team_id": "jmaVXQ05NR",
+          "events": []
+        },
+        {
+          "match_hash_id": "4KLlzMqk7K",
+          "date": "2026-05-03T01:30:00.000000Z",
+          "date_aest": "2026-05-03",
+          "datetime_aest": "2026-05-03T11:30:00",
+          "team_name": "Geelong SC U15",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U15 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Ballarat City FC U15",
+          "opponent_team_id": "ld4Ol8ABKW",
           "events": []
         }
       ]
@@ -57978,7 +57992,7 @@
       },
       "team_stats": {
         "Geelong SC U15": {
-          "matches_played": 12,
+          "matches_played": 13,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -57999,7 +58013,7 @@
         }
       },
       "stats": {
-        "matches_attended": 13,
+        "matches_attended": 14,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -58185,6 +58199,20 @@
           "opponent_team_name": "Murray United FC U15",
           "opponent_team_id": "jmaVXQ05NR",
           "events": []
+        },
+        {
+          "match_hash_id": "4KLlzMqk7K",
+          "date": "2026-05-03T01:30:00.000000Z",
+          "date_aest": "2026-05-03",
+          "datetime_aest": "2026-05-03T11:30:00",
+          "team_name": "Geelong SC U15",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U15 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Ballarat City FC U15",
+          "opponent_team_id": "ld4Ol8ABKW",
+          "events": []
         }
       ]
     },
@@ -58207,7 +58235,7 @@
       },
       "team_stats": {
         "Geelong SC U15": {
-          "matches_played": 11,
+          "matches_played": 12,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -58218,7 +58246,7 @@
         }
       },
       "stats": {
-        "matches_attended": 11,
+        "matches_attended": 12,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -58375,6 +58403,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Murray United FC U15",
           "opponent_team_id": "jmaVXQ05NR",
+          "events": []
+        },
+        {
+          "match_hash_id": "4KLlzMqk7K",
+          "date": "2026-05-03T01:30:00.000000Z",
+          "date_aest": "2026-05-03",
+          "datetime_aest": "2026-05-03T11:30:00",
+          "team_name": "Geelong SC U15",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U15 YPL2 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Ballarat City FC U15",
+          "opponent_team_id": "ld4Ol8ABKW",
           "events": []
         }
       ]
@@ -81158,7 +81200,7 @@
       },
       "team_stats": {
         "Ballarat City FC U15": {
-          "matches_played": 12,
+          "matches_played": 13,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -81169,7 +81211,7 @@
         }
       },
       "stats": {
-        "matches_attended": 12,
+        "matches_attended": 13,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -81341,6 +81383,20 @@
           "opponent_team_name": "Brunswick Juventus FC U15",
           "opponent_team_id": "gdMvMWY7mE",
           "events": []
+        },
+        {
+          "match_hash_id": "4KLlzMqk7K",
+          "date": "2026-05-03T01:30:00.000000Z",
+          "date_aest": "2026-05-03",
+          "datetime_aest": "2026-05-03T11:30:00",
+          "team_name": "Ballarat City FC U15",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U15 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Geelong SC U15",
+          "opponent_team_id": "ld4OlakrKW",
+          "events": []
         }
       ]
     },
@@ -81376,7 +81432,7 @@
       },
       "team_stats": {
         "Ballarat City FC U15": {
-          "matches_played": 12,
+          "matches_played": 13,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -81427,7 +81483,7 @@
         }
       },
       "stats": {
-        "matches_attended": 42,
+        "matches_attended": 43,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -82018,6 +82074,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Brunswick Juventus FC U15",
           "opponent_team_id": "gdMvMWY7mE",
+          "events": []
+        },
+        {
+          "match_hash_id": "4KLlzMqk7K",
+          "date": "2026-05-03T01:30:00.000000Z",
+          "date_aest": "2026-05-03",
+          "datetime_aest": "2026-05-03T11:30:00",
+          "team_name": "Ballarat City FC U15",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U15 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Geelong SC U15",
+          "opponent_team_id": "ld4OlakrKW",
           "events": []
         }
       ]
@@ -200324,7 +200394,7 @@
           "red_cards": 0
         },
         "Ballarat City FC U15": {
-          "matches_played": 11,
+          "matches_played": 12,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -200355,7 +200425,7 @@
         }
       },
       "stats": {
-        "matches_attended": 50,
+        "matches_attended": 51,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -201058,6 +201128,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Brunswick Juventus FC U15",
           "opponent_team_id": "gdMvMWY7mE",
+          "events": []
+        },
+        {
+          "match_hash_id": "4KLlzMqk7K",
+          "date": "2026-05-03T01:30:00.000000Z",
+          "date_aest": "2026-05-03",
+          "datetime_aest": "2026-05-03T11:30:00",
+          "team_name": "Ballarat City FC U15",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U15 YPL2 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Geelong SC U15",
+          "opponent_team_id": "ld4OlakrKW",
           "events": []
         }
       ]
@@ -245772,5 +245856,5 @@
       ]
     }
   ],
-  "_last_updated": "2026-05-11T16:05:23.808320"
+  "_last_updated": "2026-05-11T18:05:17.593105"
 }
