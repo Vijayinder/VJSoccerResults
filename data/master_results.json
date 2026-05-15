@@ -77698,5 +77698,55 @@
                 "href": "https://mc-api.dribl.com/api/results/1K3pvVkGGd"
             }
         }
+    },
+    {
+        "type": "results",
+        "hash_id": "emAneP6xRN",
+        "attributes": {
+            "name": "FV54534720 - Kingston City FC v Mornington SC",
+            "date": "2026-05-10 03:00:00",
+            "round": "R11",
+            "full_round": "Round 11",
+            "ground_name": "The Grange Reserve - Clayton South",
+            "field_name": "Main Pitch",
+            "home_team_name": "Kingston City FC U15",
+            "home_logo": "https://ocean.dribl.com/6eb1782d41474f8e893fa5cdd1a65935",
+            "away_team_name": "Mornington SC U15",
+            "away_logo": "https://ocean.dribl.com/1659b80dbf89427f8e46c076c8d4e3d4",
+            "competition_name": "Boys Youth State League South-East",
+            "league_name": "U15 YSL Boys - South-East",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 0,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 2,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": false,
+            "allocated_assistant_referee_2": false,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 1,
+            "enable_referees_allocated": true,
+            "match_hash_id": "pN6R94pAnN",
+            "home_team_hash_id": "vmZwn2gRNq",
+            "away_team_hash_id": "gdMvM23OmE",
+            "forfeit_team_hash_id": null,
+            "datetime_aest": "2026-05-10T13:00:00",
+            "date_aest": "2026-05-10"
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/emAneP6xRN"
+            }
+        }
     }
 ]

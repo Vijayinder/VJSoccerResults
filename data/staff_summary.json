@@ -152001,7 +152001,7 @@
           "red_cards": 0
         },
         "Mornington SC U15": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -152032,7 +152032,7 @@
         }
       },
       "stats": {
-        "matches_attended": 51,
+        "matches_attended": 52,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -152749,6 +152749,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Kingston City FC U16",
           "opponent_team_id": "2KpvA9WPmY",
+          "events": []
+        },
+        {
+          "match_hash_id": "pN6R94pAnN",
+          "date": "2026-05-10T01:45:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T11:45:00",
+          "team_name": "Mornington SC U15",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U15 YSL Boys - South-East",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Kingston City FC U15",
+          "opponent_team_id": "vmZwn2gRNq",
           "events": []
         }
       ]
@@ -164021,7 +164035,7 @@
       },
       "team_stats": {
         "Kingston City FC U15": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -164032,7 +164046,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 1,
         "red_cards": 0
       },
@@ -164181,6 +164195,20 @@
               "minute": "37"
             }
           ]
+        },
+        {
+          "match_hash_id": "pN6R94pAnN",
+          "date": "2026-05-10T01:45:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T11:45:00",
+          "team_name": "Kingston City FC U15",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U15 YSL Boys - South-East",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Mornington SC U15",
+          "opponent_team_id": "gdMvM23OmE",
+          "events": []
         }
       ]
     },
@@ -164203,7 +164231,7 @@
       },
       "team_stats": {
         "Kingston City FC U15": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -164214,7 +164242,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -164358,6 +164386,20 @@
           "opponent_team_name": "Goulburn Valley Suns FC U15",
           "opponent_team_id": "ld4Olwg0KW",
           "events": []
+        },
+        {
+          "match_hash_id": "pN6R94pAnN",
+          "date": "2026-05-10T01:45:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T11:45:00",
+          "team_name": "Kingston City FC U15",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U15 YSL Boys - South-East",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Mornington SC U15",
+          "opponent_team_id": "gdMvM23OmE",
+          "events": []
         }
       ]
     },
@@ -164383,7 +164425,7 @@
       },
       "team_stats": {
         "Kingston City FC U15": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -164404,7 +164446,7 @@
         }
       },
       "stats": {
-        "matches_attended": 15,
+        "matches_attended": 16,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -164618,6 +164660,20 @@
           "opponent_team_name": "Goulburn Valley Suns FC U15",
           "opponent_team_id": "ld4Olwg0KW",
           "events": []
+        },
+        {
+          "match_hash_id": "pN6R94pAnN",
+          "date": "2026-05-10T01:45:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T11:45:00",
+          "team_name": "Kingston City FC U15",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U15 YSL Boys - South-East",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Mornington SC U15",
+          "opponent_team_id": "gdMvM23OmE",
+          "events": []
         }
       ]
     },
@@ -164640,7 +164696,7 @@
       },
       "team_stats": {
         "Kingston City FC U15": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -164651,7 +164707,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 1,
         "red_cards": 0
       },
@@ -164799,6 +164855,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Goulburn Valley Suns FC U15",
           "opponent_team_id": "ld4Olwg0KW",
+          "events": []
+        },
+        {
+          "match_hash_id": "pN6R94pAnN",
+          "date": "2026-05-10T01:45:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T11:45:00",
+          "team_name": "Kingston City FC U15",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U15 YSL Boys - South-East",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Mornington SC U15",
+          "opponent_team_id": "gdMvM23OmE",
           "events": []
         }
       ]
@@ -169813,7 +169883,7 @@
       },
       "team_stats": {
         "Mornington SC U15": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -169824,7 +169894,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -169967,6 +170037,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Gippsland United FC U15",
           "opponent_team_id": "MNGog2lLNA",
+          "events": []
+        },
+        {
+          "match_hash_id": "pN6R94pAnN",
+          "date": "2026-05-10T01:45:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T11:45:00",
+          "team_name": "Mornington SC U15",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U15 YSL Boys - South-East",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Kingston City FC U15",
+          "opponent_team_id": "vmZwn2gRNq",
           "events": []
         }
       ]
@@ -169990,7 +170074,7 @@
       },
       "team_stats": {
         "Mornington SC U15": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -170001,7 +170085,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -170144,6 +170228,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Gippsland United FC U15",
           "opponent_team_id": "MNGog2lLNA",
+          "events": []
+        },
+        {
+          "match_hash_id": "pN6R94pAnN",
+          "date": "2026-05-10T01:45:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T11:45:00",
+          "team_name": "Mornington SC U15",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U15 YSL Boys - South-East",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Kingston City FC U15",
+          "opponent_team_id": "vmZwn2gRNq",
           "events": []
         }
       ]
@@ -170173,7 +170271,7 @@
       },
       "team_stats": {
         "Mornington SC U15": {
-          "matches_played": 9,
+          "matches_played": 10,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -170204,7 +170302,7 @@
         }
       },
       "stats": {
-        "matches_attended": 20,
+        "matches_attended": 21,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -170487,6 +170585,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Gippsland United FC U15",
           "opponent_team_id": "MNGog2lLNA",
+          "events": []
+        },
+        {
+          "match_hash_id": "pN6R94pAnN",
+          "date": "2026-05-10T01:45:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T11:45:00",
+          "team_name": "Mornington SC U15",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U15 YSL Boys - South-East",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Kingston City FC U15",
+          "opponent_team_id": "vmZwn2gRNq",
           "events": []
         }
       ]
@@ -238146,7 +238258,7 @@
           "red_cards": 0
         },
         "Mornington SC U15": {
-          "matches_played": 10,
+          "matches_played": 12,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -238177,7 +238289,7 @@
         }
       },
       "stats": {
-        "matches_attended": 26,
+        "matches_attended": 28,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -238544,6 +238656,34 @@
           "home_or_away": "away",
           "opponent_team_name": "Kingston City FC U16",
           "opponent_team_id": "2KpvA9WPmY",
+          "events": []
+        },
+        {
+          "match_hash_id": "pN6R94pAnN",
+          "date": "2026-05-10T01:45:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T11:45:00",
+          "team_name": "Mornington SC U15",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U15 YSL Boys - South-East",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Kingston City FC U15",
+          "opponent_team_id": "vmZwn2gRNq",
+          "events": []
+        },
+        {
+          "match_hash_id": "pN6R94pAnN",
+          "date": "2026-05-10T01:45:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T11:45:00",
+          "team_name": "Mornington SC U15",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U15 YSL Boys - South-East",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "away",
+          "opponent_team_name": "Kingston City FC U15",
+          "opponent_team_id": "vmZwn2gRNq",
           "events": []
         }
       ]
@@ -241731,7 +241871,7 @@
       },
       "team_stats": {
         "Mornington SC U15": {
-          "matches_played": 3,
+          "matches_played": 4,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -241742,7 +241882,7 @@
         }
       },
       "stats": {
-        "matches_attended": 3,
+        "matches_attended": 4,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -241787,6 +241927,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Gippsland United FC U15",
           "opponent_team_id": "MNGog2lLNA",
+          "events": []
+        },
+        {
+          "match_hash_id": "pN6R94pAnN",
+          "date": "2026-05-10T01:45:00.000000Z",
+          "date_aest": "2026-05-10",
+          "datetime_aest": "2026-05-10T11:45:00",
+          "team_name": "Mornington SC U15",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U15 YSL Boys - South-East",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Kingston City FC U15",
+          "opponent_team_id": "vmZwn2gRNq",
           "events": []
         }
       ]
@@ -246565,5 +246719,5 @@
       ]
     }
   ],
-  "_last_updated": "2026-05-15T12:05:26.994276"
+  "_last_updated": "2026-05-15T16:05:43.319216"
 }
