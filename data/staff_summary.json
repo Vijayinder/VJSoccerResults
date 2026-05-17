@@ -13525,7 +13525,7 @@
           "red_cards": 0
         },
         "Glen Eira FC U13": {
-          "matches_played": 13,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -13556,7 +13556,7 @@
         }
       },
       "stats": {
-        "matches_attended": 34,
+        "matches_attended": 35,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -14036,6 +14036,20 @@
           "opponent_team_name": "Eastern Lions SC U18",
           "opponent_team_id": "bd9X9QYwK4",
           "events": []
+        },
+        {
+          "match_hash_id": "Pmj27a4ZPm",
+          "date": "2026-05-16T23:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T09:00:00",
+          "team_name": "Glen Eira FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U13 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "South Melbourne FC U13",
+          "opponent_team_id": "Pmrk76pPNo",
+          "events": []
         }
       ]
     },
@@ -14100,7 +14114,7 @@
           "red_cards": 0
         },
         "Glen Eira FC U14": {
-          "matches_played": 13,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -14110,7 +14124,7 @@
           "red_cards": 0
         },
         "Glen Eira FC U13": {
-          "matches_played": 9,
+          "matches_played": 10,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -14121,7 +14135,7 @@
         }
       },
       "stats": {
-        "matches_attended": 49,
+        "matches_attended": 51,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -14810,6 +14824,34 @@
           "home_or_away": "home",
           "opponent_team_name": "Eastern Lions SC U14",
           "opponent_team_id": "Pmrk76ZRNo",
+          "events": []
+        },
+        {
+          "match_hash_id": "Pmj27a4ZPm",
+          "date": "2026-05-16T23:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T09:00:00",
+          "team_name": "Glen Eira FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U13 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "South Melbourne FC U13",
+          "opponent_team_id": "Pmrk76pPNo",
+          "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMeMWd",
+          "date": "2026-05-17T00:20:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:20:00",
+          "team_name": "Glen Eira FC U14",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U14 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "South Melbourne FC U14",
+          "opponent_team_id": "vmZwn47DNq",
           "events": []
         }
       ]
@@ -20348,7 +20390,7 @@
           "red_cards": 0
         },
         "Geelong SC U15": {
-          "matches_played": 13,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -20359,7 +20401,7 @@
         }
       },
       "stats": {
-        "matches_attended": 14,
+        "matches_attended": 15,
         "yellow_cards": 1,
         "red_cards": 0
       },
@@ -20563,6 +20605,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Ballarat City FC U15",
           "opponent_team_id": "ld4Ol8ABKW",
+          "events": []
+        },
+        {
+          "match_hash_id": "MNGJx12abm",
+          "date": "2026-05-16T23:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T09:00:00",
+          "team_name": "Geelong SC U15",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U15 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Langwarrin SC U15",
+          "opponent_team_id": "lNb3Vn0EKx",
           "events": []
         }
       ]
@@ -28531,7 +28587,7 @@
           "red_cards": 0
         },
         "Malvern City FC U14": {
-          "matches_played": 13,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -28552,7 +28608,7 @@
         }
       },
       "stats": {
-        "matches_attended": 66,
+        "matches_attended": 67,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -29479,6 +29535,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Caroline Springs George Cross FC U13",
           "opponent_team_id": "2KpvA7rbmY",
+          "events": []
+        },
+        {
+          "match_hash_id": "2Kp0pgwZzK",
+          "date": "2026-05-17T00:45:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:45:00",
+          "team_name": "Malvern City FC U14",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U14 YPL1 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "away",
+          "opponent_team_name": "Caroline Springs George Cross FC U14",
+          "opponent_team_id": "PmjnxbaAmZ",
           "events": []
         }
       ]
@@ -29544,7 +29614,7 @@
           "red_cards": 0
         },
         "Malvern City FC U14": {
-          "matches_played": 13,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -29565,7 +29635,7 @@
         }
       },
       "stats": {
-        "matches_attended": 66,
+        "matches_attended": 67,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -30492,6 +30562,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Caroline Springs George Cross FC U13",
           "opponent_team_id": "2KpvA7rbmY",
+          "events": []
+        },
+        {
+          "match_hash_id": "2Kp0pgwZzK",
+          "date": "2026-05-17T00:45:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:45:00",
+          "team_name": "Malvern City FC U14",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U14 YPL1 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "away",
+          "opponent_team_name": "Caroline Springs George Cross FC U14",
+          "opponent_team_id": "PmjnxbaAmZ",
           "events": []
         }
       ]
@@ -30757,7 +30841,7 @@
           "red_cards": 0
         },
         "Langwarrin SC U15": {
-          "matches_played": 12,
+          "matches_played": 13,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -30768,7 +30852,7 @@
         }
       },
       "stats": {
-        "matches_attended": 25,
+        "matches_attended": 26,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -31121,6 +31205,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Berwick City SC U18",
           "opponent_team_id": "emA1j2WMmB",
+          "events": []
+        },
+        {
+          "match_hash_id": "MNGJx12abm",
+          "date": "2026-05-16T23:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T09:00:00",
+          "team_name": "Langwarrin SC U15",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U15 YPL2 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Geelong SC U15",
+          "opponent_team_id": "ld4OlakrKW",
           "events": []
         }
       ]
@@ -38670,7 +38768,7 @@
           "red_cards": 0
         },
         "Caroline Springs George Cross FC U14": {
-          "matches_played": 13,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -38691,7 +38789,7 @@
         }
       },
       "stats": {
-        "matches_attended": 72,
+        "matches_attended": 73,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -39703,6 +39801,20 @@
           "opponent_team_name": "Malvern City FC U13",
           "opponent_team_id": "pmvzPnjomv",
           "events": []
+        },
+        {
+          "match_hash_id": "2Kp0pgwZzK",
+          "date": "2026-05-17T00:45:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:45:00",
+          "team_name": "Caroline Springs George Cross FC U14",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U14 YPL1 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Malvern City FC U14",
+          "opponent_team_id": "jdye8k6zd5",
+          "events": []
         }
       ]
     },
@@ -39972,7 +40084,7 @@
           "red_cards": 0
         },
         "Caroline Springs George Cross FC U14": {
-          "matches_played": 13,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -39993,7 +40105,7 @@
         }
       },
       "stats": {
-        "matches_attended": 69,
+        "matches_attended": 70,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -40963,6 +41075,20 @@
           "opponent_team_name": "Malvern City FC U13",
           "opponent_team_id": "pmvzPnjomv",
           "events": []
+        },
+        {
+          "match_hash_id": "2Kp0pgwZzK",
+          "date": "2026-05-17T00:45:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:45:00",
+          "team_name": "Caroline Springs George Cross FC U14",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U14 YPL1 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Malvern City FC U14",
+          "opponent_team_id": "jdye8k6zd5",
+          "events": []
         }
       ]
     },
@@ -41261,7 +41387,7 @@
           "red_cards": 0
         },
         "Caroline Springs George Cross FC U14": {
-          "matches_played": 13,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -41282,7 +41408,7 @@
         }
       },
       "stats": {
-        "matches_attended": 64,
+        "matches_attended": 65,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -42181,6 +42307,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Malvern City FC U13",
           "opponent_team_id": "pmvzPnjomv",
+          "events": []
+        },
+        {
+          "match_hash_id": "2Kp0pgwZzK",
+          "date": "2026-05-17T00:45:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:45:00",
+          "team_name": "Caroline Springs George Cross FC U14",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U14 YPL1 Boys",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "home",
+          "opponent_team_name": "Malvern City FC U14",
+          "opponent_team_id": "jdye8k6zd5",
           "events": []
         }
       ]
@@ -50933,7 +51073,7 @@
           "red_cards": 0
         },
         "Glen Eira FC U13": {
-          "matches_played": 13,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -50964,7 +51104,7 @@
         }
       },
       "stats": {
-        "matches_attended": 34,
+        "matches_attended": 35,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -51443,6 +51583,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Eastern Lions SC U13",
           "opponent_team_id": "bd9X9Q6YK4",
+          "events": []
+        },
+        {
+          "match_hash_id": "Pmj27a4ZPm",
+          "date": "2026-05-16T23:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T09:00:00",
+          "team_name": "Glen Eira FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U13 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "South Melbourne FC U13",
+          "opponent_team_id": "Pmrk76pPNo",
           "events": []
         }
       ]
@@ -58677,7 +58831,7 @@
       },
       "team_stats": {
         "Geelong SC U15": {
-          "matches_played": 13,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -58698,7 +58852,7 @@
         }
       },
       "stats": {
-        "matches_attended": 14,
+        "matches_attended": 15,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -58898,6 +59052,20 @@
           "opponent_team_name": "Ballarat City FC U15",
           "opponent_team_id": "ld4Ol8ABKW",
           "events": []
+        },
+        {
+          "match_hash_id": "MNGJx12abm",
+          "date": "2026-05-16T23:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T09:00:00",
+          "team_name": "Geelong SC U15",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U15 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Langwarrin SC U15",
+          "opponent_team_id": "lNb3Vn0EKx",
+          "events": []
         }
       ]
     },
@@ -58920,7 +59088,7 @@
       },
       "team_stats": {
         "Geelong SC U15": {
-          "matches_played": 12,
+          "matches_played": 13,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -58931,7 +59099,7 @@
         }
       },
       "stats": {
-        "matches_attended": 12,
+        "matches_attended": 13,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -59102,6 +59270,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Ballarat City FC U15",
           "opponent_team_id": "ld4Ol8ABKW",
+          "events": []
+        },
+        {
+          "match_hash_id": "MNGJx12abm",
+          "date": "2026-05-16T23:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T09:00:00",
+          "team_name": "Geelong SC U15",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U15 YPL2 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Langwarrin SC U15",
+          "opponent_team_id": "lNb3Vn0EKx",
           "events": []
         }
       ]
@@ -74925,7 +75107,7 @@
           "red_cards": 0
         },
         "Glen Eira FC U13": {
-          "matches_played": 6,
+          "matches_played": 7,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -74935,7 +75117,7 @@
           "red_cards": 0
         },
         "Glen Eira FC U14": {
-          "matches_played": 3,
+          "matches_played": 4,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -74946,7 +75128,7 @@
         }
       },
       "stats": {
-        "matches_attended": 31,
+        "matches_attended": 33,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -75383,6 +75565,34 @@
           "home_or_away": "home",
           "opponent_team_name": "Eastern Lions SC U18",
           "opponent_team_id": "bd9X9QYwK4",
+          "events": []
+        },
+        {
+          "match_hash_id": "Pmj27a4ZPm",
+          "date": "2026-05-16T23:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T09:00:00",
+          "team_name": "Glen Eira FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U13 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "South Melbourne FC U13",
+          "opponent_team_id": "Pmrk76pPNo",
+          "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMeMWd",
+          "date": "2026-05-17T00:20:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:20:00",
+          "team_name": "Glen Eira FC U14",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U14 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "South Melbourne FC U14",
+          "opponent_team_id": "vmZwn47DNq",
           "events": []
         }
       ]
@@ -77265,7 +77475,7 @@
       },
       "team_stats": {
         "Langwarrin SC U15": {
-          "matches_played": 13,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -77296,7 +77506,7 @@
         }
       },
       "stats": {
-        "matches_attended": 28,
+        "matches_attended": 29,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -77692,6 +77902,20 @@
           "opponent_team_name": "Geelong SC U13",
           "opponent_team_id": "BdD1BeYJmb",
           "events": []
+        },
+        {
+          "match_hash_id": "MNGJx12abm",
+          "date": "2026-05-16T23:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T09:00:00",
+          "team_name": "Langwarrin SC U15",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U15 YPL2 Boys",
+          "role_in_match": "Team Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Geelong SC U15",
+          "opponent_team_id": "ld4OlakrKW",
+          "events": []
         }
       ]
     },
@@ -77714,7 +77938,7 @@
       },
       "team_stats": {
         "Langwarrin SC U15": {
-          "matches_played": 13,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -77725,7 +77949,7 @@
         }
       },
       "stats": {
-        "matches_attended": 13,
+        "matches_attended": 14,
         "yellow_cards": 2,
         "red_cards": 0
       },
@@ -77921,6 +78145,20 @@
           "opponent_team_name": "Berwick City SC U15",
           "opponent_team_id": "lNb3VeEoKx",
           "events": []
+        },
+        {
+          "match_hash_id": "MNGJx12abm",
+          "date": "2026-05-16T23:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T09:00:00",
+          "team_name": "Langwarrin SC U15",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U15 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Geelong SC U15",
+          "opponent_team_id": "ld4OlakrKW",
+          "events": []
         }
       ]
     },
@@ -77943,7 +78181,7 @@
       },
       "team_stats": {
         "Langwarrin SC U15": {
-          "matches_played": 13,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -77954,7 +78192,7 @@
         }
       },
       "stats": {
-        "matches_attended": 13,
+        "matches_attended": 14,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -78139,6 +78377,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Berwick City SC U15",
           "opponent_team_id": "lNb3VeEoKx",
+          "events": []
+        },
+        {
+          "match_hash_id": "MNGJx12abm",
+          "date": "2026-05-16T23:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T09:00:00",
+          "team_name": "Langwarrin SC U15",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U15 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Geelong SC U15",
+          "opponent_team_id": "ld4OlakrKW",
           "events": []
         }
       ]
@@ -78819,7 +79071,7 @@
       },
       "team_stats": {
         "North Geelong Warriors FC U15": {
-          "matches_played": 12,
+          "matches_played": 13,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -78830,7 +79082,7 @@
         }
       },
       "stats": {
-        "matches_attended": 12,
+        "matches_attended": 13,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -79001,6 +79253,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Bentleigh Greens SC U15",
           "opponent_team_id": "vmZwn4WDNq",
+          "events": []
+        },
+        {
+          "match_hash_id": "OmepX4DWGd",
+          "date": "2026-05-17T01:10:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T11:10:00",
+          "team_name": "North Geelong Warriors FC U15",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U15 YPL2 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Dandenong Thunder FC U15",
+          "opponent_team_id": "jmaVX9X0NR",
           "events": []
         }
       ]
@@ -79024,7 +79290,7 @@
       },
       "team_stats": {
         "North Geelong Warriors FC U15": {
-          "matches_played": 12,
+          "matches_played": 13,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -79035,7 +79301,7 @@
         }
       },
       "stats": {
-        "matches_attended": 12,
+        "matches_attended": 13,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -79206,6 +79472,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Bentleigh Greens SC U15",
           "opponent_team_id": "vmZwn4WDNq",
+          "events": []
+        },
+        {
+          "match_hash_id": "OmepX4DWGd",
+          "date": "2026-05-17T01:10:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T11:10:00",
+          "team_name": "North Geelong Warriors FC U15",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U15 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Dandenong Thunder FC U15",
+          "opponent_team_id": "jmaVX9X0NR",
           "events": []
         }
       ]
@@ -79229,7 +79509,7 @@
       },
       "team_stats": {
         "North Geelong Warriors FC U15": {
-          "matches_played": 12,
+          "matches_played": 13,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -79240,7 +79520,7 @@
         }
       },
       "stats": {
-        "matches_attended": 12,
+        "matches_attended": 13,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -79411,6 +79691,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Bentleigh Greens SC U15",
           "opponent_team_id": "vmZwn4WDNq",
+          "events": []
+        },
+        {
+          "match_hash_id": "OmepX4DWGd",
+          "date": "2026-05-17T01:10:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T11:10:00",
+          "team_name": "North Geelong Warriors FC U15",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U15 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Dandenong Thunder FC U15",
+          "opponent_team_id": "jmaVX9X0NR",
           "events": []
         }
       ]
@@ -83271,7 +83565,7 @@
       },
       "team_stats": {
         "Dandenong Thunder FC U15": {
-          "matches_played": 13,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -83282,7 +83576,7 @@
         }
       },
       "stats": {
-        "matches_attended": 13,
+        "matches_attended": 14,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -83468,6 +83762,20 @@
           "opponent_team_name": "Melbourne Knights FC U15",
           "opponent_team_id": "gdMvMqX1mE",
           "events": []
+        },
+        {
+          "match_hash_id": "OmepX4DWGd",
+          "date": "2026-05-17T01:10:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T11:10:00",
+          "team_name": "Dandenong Thunder FC U15",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U15 YPL2 Boys",
+          "role_in_match": "Head Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "North Geelong Warriors FC U15",
+          "opponent_team_id": "pmvzPBQ8mv",
+          "events": []
         }
       ]
     },
@@ -83490,7 +83798,7 @@
       },
       "team_stats": {
         "Dandenong Thunder FC U15": {
-          "matches_played": 13,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -83501,7 +83809,7 @@
         }
       },
       "stats": {
-        "matches_attended": 13,
+        "matches_attended": 14,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -83686,6 +83994,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Melbourne Knights FC U15",
           "opponent_team_id": "gdMvMqX1mE",
+          "events": []
+        },
+        {
+          "match_hash_id": "OmepX4DWGd",
+          "date": "2026-05-17T01:10:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T11:10:00",
+          "team_name": "Dandenong Thunder FC U15",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U15 YPL2 Boys",
+          "role_in_match": "Assistant Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "North Geelong Warriors FC U15",
+          "opponent_team_id": "pmvzPBQ8mv",
           "events": []
         }
       ]
@@ -86339,7 +86661,7 @@
       },
       "team_stats": {
         "Geelong SC U14": {
-          "matches_played": 13,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -86360,7 +86682,7 @@
         }
       },
       "stats": {
-        "matches_attended": 16,
+        "matches_attended": 17,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -86588,6 +86910,20 @@
           "opponent_team_name": "Murray United FC U18",
           "opponent_team_id": "am1qvakjmw",
           "events": []
+        },
+        {
+          "match_hash_id": "Pmj27Xk0Qm",
+          "date": "2026-05-17T00:30:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:30:00",
+          "team_name": "Geelong SC U14",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U14 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Langwarrin SC U14",
+          "opponent_team_id": "EN2O4863Kq",
+          "events": []
         }
       ]
     },
@@ -86610,7 +86946,7 @@
       },
       "team_stats": {
         "Geelong SC U14": {
-          "matches_played": 13,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -86621,7 +86957,7 @@
         }
       },
       "stats": {
-        "matches_attended": 13,
+        "matches_attended": 14,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -86806,6 +87142,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Murray United FC U14",
           "opponent_team_id": "Ome0RZVvd0",
+          "events": []
+        },
+        {
+          "match_hash_id": "Pmj27Xk0Qm",
+          "date": "2026-05-17T00:30:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:30:00",
+          "team_name": "Geelong SC U14",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U14 YPL2 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Langwarrin SC U14",
+          "opponent_team_id": "EN2O4863Kq",
           "events": []
         }
       ]
@@ -91911,7 +92261,7 @@
           "red_cards": 0
         },
         "Dandenong Thunder FC U15": {
-          "matches_played": 1,
+          "matches_played": 2,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -91932,7 +92282,7 @@
         }
       },
       "stats": {
-        "matches_attended": 19,
+        "matches_attended": 20,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -92201,6 +92551,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Melbourne Knights FC U16",
           "opponent_team_id": "MNGogqxLNA",
+          "events": []
+        },
+        {
+          "match_hash_id": "OmepX4DWGd",
+          "date": "2026-05-17T01:10:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T11:10:00",
+          "team_name": "Dandenong Thunder FC U15",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U15 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "North Geelong Warriors FC U15",
+          "opponent_team_id": "pmvzPBQ8mv",
           "events": []
         }
       ]
@@ -99238,7 +99602,7 @@
       },
       "team_stats": {
         "Langwarrin SC U14": {
-          "matches_played": 13,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -99249,7 +99613,7 @@
         }
       },
       "stats": {
-        "matches_attended": 13,
+        "matches_attended": 14,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -99434,6 +99798,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Berwick City SC U14",
           "opponent_team_id": "ld4Ol8geKW",
+          "events": []
+        },
+        {
+          "match_hash_id": "Pmj27Xk0Qm",
+          "date": "2026-05-17T00:30:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:30:00",
+          "team_name": "Langwarrin SC U14",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U14 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Geelong SC U14",
+          "opponent_team_id": "emA1jX48mB",
           "events": []
         }
       ]
@@ -99457,7 +99835,7 @@
       },
       "team_stats": {
         "Langwarrin SC U14": {
-          "matches_played": 13,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -99468,7 +99846,7 @@
         }
       },
       "stats": {
-        "matches_attended": 13,
+        "matches_attended": 14,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -99653,6 +100031,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Berwick City SC U14",
           "opponent_team_id": "ld4Ol8geKW",
+          "events": []
+        },
+        {
+          "match_hash_id": "Pmj27Xk0Qm",
+          "date": "2026-05-17T00:30:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:30:00",
+          "team_name": "Langwarrin SC U14",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U14 YPL2 Boys",
+          "role_in_match": "Team Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Geelong SC U14",
+          "opponent_team_id": "emA1jX48mB",
           "events": []
         }
       ]
@@ -100112,7 +100504,7 @@
       },
       "team_stats": {
         "Glen Eira FC U14": {
-          "matches_played": 13,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -100163,7 +100555,7 @@
         }
       },
       "stats": {
-        "matches_attended": 30,
+        "matches_attended": 31,
         "yellow_cards": 1,
         "red_cards": 0
       },
@@ -100591,6 +100983,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Eastern Lions SC U18",
           "opponent_team_id": "bd9X9QYwK4",
+          "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMeMWd",
+          "date": "2026-05-17T00:20:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:20:00",
+          "team_name": "Glen Eira FC U14",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U14 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "South Melbourne FC U14",
+          "opponent_team_id": "vmZwn47DNq",
           "events": []
         }
       ]
@@ -106033,7 +106439,7 @@
       },
       "team_stats": {
         "Caroline Springs George Cross FC U14": {
-          "matches_played": 13,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -106044,7 +106450,7 @@
         }
       },
       "stats": {
-        "matches_attended": 13,
+        "matches_attended": 14,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -106229,6 +106635,20 @@
           "home_or_away": "away",
           "opponent_team_name": "FC Bulleen Lions U14",
           "opponent_team_id": "8NOD8LBaKZ",
+          "events": []
+        },
+        {
+          "match_hash_id": "2Kp0pgwZzK",
+          "date": "2026-05-17T00:45:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:45:00",
+          "team_name": "Caroline Springs George Cross FC U14",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U14 YPL1 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Malvern City FC U14",
+          "opponent_team_id": "jdye8k6zd5",
           "events": []
         }
       ]
@@ -106252,7 +106672,7 @@
       },
       "team_stats": {
         "Caroline Springs George Cross FC U14": {
-          "matches_played": 13,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -106263,7 +106683,7 @@
         }
       },
       "stats": {
-        "matches_attended": 13,
+        "matches_attended": 14,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -106448,6 +106868,20 @@
           "home_or_away": "away",
           "opponent_team_name": "FC Bulleen Lions U14",
           "opponent_team_id": "8NOD8LBaKZ",
+          "events": []
+        },
+        {
+          "match_hash_id": "2Kp0pgwZzK",
+          "date": "2026-05-17T00:45:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:45:00",
+          "team_name": "Caroline Springs George Cross FC U14",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U14 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Malvern City FC U14",
+          "opponent_team_id": "jdye8k6zd5",
           "events": []
         }
       ]
@@ -106471,7 +106905,7 @@
       },
       "team_stats": {
         "Caroline Springs George Cross FC U14": {
-          "matches_played": 13,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -106482,7 +106916,7 @@
         }
       },
       "stats": {
-        "matches_attended": 13,
+        "matches_attended": 14,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -106667,6 +107101,20 @@
           "home_or_away": "away",
           "opponent_team_name": "FC Bulleen Lions U14",
           "opponent_team_id": "8NOD8LBaKZ",
+          "events": []
+        },
+        {
+          "match_hash_id": "2Kp0pgwZzK",
+          "date": "2026-05-17T00:45:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:45:00",
+          "team_name": "Caroline Springs George Cross FC U14",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U14 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Malvern City FC U14",
+          "opponent_team_id": "jdye8k6zd5",
           "events": []
         }
       ]
@@ -107379,7 +107827,7 @@
       },
       "team_stats": {
         "South Melbourne FC U14": {
-          "matches_played": 13,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -107400,7 +107848,7 @@
         }
       },
       "stats": {
-        "matches_attended": 14,
+        "matches_attended": 15,
         "yellow_cards": 1,
         "red_cards": 0
       },
@@ -107605,6 +108053,20 @@
           "opponent_team_name": "Avondale FC U14",
           "opponent_team_id": "8NOD8LWbKZ",
           "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMeMWd",
+          "date": "2026-05-17T00:20:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:20:00",
+          "team_name": "South Melbourne FC U14",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U14 YPL1 Boys",
+          "role_in_match": "Head Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Glen Eira FC U14",
+          "opponent_team_id": "BdD1Bezgmb",
+          "events": []
         }
       ]
     },
@@ -107631,7 +108093,7 @@
       },
       "team_stats": {
         "South Melbourne FC U14": {
-          "matches_played": 13,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -107652,7 +108114,7 @@
         }
       },
       "stats": {
-        "matches_attended": 15,
+        "matches_attended": 16,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -107866,6 +108328,20 @@
           "opponent_team_name": "Avondale FC U14",
           "opponent_team_id": "8NOD8LWbKZ",
           "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMeMWd",
+          "date": "2026-05-17T00:20:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:20:00",
+          "team_name": "South Melbourne FC U14",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U14 YPL1 Boys",
+          "role_in_match": "Team Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Glen Eira FC U14",
+          "opponent_team_id": "BdD1Bezgmb",
+          "events": []
         }
       ]
     },
@@ -107889,7 +108365,7 @@
       },
       "team_stats": {
         "South Melbourne FC U14": {
-          "matches_played": 13,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -107900,7 +108376,7 @@
         }
       },
       "stats": {
-        "matches_attended": 13,
+        "matches_attended": 14,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -108085,6 +108561,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Avondale FC U14",
           "opponent_team_id": "8NOD8LWbKZ",
+          "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMeMWd",
+          "date": "2026-05-17T00:20:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:20:00",
+          "team_name": "South Melbourne FC U14",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U14 YPL1 Boys",
+          "role_in_match": "Assistant Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Glen Eira FC U14",
+          "opponent_team_id": "BdD1Bezgmb",
           "events": []
         }
       ]
@@ -108108,7 +108598,7 @@
       },
       "team_stats": {
         "South Melbourne FC U14": {
-          "matches_played": 13,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -108119,7 +108609,7 @@
         }
       },
       "stats": {
-        "matches_attended": 13,
+        "matches_attended": 14,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -108304,6 +108794,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Avondale FC U14",
           "opponent_team_id": "8NOD8LWbKZ",
+          "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMeMWd",
+          "date": "2026-05-17T00:20:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:20:00",
+          "team_name": "South Melbourne FC U14",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U14 YPL1 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Glen Eira FC U14",
+          "opponent_team_id": "BdD1Bezgmb",
           "events": []
         }
       ]
@@ -116124,7 +116628,7 @@
       },
       "team_stats": {
         "Malvern City FC U14": {
-          "matches_played": 13,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -116135,7 +116639,7 @@
         }
       },
       "stats": {
-        "matches_attended": 13,
+        "matches_attended": 14,
         "yellow_cards": 1,
         "red_cards": 0
       },
@@ -116326,6 +116830,20 @@
           "opponent_team_name": "Melbourne City - NPL U14",
           "opponent_team_id": "Ome0ExL6d0",
           "events": []
+        },
+        {
+          "match_hash_id": "2Kp0pgwZzK",
+          "date": "2026-05-17T00:45:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:45:00",
+          "team_name": "Malvern City FC U14",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U14 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Caroline Springs George Cross FC U14",
+          "opponent_team_id": "PmjnxbaAmZ",
+          "events": []
         }
       ]
     },
@@ -116354,7 +116872,7 @@
       },
       "team_stats": {
         "Malvern City FC U14": {
-          "matches_played": 13,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -116385,7 +116903,7 @@
         }
       },
       "stats": {
-        "matches_attended": 20,
+        "matches_attended": 21,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -116669,6 +117187,20 @@
           "opponent_team_name": "Melbourne City - NPL U16",
           "opponent_team_id": "pN6OW5jOK0",
           "events": []
+        },
+        {
+          "match_hash_id": "2Kp0pgwZzK",
+          "date": "2026-05-17T00:45:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:45:00",
+          "team_name": "Malvern City FC U14",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U14 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Caroline Springs George Cross FC U14",
+          "opponent_team_id": "PmjnxbaAmZ",
+          "events": []
         }
       ]
     },
@@ -116691,7 +117223,7 @@
       },
       "team_stats": {
         "Malvern City FC U14": {
-          "matches_played": 13,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -116702,7 +117234,7 @@
         }
       },
       "stats": {
-        "matches_attended": 13,
+        "matches_attended": 14,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -116887,6 +117419,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Melbourne City - NPL U14",
           "opponent_team_id": "Ome0ExL6d0",
+          "events": []
+        },
+        {
+          "match_hash_id": "2Kp0pgwZzK",
+          "date": "2026-05-17T00:45:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:45:00",
+          "team_name": "Malvern City FC U14",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U14 YPL1 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Caroline Springs George Cross FC U14",
+          "opponent_team_id": "PmjnxbaAmZ",
           "events": []
         }
       ]
@@ -133209,7 +133755,7 @@
       },
       "team_stats": {
         "South Melbourne FC U13": {
-          "matches_played": 13,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -133220,7 +133766,7 @@
         }
       },
       "stats": {
-        "matches_attended": 13,
+        "matches_attended": 14,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -133405,6 +133951,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Avondale FC U13",
           "opponent_team_id": "4KLnPbagmq",
+          "events": []
+        },
+        {
+          "match_hash_id": "Pmj27a4ZPm",
+          "date": "2026-05-16T23:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T09:00:00",
+          "team_name": "South Melbourne FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U13 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Glen Eira FC U13",
+          "opponent_team_id": "am1qv80qmw",
           "events": []
         }
       ]
@@ -133428,7 +133988,7 @@
       },
       "team_stats": {
         "South Melbourne FC U13": {
-          "matches_played": 13,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -133439,7 +133999,7 @@
         }
       },
       "stats": {
-        "matches_attended": 13,
+        "matches_attended": 14,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -133624,6 +134184,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Avondale FC U13",
           "opponent_team_id": "4KLnPbagmq",
+          "events": []
+        },
+        {
+          "match_hash_id": "Pmj27a4ZPm",
+          "date": "2026-05-16T23:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T09:00:00",
+          "team_name": "South Melbourne FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U13 YPL1 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Glen Eira FC U13",
+          "opponent_team_id": "am1qv80qmw",
           "events": []
         }
       ]
@@ -133647,7 +134221,7 @@
       },
       "team_stats": {
         "South Melbourne FC U13": {
-          "matches_played": 13,
+          "matches_played": 14,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -133658,7 +134232,7 @@
         }
       },
       "stats": {
-        "matches_attended": 13,
+        "matches_attended": 14,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -133843,6 +134417,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Avondale FC U13",
           "opponent_team_id": "4KLnPbagmq",
+          "events": []
+        },
+        {
+          "match_hash_id": "Pmj27a4ZPm",
+          "date": "2026-05-16T23:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T09:00:00",
+          "team_name": "South Melbourne FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U13 YPL1 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Glen Eira FC U13",
+          "opponent_team_id": "am1qv80qmw",
           "events": []
         }
       ]
@@ -148951,7 +149539,7 @@
           "red_cards": 0
         },
         "Langwarrin SC U15": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -148982,7 +149570,7 @@
         }
       },
       "stats": {
-        "matches_attended": 40,
+        "matches_attended": 41,
         "yellow_cards": 1,
         "red_cards": 0
       },
@@ -149550,6 +150138,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Geelong SC U13",
           "opponent_team_id": "BdD1BeYJmb",
+          "events": []
+        },
+        {
+          "match_hash_id": "MNGJx12abm",
+          "date": "2026-05-16T23:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T09:00:00",
+          "team_name": "Langwarrin SC U15",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U15 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Geelong SC U15",
+          "opponent_team_id": "ld4OlakrKW",
           "events": []
         }
       ]
@@ -174394,7 +174996,7 @@
       },
       "team_stats": {
         "Boroondara Eagles FC U14": {
-          "matches_played": 11,
+          "matches_played": 12,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -174405,7 +175007,7 @@
         }
       },
       "stats": {
-        "matches_attended": 11,
+        "matches_attended": 12,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -174562,6 +175164,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Gippsland United FC U14",
           "opponent_team_id": "4KLnP23Lmq",
+          "events": []
+        },
+        {
+          "match_hash_id": "nmYnZXz43N",
+          "date": "2026-05-17T00:45:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:45:00",
+          "team_name": "Boroondara Eagles FC U14",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U14 YSL Boys - South-East",
+          "role_in_match": "Head Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Kingston City FC U14",
+          "opponent_team_id": "2KpvA9xOmY",
           "events": []
         }
       ]
@@ -174586,7 +175202,7 @@
       },
       "team_stats": {
         "Boroondara Eagles FC U14": {
-          "matches_played": 11,
+          "matches_played": 12,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -174597,7 +175213,7 @@
         }
       },
       "stats": {
-        "matches_attended": 11,
+        "matches_attended": 12,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -174754,6 +175370,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Gippsland United FC U14",
           "opponent_team_id": "4KLnP23Lmq",
+          "events": []
+        },
+        {
+          "match_hash_id": "nmYnZXz43N",
+          "date": "2026-05-17T00:45:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:45:00",
+          "team_name": "Boroondara Eagles FC U14",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U14 YSL Boys - South-East",
+          "role_in_match": "Team Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Kingston City FC U14",
+          "opponent_team_id": "2KpvA9xOmY",
           "events": []
         }
       ]
@@ -194350,7 +194980,7 @@
       },
       "team_stats": {
         "Kingston City FC U14": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -194361,7 +194991,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -194504,6 +195134,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Goulburn Valley Suns FC U14",
           "opponent_team_id": "pN6OYw6BK0",
+          "events": []
+        },
+        {
+          "match_hash_id": "nmYnZXz43N",
+          "date": "2026-05-17T00:45:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:45:00",
+          "team_name": "Kingston City FC U14",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U14 YSL Boys - South-East",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Boroondara Eagles FC U14",
+          "opponent_team_id": "Ome0RDOjd0",
           "events": []
         }
       ]
@@ -194527,7 +195171,7 @@
       },
       "team_stats": {
         "Kingston City FC U14": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -194538,7 +195182,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -194681,6 +195325,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Goulburn Valley Suns FC U14",
           "opponent_team_id": "pN6OYw6BK0",
+          "events": []
+        },
+        {
+          "match_hash_id": "nmYnZXz43N",
+          "date": "2026-05-17T00:45:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:45:00",
+          "team_name": "Kingston City FC U14",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U14 YSL Boys - South-East",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Boroondara Eagles FC U14",
+          "opponent_team_id": "Ome0RDOjd0",
           "events": []
         }
       ]
@@ -194704,19 +195362,19 @@
       },
       "team_stats": {
         "Kingston City FC U14": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
           "own_goals": 0,
           "penalties": 0,
-          "yellow_cards": 0,
+          "yellow_cards": 1,
           "red_cards": 0
         }
       },
       "stats": {
-        "matches_attended": 10,
-        "yellow_cards": 0,
+        "matches_attended": 11,
+        "yellow_cards": 1,
         "red_cards": 0
       },
       "matches": [
@@ -194859,6 +195517,25 @@
           "opponent_team_name": "Goulburn Valley Suns FC U14",
           "opponent_team_id": "pN6OYw6BK0",
           "events": []
+        },
+        {
+          "match_hash_id": "nmYnZXz43N",
+          "date": "2026-05-17T00:45:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:45:00",
+          "team_name": "Kingston City FC U14",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U14 YSL Boys - South-East",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Boroondara Eagles FC U14",
+          "opponent_team_id": "Ome0RDOjd0",
+          "events": [
+            {
+              "type": "yellow_card",
+              "minute": "26"
+            }
+          ]
         }
       ]
     },
@@ -221912,7 +222589,7 @@
       },
       "team_stats": {
         "Geelong SC U14": {
-          "matches_played": 7,
+          "matches_played": 8,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -221923,7 +222600,7 @@
         }
       },
       "stats": {
-        "matches_attended": 7,
+        "matches_attended": 8,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -222024,6 +222701,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Murray United FC U14",
           "opponent_team_id": "Ome0RZVvd0",
+          "events": []
+        },
+        {
+          "match_hash_id": "Pmj27Xk0Qm",
+          "date": "2026-05-17T00:30:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:30:00",
+          "team_name": "Geelong SC U14",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U14 YPL2 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Langwarrin SC U14",
+          "opponent_team_id": "EN2O4863Kq",
           "events": []
         }
       ]
@@ -223445,7 +224136,7 @@
       },
       "team_stats": {
         "Dandenong Thunder FC U15": {
-          "matches_played": 7,
+          "matches_played": 8,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -223456,7 +224147,7 @@
         }
       },
       "stats": {
-        "matches_attended": 7,
+        "matches_attended": 8,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -223557,6 +224248,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Melbourne Knights FC U15",
           "opponent_team_id": "gdMvMqX1mE",
+          "events": []
+        },
+        {
+          "match_hash_id": "OmepX4DWGd",
+          "date": "2026-05-17T01:10:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T11:10:00",
+          "team_name": "Dandenong Thunder FC U15",
+          "competition_name": "Boys Victorian Youth Premier League 2",
+          "league_name": "U15 YPL2 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "North Geelong Warriors FC U15",
+          "opponent_team_id": "pmvzPBQ8mv",
           "events": []
         }
       ]
@@ -242215,7 +242920,7 @@
       },
       "team_stats": {
         "Boroondara Eagles FC U14": {
-          "matches_played": 6,
+          "matches_played": 7,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -242226,7 +242931,7 @@
         }
       },
       "stats": {
-        "matches_attended": 6,
+        "matches_attended": 7,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -242314,6 +243019,20 @@
           "opponent_team_name": "Gippsland United FC U14",
           "opponent_team_id": "4KLnP23Lmq",
           "events": []
+        },
+        {
+          "match_hash_id": "nmYnZXz43N",
+          "date": "2026-05-17T00:45:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:45:00",
+          "team_name": "Boroondara Eagles FC U14",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U14 YSL Boys - South-East",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Kingston City FC U14",
+          "opponent_team_id": "2KpvA9xOmY",
+          "events": []
         }
       ]
     },
@@ -242336,7 +243055,7 @@
       },
       "team_stats": {
         "South Melbourne FC U13": {
-          "matches_played": 6,
+          "matches_played": 7,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -242347,7 +243066,7 @@
         }
       },
       "stats": {
-        "matches_attended": 6,
+        "matches_attended": 7,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -242434,6 +243153,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Avondale FC U13",
           "opponent_team_id": "4KLnPbagmq",
+          "events": []
+        },
+        {
+          "match_hash_id": "Pmj27a4ZPm",
+          "date": "2026-05-16T23:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T09:00:00",
+          "team_name": "South Melbourne FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U13 YPL1 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Glen Eira FC U13",
+          "opponent_team_id": "am1qv80qmw",
           "events": []
         }
       ]
@@ -247854,7 +248587,7 @@
       },
       "team_stats": {
         "Malvern City FC U14": {
-          "matches_played": 2,
+          "matches_played": 3,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -247865,7 +248598,7 @@
         }
       },
       "stats": {
-        "matches_attended": 2,
+        "matches_attended": 3,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -247896,6 +248629,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Melbourne City - NPL U14",
           "opponent_team_id": "Ome0ExL6d0",
+          "events": []
+        },
+        {
+          "match_hash_id": "2Kp0pgwZzK",
+          "date": "2026-05-17T00:45:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:45:00",
+          "team_name": "Malvern City FC U14",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U14 YPL1 Boys",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Caroline Springs George Cross FC U14",
+          "opponent_team_id": "PmjnxbaAmZ",
           "events": []
         }
       ]
@@ -249589,23 +250336,26 @@
         "Glen Eira FC U13",
         "Glen Eira FC U15",
         "Glen Eira FC U16",
-        "Glen Eira FC U18"
+        "Glen Eira FC U18",
+        "Glen Eira FC U14"
       ],
       "leagues": [
         "U13 YPL1 Boys",
         "U15 YPL1 Boys",
         "U16 YPL1 Boys",
-        "U18 YPL1 Boys"
+        "U18 YPL1 Boys",
+        "U14 YPL1 Boys"
       ],
       "jerseys": {
         "Glen Eira FC U13": "",
         "Glen Eira FC U15": "",
         "Glen Eira FC U16": "",
-        "Glen Eira FC U18": ""
+        "Glen Eira FC U18": "",
+        "Glen Eira FC U14": ""
       },
       "team_stats": {
         "Glen Eira FC U13": {
-          "matches_played": 1,
+          "matches_played": 2,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -249643,10 +250393,20 @@
           "penalties": 0,
           "yellow_cards": 0,
           "red_cards": 0
+        },
+        "Glen Eira FC U14": {
+          "matches_played": 1,
+          "matches_started": 0,
+          "bench_appearances": 0,
+          "goals": 0,
+          "own_goals": 0,
+          "penalties": 0,
+          "yellow_cards": 0,
+          "red_cards": 0
         }
       },
       "stats": {
-        "matches_attended": 4,
+        "matches_attended": 6,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -249705,6 +250465,34 @@
           "home_or_away": "home",
           "opponent_team_name": "Eastern Lions SC U18",
           "opponent_team_id": "bd9X9QYwK4",
+          "events": []
+        },
+        {
+          "match_hash_id": "Pmj27a4ZPm",
+          "date": "2026-05-16T23:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T09:00:00",
+          "team_name": "Glen Eira FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U13 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "South Melbourne FC U13",
+          "opponent_team_id": "Pmrk76pPNo",
+          "events": []
+        },
+        {
+          "match_hash_id": "8NO5XMeMWd",
+          "date": "2026-05-17T00:20:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:20:00",
+          "team_name": "Glen Eira FC U14",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U14 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "South Melbourne FC U14",
+          "opponent_team_id": "vmZwn47DNq",
           "events": []
         }
       ]
@@ -250042,7 +250830,58 @@
           "events": []
         }
       ]
+    },
+    {
+      "person_id": "ZNQOkqxwGd",
+      "first_name": "Graison",
+      "last_name": "Jelbart",
+      "role_slug": "staff",
+      "roles": [
+        "Coach"
+      ],
+      "teams": [
+        "Glen Eira FC U13"
+      ],
+      "leagues": [
+        "U13 YPL1 Boys"
+      ],
+      "jerseys": {
+        "Glen Eira FC U13": ""
+      },
+      "team_stats": {
+        "Glen Eira FC U13": {
+          "matches_played": 1,
+          "matches_started": 0,
+          "bench_appearances": 0,
+          "goals": 0,
+          "own_goals": 0,
+          "penalties": 0,
+          "yellow_cards": 0,
+          "red_cards": 0
+        }
+      },
+      "stats": {
+        "matches_attended": 1,
+        "yellow_cards": 0,
+        "red_cards": 0
+      },
+      "matches": [
+        {
+          "match_hash_id": "Pmj27a4ZPm",
+          "date": "2026-05-16T23:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T09:00:00",
+          "team_name": "Glen Eira FC U13",
+          "competition_name": "Boys Victorian Youth Premier League 1",
+          "league_name": "U13 YPL1 Boys",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "South Melbourne FC U13",
+          "opponent_team_id": "Pmrk76pPNo",
+          "events": []
+        }
+      ]
     }
   ],
-  "_last_updated": "2026-05-17T12:06:37.098463"
+  "_last_updated": "2026-05-17T13:06:53.072101"
 }
