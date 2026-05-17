@@ -1270,14 +1270,14 @@
           },
           "U14": {
             "position": 6,
-            "played": 11,
+            "played": 12,
             "wins": 4,
-            "draws": 2,
+            "draws": 3,
             "losses": 5,
             "gf": 13,
             "ga": 13,
             "gd": 0,
-            "points": 14
+            "points": 15
           },
           "U13": {
             "position": 3,
@@ -1450,6 +1450,60 @@
         "overall_rank": 6
       },
       {
+        "club": "Goulburn Valley Suns FC",
+        "age_groups": {
+          "U15": {
+            "position": 9,
+            "played": 12,
+            "wins": 1,
+            "draws": 3,
+            "losses": 8,
+            "gf": 6,
+            "ga": 33,
+            "gd": -27,
+            "points": 6
+          },
+          "U14": {
+            "position": 8,
+            "played": 12,
+            "wins": 1,
+            "draws": 3,
+            "losses": 8,
+            "gf": 2,
+            "ga": 21,
+            "gd": -19,
+            "points": 6
+          },
+          "U13": {
+            "position": 7,
+            "played": 10,
+            "wins": 3,
+            "draws": 3,
+            "losses": 4,
+            "gf": 16,
+            "ga": 14,
+            "gd": 2,
+            "points": 12
+          },
+          "U16": {
+            "position": 8,
+            "played": 12,
+            "wins": 2,
+            "draws": 3,
+            "losses": 7,
+            "gf": 24,
+            "ga": 32,
+            "gd": -8,
+            "points": 9
+          }
+        },
+        "total_position_points": 32,
+        "total_gf": 48,
+        "total_ga": 100,
+        "age_group_count": 4,
+        "overall_rank": 7
+      },
+      {
         "club": "Nunawading City FC",
         "age_groups": {
           "U15": {
@@ -1464,7 +1518,7 @@
             "points": 7
           },
           "U14": {
-            "position": 8,
+            "position": 9,
             "played": 12,
             "wins": 1,
             "draws": 2,
@@ -1508,64 +1562,10 @@
             "points": 8
           }
         },
-        "total_position_points": 33,
+        "total_position_points": 34,
         "total_gf": 107,
         "total_ga": 123,
         "age_group_count": 5,
-        "overall_rank": 7
-      },
-      {
-        "club": "Goulburn Valley Suns FC",
-        "age_groups": {
-          "U15": {
-            "position": 9,
-            "played": 12,
-            "wins": 1,
-            "draws": 3,
-            "losses": 8,
-            "gf": 6,
-            "ga": 33,
-            "gd": -27,
-            "points": 6
-          },
-          "U14": {
-            "position": 9,
-            "played": 11,
-            "wins": 1,
-            "draws": 2,
-            "losses": 8,
-            "gf": 2,
-            "ga": 21,
-            "gd": -19,
-            "points": 5
-          },
-          "U13": {
-            "position": 7,
-            "played": 10,
-            "wins": 3,
-            "draws": 3,
-            "losses": 4,
-            "gf": 16,
-            "ga": 14,
-            "gd": 2,
-            "points": 12
-          },
-          "U16": {
-            "position": 8,
-            "played": 12,
-            "wins": 2,
-            "draws": 3,
-            "losses": 7,
-            "gf": 24,
-            "ga": 32,
-            "gd": -8,
-            "points": 9
-          }
-        },
-        "total_position_points": 33,
-        "total_gf": 48,
-        "total_ga": 100,
-        "age_group_count": 4,
         "overall_rank": 8
       },
       {
@@ -3412,5 +3412,5 @@
       }
     ]
   },
-  "_last_updated": "2026-05-17T23:07:14.811487"
+  "_last_updated": "2026-05-18T00:06:21.927701"
 }

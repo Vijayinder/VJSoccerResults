@@ -160672,7 +160672,7 @@
           "red_cards": 0
         },
         "Mornington SC U14": {
-          "matches_played": 11,
+          "matches_played": 12,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -160693,7 +160693,7 @@
         }
       },
       "stats": {
-        "matches_attended": 56,
+        "matches_attended": 57,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -161480,6 +161480,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Kingston City FC U14",
           "opponent_team_id": "2KpvA9xOmY",
+          "events": []
+        },
+        {
+          "match_hash_id": "gdM6EPXrZm",
+          "date": "2026-05-17T00:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:00:00",
+          "team_name": "Mornington SC U14",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U14 YSL Boys - South-East",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Goulburn Valley Suns FC U14",
+          "opponent_team_id": "pN6OYw6BK0",
           "events": []
         }
       ]
@@ -164536,7 +164550,7 @@
           "red_cards": 0
         },
         "Goulburn Valley Suns FC U14": {
-          "matches_played": 20,
+          "matches_played": 22,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -164547,7 +164561,7 @@
         }
       },
       "stats": {
-        "matches_attended": 54,
+        "matches_attended": 56,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -165306,6 +165320,34 @@
           "home_or_away": "away",
           "opponent_team_name": "Mornington SC U16",
           "opponent_team_id": "bd9X95lwK4",
+          "events": []
+        },
+        {
+          "match_hash_id": "gdM6EPXrZm",
+          "date": "2026-05-17T00:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:00:00",
+          "team_name": "Goulburn Valley Suns FC U14",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U14 YSL Boys - South-East",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Mornington SC U14",
+          "opponent_team_id": "MNGog2GQNA",
+          "events": []
+        },
+        {
+          "match_hash_id": "gdM6EPXrZm",
+          "date": "2026-05-17T00:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:00:00",
+          "team_name": "Goulburn Valley Suns FC U14",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U14 YSL Boys - South-East",
+          "role_in_match": "Teamstaff",
+          "home_or_away": "away",
+          "opponent_team_name": "Mornington SC U14",
+          "opponent_team_id": "MNGog2GQNA",
           "events": []
         }
       ]
@@ -171546,13 +171588,16 @@
         "Coach"
       ],
       "teams": [
-        "Mornington SC U16"
+        "Mornington SC U16",
+        "Mornington SC U14"
       ],
       "leagues": [
-        "U16 YSL Boys - South-East"
+        "U16 YSL Boys - South-East",
+        "U14 YSL Boys - South-East"
       ],
       "jerseys": {
-        "Mornington SC U16": ""
+        "Mornington SC U16": "",
+        "Mornington SC U14": ""
       },
       "team_stats": {
         "Mornington SC U16": {
@@ -171564,10 +171609,20 @@
           "penalties": 0,
           "yellow_cards": 2,
           "red_cards": 0
+        },
+        "Mornington SC U14": {
+          "matches_played": 1,
+          "matches_started": 0,
+          "bench_appearances": 0,
+          "goals": 0,
+          "own_goals": 0,
+          "penalties": 0,
+          "yellow_cards": 0,
+          "red_cards": 0
         }
       },
       "stats": {
-        "matches_attended": 12,
+        "matches_attended": 13,
         "yellow_cards": 2,
         "red_cards": 0
       },
@@ -171748,6 +171803,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Goulburn Valley Suns FC U16",
           "opponent_team_id": "pN6OYwvQK0",
+          "events": []
+        },
+        {
+          "match_hash_id": "gdM6EPXrZm",
+          "date": "2026-05-17T00:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:00:00",
+          "team_name": "Mornington SC U14",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U14 YSL Boys - South-East",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Goulburn Valley Suns FC U14",
+          "opponent_team_id": "pN6OYw6BK0",
           "events": []
         }
       ]
@@ -180095,7 +180164,7 @@
           "red_cards": 0
         },
         "Mornington SC U14": {
-          "matches_played": 11,
+          "matches_played": 12,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -180116,7 +180185,7 @@
         }
       },
       "stats": {
-        "matches_attended": 22,
+        "matches_attended": 23,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -180427,6 +180496,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Kingston City FC U14",
           "opponent_team_id": "2KpvA9xOmY",
+          "events": []
+        },
+        {
+          "match_hash_id": "gdM6EPXrZm",
+          "date": "2026-05-17T00:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:00:00",
+          "team_name": "Mornington SC U14",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U14 YSL Boys - South-East",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Goulburn Valley Suns FC U14",
+          "opponent_team_id": "pN6OYw6BK0",
           "events": []
         }
       ]
@@ -203720,7 +203803,7 @@
       },
       "team_stats": {
         "Goulburn Valley Suns FC U14": {
-          "matches_played": 11,
+          "matches_played": 12,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -203731,7 +203814,7 @@
         }
       },
       "stats": {
-        "matches_attended": 11,
+        "matches_attended": 12,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -203888,6 +203971,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Monash City Villarreal FC U14",
           "opponent_team_id": "BdD1B2Y6mb",
+          "events": []
+        },
+        {
+          "match_hash_id": "gdM6EPXrZm",
+          "date": "2026-05-17T00:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:00:00",
+          "team_name": "Goulburn Valley Suns FC U14",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U14 YSL Boys - South-East",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Mornington SC U14",
+          "opponent_team_id": "MNGog2GQNA",
           "events": []
         }
       ]
@@ -251952,7 +252049,7 @@
       },
       "team_stats": {
         "Mornington SC U14": {
-          "matches_played": 6,
+          "matches_played": 7,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -251993,7 +252090,7 @@
         }
       },
       "stats": {
-        "matches_attended": 33,
+        "matches_attended": 34,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -252458,6 +252555,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Kingston City FC U14",
           "opponent_team_id": "2KpvA9xOmY",
+          "events": []
+        },
+        {
+          "match_hash_id": "gdM6EPXrZm",
+          "date": "2026-05-17T00:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:00:00",
+          "team_name": "Mornington SC U14",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U14 YSL Boys - South-East",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Goulburn Valley Suns FC U14",
+          "opponent_team_id": "pN6OYw6BK0",
           "events": []
         }
       ]
@@ -261949,5 +262060,5 @@
       ]
     }
   ],
-  "_last_updated": "2026-05-17T23:07:28.247801"
+  "_last_updated": "2026-05-18T00:06:36.221840"
 }
