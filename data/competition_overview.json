@@ -204,6 +204,71 @@
         "overall_rank": 3
       },
       {
+        "club": "FC Bulleen Lions",
+        "age_groups": {
+          "U13": {
+            "position": 6,
+            "played": 13,
+            "wins": 7,
+            "draws": 2,
+            "losses": 4,
+            "gf": 14,
+            "ga": 18,
+            "gd": -4,
+            "points": 23
+          },
+          "U16": {
+            "position": 5,
+            "played": 14,
+            "wins": 8,
+            "draws": 4,
+            "losses": 2,
+            "gf": 25,
+            "ga": 17,
+            "gd": 8,
+            "points": 28
+          },
+          "U18": {
+            "position": 2,
+            "played": 14,
+            "wins": 9,
+            "draws": 1,
+            "losses": 4,
+            "gf": 34,
+            "ga": 23,
+            "gd": 11,
+            "points": 28
+          },
+          "U15": {
+            "position": 1,
+            "played": 14,
+            "wins": 12,
+            "draws": 2,
+            "losses": 0,
+            "gf": 43,
+            "ga": 14,
+            "gd": 29,
+            "points": 38
+          },
+          "U14": {
+            "position": 14,
+            "played": 14,
+            "wins": 1,
+            "draws": 6,
+            "losses": 7,
+            "gf": 10,
+            "ga": 25,
+            "gd": -15,
+            "points": 9
+          }
+        },
+        "total_position_points": 28,
+        "total_gf": 126,
+        "total_ga": 97,
+        "age_group_count": 5,
+        "overall_rank": 4
+      },
+      {
         "club": "Green Gully SC",
         "age_groups": {
           "U13": {
@@ -218,7 +283,7 @@
             "points": 28
           },
           "U16": {
-            "position": 5,
+            "position": 6,
             "played": 14,
             "wins": 8,
             "draws": 3,
@@ -262,74 +327,9 @@
             "points": 25
           }
         },
-        "total_position_points": 29,
+        "total_position_points": 30,
         "total_gf": 145,
         "total_ga": 100,
-        "age_group_count": 5,
-        "overall_rank": 4
-      },
-      {
-        "club": "FC Bulleen Lions",
-        "age_groups": {
-          "U13": {
-            "position": 6,
-            "played": 13,
-            "wins": 7,
-            "draws": 2,
-            "losses": 4,
-            "gf": 14,
-            "ga": 18,
-            "gd": -4,
-            "points": 23
-          },
-          "U16": {
-            "position": 6,
-            "played": 13,
-            "wins": 7,
-            "draws": 4,
-            "losses": 2,
-            "gf": 23,
-            "ga": 17,
-            "gd": 6,
-            "points": 25
-          },
-          "U18": {
-            "position": 2,
-            "played": 14,
-            "wins": 9,
-            "draws": 1,
-            "losses": 4,
-            "gf": 34,
-            "ga": 23,
-            "gd": 11,
-            "points": 28
-          },
-          "U15": {
-            "position": 1,
-            "played": 14,
-            "wins": 12,
-            "draws": 2,
-            "losses": 0,
-            "gf": 43,
-            "ga": 14,
-            "gd": 29,
-            "points": 38
-          },
-          "U14": {
-            "position": 14,
-            "played": 14,
-            "wins": 1,
-            "draws": 6,
-            "losses": 7,
-            "gf": 10,
-            "ga": 25,
-            "gd": -15,
-            "points": 9
-          }
-        },
-        "total_position_points": 29,
-        "total_gf": 124,
-        "total_ga": 97,
         "age_group_count": 5,
         "overall_rank": 5
       },
@@ -934,13 +934,13 @@
           },
           "U16": {
             "position": 11,
-            "played": 13,
+            "played": 14,
             "wins": 4,
             "draws": 1,
-            "losses": 8,
+            "losses": 9,
             "gf": 21,
-            "ga": 31,
-            "gd": -10,
+            "ga": 33,
+            "gd": -12,
             "points": 13
           },
           "U18": {
@@ -979,7 +979,7 @@
         },
         "total_position_points": 68,
         "total_gf": 75,
-        "total_ga": 192,
+        "total_ga": 194,
         "age_group_count": 5,
         "overall_rank": 15
       },
@@ -2169,13 +2169,13 @@
         "age_groups": {
           "U14": {
             "position": 16,
-            "played": 13,
+            "played": 14,
             "wins": 1,
             "draws": 0,
-            "losses": 12,
+            "losses": 13,
             "gf": 9,
-            "ga": 51,
-            "gd": -42,
+            "ga": 58,
+            "gd": -49,
             "points": 3
           },
           "U13": {
@@ -2225,7 +2225,7 @@
         },
         "total_position_points": 42,
         "total_gf": 123,
-        "total_ga": 144,
+        "total_ga": 151,
         "age_group_count": 5,
         "overall_rank": 8
       },
@@ -2559,14 +2559,14 @@
         "age_groups": {
           "U14": {
             "position": 15,
-            "played": 12,
-            "wins": 1,
+            "played": 13,
+            "wins": 2,
             "draws": 3,
             "losses": 8,
-            "gf": 18,
+            "gf": 25,
             "ga": 29,
-            "gd": -11,
-            "points": 6
+            "gd": -4,
+            "points": 9
           },
           "U13": {
             "position": 7,
@@ -2614,7 +2614,7 @@
           }
         },
         "total_position_points": 52,
-        "total_gf": 116,
+        "total_gf": 123,
         "total_ga": 140,
         "age_group_count": 5,
         "overall_rank": 14
@@ -3412,5 +3412,5 @@
       }
     ]
   },
-  "_last_updated": "2026-05-18T14:05:08.588864"
+  "_last_updated": "2026-05-18T16:05:25.649578"
 }
