@@ -1779,14 +1779,14 @@
         "age_groups": {
           "U14": {
             "position": 3,
-            "played": 13,
+            "played": 14,
             "wins": 9,
-            "draws": 1,
+            "draws": 2,
             "losses": 3,
             "gf": 33,
             "ga": 12,
             "gd": 21,
-            "points": 28
+            "points": 29
           },
           "U13": {
             "position": 5,
@@ -2429,14 +2429,14 @@
         "age_groups": {
           "U14": {
             "position": 8,
-            "played": 13,
+            "played": 14,
             "wins": 5,
-            "draws": 4,
+            "draws": 5,
             "losses": 4,
             "gf": 27,
             "ga": 19,
             "gd": 8,
-            "points": 19
+            "points": 20
           },
           "U13": {
             "position": 12,
@@ -3412,5 +3412,5 @@
       }
     ]
   },
-  "_last_updated": "2026-05-18T12:05:11.583282"
+  "_last_updated": "2026-05-18T14:05:08.588864"
 }

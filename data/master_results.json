@@ -83298,5 +83298,55 @@
                 "href": "https://mc-api.dribl.com/api/results/jdywlJ0pLN"
             }
         }
+    },
+    {
+        "type": "results",
+        "hash_id": "pmvvwq3b6m",
+        "attributes": {
+            "name": "FV54532810 - Pascoe Vale FC v Oakleigh Cannons FC",
+            "date": "2026-05-17 00:45:00",
+            "round": "R14",
+            "full_round": "Round 14",
+            "ground_name": "Hosken Reserve",
+            "field_name": "Pitch 1 South",
+            "home_team_name": "Pascoe Vale FC U14",
+            "home_logo": "https://ocean.dribl.com/28902757e425496ebb9fbcef551db4cf",
+            "away_team_name": "Oakleigh Cannons FC U14",
+            "away_logo": "https://ocean.dribl.com/83022e3737d94f8d9724dba79fb76086",
+            "competition_name": "Boys Victorian Youth Premier League 2",
+            "league_name": "U14 YPL2 Boys",
+            "status": "complete",
+            "bye_flag": 0,
+            "is_unstructured": false,
+            "league_result_access": "public",
+            "home_score": 0,
+            "home_score_extra": null,
+            "home_score_penalty": null,
+            "home_score_half": null,
+            "home_score_extra_half": null,
+            "away_score": 0,
+            "away_score_extra": null,
+            "away_score_penalty": null,
+            "away_score_half": null,
+            "away_score_extra_half": null,
+            "allocated_center_referee": true,
+            "allocated_assistant_referee_1": false,
+            "allocated_assistant_referee_2": false,
+            "allocated_fourth_official": false,
+            "allocated_game_leader": false,
+            "referee_count": 1,
+            "enable_referees_allocated": true,
+            "match_hash_id": "8NO5XM23Bd",
+            "home_team_hash_id": "BdD1BeoGmb",
+            "away_team_hash_id": "2KpvA7WomY",
+            "forfeit_team_hash_id": null,
+            "datetime_aest": "2026-05-17T10:45:00",
+            "date_aest": "2026-05-17"
+        },
+        "links": {
+            "self": {
+                "href": "https://mc-api.dribl.com/api/results/pmvvwq3b6m"
+            }
+        }
     }
 ]
