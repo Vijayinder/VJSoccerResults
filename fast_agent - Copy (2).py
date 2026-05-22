@@ -215,64 +215,17 @@ def get_match_centre_by_id(match_hash_id):
         return None
 
 def get_lineup_by_id(match_hash_id):
-    """Fetch lineup records from normalized DB rows and reconstruct the legacy JSON payload structure."""
+    """Fetch one lineup record from DB by match_hash_id."""
     if not match_hash_id:
         return None
     try:
         with _get_db() as conn:
-            rows = conn.execute(
-                "SELECT * FROM lineups WHERE match_hash_id = ?",
+            row = conn.execute(
+                "SELECT raw_json FROM lineups WHERE match_hash_id = ?",
                 (match_hash_id,)
-            ).fetchall()
-            
-        if not rows:
-            return None
-            
-        def _deserialize_field(v):
-            """Safely translate JSON text back into lists/dicts for Streamlit engine consumption."""
-            if isinstance(v, str):
-                if (v.startswith('[') and v.endswith(']')) or (v.startswith('{') and v.endswith('}')):
-                    try:
-                        return json.loads(v)
-                    except:
-                        pass
-            return v
-
-        home_players = []
-        away_players = []
-        
-        distinct_teams = list(set([r["team_hash_id"] for r in rows if r["team_hash_id"]]))
-        home_team_id = distinct_teams[0] if len(distinct_teams) > 0 else "home"
-        
-        for r in rows:
-            p_dict = {
-                "team_hash_id": r["team_hash_id"],
-                "user_hash_id": r["user_hash_id"],
-                "first_name": r["first_name"],
-                "last_name": r["last_name"],
-                "jersey": r["jersey"],
-                "role_slug": r["role_slug"],
-                "starting": bool(r["starting"]),
-                "available": bool(r["available"]),
-                "borrowed": bool(r["borrowed"]),
-                "is_captain": bool(r["is_captain"]),
-                "is_goalkeeper": bool(r["is_goalkeeper"]),
-                "field_role": r["field_role"],
-                "goals": _deserialize_field(r["goals"]),
-                "cards": _deserialize_field(r["cards"])
-            }
-            if r["team_hash_id"] == home_team_id:
-                home_players.append(p_dict)
-            else:
-                away_players.append(p_dict)
-                
-        return {
-            "match_hash_id": match_hash_id,
-            "home_lineup": {"data": home_players},
-            "away_lineup": {"data": away_players}
-        }
-    except Exception as e:
-        print(f"[fast_agent] Lineup normalization decoding error: {e}")
+            ).fetchone()
+        return json.loads(row["raw_json"]) if row else None
+    except Exception:
         return None
 
 def _load_from_db():
