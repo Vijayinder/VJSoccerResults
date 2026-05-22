@@ -4,7 +4,6 @@ import time
 import pandas as pd
 import json
 import os
-import sqlite3
 import re
 from collections import defaultdict
 from datetime import datetime, timedelta
@@ -184,11 +183,6 @@ st.markdown("""
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 
-def _get_app_db():
-    """SQLite connection for app.py data loaders."""
-    conn = sqlite3.connect(os.path.join(DATA_DIR, "soccer_data.db"))
-    conn.row_factory = sqlite3.Row
-    return conn
 # ---------------------------------------------------------
 # Session Management
 # ---------------------------------------------------------
@@ -523,8 +517,8 @@ def get_last_updated_time():
         except Exception:
             pass
 
-    # Fallback: use DB file modification time
-    results_path = os.path.join(DATA_DIR, "soccer_data.db")
+    # Fallback: use file modification time
+    results_path = os.path.join(DATA_DIR, "master_results.json")
     if not os.path.exists(results_path):
         return "Data file not found"
     try:
@@ -551,75 +545,145 @@ router = load_router()
 # Data loaders
 # ---------------------------------------------------------
 
-@st.cache_data(ttl=900)
+@st.cache_data(ttl=900)  # Auto-refresh every 5 minutes
 def load_master_results():
-    """Load results from SQLite."""
+    """Load master_results.json"""
+    path = os.path.join(DATA_DIR, "master_results.json")
+    
+    if not os.path.exists(path):
+        return []
+    
     try:
-        with _get_app_db() as conn:
-            rows = conn.execute("SELECT raw_json FROM results").fetchall()
-        return [json.loads(r["raw_json"]) for r in rows]
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        
+        if isinstance(data, dict):
+            if "results" in data:
+                return data["results"]
+            elif "data" in data:
+                return data["data"]
+            elif "matches" in data:
+                return data["matches"]
+            else:
+                for key, value in data.items():
+                    if isinstance(value, list):
+                        return value
+                return []
+        elif isinstance(data, list):
+            return data
+        else:
+            return []
     except Exception as e:
-        st.error(f"Error loading results: {e}")
+        st.error(f"Error loading results: {str(e)}")
         return []
 
-@st.cache_data(ttl=900)
+@st.cache_data(ttl=900)  # Auto-refresh every 5 minutes
 def load_fixtures():
-    """Load fixtures from SQLite."""
+    """Load fixtures.json"""
+    path = os.path.join(DATA_DIR, "fixtures.json")
+    
+    if not os.path.exists(path):
+        return []
+    
     try:
-        with _get_app_db() as conn:
-            rows = conn.execute("SELECT raw_json FROM fixtures").fetchall()
-        return [json.loads(r["raw_json"]) for r in rows]
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        
+        if isinstance(data, dict):
+            if "fixtures" in data:
+                return data["fixtures"]
+            elif "data" in data:
+                return data["data"]
+            elif "matches" in data:
+                return data["matches"]
+            else:
+                for key, value in data.items():
+                    if isinstance(value, list):
+                        return value
+                return []
+        elif isinstance(data, list):
+            return data
+        else:
+            return []
     except Exception as e:
-        st.error(f"Error loading fixtures: {e}")
+        st.error(f"Error loading fixtures: {str(e)}")
         return []
 
-@st.cache_data(ttl=900)
+@st.cache_data(ttl=900)  # Auto-refresh every 5 minutes
 def load_players_summary():
-    """Load players from SQLite. Returns {"players": [...]}."""
+    """Load players_summary.json"""
+    path = os.path.join(DATA_DIR, "players_summary.json")
+    
+    if not os.path.exists(path):
+        return {"players": []}
+    
     try:
-        with _get_app_db() as conn:
-            rows = conn.execute(
-                "SELECT profile_json, matches_json FROM players"
-            ).fetchall()
-        players = []
-        for r in rows:
-            p = json.loads(r["profile_json"])
-            p["matches"] = json.loads(r["matches_json"])
-            players.append(p)
-        return {"players": players}
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        
+        if isinstance(data, dict):
+            if "players" in data:
+                return data
+            else:
+                for key, value in data.items():
+                    if isinstance(value, list):
+                        return {"players": value}
+                return {"players": []}
+        elif isinstance(data, list):
+            return {"players": data}
+        else:
+            return {"players": []}
     except Exception as e:
-        st.error(f"Error loading players: {e}")
+        st.error(f"Error loading players: {str(e)}")
         return {"players": []}
 
-@st.cache_data(ttl=900)
+
+@st.cache_data(ttl=900)  # Auto-refresh every 5 minutes
 def load_staff_summary():
-    """Load staff from SQLite. Returns {"staff": [...]}."""
+    """Load staff_summary.json"""
+    path = os.path.join(DATA_DIR, "staff_summary.json")
+    
+    if not os.path.exists(path):
+        return {"staff": []}
+    
     try:
-        with _get_app_db() as conn:
-            rows = conn.execute(
-                "SELECT profile_json, matches_json FROM staff"
-            ).fetchall()
-        staff = []
-        for r in rows:
-            p = json.loads(r["profile_json"])
-            p["matches"] = json.loads(r["matches_json"])
-            staff.append(p)
-        return {"staff": staff}
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        
+        if isinstance(data, dict):
+            if "staff" in data:
+                return data
+            else:
+                for key, value in data.items():
+                    if isinstance(value, list):
+                        return {"staff": value}
+                return {"staff": []}
+        elif isinstance(data, list):
+            return {"staff": data}
+        else:
+            return {"staff": []}
     except Exception as e:
-        st.error(f"Error loading staff: {e}")
+        st.error(f"Error loading staff: {str(e)}")
         return {"staff": []}
 
-@st.cache_data(ttl=900)
+@st.cache_data(ttl=900)  # Auto-refresh every 5 minutes
 def load_competition_overview():
-    """Load competition overview from SQLite."""
+    """Load competition_overview.json"""
+    path = os.path.join(DATA_DIR, "competition_overview.json")
+    
+    if not os.path.exists(path):
+        return {}
+    
     try:
-        with _get_app_db() as conn:
-            row = conn.execute(
-                "SELECT value FROM kv_store WHERE key = 'competition_overview'"
-            ).fetchone()
-        return json.loads(row["value"]) if row else {}
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        
+        if isinstance(data, dict):
+            return data
+        else:
+            return {}
     except Exception as e:
-        st.error(f"Error loading competition overview: {e}")
+        st.error(f"Error loading competition overview: {str(e)}")
         return {}
 
 def force_reload_all_data():
@@ -653,11 +717,8 @@ def base_club_name(team_name: str) -> str:
 
 
 def get_player_reg_info(player: dict, current_club: str, current_comp: str) -> dict:
-    """Classify dual registrations relative to current club/competition.
-    Also detects senior (VPL Men / no age group) appearances.
-    """
-    p_teams   = player.get("teams", [])
-    p_leagues = player.get("leagues", [])
+    """Classify dual registrations relative to current club/competition."""
+    p_teams = player.get("teams", [])
     if not p_teams and player.get("team_name"):
         p_teams = [player["team_name"]]
 
@@ -676,54 +737,15 @@ def get_player_reg_info(player: dict, current_club: str, current_comp: str) -> d
     current_team = f"{current_club} {current_age}".strip()
     other_teams  = [t for t in p_teams if t.strip() and t.strip() != current_team]
 
-    same_club_other_ages, diff_clubs, senior_teams = [], [], []
+    same_club_other_ages, diff_clubs = [], []
     for t in other_teams:
         b = base_club_name(t)
         if b == current_club:
             ag = re.search(r'U\d{2}', t, re.IGNORECASE)
             if ag:
                 same_club_other_ages.append(ag.group(0).upper())
-            else:
-                # No age group suffix = senior team (e.g. VPL Men)
-                senior_teams.append(t)
         elif b:
             diff_clubs.append(b)
-
-    # Count senior matches and get league labels
-    senior_match_count = 0
-    senior_comp_labels = []
-    if senior_teams:
-        for m in player.get("matches", []):
-            if m.get("team_name", "") in senior_teams:
-                senior_match_count += 1
-        # Get competition labels from paired leagues list
-        for i, t in enumerate(p_teams):
-            if t in senior_teams and i < len(p_leagues):
-                lg = p_leagues[i]
-                # extract_competition_from_league is defined below — safe to call here
-                code = extract_competition_from_league(lg) if lg else ""
-                label = code if code and code != "Other" else "Senior"
-                if label not in senior_comp_labels:
-                    senior_comp_labels.append(label)
-
-    badge_parts = []
-    if same_club_other_ages:
-        badge_parts.append("🔁 " + "/".join(same_club_other_ages))
-    if diff_clubs:
-        badge_parts.append("⚡ " + "/".join(c.split()[0] for c in diff_clubs))
-    if senior_teams and senior_match_count > 0:
-        comp_label = "/".join(senior_comp_labels) if senior_comp_labels else "Senior"
-        badge_parts.append(f"⬆️ {comp_label} ({senior_match_count}m)")
-    badge = "  " + " · ".join(badge_parts) if badge_parts else ""
-
-    return {
-        "age":                  current_age,
-        "same_club_other_ages": same_club_other_ages,
-        "diff_clubs":           diff_clubs,
-        "senior_teams":         senior_teams,
-        "senior_match_count":   senior_match_count,
-        "badge":                badge,
-    }
 
     badge_parts = []
     if same_club_other_ages:
@@ -856,8 +878,8 @@ def get_all_leagues(results, fixtures):
             extracted = extract_competition_from_league(str(league_name))
             if extracted != "Other":
                 leagues.add(extracted)
-    HIDE_FROM_NAV = {"VPL Men", "VPL Women"}
-    return sorted([l for l in leagues if l not in HIDE_FROM_NAV])
+
+    return sorted(list(leagues))
     
 def get_competitions_for_league(results, fixtures, league):
     comps = set()
@@ -3970,19 +3992,8 @@ def main_app():
                 # PLAYERS TABLE
                 if players:
                     st.markdown("**Players**")
-                    has_dual   = any(len(p.get("teams", [])) > 1 for p in players)
-                    has_senior = any(
-                        any(not re.search(r'U\d{2}', t, re.IGNORECASE)
-                            for t in p.get("teams", [])
-                            if base_club_name(t) == (st.session_state.get("selected_club") or ""))
-                        for p in players
-                    )
-                    if has_dual or has_senior:
-                        st.caption(
-                            "🔁 = also plays another age group at this club  "
-                            "·  ⚡ = also registered at a different club  "
-                            "·  ⬆️ = also plays senior football (e.g. VPL Men) — number = matches played"
-                        )        
+                    if any(len(p.get("teams", [])) > 1 for p in players):
+                        st.caption("🔁 = also plays another age group at this club · ⚡ = also registered at a different club")
                     rows = []
                     for p in players:
                         full_name   = f"{p.get('first_name','')} {p.get('last_name','')}"
@@ -4345,3 +4356,376 @@ if __name__ == "__main__":
 # Last auto-update: Sun 29 Mar 18:00:58 AEDT 2026
 # Last auto-update: Sun 29 Mar 19:06:02 AEDT 2026
 # Last auto-update: Sun 29 Mar 20:06:12 AEDT 2026
+# Last auto-update: Sun 29 Mar 21:06:13 AEDT 2026
+# Last auto-update: Sun 29 Mar 22:06:06 AEDT 2026
+# Last auto-update: Sun 29 Mar 23:06:19 AEDT 2026
+# Last auto-update: Mon 30 Mar 00:05:39 AEDT 2026
+# Last auto-update: Mon 30 Mar 02:05:24 AEDT 2026
+# Last auto-update: Mon 30 Mar 04:05:15 AEDT 2026
+# Last auto-update: Mon 30 Mar 06:05:41 AEDT 2026
+# Last auto-update: Mon 30 Mar 08:05:56 AEDT 2026
+# Last auto-update: Mon 30 Mar 10:06:00 AEDT 2026
+# Last auto-update: Mon 30 Mar 12:04:26 AEDT 2026
+# Last auto-update: Mon 30 Mar 14:04:25 AEDT 2026
+# Last auto-update: Mon 30 Mar 16:04:21 AEDT 2026
+# Last auto-update: Mon 30 Mar 18:05:51 AEDT 2026
+# Last auto-update: Mon 30 Mar 20:04:29 AEDT 2026
+# Last auto-update: Mon 30 Mar 22:04:34 AEDT 2026
+# Last auto-update: Tue 31 Mar 00:04:11 AEDT 2026
+# Last auto-update: Tue 31 Mar 04:03:59 AEDT 2026
+# Last auto-update: Tue 31 Mar 08:04:22 AEDT 2026
+# Last auto-update: Tue 31 Mar 12:04:32 AEDT 2026
+# Last auto-update: Tue 31 Mar 16:04:31 AEDT 2026
+# Last auto-update: Tue 31 Mar 20:04:31 AEDT 2026
+# Last auto-update: Wed  1 Apr 00:04:12 AEDT 2026
+# Last auto-update: Wed  1 Apr 04:04:00 AEDT 2026
+# Last auto-update: Wed  1 Apr 08:04:10 AEDT 2026
+# Last auto-update: Wed  1 Apr 12:04:25 AEDT 2026
+# Last auto-update: Wed  1 Apr 16:04:40 AEDT 2026
+# Last auto-update: Wed  1 Apr 20:04:34 AEDT 2026
+# Last auto-update: Thu  2 Apr 00:04:20 AEDT 2026
+# Last auto-update: Thu  2 Apr 04:03:57 AEDT 2026
+# Last auto-update: Thu  2 Apr 08:04:17 AEDT 2026
+# Last auto-update: Thu  2 Apr 12:04:40 AEDT 2026
+# Last auto-update: Thu  2 Apr 16:04:35 AEDT 2026
+# Last auto-update: Thu  2 Apr 20:04:39 AEDT 2026
+# Last auto-update: Fri  3 Apr 00:04:44 AEDT 2026
+# Last auto-update: Fri  3 Apr 04:04:06 AEDT 2026
+# Last auto-update: Fri  3 Apr 08:04:27 AEDT 2026
+# Last auto-update: Fri  3 Apr 12:04:30 AEDT 2026
+# Last auto-update: Fri  3 Apr 16:04:24 AEDT 2026
+# Last auto-update: Fri  3 Apr 20:04:27 AEDT 2026
+# Last auto-update: Sat  4 Apr 00:04:17 AEDT 2026
+# Last auto-update: Sat  4 Apr 04:04:06 AEDT 2026
+# Last auto-update: Sat  4 Apr 08:04:18 AEDT 2026
+# Last auto-update: Sat  4 Apr 12:04:36 AEDT 2026
+# Last auto-update: Sat  4 Apr 16:04:46 AEDT 2026
+# Last auto-update: Sat  4 Apr 20:04:38 AEDT 2026
+# Last auto-update: Sun  5 Apr 00:04:19 AEDT 2026
+# Last auto-update: Sun  5 Apr 01:04:09 AEDT 2026
+# Last auto-update: Sun  5 Apr 02:04:03 AEDT 2026
+# Last auto-update: Sun  5 Apr 02:04:05 AEST 2026
+# Last auto-update: Sun  5 Apr 03:04:04 AEST 2026
+# Last auto-update: Sun  5 Apr 04:04:00 AEST 2026
+# Last auto-update: Sun  5 Apr 05:04:04 AEST 2026
+# Last auto-update: Sun  5 Apr 06:04:16 AEST 2026
+# Last auto-update: Sun  5 Apr 07:04:12 AEST 2026
+# Last auto-update: Sun  5 Apr 08:04:14 AEST 2026
+# Last auto-update: Sun  5 Apr 09:04:20 AEST 2026
+# Last auto-update: Sun  5 Apr 10:04:23 AEST 2026
+# Last auto-update: Sun  5 Apr 11:04:21 AEST 2026
+# Last auto-update: Sun  5 Apr 12:04:25 AEST 2026
+# Last auto-update: Sun  5 Apr 13:04:20 AEST 2026
+# Last auto-update: Sun  5 Apr 14:04:19 AEST 2026
+# Last auto-update: Sun  5 Apr 15:04:22 AEST 2026
+# Last auto-update: Sun  5 Apr 16:04:20 AEST 2026
+# Last auto-update: Sun  5 Apr 17:04:18 AEST 2026
+# Last auto-update: Sun  5 Apr 18:04:29 AEST 2026
+# Last auto-update: Sun  5 Apr 19:04:19 AEST 2026
+# Last auto-update: Sun  5 Apr 20:04:21 AEST 2026
+# Last auto-update: Sun  5 Apr 21:04:17 AEST 2026
+# Last auto-update: Sun  5 Apr 22:04:14 AEST 2026
+# Last auto-update: Sun  5 Apr 23:04:09 AEST 2026
+# Last auto-update: Mon  6 Apr 00:04:02 AEST 2026
+# Last auto-update: Mon  6 Apr 02:04:03 AEST 2026
+# Last auto-update: Mon  6 Apr 04:03:59 AEST 2026
+# Last auto-update: Mon  6 Apr 06:04:14 AEST 2026
+# Last auto-update: Mon  6 Apr 08:04:11 AEST 2026
+# Last auto-update: Mon  6 Apr 12:02:39 AEST 2026
+# Last auto-update: Mon  6 Apr 14:02:41 AEST 2026
+# Last auto-update: Mon  6 Apr 16:02:42 AEST 2026
+# Last auto-update: Mon  6 Apr 18:02:40 AEST 2026
+# Last auto-update: Mon  6 Apr 20:02:41 AEST 2026
+# Last auto-update: Mon  6 Apr 22:02:39 AEST 2026
+# Last auto-update: Tue  7 Apr 00:02:32 AEST 2026
+# Last auto-update: Tue  7 Apr 04:02:30 AEST 2026
+# Last auto-update: Tue  7 Apr 08:02:36 AEST 2026
+# Last auto-update: Tue  7 Apr 12:02:43 AEST 2026
+# Last auto-update: Tue  7 Apr 16:02:43 AEST 2026
+# Last auto-update: Tue  7 Apr 20:02:48 AEST 2026
+# Last auto-update: Wed  8 Apr 00:02:34 AEST 2026
+# Last auto-update: Wed  8 Apr 04:02:31 AEST 2026
+# Last auto-update: Wed  8 Apr 08:02:34 AEST 2026
+# Last auto-update: Wed  8 Apr 12:02:47 AEST 2026
+# Last auto-update: Wed  8 Apr 16:02:44 AEST 2026
+# Last auto-update: Wed  8 Apr 20:02:46 AEST 2026
+# Last auto-update: Mon 20 Apr 08:02:46 AEST 2026
+# Last auto-update: Mon 20 Apr 10:02:53 AEST 2026
+# Last auto-update: Mon 20 Apr 12:02:55 AEST 2026
+# Last auto-update: Mon 20 Apr 14:02:54 AEST 2026
+# Last auto-update: Mon 20 Apr 16:02:54 AEST 2026
+# Last auto-update: Mon 20 Apr 18:03:10 AEST 2026
+# Last auto-update: Mon 20 Apr 20:03:06 AEST 2026
+# Last auto-update: Mon 20 Apr 22:03:05 AEST 2026
+# Last auto-update: Tue 21 Apr 00:02:38 AEST 2026
+# Last auto-update: Tue 21 Apr 04:02:31 AEST 2026
+# Last auto-update: Tue 21 Apr 08:02:45 AEST 2026
+# Last auto-update: Tue 21 Apr 12:02:56 AEST 2026
+# Last auto-update: Tue 21 Apr 16:03:00 AEST 2026
+# Last auto-update: Tue 21 Apr 20:02:59 AEST 2026
+# Last auto-update: Wed 22 Apr 00:02:41 AEST 2026
+# Last auto-update: Wed 22 Apr 04:02:30 AEST 2026
+# Last auto-update: Wed 22 Apr 08:02:44 AEST 2026
+# Last auto-update: Wed 22 Apr 12:02:56 AEST 2026
+# Last auto-update: Wed 22 Apr 16:02:56 AEST 2026
+# Last auto-update: Wed 22 Apr 20:03:06 AEST 2026
+# Last auto-update: Thu 23 Apr 00:02:47 AEST 2026
+# Last auto-update: Thu 23 Apr 04:02:37 AEST 2026
+# Last auto-update: Thu 23 Apr 08:03:10 AEST 2026
+# Last auto-update: Thu 23 Apr 12:03:04 AEST 2026
+# Last auto-update: Thu 23 Apr 16:02:54 AEST 2026
+# Last auto-update: Thu 23 Apr 20:03:02 AEST 2026
+# Last auto-update: Fri 24 Apr 00:02:46 AEST 2026
+# Last auto-update: Fri 24 Apr 04:02:36 AEST 2026
+# Last auto-update: Fri 24 Apr 08:02:55 AEST 2026
+# Last auto-update: Fri 24 Apr 12:02:54 AEST 2026
+# Last auto-update: Fri 24 Apr 16:03:05 AEST 2026
+# Last auto-update: Fri 24 Apr 20:03:01 AEST 2026
+# Last auto-update: Sat 25 Apr 00:02:51 AEST 2026
+# Last auto-update: Sat 25 Apr 04:02:40 AEST 2026
+# Last auto-update: Sat 25 Apr 08:02:56 AEST 2026
+# Last auto-update: Sat 25 Apr 12:03:11 AEST 2026
+# Last auto-update: Sat 25 Apr 16:03:17 AEST 2026
+# Last auto-update: Sat 25 Apr 20:03:16 AEST 2026
+# Last auto-update: Sun 26 Apr 00:02:52 AEST 2026
+# Last auto-update: Sun 26 Apr 01:02:50 AEST 2026
+# Last auto-update: Sun 26 Apr 02:02:41 AEST 2026
+# Last auto-update: Sun 26 Apr 03:02:43 AEST 2026
+# Last auto-update: Sun 26 Apr 04:02:44 AEST 2026
+# Last auto-update: Sun 26 Apr 05:02:46 AEST 2026
+# Last auto-update: Sun 26 Apr 06:02:46 AEST 2026
+# Last auto-update: Sun 26 Apr 07:02:52 AEST 2026
+# Last auto-update: Sun 26 Apr 08:03:06 AEST 2026
+# Last auto-update: Sun 26 Apr 09:03:05 AEST 2026
+# Last auto-update: Sun 26 Apr 10:03:11 AEST 2026
+# Last auto-update: Sun 26 Apr 11:03:18 AEST 2026
+# Last auto-update: Sun 26 Apr 12:03:40 AEST 2026
+# Last auto-update: Sun 26 Apr 13:03:57 AEST 2026
+# Last auto-update: Sun 26 Apr 14:04:16 AEST 2026
+# Last auto-update: Sun 26 Apr 15:04:23 AEST 2026
+# Last auto-update: Sun 26 Apr 16:04:28 AEST 2026
+# Last auto-update: Sun 26 Apr 17:04:42 AEST 2026
+# Last auto-update: Sun 26 Apr 18:04:57 AEST 2026
+# Last auto-update: Sun 26 Apr 19:05:06 AEST 2026
+# Last auto-update: Sun 26 Apr 20:05:11 AEST 2026
+# Last auto-update: Sun 26 Apr 21:05:25 AEST 2026
+# Last auto-update: Sun 26 Apr 22:05:02 AEST 2026
+# Last auto-update: Sun 26 Apr 23:04:33 AEST 2026
+# Last auto-update: Mon 27 Apr 00:04:14 AEST 2026
+# Last auto-update: Mon 27 Apr 02:04:20 AEST 2026
+# Last auto-update: Mon 27 Apr 04:04:24 AEST 2026
+# Last auto-update: Mon 27 Apr 06:04:33 AEST 2026
+# Last auto-update: Mon 27 Apr 08:04:54 AEST 2026
+# Last auto-update: Mon 27 Apr 10:05:04 AEST 2026
+# Last auto-update: Mon 27 Apr 14:04:50 AEST 2026
+# Last auto-update: Mon 27 Apr 16:04:53 AEST 2026
+# Last auto-update: Mon 27 Apr 18:04:49 AEST 2026
+# Last auto-update: Mon 27 Apr 20:04:50 AEST 2026
+# Last auto-update: Mon 27 Apr 22:04:42 AEST 2026
+# Last auto-update: Tue 28 Apr 00:04:18 AEST 2026
+# Last auto-update: Tue 28 Apr 04:04:08 AEST 2026
+# Last auto-update: Tue 28 Apr 08:04:36 AEST 2026
+# Last auto-update: Tue 28 Apr 12:04:38 AEST 2026
+# Last auto-update: Tue 28 Apr 16:06:14 AEST 2026
+# Last auto-update: Tue 28 Apr 20:04:55 AEST 2026
+# Last auto-update: Wed 29 Apr 00:04:27 AEST 2026
+# Last auto-update: Wed 29 Apr 04:04:13 AEST 2026
+# Last auto-update: Wed 29 Apr 08:04:35 AEST 2026
+# Last auto-update: Wed 29 Apr 12:04:52 AEST 2026
+# Last auto-update: Wed 29 Apr 16:04:47 AEST 2026
+# Last auto-update: Wed 29 Apr 20:04:52 AEST 2026
+# Last auto-update: Thu 30 Apr 00:04:22 AEST 2026
+# Last auto-update: Thu 30 Apr 04:04:12 AEST 2026
+# Last auto-update: Thu 30 Apr 08:04:41 AEST 2026
+# Last auto-update: Thu 30 Apr 12:04:58 AEST 2026
+# Last auto-update: Thu 30 Apr 16:04:45 AEST 2026
+# Last auto-update: Thu 30 Apr 20:04:53 AEST 2026
+# Last auto-update: Fri  1 May 00:04:29 AEST 2026
+# Last auto-update: Fri  1 May 04:04:12 AEST 2026
+# Last auto-update: Fri  1 May 08:04:52 AEST 2026
+# Last auto-update: Fri  1 May 12:04:53 AEST 2026
+# Last auto-update: Fri  1 May 16:04:59 AEST 2026
+# Last auto-update: Fri  1 May 20:05:07 AEST 2026
+# Last auto-update: Sat  2 May 00:04:40 AEST 2026
+# Last auto-update: Sat  2 May 04:04:20 AEST 2026
+# Last auto-update: Sat  2 May 08:05:08 AEST 2026
+# Last auto-update: Sat  2 May 12:05:29 AEST 2026
+# Last auto-update: Sat  2 May 16:05:25 AEST 2026
+# Last auto-update: Sat  2 May 20:05:16 AEST 2026
+# Last auto-update: Sun  3 May 00:04:38 AEST 2026
+# Last auto-update: Sun  3 May 01:04:23 AEST 2026
+# Last auto-update: Sun  3 May 02:04:22 AEST 2026
+# Last auto-update: Sun  3 May 03:04:13 AEST 2026
+# Last auto-update: Sun  3 May 04:04:20 AEST 2026
+# Last auto-update: Sun  3 May 05:04:18 AEST 2026
+# Last auto-update: Sun  3 May 06:04:34 AEST 2026
+# Last auto-update: Sun  3 May 07:04:44 AEST 2026
+# Last auto-update: Sun  3 May 08:05:07 AEST 2026
+# Last auto-update: Sun  3 May 09:05:06 AEST 2026
+# Last auto-update: Sun  3 May 10:05:26 AEST 2026
+# Last auto-update: Sun  3 May 11:05:28 AEST 2026
+# Last auto-update: Sun  3 May 12:05:46 AEST 2026
+# Last auto-update: Sun  3 May 13:05:55 AEST 2026
+# Last auto-update: Sun  3 May 14:06:15 AEST 2026
+# Last auto-update: Sun  3 May 15:06:49 AEST 2026
+# Last auto-update: Sun  3 May 15:39:00 AEST 2026
+# Last auto-update: Sun  3 May 16:06:48 AEST 2026
+# Last auto-update: Sun  3 May 17:06:57 AEST 2026
+# Last auto-update: Sun  3 May 18:07:14 AEST 2026
+# Last auto-update: Sun  3 May 19:07:18 AEST 2026
+# Last auto-update: Sun  3 May 20:07:29 AEST 2026
+# Last auto-update: Sun  3 May 20:20:07 AEST 2026
+# Last auto-update: Sun  3 May 21:07:19 AEST 2026
+# Last auto-update: Sun  3 May 22:07:07 AEST 2026
+# Last auto-update: Sun  3 May 23:06:32 AEST 2026
+# Last auto-update: Mon  4 May 00:06:13 AEST 2026
+# Last auto-update: Mon  4 May 02:05:49 AEST 2026
+# Last auto-update: Mon  4 May 04:05:45 AEST 2026
+# Last auto-update: Mon  4 May 06:06:13 AEST 2026
+# Last auto-update: Mon  4 May 08:06:53 AEST 2026
+# Last auto-update: Mon  4 May 10:05:15 AEST 2026
+# Last auto-update: Mon  4 May 12:05:10 AEST 2026
+# Last auto-update: Mon  4 May 14:05:12 AEST 2026
+# Last auto-update: Mon  4 May 16:05:19 AEST 2026
+# Last auto-update: Mon  4 May 18:05:23 AEST 2026
+# Last auto-update: Mon  4 May 20:05:19 AEST 2026
+# Last auto-update: Tue  5 May 00:04:44 AEST 2026
+# Last auto-update: Tue  5 May 04:04:41 AEST 2026
+# Last auto-update: Tue  5 May 08:05:02 AEST 2026
+# Last auto-update: Tue  5 May 12:05:05 AEST 2026
+# Last auto-update: Tue  5 May 20:05:16 AEST 2026
+# Last auto-update: Wed  6 May 00:05:03 AEST 2026
+# Last auto-update: Wed  6 May 04:04:46 AEST 2026
+# Last auto-update: Wed  6 May 16:05:13 AEST 2026
+# Last auto-update: Wed  6 May 20:05:18 AEST 2026
+# Last auto-update: Thu  7 May 00:04:52 AEST 2026
+# Last auto-update: Thu  7 May 04:04:44 AEST 2026
+# Last auto-update: Thu  7 May 08:04:55 AEST 2026
+# Last auto-update: Thu  7 May 12:05:29 AEST 2026
+# Last auto-update: Thu  7 May 16:05:14 AEST 2026
+# Last auto-update: Thu  7 May 20:05:15 AEST 2026
+# Last auto-update: Fri  8 May 00:04:49 AEST 2026
+# Last auto-update: Fri  8 May 04:04:35 AEST 2026
+# Last auto-update: Fri  8 May 08:05:04 AEST 2026
+# Last auto-update: Fri  8 May 12:05:13 AEST 2026
+# Last auto-update: Fri  8 May 16:05:28 AEST 2026
+# Last auto-update: Fri  8 May 20:05:28 AEST 2026
+# Last auto-update: Sat  9 May 00:05:01 AEST 2026
+# Last auto-update: Sat  9 May 04:04:39 AEST 2026
+# Last auto-update: Sat  9 May 08:05:45 AEST 2026
+# Last auto-update: Sat  9 May 12:05:49 AEST 2026
+# Last auto-update: Sat  9 May 16:05:43 AEST 2026
+# Last auto-update: Sat  9 May 20:05:48 AEST 2026
+# Last auto-update: Sun 10 May 00:05:03 AEST 2026
+# Last auto-update: Sun 10 May 01:04:56 AEST 2026
+# Last auto-update: Sun 10 May 02:04:39 AEST 2026
+# Last auto-update: Sun 10 May 03:04:38 AEST 2026
+# Last auto-update: Sun 10 May 04:04:46 AEST 2026
+# Last auto-update: Sun 10 May 05:04:46 AEST 2026
+# Last auto-update: Sun 10 May 06:04:59 AEST 2026
+# Last auto-update: Sun 10 May 07:05:09 AEST 2026
+# Last auto-update: Sun 10 May 08:05:30 AEST 2026
+# Last auto-update: Sun 10 May 09:05:35 AEST 2026
+# Last auto-update: Sun 10 May 10:05:35 AEST 2026
+# Last auto-update: Sun 10 May 11:05:48 AEST 2026
+# Last auto-update: Sun 10 May 12:06:03 AEST 2026
+# Last auto-update: Sun 10 May 13:06:39 AEST 2026
+# Last auto-update: Sun 10 May 14:06:33 AEST 2026
+# Last auto-update: Sun 10 May 15:07:00 AEST 2026
+# Last auto-update: Sun 10 May 16:07:16 AEST 2026
+# Last auto-update: Sun 10 May 17:07:16 AEST 2026
+# Last auto-update: Sun 10 May 17:45:29 AEST 2026
+# Last auto-update: Sun 10 May 18:07:31 AEST 2026
+# Last auto-update: Sun 10 May 19:07:28 AEST 2026
+# Last auto-update: Sun 10 May 20:07:33 AEST 2026
+# Last auto-update: Sun 10 May 21:07:23 AEST 2026
+# Last auto-update: Sun 10 May 22:07:19 AEST 2026
+# Last auto-update: Sun 10 May 23:06:41 AEST 2026
+# Last auto-update: Mon 11 May 00:06:15 AEST 2026
+# Last auto-update: Mon 11 May 02:06:07 AEST 2026
+# Last auto-update: Mon 11 May 04:06:04 AEST 2026
+# Last auto-update: Mon 11 May 06:06:27 AEST 2026
+# Last auto-update: Mon 11 May 08:07:00 AEST 2026
+# Last auto-update: Mon 11 May 10:05:28 AEST 2026
+# Last auto-update: Mon 11 May 12:05:35 AEST 2026
+# Last auto-update: Mon 11 May 14:05:19 AEST 2026
+# Last auto-update: Mon 11 May 16:05:28 AEST 2026
+# Last auto-update: Mon 11 May 18:05:23 AEST 2026
+# Last auto-update: Mon 11 May 20:05:24 AEST 2026
+# Last auto-update: Mon 11 May 22:05:22 AEST 2026
+# Last auto-update: Tue 12 May 00:04:54 AEST 2026
+# Last auto-update: Tue 12 May 04:04:50 AEST 2026
+# Last auto-update: Tue 12 May 08:05:11 AEST 2026
+# Last auto-update: Tue 12 May 12:05:24 AEST 2026
+# Last auto-update: Tue 12 May 16:05:17 AEST 2026
+# Last auto-update: Tue 12 May 20:05:43 AEST 2026
+# Last auto-update: Wed 13 May 00:04:54 AEST 2026
+# Last auto-update: Wed 13 May 04:04:42 AEST 2026
+# Last auto-update: Wed 13 May 08:05:26 AEST 2026
+# Last auto-update: Wed 13 May 12:05:59 AEST 2026
+# Last auto-update: Wed 13 May 16:05:34 AEST 2026
+# Last auto-update: Wed 13 May 20:05:45 AEST 2026
+# Last auto-update: Thu 14 May 00:05:07 AEST 2026
+# Last auto-update: Thu 14 May 04:04:49 AEST 2026
+# Last auto-update: Thu 14 May 08:05:32 AEST 2026
+# Last auto-update: Thu 14 May 12:05:53 AEST 2026
+# Last auto-update: Thu 14 May 16:05:36 AEST 2026
+# Last auto-update: Thu 14 May 20:05:37 AEST 2026
+# Last auto-update: Fri 15 May 00:05:01 AEST 2026
+# Last auto-update: Fri 15 May 04:04:45 AEST 2026
+# Last auto-update: Fri 15 May 08:05:24 AEST 2026
+# Last auto-update: Fri 15 May 12:05:30 AEST 2026
+# Last auto-update: Fri 15 May 16:05:49 AEST 2026
+# Last auto-update: Fri 15 May 20:05:53 AEST 2026
+# Last auto-update: Sat 16 May 00:05:22 AEST 2026
+# Last auto-update: Sat 16 May 04:04:51 AEST 2026
+# Last auto-update: Sat 16 May 08:05:57 AEST 2026
+# Last auto-update: Sat 16 May 12:06:21 AEST 2026
+# Last auto-update: Sat 16 May 16:06:16 AEST 2026
+# Last auto-update: Sat 16 May 20:06:11 AEST 2026
+# Last auto-update: Sun 17 May 00:05:31 AEST 2026
+# Last auto-update: Sun 17 May 01:05:02 AEST 2026
+# Last auto-update: Sun 17 May 02:05:00 AEST 2026
+# Last auto-update: Sun 17 May 03:04:53 AEST 2026
+# Last auto-update: Sun 17 May 04:04:47 AEST 2026
+# Last auto-update: Sun 17 May 05:05:02 AEST 2026
+# Last auto-update: Sun 17 May 06:05:21 AEST 2026
+# Last auto-update: Sun 17 May 07:05:23 AEST 2026
+# Last auto-update: Sun 17 May 08:05:46 AEST 2026
+# Last auto-update: Sun 17 May 09:05:49 AEST 2026
+# Last auto-update: Sun 17 May 10:06:58 AEST 2026
+# Last auto-update: Sun 17 May 11:06:34 AEST 2026
+# Last auto-update: Sun 17 May 12:06:43 AEST 2026
+# Last auto-update: Sun 17 May 13:06:58 AEST 2026
+# Last auto-update: Sun 17 May 14:07:09 AEST 2026
+# Last auto-update: Sun 17 May 15:07:07 AEST 2026
+# Last auto-update: Sun 17 May 16:07:18 AEST 2026
+# Last auto-update: Sun 17 May 16:38:03 AEST 2026
+# Last auto-update: Sun 17 May 17:07:49 AEST 2026
+# Last auto-update: Sun 17 May 18:07:54 AEST 2026
+# Last auto-update: Sun 17 May 19:07:58 AEST 2026
+# Last auto-update: Sun 17 May 20:08:16 AEST 2026
+# Last auto-update: Sun 17 May 21:08:19 AEST 2026
+# Last auto-update: Sun 17 May 22:08:38 AEST 2026
+# Last auto-update: Sun 17 May 23:07:32 AEST 2026
+# Last auto-update: Mon 18 May 00:06:42 AEST 2026
+# Last auto-update: Mon 18 May 02:06:30 AEST 2026
+# Last auto-update: Mon 18 May 04:06:45 AEST 2026
+# Last auto-update: Mon 18 May 06:07:05 AEST 2026
+# Last auto-update: Mon 18 May 08:07:20 AEST 2026
+# Last auto-update: Mon 18 May 10:05:46 AEST 2026
+# Last auto-update: Mon 18 May 12:05:29 AEST 2026
+# Last auto-update: Mon 18 May 14:05:28 AEST 2026
+# Last auto-update: Mon 18 May 16:05:46 AEST 2026
+# Last auto-update: Mon 18 May 18:05:55 AEST 2026
+# Last auto-update: Mon 18 May 20:06:35 AEST 2026
+# Last auto-update: Mon 18 May 22:05:47 AEST 2026
+# Last auto-update: Tue 19 May 00:05:06 AEST 2026
+# Last auto-update: Tue 19 May 04:05:07 AEST 2026
+# Last auto-update: Tue 19 May 08:05:58 AEST 2026
+# Last auto-update: Tue 19 May 12:05:33 AEST 2026
+# Last auto-update: Tue 19 May 16:05:44 AEST 2026
+# Last auto-update: Tue 19 May 20:05:42 AEST 2026
+# Last auto-update: Wed 20 May 00:05:18 AEST 2026
+# Last auto-update: Wed 20 May 04:05:04 AEST 2026
+# Last auto-update: Wed 20 May 08:05:27 AEST 2026

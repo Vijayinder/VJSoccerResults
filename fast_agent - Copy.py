@@ -15,7 +15,6 @@ Features:
 import os
 import json
 import re
-import sqlite3
 import pytz
 from typing import List, Dict, Any, Optional
 from datetime import datetime, timedelta
@@ -187,95 +186,69 @@ def get_canonical_club_name(query: str) -> Optional[str]:
 # ---------------------------------------------------------
 # 1. Load JSON data files
 # ---------------------------------------------------------
-# ---------------------------------------------------------
-# 1. Load data from SQLite database
-# ---------------------------------------------------------
 
+# Get the directory where this file is located
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
-_DB_PATH  = os.path.join(DATA_DIR, "soccer_data.db")
 
-def _get_db():
-    conn = sqlite3.connect(_DB_PATH)
-    conn.row_factory = sqlite3.Row
-    return conn
+def load_json(name: str):
+    """Load and parse JSON file from data directory"""
+    possible_paths = [
+        os.path.join(DATA_DIR, name),
+        os.path.join("data", name),
+        name
+    ]
+    
+    for path in possible_paths:
+        if os.path.exists(path):
+            with open(path, "r", encoding="utf-8") as f:
+                return json.load(f)
+    
+    # Return appropriate empty data structure based on filename
+    if "players_summary" in name:
+        return {"players": []}
+    elif "staff_summary" in name:
+        return {"staff": []}
+    elif "competition_overview" in name:
+        return {}
+    elif "fixtures" in name or "results" in name or "match_centre" in name or "lineups" in name or "predictions" in name:
+        return []
+    else:
+        return {}
 
-def get_match_centre_by_id(match_hash_id):
-    """Fetch one match-centre record from DB by match_hash_id."""
-    if not match_hash_id:
-        return None
-    try:
-        with _get_db() as conn:
-            row = conn.execute(
-                "SELECT raw_json FROM match_centre WHERE match_hash_id = ?",
-                (match_hash_id,)
-            ).fetchone()
-        return json.loads(row["raw_json"]) if row else None
-    except Exception:
-        return None
-
-def get_lineup_by_id(match_hash_id):
-    """Fetch one lineup record from DB by match_hash_id."""
-    if not match_hash_id:
-        return None
-    try:
-        with _get_db() as conn:
-            row = conn.execute(
-                "SELECT raw_json FROM lineups WHERE match_hash_id = ?",
-                (match_hash_id,)
-            ).fetchone()
-        return json.loads(row["raw_json"]) if row else None
-    except Exception:
-        return None
-
-def _load_from_db():
-    """Load all data from SQLite. match_centre and lineups are lazy (not loaded here)."""
-    _results, _fixtures, _raw_players, _raw_staff, _competition_overview = [], [], [], [], {}
-    try:
-        with _get_db() as conn:
-            _results = [json.loads(r["raw_json"]) for r in
-                        conn.execute("SELECT raw_json FROM results").fetchall()]
-            _fixtures = [json.loads(r["raw_json"]) for r in
-                         conn.execute("SELECT raw_json FROM fixtures").fetchall()]
-            rows = conn.execute("SELECT profile_json, matches_json FROM players").fetchall()
-            for r in rows:
-                p = json.loads(r["profile_json"])
-                p["matches"] = json.loads(r["matches_json"])
-                _raw_players.append(p)
-            rows = conn.execute("SELECT profile_json, matches_json FROM staff").fetchall()
-            for r in rows:
-                p = json.loads(r["profile_json"])
-                p["matches"] = json.loads(r["matches_json"])
-                _raw_staff.append(p)
-            row = conn.execute(
-                "SELECT value FROM kv_store WHERE key='competition_overview'"
-            ).fetchone()
-            if row:
-                _competition_overview = json.loads(row["value"])
-    except Exception as e:
-        print(f"[fast_agent] DB load error: {e}")
-    return _results, _fixtures, _raw_players, _raw_staff, _competition_overview
-
+# ── Cached data loader — reloads every 30 minutes ───────────────────────
 try:
     import streamlit as _st
     @_st.cache_data(ttl=1800, show_spinner=False)
     def _load_all_data():
-        _results, _fixtures, _raw_players, _raw_staff, _competition_overview = _load_from_db()
+        _results             = load_json("master_results.json")
+        _fixtures            = load_json("fixtures.json")
+        _players_data        = load_json("players_summary.json")
+        _staff_data          = load_json("staff_summary.json")
+        _match_centre_data   = load_json("master_match_centre.json")
+        _lineups_data        = load_json("master_lineups.json")
+        _competition_overview = load_json("competition_overview.json")
+        _raw_players = _players_data.get("players", [])
+        _raw_staff   = _staff_data.get("staff", [])
         return (
-            _results, _fixtures,
-            {"players": _raw_players}, {"staff": _raw_staff},
-            [], [],   # match_centre_data, lineups_data — now fetched per-match via get_match_centre_by_id()
-            _competition_overview,
+            _results, _fixtures, _players_data, _staff_data,
+            _match_centre_data, _lineups_data, _competition_overview,
             _raw_players, _raw_staff
         )
 except ImportError:
     def _load_all_data():
-        _results, _fixtures, _raw_players, _raw_staff, _competition_overview = _load_from_db()
+        _results             = load_json("master_results.json")
+        _fixtures            = load_json("fixtures.json")
+        _players_data        = load_json("players_summary.json")
+        _staff_data          = load_json("staff_summary.json")
+        _match_centre_data   = load_json("master_match_centre.json")
+        _lineups_data        = load_json("master_lineups.json")
+        _competition_overview = load_json("competition_overview.json")
+        _raw_players = _players_data.get("players", [])
+        _raw_staff   = _staff_data.get("staff", [])
         return (
-            _results, _fixtures,
-            {"players": _raw_players}, {"staff": _raw_staff},
-            [], [],
-            _competition_overview,
+            _results, _fixtures, _players_data, _staff_data,
+            _match_centre_data, _lineups_data, _competition_overview,
             _raw_players, _raw_staff
         )
 
@@ -312,7 +285,6 @@ def _refresh_data():
     match_centre_data, lineups_data, competition_overview,
     _raw_p, _raw_s
 ) = _load_all_data()
-
 
 
 def _normalize_person(p: Dict, is_player: bool) -> Dict:
@@ -724,32 +696,52 @@ def find_matches_by_teams_or_hash(
     away_like: Optional[str] = None,
     match_hash_id: Optional[str] = None,
 ) -> List[Dict[str, Any]]:
-    if match_hash_id:
-        mc = get_match_centre_by_id(match_hash_id)
-        return [mc] if mc else []
-    if not home_like and not away_like:
-        return []
-    try:
-        parts, params = [], []
-        def _core(s):
-            s = re.sub(r'\bU\d{2}\b', '', s or '').lower().strip()
-            s = re.sub(r'\b(fc|sc|afc|fk|ac|bfc)\b', '', s).strip()
-            return re.sub(r'\s+', ' ', s).strip()
+    matches = []
+    for m in match_centre_data:
+        mh = m.get("match_hash_id")
+        result = m.get("result", {})
+        attrs = result.get("attributes", {})
+
+        if match_hash_id and mh == match_hash_id:
+            matches.append(m)
+            continue
+
+        home = attrs.get("home_team_name", "")
+        away = attrs.get("away_team_name", "")
+
+        def _cn(s):
+            """Core name: strip age group + club-type suffix for fuzzy matching."""
+            import re as _re2
+            s = s.lower().strip()
+            s = _re2.sub(r'\bu\d{2}\b', '', s)
+            s = _re2.sub(r'\b(fc|sc|afc|fk|ac|bfc)\b', '', s)
+            return _re2.sub(r'\s+', ' ', s).strip()
+
         if home_like:
-            parts.append("home_team LIKE ?")
-            params.append(f"%{_core(home_like)}%")
+            norm_home = normalize_team(home_like) or home_like
+            nh_lower  = norm_home.lower()
+            h_lower   = home.lower()
+            if nh_lower not in h_lower and _cn(norm_home) not in _cn(home):
+                continue
+
         if away_like:
-            parts.append("away_team LIKE ?")
-            params.append(f"%{_core(away_like)}%")
-        sql = f"SELECT raw_json FROM match_centre WHERE {' OR '.join(parts)}"
-        with _get_db() as conn:
-            rows = conn.execute(sql, params).fetchall()
-        return [json.loads(r["raw_json"]) for r in rows]
-    except Exception:
-        return []
+            norm_away = normalize_team(away_like) or away_like
+            na_lower  = norm_away.lower()
+            a_lower   = away.lower()
+            if na_lower not in a_lower and _cn(norm_away) not in _cn(away):
+                continue
+
+        if home_like or away_like:
+            matches.append(m)
+
+    return matches
 
 def find_lineup_by_match_hash(match_hash_id: str) -> Optional[Dict[str, Any]]:
-    return get_lineup_by_id(match_hash_id)
+    for l in lineups_data:
+        if l.get("match_hash_id") == match_hash_id:
+            return l
+    return None
+
 # ---------------------------------------------------------
 # 5. FILTERING HELPERS
 # ---------------------------------------------------------
@@ -1750,8 +1742,7 @@ def tool_all_results(query: str = "", round_filter: int = None, limit: int = 60)
             continue
         
         # Get match centre data for this match
-#        match_data = next((m for m in match_centre_data if m.get("match_hash_id") == match_hash), None)
-        match_data = get_match_centre_by_id(match_hash)
+        match_data = next((m for m in match_centre_data if m.get("match_hash_id") == match_hash), None)
         if not match_data:
             continue
         
@@ -3812,20 +3803,12 @@ def tool_match_detail(query: str) -> Any:
             vs_parts  = _re.split(r'\s+vs?\s+', team_part, flags=_re.IGNORECASE)
             team_cores = [_cn2(p) for p in vs_parts if p.strip()]
 
-            try:
-                with _get_db() as _conn:
-                    _mc_rows = _conn.execute(
-                        "SELECT raw_json FROM match_centre WHERE date_aest LIKE ?",
-                        (f"{target_date}%",)
-                    ).fetchall()
-                _mc_for_date = [json.loads(r["raw_json"]) for r in _mc_rows]
-            except Exception:
-                _mc_for_date = []
-            for mc in _mc_for_date:
+            for mc in match_centre_data:
                 ra   = mc.get("result", {}).get("attributes", {})
+                # Compare using AEST date (same as display) to avoid UTC boundary mismatch
                 d = iso_date_aest(ra.get("date") or "")
                 if d != target_date:
-                    continue        
+                    continue
                 h = ra.get("home_team_name", "")
                 a = ra.get("away_team_name", "")
                 hc = _cn2(h)
@@ -3939,7 +3922,7 @@ def tool_match_detail(query: str) -> Any:
                     red_mins[pname].extend(mins_from_events or [""] * rc_n)
 
     # Pass 2: mc_events fallback for any player not found above
-    mc_entry  = get_match_centre_by_id(match_id)
+    mc_entry  = next((m for m in match_centre_data if m.get("match_hash_id") == match_id), None)
     mc_events = mc_entry.get("events", []) if mc_entry else []
     for e in mc_events:
         pn = (e.get("player_name") or "").strip()
@@ -5212,7 +5195,8 @@ def tool_club_season(club_query: str = "heidelberg", age_group_filter: str = "")
     if past:
         most_recent = past[-1]
         mhash = most_recent.get("hash", "")
-        mc = get_match_centre_by_id(mhash) if mhash else None
+        mc = next((m for m in match_centre_data
+                   if m.get("match_hash_id") == mhash), None) if mhash else None
         if mc:
             r_attrs = mc.get("result", {}).get("attributes", {})
             events  = mc.get("events", []) or []
