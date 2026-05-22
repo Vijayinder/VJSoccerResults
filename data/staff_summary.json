@@ -161437,7 +161437,7 @@
           "red_cards": 0
         },
         "Mornington SC U13": {
-          "matches_played": 11,
+          "matches_played": 12,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -161448,7 +161448,7 @@
         }
       },
       "stats": {
-        "matches_attended": 57,
+        "matches_attended": 58,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -162249,6 +162249,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Goulburn Valley Suns FC U14",
           "opponent_team_id": "pN6OYw6BK0",
+          "events": []
+        },
+        {
+          "match_hash_id": "1K3pvQn47d",
+          "date": "2026-05-17T00:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:00:00",
+          "team_name": "Mornington SC U13",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U13 YSL Boys - South-East",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Goulburn Valley Suns FC U13",
+          "opponent_team_id": "ld4OlwwrKW",
           "events": []
         }
       ]
@@ -165295,7 +165309,7 @@
           "red_cards": 0
         },
         "Goulburn Valley Suns FC U13": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -165316,7 +165330,7 @@
         }
       },
       "stats": {
-        "matches_attended": 56,
+        "matches_attended": 57,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -166103,6 +166117,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Mornington SC U14",
           "opponent_team_id": "MNGog2GQNA",
+          "events": []
+        },
+        {
+          "match_hash_id": "1K3pvQn47d",
+          "date": "2026-05-17T00:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:00:00",
+          "team_name": "Goulburn Valley Suns FC U13",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U13 YSL Boys - South-East",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Mornington SC U13",
+          "opponent_team_id": "PmjnxkDjmZ",
           "events": []
         }
       ]
@@ -166152,7 +166180,7 @@
           "red_cards": 0
         },
         "Goulburn Valley Suns FC U13": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -166163,7 +166191,7 @@
         }
       },
       "stats": {
-        "matches_attended": 34,
+        "matches_attended": 35,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -166642,6 +166670,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Mornington SC U16",
           "opponent_team_id": "bd9X95lwK4",
+          "events": []
+        },
+        {
+          "match_hash_id": "1K3pvQn47d",
+          "date": "2026-05-17T00:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:00:00",
+          "team_name": "Goulburn Valley Suns FC U13",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U13 YSL Boys - South-East",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Mornington SC U13",
+          "opponent_team_id": "PmjnxkDjmZ",
           "events": []
         }
       ]
@@ -174765,7 +174807,7 @@
           "red_cards": 0
         },
         "Kingston City FC U13": {
-          "matches_played": 6,
+          "matches_played": 7,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -174776,7 +174818,7 @@
         }
       },
       "stats": {
-        "matches_attended": 18,
+        "matches_attended": 19,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -175031,6 +175073,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Boroondara Eagles FC U15",
           "opponent_team_id": "am1qvwBnmw",
+          "events": []
+        },
+        {
+          "match_hash_id": "BdDb9PnG3N",
+          "date": "2026-05-16T23:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T09:00:00",
+          "team_name": "Kingston City FC U13",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U13 YSL Boys - South-East",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Boroondara Eagles FC U13",
+          "opponent_team_id": "am1qvwwkmw",
           "events": []
         }
       ]
@@ -188685,7 +188741,7 @@
       },
       "team_stats": {
         "Kingston City FC U13": {
-          "matches_played": 11,
+          "matches_played": 12,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -188696,7 +188752,7 @@
         }
       },
       "stats": {
-        "matches_attended": 11,
+        "matches_attended": 12,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -188853,6 +188909,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Mornington SC U13",
           "opponent_team_id": "PmjnxkDjmZ",
+          "events": []
+        },
+        {
+          "match_hash_id": "BdDb9PnG3N",
+          "date": "2026-05-16T23:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T09:00:00",
+          "team_name": "Kingston City FC U13",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U13 YSL Boys - South-East",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Boroondara Eagles FC U13",
+          "opponent_team_id": "am1qvwwkmw",
           "events": []
         }
       ]
@@ -188876,7 +188946,7 @@
       },
       "team_stats": {
         "Kingston City FC U13": {
-          "matches_played": 11,
+          "matches_played": 12,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -188887,7 +188957,7 @@
         }
       },
       "stats": {
-        "matches_attended": 11,
+        "matches_attended": 12,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -189044,6 +189114,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Mornington SC U13",
           "opponent_team_id": "PmjnxkDjmZ",
+          "events": []
+        },
+        {
+          "match_hash_id": "BdDb9PnG3N",
+          "date": "2026-05-16T23:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T09:00:00",
+          "team_name": "Kingston City FC U13",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U13 YSL Boys - South-East",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Boroondara Eagles FC U13",
+          "opponent_team_id": "am1qvwwkmw",
           "events": []
         }
       ]
@@ -189067,7 +189151,7 @@
       },
       "team_stats": {
         "Kingston City FC U13": {
-          "matches_played": 11,
+          "matches_played": 12,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -189078,7 +189162,7 @@
         }
       },
       "stats": {
-        "matches_attended": 11,
+        "matches_attended": 12,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -189235,6 +189319,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Mornington SC U13",
           "opponent_team_id": "PmjnxkDjmZ",
+          "events": []
+        },
+        {
+          "match_hash_id": "BdDb9PnG3N",
+          "date": "2026-05-16T23:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T09:00:00",
+          "team_name": "Kingston City FC U13",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U13 YSL Boys - South-East",
+          "role_in_match": "Assistant Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Boroondara Eagles FC U13",
+          "opponent_team_id": "am1qvwwkmw",
           "events": []
         }
       ]
@@ -189421,7 +189519,7 @@
       },
       "team_stats": {
         "Goulburn Valley Suns FC U13": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -189432,7 +189530,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -189575,6 +189673,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Monash City Villarreal FC U13",
           "opponent_team_id": "nmYyQ22bmz",
+          "events": []
+        },
+        {
+          "match_hash_id": "1K3pvQn47d",
+          "date": "2026-05-17T00:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:00:00",
+          "team_name": "Goulburn Valley Suns FC U13",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U13 YSL Boys - South-East",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Mornington SC U13",
+          "opponent_team_id": "PmjnxkDjmZ",
           "events": []
         }
       ]
@@ -189598,7 +189710,7 @@
       },
       "team_stats": {
         "Goulburn Valley Suns FC U13": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -189609,7 +189721,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -189752,6 +189864,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Monash City Villarreal FC U13",
           "opponent_team_id": "nmYyQ22bmz",
+          "events": []
+        },
+        {
+          "match_hash_id": "1K3pvQn47d",
+          "date": "2026-05-17T00:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:00:00",
+          "team_name": "Goulburn Valley Suns FC U13",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U13 YSL Boys - South-East",
+          "role_in_match": "Coach",
+          "home_or_away": "away",
+          "opponent_team_name": "Mornington SC U13",
+          "opponent_team_id": "PmjnxkDjmZ",
           "events": []
         }
       ]
@@ -189775,7 +189901,7 @@
       },
       "team_stats": {
         "Goulburn Valley Suns FC U13": {
-          "matches_played": 10,
+          "matches_played": 11,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -189786,7 +189912,7 @@
         }
       },
       "stats": {
-        "matches_attended": 10,
+        "matches_attended": 11,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -189929,6 +190055,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Monash City Villarreal FC U13",
           "opponent_team_id": "nmYyQ22bmz",
+          "events": []
+        },
+        {
+          "match_hash_id": "1K3pvQn47d",
+          "date": "2026-05-17T00:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:00:00",
+          "team_name": "Goulburn Valley Suns FC U13",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U13 YSL Boys - South-East",
+          "role_in_match": "Manager",
+          "home_or_away": "away",
+          "opponent_team_name": "Mornington SC U13",
+          "opponent_team_id": "PmjnxkDjmZ",
           "events": []
         }
       ]
@@ -190365,7 +190505,7 @@
       },
       "team_stats": {
         "Boroondara Eagles FC U13": {
-          "matches_played": 11,
+          "matches_played": 12,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -190376,7 +190516,7 @@
         }
       },
       "stats": {
-        "matches_attended": 11,
+        "matches_attended": 12,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -190533,6 +190673,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Gippsland United FC U13",
           "opponent_team_id": "MNGog22ENA",
+          "events": []
+        },
+        {
+          "match_hash_id": "BdDb9PnG3N",
+          "date": "2026-05-16T23:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T09:00:00",
+          "team_name": "Boroondara Eagles FC U13",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U13 YSL Boys - South-East",
+          "role_in_match": "Head Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Kingston City FC U13",
+          "opponent_team_id": "pmvzPooLmv",
           "events": []
         }
       ]
@@ -190557,7 +190711,7 @@
       },
       "team_stats": {
         "Boroondara Eagles FC U13": {
-          "matches_played": 11,
+          "matches_played": 12,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -190568,7 +190722,7 @@
         }
       },
       "stats": {
-        "matches_attended": 11,
+        "matches_attended": 12,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -190725,6 +190879,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Gippsland United FC U13",
           "opponent_team_id": "MNGog22ENA",
+          "events": []
+        },
+        {
+          "match_hash_id": "BdDb9PnG3N",
+          "date": "2026-05-16T23:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T09:00:00",
+          "team_name": "Boroondara Eagles FC U13",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U13 YSL Boys - South-East",
+          "role_in_match": "Team Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Kingston City FC U13",
+          "opponent_team_id": "pmvzPooLmv",
           "events": []
         }
       ]
@@ -206771,7 +206939,7 @@
       },
       "team_stats": {
         "Mornington SC U13": {
-          "matches_played": 11,
+          "matches_played": 12,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -206782,7 +206950,7 @@
         }
       },
       "stats": {
-        "matches_attended": 11,
+        "matches_attended": 12,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -206939,6 +207107,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Kingston City FC U13",
           "opponent_team_id": "pmvzPooLmv",
+          "events": []
+        },
+        {
+          "match_hash_id": "1K3pvQn47d",
+          "date": "2026-05-17T00:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:00:00",
+          "team_name": "Mornington SC U13",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U13 YSL Boys - South-East",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Goulburn Valley Suns FC U13",
+          "opponent_team_id": "ld4OlwwrKW",
           "events": []
         }
       ]
@@ -206962,7 +207144,7 @@
       },
       "team_stats": {
         "Mornington SC U13": {
-          "matches_played": 11,
+          "matches_played": 12,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -206973,7 +207155,7 @@
         }
       },
       "stats": {
-        "matches_attended": 11,
+        "matches_attended": 12,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -207130,6 +207312,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Kingston City FC U13",
           "opponent_team_id": "pmvzPooLmv",
+          "events": []
+        },
+        {
+          "match_hash_id": "1K3pvQn47d",
+          "date": "2026-05-17T00:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:00:00",
+          "team_name": "Mornington SC U13",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U13 YSL Boys - South-East",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Goulburn Valley Suns FC U13",
+          "opponent_team_id": "ld4OlwwrKW",
           "events": []
         }
       ]
@@ -207153,7 +207349,7 @@
       },
       "team_stats": {
         "Mornington SC U13": {
-          "matches_played": 11,
+          "matches_played": 12,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -207164,7 +207360,7 @@
         }
       },
       "stats": {
-        "matches_attended": 11,
+        "matches_attended": 12,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -207321,6 +207517,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Kingston City FC U13",
           "opponent_team_id": "pmvzPooLmv",
+          "events": []
+        },
+        {
+          "match_hash_id": "1K3pvQn47d",
+          "date": "2026-05-17T00:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:00:00",
+          "team_name": "Mornington SC U13",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U13 YSL Boys - South-East",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Goulburn Valley Suns FC U13",
+          "opponent_team_id": "ld4OlwwrKW",
           "events": []
         }
       ]
@@ -207344,7 +207554,7 @@
       },
       "team_stats": {
         "Mornington SC U13": {
-          "matches_played": 11,
+          "matches_played": 12,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -207355,7 +207565,7 @@
         }
       },
       "stats": {
-        "matches_attended": 11,
+        "matches_attended": 12,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -207512,6 +207722,20 @@
           "home_or_away": "away",
           "opponent_team_name": "Kingston City FC U13",
           "opponent_team_id": "pmvzPooLmv",
+          "events": []
+        },
+        {
+          "match_hash_id": "1K3pvQn47d",
+          "date": "2026-05-17T00:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:00:00",
+          "team_name": "Mornington SC U13",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U13 YSL Boys - South-East",
+          "role_in_match": "Coach",
+          "home_or_away": "home",
+          "opponent_team_name": "Goulburn Valley Suns FC U13",
+          "opponent_team_id": "ld4OlwwrKW",
           "events": []
         }
       ]
@@ -253044,7 +253268,7 @@
           "red_cards": 0
         },
         "Mornington SC U13": {
-          "matches_played": 6,
+          "matches_played": 7,
           "matches_started": 0,
           "bench_appearances": 0,
           "goals": 0,
@@ -253055,7 +253279,7 @@
         }
       },
       "stats": {
-        "matches_attended": 34,
+        "matches_attended": 35,
         "yellow_cards": 0,
         "red_cards": 0
       },
@@ -253534,6 +253758,20 @@
           "home_or_away": "home",
           "opponent_team_name": "Goulburn Valley Suns FC U14",
           "opponent_team_id": "pN6OYw6BK0",
+          "events": []
+        },
+        {
+          "match_hash_id": "1K3pvQn47d",
+          "date": "2026-05-17T00:00:00.000000Z",
+          "date_aest": "2026-05-17",
+          "datetime_aest": "2026-05-17T10:00:00",
+          "team_name": "Mornington SC U13",
+          "competition_name": "Boys Youth State League South-East",
+          "league_name": "U13 YSL Boys - South-East",
+          "role_in_match": "Manager",
+          "home_or_away": "home",
+          "opponent_team_name": "Goulburn Valley Suns FC U13",
+          "opponent_team_id": "ld4OlwwrKW",
           "events": []
         }
       ]
@@ -263123,5 +263361,5 @@
       ]
     }
   ],
-  "_last_updated": "2026-05-20T08:05:22.953855"
+  "_last_updated": "2026-05-22T08:05:43.001192"
 }
