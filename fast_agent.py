@@ -268,8 +268,10 @@ def get_lineup_by_id(match_hash_id):
                 
         return {
             "match_hash_id": match_hash_id,
-            "home_lineup": {"data": home_players},
-            "away_lineup": {"data": away_players}
+            "home_team_id":  home_team_id,
+            "away_team_id":  distinct_teams[1] if len(distinct_teams) > 1 else "away",
+            "home_lineup":   home_players,
+            "away_lineup":   away_players,
         }
     except Exception as e:
         print(f"[fast_agent] Lineup normalization decoding error: {e}")
